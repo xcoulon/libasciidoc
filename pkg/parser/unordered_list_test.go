@@ -46,10 +46,10 @@ var _ = Describe("unordered lists", func() {
 					Elements: []interface{}{
 						types.UnorderedListItem{
 							Attributes: types.Attributes{
-								types.AttrTitle:    "mytitle",
-								types.AttrID:       "listID",
-								types.AttrCustomID: true,
-								types.AttrRole:     types.ElementRole{"myrole"},
+								types.AttrTitle: "mytitle",
+								types.AttrID:    "listID",
+								// types.AttrCustomID: true,
+								types.AttrRoles: []interface{}{"myrole"},
 							},
 							Level:       1,
 							BulletStyle: types.OneAsterisk,
@@ -78,11 +78,11 @@ var _ = Describe("unordered lists", func() {
 					Elements: []interface{}{
 						types.UnorderedListItem{
 							Attributes: types.Attributes{
-								types.AttrTitle:    "mytitle",
-								types.AttrID:       "listID",
-								types.AttrCustomID: true,
-								types.AttrRole:     types.ElementRole{"myrole"},
-								types.AttrStyle:    "square",
+								types.AttrTitle: "mytitle",
+								types.AttrID:    "listID",
+								// types.AttrCustomID: true,
+								types.AttrRoles: []interface{}{"myrole"},
+								types.AttrStyle: "square",
 							},
 							Level:       1,
 							BulletStyle: types.OneAsterisk,
@@ -1549,10 +1549,10 @@ paragraph attached to parent list item`
 					Elements: []interface{}{
 						types.UnorderedList{
 							Attributes: types.Attributes{
-								types.AttrID:       "listID",
-								types.AttrCustomID: true,
-								types.AttrTitle:    "mytitle",
-								types.AttrRole:     types.ElementRole{"myrole"},
+								types.AttrID: "listID",
+								// types.AttrCustomID: true,
+								types.AttrTitle: "mytitle",
+								types.AttrRoles: []interface{}{"myrole"},
 							},
 							Items: []types.UnorderedListItem{
 								{

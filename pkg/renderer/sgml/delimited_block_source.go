@@ -52,7 +52,7 @@ func (r *sgmlRenderer) renderSourceParagraph(ctx *renderer.Context, p types.Para
 	lines := make([][]interface{}, len(p.Lines))
 	copy(lines, p.Lines)
 	attributes := p.Attributes
-	attributes[types.AttrBlockKind] = types.Source
+	attributes[types.AttrStyle] = types.Source
 	return r.renderSourceBlock(ctx, types.ListingBlock{
 		Attributes: attributes,
 		Lines:      lines,

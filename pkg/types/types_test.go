@@ -724,8 +724,8 @@ var _ = Describe("element id resolution", func() {
 				section := types.Section{
 					Level: 0,
 					Attributes: types.Attributes{
-						types.AttrCustomID: true,
-						types.AttrID:       "bar",
+						// types.AttrCustomID: true,
+						types.AttrID: "bar",
 					},
 					Title: []interface{}{
 						types.StringElement{
@@ -751,8 +751,8 @@ var _ = Describe("element id resolution", func() {
 				section := types.Section{
 					Level: 0,
 					Attributes: types.Attributes{
-						types.AttrCustomID: true,
-						types.AttrID:       "bar",
+						// types.AttrCustomID: true,
+						types.AttrID: "bar",
 					},
 					Title: []interface{}{
 						types.StringElement{
@@ -1090,12 +1090,12 @@ var _ = DescribeTable("match for attribute with key and value",
 		// given
 		attributes := []interface{}{
 			types.Attribute{
-				Key:   types.AttrBlockKind,
+				Key:   types.AttrStyle,
 				Value: types.Quote,
 			},
 			types.Attributes{
-				types.AttrBlockKind: types.Verse,
-				types.AttrTitle:     "verse title",
+				types.AttrStyle: types.Verse,
+				types.AttrTitle: "verse title",
 			},
 		}
 		// when
@@ -1105,8 +1105,8 @@ var _ = DescribeTable("match for attribute with key and value",
 		Expect(result).To((Equal(expected)))
 
 	},
-	Entry("match for block-kind: verse", types.AttrBlockKind, types.Verse, true),
-	Entry("match for block-kind: quote", types.AttrBlockKind, types.Quote, true),
+	Entry("match for block-kind: verse", types.AttrStyle, types.Verse, true),
+	Entry("match for block-kind: quote", types.AttrStyle, types.Quote, true),
 	Entry("no match for block-kind: quote", types.AttrID, "unknown", false),
 )
 
@@ -1115,12 +1115,12 @@ var _ = DescribeTable("no match attribute with key",
 		// given
 		attributes := []interface{}{
 			types.Attribute{
-				Key:   types.AttrBlockKind,
+				Key:   types.AttrStyle,
 				Value: types.Quote,
 			},
 			types.Attributes{
-				types.AttrBlockKind: types.Verse,
-				types.AttrTitle:     "verse title",
+				types.AttrStyle: types.Verse,
+				types.AttrTitle: "verse title",
 			},
 		}
 		// when
@@ -1130,7 +1130,7 @@ var _ = DescribeTable("no match attribute with key",
 		Expect(result).To((Equal(expected)))
 
 	},
-	Entry("match for block-kind: verse", types.AttrBlockKind, false),
-	Entry("match for block-kind: quote", types.AttrBlockKind, false),
+	Entry("match for block-kind: verse", types.AttrStyle, false),
+	Entry("match for block-kind: quote", types.AttrStyle, false),
 	Entry("no match for block-kind: quote", types.AttrID, true),
 )

@@ -123,8 +123,8 @@ a paragraph`
 						Elements: []interface{}{
 							types.Paragraph{
 								Attributes: types.Attributes{
-									types.AttrID:       "img-foobar",
-									types.AttrCustomID: true,
+									types.AttrID: "img-foobar",
+									// types.AttrCustomID: true,
 								},
 								Lines: [][]interface{}{
 									{
@@ -146,8 +146,8 @@ a paragraph`
 						Elements: []interface{}{
 							types.Paragraph{
 								Attributes: types.Attributes{
-									types.AttrID:       "img-foobar",
-									types.AttrCustomID: true,
+									types.AttrID: "img-foobar",
+									// types.AttrCustomID: true,
 								},
 								Lines: [][]interface{}{
 									{
@@ -310,13 +310,13 @@ a paragraph`
 			Context("with valid syntax", func() {
 
 				It("shortcut role element", func() {
-					source := `[.a role]
+					source := `[.a_role]
 a paragraph`
 					expected := types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
 								Attributes: types.Attributes{
-									types.AttrRole: types.ElementRole{"a role"},
+									types.AttrRoles: []interface{}{"a_role"},
 								},
 								Lines: [][]interface{}{
 									{
@@ -332,13 +332,13 @@ a paragraph`
 				})
 
 				It("full role syntax", func() {
-					source := `[role=a role]
+					source := `[role=a_role]
 a paragraph`
 					expected := types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
 								Attributes: types.Attributes{
-									types.AttrRole: types.ElementRole{"a role"},
+									types.AttrRoles: []interface{}{"a_role"},
 								},
 								Lines: [][]interface{}{
 									{
@@ -355,14 +355,14 @@ a paragraph`
 			})
 
 			It("blank line after role attribute", func() {
-				source := `[.a role]
+				source := `[.a_role]
 
 a paragraph`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
 							Attributes: types.Attributes{
-								types.AttrRole: types.ElementRole{"a role"},
+								types.AttrRoles: []interface{}{"a_role"},
 							},
 							Lines: [][]interface{}{
 								{types.StringElement{
@@ -379,7 +379,7 @@ a paragraph`
 			})
 
 			It("blank lines after id, role and title attributes", func() {
-				source := `[.a role]
+				source := `[.a_role]
 [[ID]]
 .title
 
@@ -389,10 +389,10 @@ a paragraph`
 					Elements: []interface{}{
 						types.Paragraph{
 							Attributes: types.Attributes{
-								types.AttrRole:     types.ElementRole{"a role"},
-								types.AttrTitle:    "title",
-								types.AttrID:       "ID",
-								types.AttrCustomID: true,
+								types.AttrRoles: []interface{}{"a_role"},
+								types.AttrTitle: "title",
+								types.AttrID:    "ID",
+								// types.AttrCustomID: true,
 							},
 							Lines: [][]interface{}{
 								{types.StringElement{
@@ -410,7 +410,7 @@ a paragraph`
 		Context("standalone attributes", func() {
 
 			It("single standalone attribute", func() {
-				source := `[.a role]
+				source := `[.a_role]
 `
 				expected := types.Document{
 					Elements: []interface{}{},
@@ -419,7 +419,7 @@ a paragraph`
 			})
 
 			It("multiple standalone attributes", func() {
-				source := `[.a role]
+				source := `[.a_role]
 [[ID]]
 .title`
 				expected := types.Document{
@@ -431,7 +431,7 @@ a paragraph`
 			It("multiple standalone attributes after a paragraph", func() {
 				source := `a paragraph
 			
-[.a role]
+[.a_role]
 [[ID]]
 .title`
 				expected := types.Document{

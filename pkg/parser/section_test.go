@@ -139,7 +139,9 @@ and a paragraph`
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				result, err := ParseDraftDocument(source)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).To(MatchDraftDocument(expected))
 			})
 
 			It("section level 1 with custom idseparator", func() {
@@ -443,8 +445,8 @@ a paragraph`
 					Elements: []interface{}{
 						types.Section{
 							Attributes: types.Attributes{
-								types.AttrID:       "custom_header",
-								types.AttrCustomID: true,
+								types.AttrID: "custom_header",
+								// // types.AttrCustomID: true,
 							},
 							Level:    1,
 							Title:    sectionTitle,
@@ -477,8 +479,8 @@ a paragraph`
 					Elements: []interface{}{
 						types.Section{
 							Attributes: types.Attributes{
-								types.AttrID:       "custom_header",
-								types.AttrCustomID: true,
+								types.AttrID: "custom_header",
+								// types.AttrCustomID: true,
 							},
 							Level:    0,
 							Title:    doctitle,
@@ -487,8 +489,8 @@ a paragraph`
 						types.BlankLine{},
 						types.Section{
 							Attributes: types.Attributes{
-								types.AttrID:       "foo",
-								types.AttrCustomID: true,
+								types.AttrID: "foo",
+								// types.AttrCustomID: true,
 							},
 							Level:    1,
 							Title:    fooTitle,
@@ -497,8 +499,8 @@ a paragraph`
 						types.BlankLine{},
 						types.Section{
 							Attributes: types.Attributes{
-								types.AttrID:       "bar",
-								types.AttrCustomID: true,
+								types.AttrID: "bar",
+								// types.AttrCustomID: true,
 							},
 							Level:    1,
 							Title:    barTitle,
@@ -787,7 +789,7 @@ a short preamble
 					Elements: []interface{}{
 						types.LiteralBlock{
 							Attributes: types.Attributes{
-								types.AttrBlockKind:        types.Literal,
+								types.AttrStyle:            types.Literal,
 								types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
 							},
 							Lines: [][]interface{}{
@@ -825,7 +827,7 @@ a short preamble
 						types.BlankLine{},
 						types.LiteralBlock{
 							Attributes: types.Attributes{
-								types.AttrBlockKind:        types.Literal,
+								types.AttrStyle:            types.Literal,
 								types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
 							},
 							Lines: [][]interface{}{
@@ -1519,8 +1521,8 @@ a paragraph`
 					Elements: []interface{}{
 						types.Section{
 							Attributes: types.Attributes{
-								types.AttrID:       "custom_header",
-								types.AttrCustomID: true,
+								types.AttrID: "custom_header",
+								// types.AttrCustomID: true,
 							},
 							Level:    1,
 							Title:    sectionTitle,
@@ -1558,16 +1560,16 @@ a paragraph`
 					Elements: []interface{}{
 						types.Section{
 							Attributes: types.Attributes{
-								types.AttrID:       "custom_header",
-								types.AttrCustomID: true,
+								types.AttrID: "custom_header",
+								// types.AttrCustomID: true,
 							},
 							Level: 0,
 							Title: doctitle,
 							Elements: []interface{}{
 								types.Section{
 									Attributes: types.Attributes{
-										types.AttrID:       "foo",
-										types.AttrCustomID: true,
+										types.AttrID: "foo",
+										// types.AttrCustomID: true,
 									},
 									Level:    1,
 									Title:    fooTitle,
@@ -1575,8 +1577,8 @@ a paragraph`
 								},
 								types.Section{
 									Attributes: types.Attributes{
-										types.AttrID:       "bar",
-										types.AttrCustomID: true,
+										types.AttrID: "bar",
+										// types.AttrCustomID: true,
 									},
 									Level: 1,
 									Title: barTitle,
@@ -1944,7 +1946,7 @@ a short preamble
 					Elements: []interface{}{
 						types.LiteralBlock{
 							Attributes: types.Attributes{
-								types.AttrBlockKind:        types.Literal,
+								types.AttrStyle:            types.Literal,
 								types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
 							},
 							Lines: [][]interface{}{
@@ -1981,7 +1983,7 @@ a short preamble
 							Elements: []interface{}{
 								types.LiteralBlock{
 									Attributes: types.Attributes{
-										types.AttrBlockKind:        types.Literal,
+										types.AttrStyle:            types.Literal,
 										types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
 									},
 									Lines: [][]interface{}{

@@ -63,11 +63,11 @@ RawBlocks <- Newline* header:(DocumentHeader?) blocks:(DocumentRawBlock*) {
 
 DocumentRawBlock <- 
         block:(LabeledListItem // must appear before simple paragraph
-        / ImageBlock
         / SimpleRawParagraph
         / BlankLine // must be before LiteralBlock 
         / Section
         / DelimitedBlock
+        / ImageBlock
         / SingleLineComment
         / Table
         / ThematicBreak
@@ -245,17 +245,17 @@ ElementAttribute <- &("[" / "." ) // skip if the content does not start with one
 }
 
 ElementID <- "[[" id:(Id) "]]" Space* EOL {
-    return types.NewElementID(id)
+    return types.NewIDAttribute(id)
 }
 
 InlineElementID <- "[[" id:(Id) "]]" Space* { // no EOL here since there can be multiple InlineElementID on the same line
-    return types.NewInlineElementID(id.(string))
+    return types.NewInlineIDAttribute(id.(string))
 }
 
 // a title attached to an element, such as a ImageBlock
 // a title starts with a single "." followed by the value, without space in-between
 ElementTitle <- "." title:(ElementTitleContent) Space* EOL {
-    return types.NewElementTitle(title.([]interface{}))
+    return types.NewTitleAttribute(title.([]interface{}))
 }
 
 ElementTitleContent <- (
@@ -270,20 +270,18 @@ ElementTitleContent <- (
 
 // These are elements that do not start with a leading positional attribute, except
 // perhaps the shorthand attributes.
-ElementShortHandAttributes <- "[" attributes:(ShortHandAttr* NamedAttribute*) "]" Space* EOL {
+ElementShortHandAttributes <- "[" attributes:(ShortHandAttribute* NamedAttribute*) "]" Space* EOL {
     return types.NewAttributeGroup(attributes.([]interface{})...)
 }
 
-BlockAttribute <- BlockAttributeList / ElementTitle / ElementID
-
 // All blocks have style as their first element, and no block has more than 3 positional elements.
 // This allows us to keep the grammar simpler, and use context to determine what the second and third attributes are.
-BlockAttributeList <- '[' attributes:(BlockAttrStyle? ShortHandAttr* BlockAttrPositional2? BlockAttrPositional3? NamedAttribute*) ']' EOL {
+BlockAttributeList <- '[' attributes:(BlockAttrStyle? ShortHandAttribute* BlockAttrPositional2? BlockAttrPositional3? NamedAttribute*) ']' EOL {
     return types.NewAttributeGroup(attributes.([]interface{})...)
 }
 
 BlockAttrStyle <- style:PositionalValue {
-    return types.NewElementStyle(style)
+    return types.NewStyleAttribute(style)
 }
 
 BlockAttrPositional2 <- Space* "," Space* value:PositionalValue? {
@@ -318,18 +316,16 @@ ListingBlockAttribute <- "[listing]" Space* EOL {
 
 // expression for the whole admonition marker, but only retains the actual kind
 AdmonitionMarkerAttribute <- "[" k:(AdmonitionKind) "]" Space* EOL {
-    return types.NewAdmonitionAttribute(k.(types.AdmonitionKind))
+    return types.NewAdmonitionAttribute(k.(string))
 }
 
 // a paragraph or a delimited block may contain source code in a given language
 SourceAttributes <- "[source" 
-    option:("%nowrap" {
-        return "nowrap", nil
-    })?
+    options:(ShortHandAttribute)*
     language:("," attr:(AttributeValue)? { return attr, nil })? 
     others:("," attr:(NamedAttribute / StandaloneAttributeKey)? { return attr, nil })* 
     "]" Space* EOL {
-    return types.NewSourceAttributes(language, option, others.([]interface{})...)
+    return types.NewSourceAttributes(language, options, others.([]interface{})...)
 }
 
 // one or more attributes. eg: [foo, key1=value1, key2 = value2 , ]
@@ -343,9 +339,9 @@ NamedAttributes <- attributes:(NamedAttribute)* {
     return types.NewAttributeGroup(attributes.([]interface{})...)
 }
 
-NamedAttribute <- key:(NamedAttributeKey)  "=" value:(AttributeValue) ("," Space*)? {
-    return types.NewNamedAttribute(key.(string), value)
-}
+// NamedAttribute <- key:(NamedAttributeKey)  "=" value:(AttributeValue) ("," Space*)? {
+//     return types.NewNamedAttribute(key.(string), value)
+// }
 
 // The spec says attributes have be alphanumeric but does not consider foreign letters.  We are more generous.
 NamedAttributeKey <- !Space [^\r\n=,\]]+ Space* {
@@ -357,7 +353,7 @@ AttributeValue <- Space* value:(SingleQuotedAttributeValue / DoubleQuotedAttribu
 }
 
 SingleQuotedAttributeValue <- "'" elements:(
-    ([^'\r\n\uFFFD\\{]+ { // '=' and `,` signs are allowed within quotes
+    ([^'\r\n\uFFFD\\{]+ { // = and , signs are allowed within ' quotes 
         return types.NewStringElement(string(c.text))
     }) / 
     ElementPlaceHolder /
@@ -371,7 +367,7 @@ SingleQuotedAttributeValue <- "'" elements:(
 }
 
 DoubleQuotedAttributeValue <- "\"" elements:(
-    ([^\r\n\uFFFD"\\{]+ { // '=' and `,` signs are allowed within quotes
+    ([^\r\n\uFFFD"\\{]+ { // = and , signs are allowed within " quotes
         return types.NewStringElement(string(c.text))
     }) / 
     ElementPlaceHolder /
@@ -415,30 +411,27 @@ QuoteAttribute <- ([^\r\n,\]]*) {
     return string(c.text), nil
 }
 
-QuotedTextAttributes <- "[" attributes:(QuotedTextAttrRole? ShortHandAttr* NamedAttribute*) "]" {
-    return types.NewAttributeGroup(attributes.([]interface{})...)
-}
+// QuotedTextAttributes <- "[" attributes:(QuotedTextAttrRole? ShortHandAttribute* NamedAttribute*) "]" {
+//     return types.NewAttributeGroup(attributes.([]interface{})...)
+// }
+QuotedTextAttributes <- LongHandAttributes
 
 QuotedTextAttrRole <- role:PositionalValue ("," Space*)? {
-    return types.NewElementRole(role)
+    return types.NewRoleAttribute(role)
 }
 
-StandaloneAttributes <- attributes:(ElementAttribute)+ BlankLine* { // standalone attributes, i.e., with nothing afterwards
-    return types.NewAttributeGroup(attributes.([]interface{})...)
+ShortHandAttribute <- ShortHandID / ShortHandOption / ShortHandRole
+
+ShortHandID <- "#" id:(ShortHandValue) &[,#%.\r\n\]] ("," Space*)? {
+    return types.NewIDAttribute(id)
 }
 
-ShortHandAttr <- ShortHandAttrID / ShortHandAttrOption / ShortHandAttrRole
-
-ShortHandAttrOption <- "%" option:(ShortHandValue) &[,#%.\r\n\]] ("," Space*)? {
-    return types.NewElementOption(option)
+ShortHandOption <- "%" option:(ShortHandValue) &[,#%.\r\n\]] ("," Space*)? {
+    return types.NewOptionAttribute(option)
 }
 
-ShortHandAttrID <- "#" id:(ShortHandValue) &[,#%.\r\n\]] ("," Space*)? {
-    return types.NewElementID(id)
-}
-
-ShortHandAttrRole <- '.' role:(ShortHandValue) &[,#%.\r\n\]] ("," Space*)? {
-    return types.NewElementRole(role)
+ShortHandRole <- '.' role:(ShortHandValue) &[,#%.\r\n\]] ("," Space*)? {
+    return types.NewRoleAttribute(role)
 }
 
 // PositionalValue is an unnamed attribute.
@@ -450,11 +443,12 @@ ShortHandValue <- ShortHandValuePlain / SingleQuotedAttributeValue / DoubleQuote
 
 // ShortHandValuePlain is sort of like AttrValuePlain, but it also needs to exclude the characters
 // used to start a short hand role, id, or option, as well as equals signs.
-ShortHandValuePlain <- first:([^,\r\n"' \t.#%=\]] {
+ShortHandValuePlain <- first:([^,\r\n"' \t.#%=\uFFFD\]]? { // '"
        return types.NewStringElement(string(c.text))
     })
-    others: (ElementPlaceHolder 
-        / ([^ \t,\r\n"'.#%=\]] / [ \t][^ \t,\r\n"'.#%=\]] {
+    others: (
+        ElementPlaceHolder 
+        / ([^ \t,\r\n"'.#%=\]] / [ \t][^ \t,\r\n"'.#%=\]] { // '
             return types.NewStringElement(string(c.text))
         })
     )* {
@@ -462,9 +456,304 @@ ShortHandValuePlain <- first:([^,\r\n"' \t.#%=\]] {
     }
 
 // ------------------------------------------
+// Attributes, refactored
+// ------------------------------------------
+BlockAttributes <- 
+    attributes:(
+        // shorthand syntax for anchors. Eg: `[[an_id]]`
+        (anchor:(ShortHandAnchor) (Space* Newline)+ {
+            return anchor, nil
+        })
+        // shorthand syntax for titles. Eg: `.a title`
+        / (title:(ShortHandTitle) (Space* Newline)+ {
+            return title, nil
+        })
+        // default syntax
+        / (attributes:(LongHandAttributes) (Space* Newline)+ {
+            return attributes, nil
+        })
+    )+ {
+        return types.NewAttributes(attributes.([]interface{})...)
+    }
+
+// standalone attributes, i.e., no attached to a block
+StandaloneAttributes <- attributes:(BlockAttributes) BlankLine* { 
+    return attributes, nil
+}
+
+// shorthand syntax for anchors. Eg: `[[An ID]]`
+ShortHandAnchor <-
+   "[[" 
+    id:(
+        elements:(
+            ([^=\r\n\uFFFD{\]]+ { // spaces, commas and dots are allowed in this syntax
+                return types.NewStringElement(string(c.text))
+            }) / 
+            ElementPlaceHolder /
+            AttrSub /
+            ("{" { 
+                return types.NewStringElement(string(c.text))
+            }))+ {
+                return types.Reduce(elements, strings.TrimSpace), nil
+            }
+        )
+    "]]" {
+        return types.NewIDAttribute(id)
+    }
+
+// shorthand syntax for titles. Eg: `.a title`
+ShortHandTitle <- `.` title:(
+    ![. ] // may not start with a dot or a space, to avoid confusion with list items or literal block delimiters
+    elements:(
+        ([^\r\n\uFFFD{]+ {
+            return types.NewStringElement(string(c.text))
+        }) / 
+        ElementPlaceHolder /
+        AttrSub /
+        ("{" { 
+            return types.NewStringElement(string(c.text))
+        }))+ {
+            return types.Reduce(elements, strings.TrimSpace), nil
+        }
+    ) {
+        return types.NewTitleAttribute(title)
+    }
+
+// LongHandAttributes. Eg: `[positional1,positional2,...,named1,named2,...]
+// positional attributes are optional, and `positional1` can be combined with options and roles ("extras")
+LongHandAttributes <-
+    #{
+        return initPositionalIndex(c)
+    }
+    "[" 
+    // !Space // no space allowed on the first character
+    firstPositionalAttribute:(FirstPositionalAttribute)?
+    otherPositionalAttributes:(PositionalAttribute)*
+    namedAttributes:(NamedAttribute)*
+    "]" {
+        attributes:=[]interface{}{}
+        if firstPositionalAttribute != nil {
+            attributes=append(attributes, firstPositionalAttribute.([]interface{})...)
+        }
+        attributes=append(attributes, otherPositionalAttributes.([]interface{})...)
+        attributes=append(attributes, namedAttributes.([]interface{})...)
+        return types.NewAttributes(attributes...)
+    }
+
+// First Positional Attribute may be an ID or a style, with extra roles and options.
+// Or sometimes, it's just 1 or more roles or options...
+FirstPositionalAttribute <- 
+    main:(
+        ShortHandAttribute
+    )?
+    extras:( 
+        ShortHandIDAttribute 
+        / ShortHandOptionAttribute
+        / ShortHandDotRoleAttribute
+    )* ("," Space*)? 
+    &{
+        // make sure there was a match
+        return main != nil || len(extras.([]interface{})) > 0, nil
+    }
+    {
+        attrs:=[]interface{}{}
+        if main != nil {
+            attrs = append(attrs, main)
+        }
+        attrs = append(attrs, extras.([]interface{})...)
+        return attrs, nil
+    }
+
+// an `id` must be prefixed with a `#` 
+ShortHandIDAttribute <- "#" id:(ShortHandAttributeValue) {
+    _, err := incrementPositionalIndex(c)
+	if err != nil {
+		return types.Attribute{}, err
+    }
+    return types.NewIDAttribute(id)
+}
+
+ShortHandAttribute <- value:(ShortHandAttributeValue) {
+    i, err := incrementPositionalIndex(c)
+	if err != nil {
+		return types.Attribute{}, err
+    }
+    return types.NewPositionalAttribute(i, value)
+}
+
+// a `role` must be prefixed with a `.` 
+ShortHandDotRoleAttribute <- "." role:(ShortHandAttributeValue) {
+    return types.NewRoleAttribute(role)
+}
+
+// an `option` must be prefixed with a `%` 
+ShortHandOptionAttribute <- "%" option:(ShortHandAttributeValue) {
+    return types.NewOptionAttribute(option)
+}
+
+// // a `style` has no prefix
+// ShortHandStyleAttribute <- value:(ShortHandAttributeValue) {
+//     return types.NewStyleAttribute(value)
+// }
+
+// Shorthand Attribute Value. 
+ShortHandAttributeValue <- 
+    RefactoredSingleQuotedAttributeValue 
+    / RefactoredDoubleQuotedAttributeValue 
+    / elements:(
+    // unquoted shorthand value may include placeholders and substitutions but NOT comma, space, equal sign and dots
+    // also, cannot be followed by an `=` sign
+    ([^,=.%# \r\n\uFFFD{\]]+ {
+        return types.NewStringElement(string(c.text))
+    }) / 
+    ElementPlaceHolder /
+    AttrSub /
+    ("{" { 
+        return types.NewStringElement(string(c.text))
+    }))+ &[^=] {
+        return types.Reduce(elements, strings.TrimSpace), nil
+    }
+
+
+// // Block ID with roles and options. Eg: `#id.role1%option1.rol2%option2`
+// IDAttributeWithExtras <- 
+//     "#" 
+//     id:(ShortHandAttributeValue) 
+//     extras:(ShortHandDotRoleAttribute / ShortHandOptionAttribute)* 
+//     ("," Space*)? {
+//         _, err := incrementPositionalIndex(c)
+//     	if err != nil {
+//     		return types.Attribute{}, err
+//     	}
+//         return types.NewIDAttribute(id, extras.([]interface{})...)
+//     }
+
+// // Block Style with roles and options. Eg: `source.role1%option1.rol2%option2`
+// StyleAttributeWithExtras <- 
+//     style:(ShortHandAttributeValue) 
+//     extras:(ShortHandDotRoleAttribute / ShortHandOptionAttribute)* 
+//     ("," Space*)?{
+//         _, err := incrementPositionalIndex(c)
+//     	if err != nil {
+//     		return types.Attribute{}, err
+//     	}
+//         return types.NewStyleAttribute(style, extras.([]interface{})...)
+//     }
+
+// NoneWithExtras <-     
+//     extras:(ShortHandDotRoleAttribute / ShortHandOptionAttribute)+
+//     ("," Space*)? {
+//         _, err := incrementPositionalIndex(c)
+//     	if err != nil {
+//     		return types.Attribute{}, err
+//     	}
+//         return types.NewExtraAttributes(extras.([]interface{})...)
+//     }
+
+
+PositionalAttribute <- (
+    value:(RefactoredAttributeValue) (("," Space*)? / &"]") { 
+    	i, err := incrementPositionalIndex(c)
+    	if err != nil {
+    		return types.Attribute{}, err
+        }
+        return types.NewPositionalAttribute(i, value)
+    }) 
+    / 
+    // empty value. Eg: `[ ]`, `[, a, b]`, `[a, ,b]`, etc.
+    (value:(Space* (("," Space*) / &"]"))
+    &{
+        // here we can't rely on `c.text` if the content is empty 
+        // (in which case, `c.text` contains the char sequence of the previous 
+        // rule that matched)
+        v := types.Merge(value)
+        return len(v) > 0, nil
+    }
+    { 
+        i, err := incrementPositionalIndex(c)
+    	if err != nil {
+            return types.Attribute{}, err
+        }
+        return types.NewPositionalAttribute(i, nil)
+    })
+
+NamedAttribute <- key:(NamedAttributeKey) "=" Space* value:(RefactoredAttributeValue) ("," Space*)? { // TODO: include `,` or expect `]`
+    return types.NewNamedAttribute(key.(string), value)
+}
+
+RefactoredAttributeValue <- 
+    value:(
+        RefactoredSingleQuotedAttributeValue 
+        / RefactoredDoubleQuotedAttributeValue 
+        / RefactoredUnquotedAttributeValue
+    ) 
+    &(!(Space* "=")) {
+        return value, nil
+    }
+
+RefactoredSingleQuotedAttributeValue <- 
+    "'" 
+    elements:(
+        ([^'\r\n\uFFFD\\{]+ { // = and , signs are allowed within ' quotes 
+            return types.NewStringElement(string(c.text))
+        })
+        / ElementPlaceHolder
+        / AttrSub
+        / (`\'` { 
+            return types.NewStringElement(`'`) // escaped quote
+        }
+        / `{` / `\` { 
+            return types.NewStringElement(string(c.text)) 
+        })
+    )+ 
+    "'" {
+        return types.Reduce(elements), nil
+    }
+
+RefactoredDoubleQuotedAttributeValue <- 
+    "\"" 
+    elements:(
+        ([^\r\n\uFFFD"\\{]+ { // = and , signs are allowed within " quotes
+            return types.NewStringElement(string(c.text))
+        }) 
+        / ElementPlaceHolder
+        / AttrSub
+        / (`\"` { 
+            return types.NewStringElement(`"`) // escaped quote
+        }
+        / `{` / `\` { 
+            return types.NewStringElement(string(c.text)) 
+        })
+    )+ 
+    "\"" {
+        return types.Reduce(elements), nil
+    }
+
+// Unquoted Attribute Value, may include spaces but not on the first position
+RefactoredUnquotedAttributeValue <- 
+    !Space
+    elements:(
+        ([^,=\r\n\uFFFD{\]]+ {
+            return types.NewStringElement(string(c.text))
+        }) 
+        / ElementPlaceHolder
+        / AttrSub
+        / ("{" { 
+            return types.NewStringElement(string(c.text))
+        })
+    )+ 
+    &{
+        // empty string is not a valid value
+        return types.Reduce(elements, strings.TrimSpace) != "", nil
+    }
+    {
+        return types.Reduce(elements, strings.TrimSpace), nil
+    }
+
+// ------------------------------------------
 // Sections
 // ------------------------------------------
-Section <- attributes:(BlockAttribute)*
+Section <- attributes:(BlockAttributes)?
     level:(("=")+ {   
         // `=` is level 0, etc.
         return (len(c.text)-1), nil 
@@ -474,7 +763,7 @@ Section <- attributes:(BlockAttribute)*
         return level.(int) <= 5, nil 
     } 
     Space+ title:(TitleElements) id:(InlineElementID*) EOL {
-    return types.NewSection(level.(int), title.([]interface{}), id.([]interface{}), attributes.([]interface{})) 
+    return types.NewSection(level.(int), title.([]interface{}), id.([]interface{}), attributes) 
 }
 
 TitleElements <- elements:(!Newline !InlineElementID TitleElement)+ { // absorbs heading and trailing spaces
@@ -498,11 +787,11 @@ TableOfContentsPlaceHolder <- "toc::[]" EOL
 // User Macro
 // ------------------------------------------
 UserMacroBlock <- name:(UserMacroName) "::" value:(UserMacroValue) attributes:(UserMacroAttributes) {
-    return types.NewUserMacroBlock(name.(string), value.(string), attributes.(types.Attributes), string(c.text))
+    return types.NewUserMacroBlock(name.(string), value.(string), attributes, string(c.text))
 }
 
 InlineUserMacro <- name:(UserMacroName) ":" value:(UserMacroValue) attributes:(UserMacroAttributes) {
-    return types.NewInlineUserMacro(name.(string), value.(string), attributes.(types.Attributes), string(c.text))
+    return types.NewInlineUserMacro(name.(string), value.(string), attributes, string(c.text))
 }
 
 UserMacroName <- !"include" ([\pL0-9_-]+) {
@@ -677,8 +966,8 @@ ContinuedListItemContent <- !EOF
 // ------------------------------------------
 // Ordered List Items
 // ------------------------------------------
-OrderedListItem <- attributes:(BlockAttribute)* prefix:(OrderedListItemPrefix) content:(OrderedListItemContent) {
-    return types.NewOrderedListItem(prefix.(types.OrderedListItemPrefix), content.([]interface{}), attributes.([]interface{}))
+OrderedListItem <- attributes:(BlockAttributes)? prefix:(OrderedListItemPrefix) content:(OrderedListItemContent) {
+    return types.NewOrderedListItem(prefix.(types.OrderedListItemPrefix), content.([]interface{}), attributes)
 }
 
 OrderedListItemPrefix <- 
@@ -728,8 +1017,8 @@ OrderedListItemContent <- elements:(ListParagraph+) {
 // ------------------------------------------
 // Unordered List Items
 // ------------------------------------------
-UnorderedListItem <- attributes:(BlockAttribute)* prefix:(UnorderedListItemPrefix) checkstyle:(UnorderedListItemCheckStyle)? content:(UnorderedListItemContent) {
-    return types.NewUnorderedListItem(prefix.(types.UnorderedListItemPrefix), checkstyle, content.([]interface{}), attributes.([]interface{}))
+UnorderedListItem <- attributes:(BlockAttributes)? prefix:(UnorderedListItemPrefix) checkstyle:(UnorderedListItemCheckStyle)? content:(UnorderedListItemContent) {
+    return types.NewUnorderedListItem(prefix.(types.UnorderedListItemPrefix), checkstyle, content.([]interface{}), attributes)
 }
 
 UnorderedListItemPrefix <- 
@@ -777,8 +1066,8 @@ UnorderedListItemContent <- elements:(ListParagraph+) { // Another list or a lit
 // ------------------------------------------
 // Labeled List Items
 // ------------------------------------------
-LabeledListItem <- attributes:(BlockAttribute)* term:(VerbatimLabeledListItemTerm) separator:(LabeledListItemSeparator) description:(LabeledListItemDescription)? {
-    return types.NewLabeledListItem(len(separator.(string)) - 1, term.([]interface{}), description, attributes.([]interface{}))
+LabeledListItem <- attributes:(BlockAttributes)? term:(VerbatimLabeledListItemTerm) separator:(LabeledListItemSeparator) description:(LabeledListItemDescription)? {
+    return types.NewLabeledListItem(len(separator.(string)) - 1, term.([]interface{}), description, attributes)
 }
 
 LabeledListItemPrefix <- VerbatimLabeledListItemTerm LabeledListItemSeparator
@@ -855,24 +1144,24 @@ AdmonitionKind <- "TIP" {
 // TODO: refactor to avoid multiple 'Attributes?' rule evaluations?
 RawParagraph <- 
     // admonition paragraph 
-     attributes:(ElementAttribute)* t:(AdmonitionKind) ": " lines:(SingleLineComment / RawParagraphLine)+ { 
-        return types.NewAdmonitionParagraph(lines.([]interface{}), t.(types.AdmonitionKind), attributes.([]interface{}))
+     attributes:(BlockAttributes)? t:(AdmonitionKind) ": " lines:(SingleLineComment / RawParagraphLine)+ { 
+        return types.NewAdmonitionParagraph(lines.([]interface{}), t.(string), attributes)
     } / 
     // markdown-style blockquote paragraph
     // TODO: move with other Delimited block rules?
-    attributes:(ElementAttribute)* "> " content:(MarkdownQuoteBlockRawContent) {
-        return types.NewMarkdownQuoteBlock(content.([]interface{}), attributes.([]interface{}))
+    attributes:(BlockAttributes)? "> " content:(MarkdownQuoteBlockRawContent) {
+        return types.NewMarkdownQuoteBlock(content.([]interface{}), attributes)
     } /
     // passthrough open block: requires `[pass]`
-    attributes:(ElementAttribute)* &{
+    attributes:(BlockAttributes)? &{
         // verify that one of the attributes is `kind:passthrough`
-        return types.HasAttributeWithValue(attributes, types.AttrBlockKind, types.Passthrough), nil
+        return types.HasAttributeWithValue(attributes, types.AttrPositional1, types.Passthrough), nil
     } content:(RawParagraphLine)+ { 
-        return types.NewPassthroughBlock(content.([]interface{}), attributes.([]interface{}))
+        return types.NewPassthroughBlock(content.([]interface{}), attributes)
     } /
     // other kind of paragraph (verse, regular, etc.)
-    attributes:(ElementAttribute)* lines:(SingleLineComment / RawParagraphLine)+ { 
-        return types.NewParagraph(lines.([]interface{}), attributes.([]interface{}))
+    attributes:(BlockAttributes)? lines:(SingleLineComment / RawParagraphLine)+ { 
+        return types.NewParagraph(lines.([]interface{}), attributes)
     }
 
 MarkdownQuoteBlockRawContent <- (!BlankLine "> "? content:(RawLine) { 
@@ -895,13 +1184,13 @@ RawParagraphLineContent <- [^\r\n]+ {
 }
 
 // a paragraph whose first line begins with a word followed by spaces
-SimpleRawParagraph <- attributes:(ElementAttribute)* 
+SimpleRawParagraph <- attributes:(BlockAttributes)? 
     &{
-        return !types.HasAttributeWithValue(attributes, types.AttrBlockKind, types.Literal), nil
+        return !types.HasAttributeWithValue(attributes, types.AttrPositional1, types.Literal), nil
     }
     firstLine: FirstParagraphRawLine
     otherLines:(SingleLineComment / RawParagraphLine)* { 
-    return types.NewParagraph(append([]interface{}{firstLine}, otherLines.([]interface{})...), attributes.([]interface{}))
+    return types.NewParagraph(append([]interface{}{firstLine}, otherLines.([]interface{})...), attributes)
 }
 
 FirstParagraphRawLine <- 
@@ -918,12 +1207,12 @@ FirstParagraphRawLine <-
 // same as RawParagraph, but without allowing for ListItemContinuation (`+`)
 ContinuedRawParagraph <- 
     // admonition paragraph 
-    attributes:(ElementAttribute)* t:(AdmonitionKind) ": " lines:(ContinuedRawParagraphLines) { 
-        return types.NewAdmonitionParagraph(lines.([]interface{}), t.(types.AdmonitionKind), attributes.([]interface{}))
+    attributes:(BlockAttributes)? t:(AdmonitionKind) ": " lines:(ContinuedRawParagraphLines) { 
+        return types.NewAdmonitionParagraph(lines.([]interface{}), t.(string), attributes)
     } / 
     // other kind of paragraph (verse, regular, etc.)
-    attributes:(ElementAttribute)* lines:(ContinuedRawParagraphLines) { 
-        return types.NewParagraph(lines.([]interface{}), attributes.([]interface{}))
+    attributes:(BlockAttributes)? lines:(ContinuedRawParagraphLines) { 
+        return types.NewParagraph(lines.([]interface{}), attributes)
 } 
 
 ContinuedRawParagraphLines <- firstLine:(FirstParagraphRawLine) otherLines:(!ListItemContinuation line:(SingleLineComment / RawParagraphLine) { return line, nil })* {
@@ -1471,10 +1760,25 @@ ExternalLink <- url:(LocationWithScheme) inlineAttributes:(LinkAttributes)? {
     return types.NewInlineLink(url.(types.Location), inlineAttributes)
 }
 
-LinkAttributes <- "[" firstAttr:(FirstLinkAttributeElement)*
-    Space* otherAttrs:(NamedAttribute)* "]" {
-    return types.NewInlineLinkAttributes(append(firstAttr.([]interface{}), otherAttrs.([]interface{})...))
-} 
+// TODO: same as InlineImageAttributes? (if yes: rename to `InlineAttributes`)
+LinkAttributes <-  
+    #{
+        return initPositionalIndex(c)
+    }
+    "["
+    positionalAttributes:(PositionalAttribute)*
+    namedAttributes:(NamedAttribute)*
+    "]" {
+        attributes:=[]interface{}{}
+        attributes=append(attributes, positionalAttributes.([]interface{})...)
+        attributes=append(attributes, namedAttributes.([]interface{})...)
+        return types.NewAttributes(attributes...)
+    }
+
+// LinkAttributes <- "[" firstAttr:(FirstLinkAttributeElement)*
+//     Space* otherAttrs:(NamedAttribute)* "]" {
+//     return types.NewInlineLinkAttributes(append(firstAttr.([]interface{}), otherAttrs.([]interface{})...))
+// } 
 
 FirstLinkAttributeElement <- element:(
     // surrounded with double quotes
@@ -1496,21 +1800,27 @@ QuotedAttributeChar <- [^\r\n"=\]] { // does not exclude comma
     return types.NewStringElement(string(c.text))
 }
 
-UnquotedAttributeChar <- [^\r\n"=\],] { // excludes comma
+UnquotedAttributeChar <- [^\r\n"=\],] { // excludes comma and double quotes (")
     return types.NewStringElement(string(c.text))
 }
 
 // ------------------------------------------
 // Images
 // ------------------------------------------
-ImageBlock <- attributes:(ImageBlockAttributes) "image::" path:(Location) inlineAttributes:(InlineImageAttributes) Space* EOL {
+ImageBlock <- 
+    attributes:(BlockAttributes)? 
+    &{
+        // AttrPositional1 must not be set
+        return types.HasNotAttribute(attributes, types.AttrPositional1), nil
+    }
+    "image::" path:(Location) inlineAttributes:(InlineImageAttributes) Space* EOL {
     // 'imagesdir' attribute is added after applying the attribute substitutions on the image location
-    return types.NewImageBlock(path.(types.Location), inlineAttributes.(types.Attributes), attributes.([]interface{}))
+    return types.NewImageBlock(path.(types.Location), inlineAttributes.(types.Attributes), attributes)
 }
 
 ImageBlockAttributes <- (!VerseAttributes attribute:(ElementShortHandAttributes / ElementTitle / ElementID) { return attribute, nil })* 
 
-ImageAttrList <- '[' alt:(ImageAlt)? shortHands:(ShortHandAttr)* ("," Space*)? width:(ImageWidth)? ("," Space*)? height:(ImageHeight)? ("," Space*)? others:(NamedAttributes) ']' Space* EOL {
+ImageAttrList <- '[' alt:(ImageAlt)? shortHands:(ShortHandAttribute)* ("," Space*)? width:(ImageWidth)? ("," Space*)? height:(ImageHeight)? ("," Space*)? others:(NamedAttributes) ']' Space* EOL {
     return types.NewAttributeGroup(alt, width, height, others)
 }
 
@@ -1518,27 +1828,41 @@ InlineImage <- "image:" !":" path:(Location) inlineAttributes:(InlineImageAttrib
     return types.NewInlineImage(path.(types.Location), inlineAttributes.(types.Attributes), c.globalStore["imagesdir"])
 }
 
-InlineImageAttributes <- '[' Space* alt:(ImageAlt)? ("," Space*)? width:(ImageWidth)? ("," Space*)? height:(ImageHeight)? ("," Space*)? others:(NamedAttributes) ']' {
-    return types.NewAttributeGroup(alt, width, height, others)
-}
+InlineImageAttributes <-  
+    #{
+        return initPositionalIndex(c)
+    }
+    "["
+    positionalAttributes:(PositionalAttribute)*
+    namedAttributes:(NamedAttribute)*
+    "]" {
+        attributes:=[]interface{}{}
+        attributes=append(attributes, positionalAttributes.([]interface{})...)
+        attributes=append(attributes, namedAttributes.([]interface{})...)
+        return types.NewAttributes(attributes...)
+    }
 
-ImageAlt <- value:(AttributeValue) {
-    return types.NewInlineAttribute(types.AttrImageAlt, value)
-}
+// InlineImageAttributes <- '[' Space* alt:(ImageAlt)? ("," Space*)? width:(ImageWidth)? ("," Space*)? height:(ImageHeight)? ("," Space*)? others:(NamedAttributes) ']' {
+//     return types.NewAttributeGroup(alt, width, height, others)
+// }
 
-ImageWidth <- value:(AttributeValue) {
-    return types.NewInlineAttribute(types.AttrWidth, value)
-}
+// ImageAlt <- value:(AttributeValue) {
+//     return types.NewInlineAttribute(types.AttrImageAlt, value)
+// }
 
-ImageHeight <- value:(AttributeValue) {
-    return types.NewInlineAttribute(types.AttrImageHeight, value)
-}
+// ImageWidth <- value:(AttributeValue) {
+//     return types.NewInlineAttribute(types.AttrWidth, value)
+// }
+
+// ImageHeight <- value:(AttributeValue) {
+//     return types.NewInlineAttribute(types.AttrImageHeight, value)
+// }
 
 // ------------------------------------------------------------------------------------
 // Inline icons
 // ------------------------------------------------------------------------------------
 InlineIcon <- "icon:" icon:([\pL0-9_-]+ { return string(c.text), nil }) attributes:(IconAttributes) {
-    return types.NewIcon(icon.(string), attributes.(types.Attributes))
+    return types.NewIcon(icon.(string), attributes)
 }
 
 IconAttributes <- '[' size:(IconSize)? others:(NamedAttributes) ']' {
@@ -1620,8 +1944,8 @@ BlockDelimiter <- !(Alphanum) LiteralBlockDelimiter //TODO: use "start" delimite
 // -------------------------------------------------------------------------------------
 // Example blocks
 // -------------------------------------------------------------------------------------
-ExampleBlock <- attributes:(ElementAttribute)* ExampleBlockStartDelimiter blocks:(ExampleBlockRawContent) ExampleBlockEndDelimiter {
-    return types.NewExampleBlock(blocks.([]interface{}), attributes.([]interface{}))
+ExampleBlock <- attributes:(BlockAttributes)? ExampleBlockStartDelimiter blocks:(ExampleBlockRawContent) ExampleBlockEndDelimiter {
+    return types.NewExampleBlock(blocks.([]interface{}), attributes)
 }
 
 ExampleBlockDelimiter <- "====" Space* EOL
@@ -1657,17 +1981,17 @@ ExampleBlockRawContent <- (
 // -------------------------------------------------------------------------------------
 // Quote blocks
 // -------------------------------------------------------------------------------------
-QuoteBlock <- attributes:(ElementAttribute)* 
+QuoteBlock <- attributes:(BlockAttributes)? 
     &{
-        // AttrBlockKind may be missing or must be equal to `quote`
-        if types.HasNotAttribute(attributes, types.AttrBlockKind) || 
-            types.HasAttributeWithValue(attributes, types.AttrBlockKind, types.Quote) {
+        // AttrPositional1 may be missing or must be equal to `quote`
+        if types.HasNotAttribute(attributes, types.AttrPositional1) || 
+            types.HasAttributeWithValue(attributes, types.AttrPositional1, types.Quote) {
             return true, nil
         }
         return false, nil
     }
     QuoteBlockStartDelimiter content:(QuoteBlockRawContent) QuoteBlockEndDelimiter {
-        return types.NewQuoteBlock(content.([]interface{}), attributes.([]interface{}))
+        return types.NewQuoteBlock(content.([]interface{}), attributes)
     }
 
 QuoteBlockDelimiter <- "____" Space* EOL // same for verse blocks
@@ -1703,8 +2027,8 @@ QuoteBlockRawContent <- (
 // -------------------------------------------------------------------------------------
 // Sidebar blocks
 // -------------------------------------------------------------------------------------
-SidebarBlock <- attributes:(ElementAttribute)* SidebarBlockStartDelimiter content:(SidebarBlockRawContent) SidebarBlockEndDelimiter {
-    return types.NewSidebarBlock(content.([]interface{}), attributes.([]interface{}))
+SidebarBlock <- attributes:(BlockAttributes)? SidebarBlockStartDelimiter content:(SidebarBlockRawContent) SidebarBlockEndDelimiter {
+    return types.NewSidebarBlock(content.([]interface{}), attributes)
 }
 
 SidebarBlockDelimiter <- "****" Space* EOL
@@ -1740,8 +2064,8 @@ SidebarBlockRawContent <- (
 // -------------------------------------------------------------------------------------
 // Fenced blocks
 // -------------------------------------------------------------------------------------
-FencedBlock <- attributes:(ElementAttribute)* FencedBlockStartDelimiter content:(FencedBlockRawContent) FencedBlockEndDelimiter {
-    return types.NewFencedBlock(content.([]interface{}), attributes.([]interface{}))
+FencedBlock <- attributes:(BlockAttributes)? FencedBlockStartDelimiter content:(FencedBlockRawContent) FencedBlockEndDelimiter {
+    return types.NewFencedBlock(content.([]interface{}), attributes)
 }
 
 FencedBlockDelimiter <- "```" Space* EOL // Deprecated: use 'FencedBlockStartDelimiter' instead
@@ -1757,8 +2081,8 @@ FencedBlockRawContent <- (!FencedBlockEndDelimiter line:(RawLine) {
 // -------------------------------------------------------------------------------------
 // Listing blocks
 // -------------------------------------------------------------------------------------
-ListingBlock <- attributes:(ElementAttribute)* ListingBlockStartDelimiter content:(ListingBlockRawContent) ListingBlockEndDelimiter {
-    return types.NewListingBlock(content.([]interface{}), attributes.([]interface{}))
+ListingBlock <- attributes:(BlockAttributes)? ListingBlockStartDelimiter content:(ListingBlockRawContent) ListingBlockEndDelimiter {
+    return types.NewListingBlock(content.([]interface{}), attributes)
 }
 
 ListingBlockDelimiter <- "----" Space* EOL
@@ -1774,13 +2098,13 @@ ListingBlockRawContent <- (!ListingBlockEndDelimiter line:(RawLine) {
 // -------------------------------------------------------------------------------------
 // Verse blocks
 // -------------------------------------------------------------------------------------
-VerseBlock <- attributes:(ElementAttribute)* 
+VerseBlock <- attributes:(BlockAttributes)? 
     &{
-        // AttrBlockKind must be equal to `verse`
-        return types.HasAttributeWithValue(attributes, types.AttrBlockKind, types.Verse), nil
+        // AttrPositional1 must be equal to `verse`
+        return types.HasAttributeWithValue(attributes, types.AttrPositional1, types.Verse), nil
     }
     QuoteBlockStartDelimiter content:(VerseBlockRawContent) QuoteBlockEndDelimiter {
-        return types.NewVerseBlock(content.([]interface{}), attributes.([]interface{}))
+        return types.NewVerseBlock(content.([]interface{}), attributes)
     }
 
 VerseBlockRawContent <- (!QuoteBlockEndDelimiter line:(RawLine) { 
@@ -1790,8 +2114,8 @@ VerseBlockRawContent <- (!QuoteBlockEndDelimiter line:(RawLine) {
 // -------------------------------------------------------------------------------------
 // Passthrough blocks
 // -------------------------------------------------------------------------------------
-PassthroughBlock <- attributes:(ElementAttribute)* PassthroughBlockStartDelimiter content:(PassthroughBlockRawContent) PassthroughBlockEndDelimiter {
-    return types.NewPassthroughBlock(content.([]interface{}), attributes.([]interface{}))
+PassthroughBlock <- attributes:(BlockAttributes)? PassthroughBlockStartDelimiter content:(PassthroughBlockRawContent) PassthroughBlockEndDelimiter {
+    return types.NewPassthroughBlock(content.([]interface{}), attributes)
 }
 
 PassthroughBlockDelimiter <- "++++" Space* EOL
@@ -1952,11 +2276,11 @@ NoneSubs <- (
 // -------------------------------------------------------------------------------------
 // Tables
 // -------------------------------------------------------------------------------------
-Table <- attributes:(BlockAttribute)* TableDelimiter
+Table <- attributes:(BlockAttributes)? TableDelimiter
     header:(TableLineHeader)?
     lines:(TableLine)*
     (TableDelimiter / EOF) { // end delimiter or end of file
-        return types.NewTable(header, lines.([]interface{}), attributes.([]interface{}))
+        return types.NewTable(header, lines.([]interface{}), attributes)
     }
 
 TableCellSeparator <- "|" Space*
@@ -1984,8 +2308,8 @@ LiteralBlock <- ParagraphWithLiteralAttribute / ParagraphWithHeadingSpaces / Par
 LiteralBlockDelimiter <- "...."
 
 // paragraph indented with one or more spaces on the first line
-ParagraphWithHeadingSpaces <- attributes:(ElementAttribute)* lines:(ParagraphWithHeadingSpacesLines) {
-    return types.NewLiteralBlock(types.LiteralBlockWithSpacesOnFirstLine, lines.([]interface{}), attributes.([]interface{}))
+ParagraphWithHeadingSpaces <- attributes:(BlockAttributes)? lines:(ParagraphWithHeadingSpacesLines) {
+    return types.NewLiteralBlock(types.LiteralBlockWithSpacesOnFirstLine, lines.([]interface{}), attributes)
 }
 
 // first line MUST start with one (or more) space. Stop when reaching a blank line
@@ -2002,9 +2326,9 @@ ParagraphWithHeadingSpacesLine <- line:(Space+ [^\r\n]+ {
 }
 
 // paragraph with the literal block delimiter (`....`)
-ParagraphWithLiteralBlockDelimiter <- attributes:(ElementAttribute)*
+ParagraphWithLiteralBlockDelimiter <- attributes:(BlockAttributes)?
         LiteralBlockDelimiter Space* Newline lines:(ParagraphWithLiteralBlockDelimiterLines) ((LiteralBlockDelimiter Space* EOL) / EOF) {
-    return types.NewLiteralBlock(types.LiteralBlockWithDelimiter, lines.([]interface{}), attributes.([]interface{}))
+    return types.NewLiteralBlock(types.LiteralBlockWithDelimiter, lines.([]interface{}), attributes)
 }
 
 // include all lines until delimiter is reached
@@ -2021,12 +2345,12 @@ ParagraphWithLiteralBlockDelimiterLine <-
 
 // paragraph with the literal attribute (`[literal]`)
 ParagraphWithLiteralAttribute <- 
-    attributes:(ElementAttribute)*
+    attributes:(BlockAttributes)?
     &{
-        return types.HasAttributeWithValue(attributes, types.AttrBlockKind, types.Literal), nil
+        return types.HasAttributeWithValue(attributes, types.AttrPositional1, types.Literal), nil
     }
     lines:(LiteralParagraphLine)+ {
-        return types.NewLiteralBlock(types.LiteralBlockWithAttribute, lines.([]interface{}), attributes.([]interface{}))
+        return types.NewLiteralBlock(types.LiteralBlockWithAttribute, lines.([]interface{}), attributes)
     }
 
 LiteralKind <- "literal" {
@@ -2129,7 +2453,7 @@ Word <-
     // then followed by spaces but not the "+" signs because it needs a heading space to become a LineBreak element
     [\pL0-9]+ &([\r\n ,\]] / EOF) { 
         return types.NewStringElement(string(c.text))
-    } / [\pL0-9]+ ([=*_`] [\pL0-9]+)+ { 
+    } / [\pL0-9]+ ([=*_`] [\pL0-9]+)+ {  // allow `
         return types.NewStringElement(string(c.text))
     }
 

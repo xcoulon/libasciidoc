@@ -31,8 +31,8 @@ with some content linked to <<thetitle>>!`
 						types.Section{
 							Level: 1,
 							Attributes: types.Attributes{
-								types.AttrID:       "thetitle",
-								types.AttrCustomID: true,
+								types.AttrID: "thetitle",
+								// types.AttrCustomID: true,
 							},
 							Title: []interface{}{
 								types.StringElement{
@@ -79,8 +79,8 @@ with some content linked to <<thetitle,a label to the title>>!`
 						types.Section{
 							Level: 1,
 							Attributes: types.Attributes{
-								types.AttrID:       "thetitle",
-								types.AttrCustomID: true,
+								types.AttrID: "thetitle",
+								// types.AttrCustomID: true,
 							},
 							Title: []interface{}{
 								types.StringElement{
@@ -120,9 +120,10 @@ with some content linked to <<thetitle,a label to the title>>!`
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
-								{types.StringElement{
-									Content: "some content linked to ",
-								},
+								{
+									types.StringElement{
+										Content: "some content linked to ",
+									},
 									types.ExternalCrossReference{
 										Location: types.Location{
 											Path: []interface{}{
@@ -159,9 +160,10 @@ with some content linked to <<thetitle,a label to the title>>!`
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
-								{types.StringElement{
-									Content: "some content linked to ",
-								},
+								{
+									types.StringElement{
+										Content: "some content linked to ",
+									},
 									types.ExternalCrossReference{
 										Location: types.Location{
 											Path: []interface{}{
@@ -170,11 +172,7 @@ with some content linked to <<thetitle,a label to the title>>!`
 												},
 											},
 										},
-										Label: []interface{}{
-											types.StringElement{
-												Content: "another doc",
-											},
-										},
+										Label: "another doc",
 									},
 									types.StringElement{
 										Content: "!",
@@ -210,11 +208,7 @@ some content linked to xref:{foo}[another_doc()]!`
 												},
 											},
 										},
-										Label: []interface{}{
-											types.StringElement{
-												Content: "another_doc()",
-											},
-										},
+										Label: "another_doc()",
 									},
 									types.StringElement{
 										Content: "!",

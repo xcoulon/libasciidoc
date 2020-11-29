@@ -897,8 +897,8 @@ var _ = Describe("quoted texts", func() {
 
 		Context("with attributes", func() {
 
-			It("simple role italics", func() {
-				source := "[myrole]_italics_"
+			It("simple dot.role italics", func() {
+				source := "[.myrole]_italics_"
 				expected := types.DraftDocument{
 					Elements: []interface{}{
 						types.Paragraph{
@@ -910,7 +910,7 @@ var _ = Describe("quoted texts", func() {
 											types.StringElement{Content: "italics"},
 										},
 										Attributes: types.Attributes{
-											types.AttrRole: types.ElementRole{"myrole"},
+											types.AttrRoles: []interface{}{"myrole"},
 										},
 									},
 								},
@@ -921,8 +921,8 @@ var _ = Describe("quoted texts", func() {
 				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
 			})
 
-			It("simple role italics unconstrained", func() {
-				source := "it[uncle]__al__ic"
+			It("simple dot.role italics unconstrained", func() {
+				source := "it[.uncle]__al__ic"
 				expected := types.DraftDocument{
 					Elements: []interface{}{
 						types.Paragraph{
@@ -937,7 +937,7 @@ var _ = Describe("quoted texts", func() {
 											types.StringElement{Content: "al"},
 										},
 										Attributes: types.Attributes{
-											types.AttrRole: types.ElementRole{"uncle"},
+											types.AttrRoles: []interface{}{"uncle"},
 										},
 									},
 									types.StringElement{
@@ -951,8 +951,8 @@ var _ = Describe("quoted texts", func() {
 				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
 			})
 
-			It("simple role bold", func() {
-				source := "[myrole]*bold*"
+			It("simple dot.role bold", func() {
+				source := "[.myrole]*bold*"
 				expected := types.DraftDocument{
 					Elements: []interface{}{
 						types.Paragraph{
@@ -964,7 +964,7 @@ var _ = Describe("quoted texts", func() {
 											types.StringElement{Content: "bold"},
 										},
 										Attributes: types.Attributes{
-											types.AttrRole: types.ElementRole{"myrole"},
+											types.AttrRoles: []interface{}{"myrole"},
 										},
 									},
 								},
@@ -975,8 +975,8 @@ var _ = Describe("quoted texts", func() {
 				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
 			})
 
-			It("simple role bold unconstrained", func() {
-				source := "it[uncle]**al**ic"
+			It("simple dot.role bold unconstrained", func() {
+				source := "it[.uncle]**al**ic"
 				expected := types.DraftDocument{
 					Elements: []interface{}{
 						types.Paragraph{
@@ -991,7 +991,7 @@ var _ = Describe("quoted texts", func() {
 											types.StringElement{Content: "al"},
 										},
 										Attributes: types.Attributes{
-											types.AttrRole: types.ElementRole{"uncle"},
+											types.AttrRoles: []interface{}{"uncle"},
 										},
 									},
 									types.StringElement{
@@ -1005,8 +1005,8 @@ var _ = Describe("quoted texts", func() {
 				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
 			})
 
-			It("simple role mono", func() {
-				source := "[myrole]`true`"
+			It("simple dot.role mono", func() {
+				source := "[.myrole]`true`"
 				expected := types.DraftDocument{
 					Elements: []interface{}{
 						types.Paragraph{
@@ -1018,7 +1018,7 @@ var _ = Describe("quoted texts", func() {
 											types.StringElement{Content: "true"},
 										},
 										Attributes: types.Attributes{
-											types.AttrRole: types.ElementRole{"myrole"},
+											types.AttrRoles: []interface{}{"myrole"},
 										},
 									},
 								},
@@ -1029,8 +1029,8 @@ var _ = Describe("quoted texts", func() {
 				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
 			})
 
-			It("simple role mono unconstrained", func() {
-				source := "int[uncle]``eg``rate"
+			It("simple dot.role mono unconstrained", func() {
+				source := "int[.uncle]``eg``rate"
 				expected := types.DraftDocument{
 					Elements: []interface{}{
 						types.Paragraph{
@@ -1045,7 +1045,7 @@ var _ = Describe("quoted texts", func() {
 											types.StringElement{Content: "eg"},
 										},
 										Attributes: types.Attributes{
-											types.AttrRole: types.ElementRole{"uncle"},
+											types.AttrRoles: []interface{}{"uncle"},
 										},
 									},
 									types.StringElement{
@@ -1059,7 +1059,7 @@ var _ = Describe("quoted texts", func() {
 				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
 			})
 
-			It("role with comma truncates", func() {
+			It("role with extra attribute", func() {
 				source := "[myrole,and=nothing]_italics_"
 				expected := types.DraftDocument{
 					Elements: []interface{}{
@@ -1069,8 +1069,33 @@ var _ = Describe("quoted texts", func() {
 									types.QuotedText{
 										Kind: types.Italic,
 										Attributes: types.Attributes{
-											types.AttrRole: types.ElementRole{"myrole"},
-											"and":          "nothing",
+											types.AttrRoles: []interface{}{"myrole"},
+											"and":           "nothing",
+										},
+										Elements: []interface{}{
+											types.StringElement{Content: "italics"},
+										},
+									},
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			})
+
+			It("dot.role with extra attribute", func() {
+				source := "[.myrole,and=nothing]_italics_"
+				expected := types.DraftDocument{
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.QuotedText{
+										Kind: types.Italic,
+										Attributes: types.Attributes{
+											types.AttrRoles: []interface{}{"myrole"},
+											"and":           "nothing",
 										},
 										Elements: []interface{}{
 											types.StringElement{Content: "italics"},
@@ -1097,8 +1122,8 @@ var _ = Describe("quoted texts", func() {
 											types.StringElement{Content: "bold"},
 										},
 										Attributes: types.Attributes{
-											types.AttrID:       "here",
-											types.AttrCustomID: true,
+											types.AttrID: "here",
+											// types.AttrCustomID: true,
 										},
 									},
 								},
@@ -1110,6 +1135,30 @@ var _ = Describe("quoted texts", func() {
 			})
 
 			It("short-hand role only", func() {
+				source := "[bob]**bold**"
+				expected := types.DraftDocument{
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.QuotedText{
+										Kind: types.Bold,
+										Elements: []interface{}{
+											types.StringElement{Content: "bold"},
+										},
+										Attributes: types.Attributes{
+											types.AttrRoles: []interface{}{"bob"},
+										},
+									},
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			})
+
+			It("short-hand dot.role only", func() {
 				source := "[.bob]**bold**"
 				expected := types.DraftDocument{
 					Elements: []interface{}{
@@ -1122,7 +1171,7 @@ var _ = Describe("quoted texts", func() {
 											types.StringElement{Content: "bold"},
 										},
 										Attributes: types.Attributes{
-											types.AttrRole: types.ElementRole{"bob"},
+											types.AttrRoles: []interface{}{"bob"},
 										},
 									},
 								},
@@ -1134,7 +1183,7 @@ var _ = Describe("quoted texts", func() {
 			})
 
 			It("short-hand role with special characters", func() {
-				source := "[\"a <role>\"]**bold**"
+				source := `["a <role>"]**bold**`
 				expected := types.DraftDocument{
 					Elements: []interface{}{
 						types.Paragraph{
@@ -1143,19 +1192,20 @@ var _ = Describe("quoted texts", func() {
 									types.QuotedText{
 										Kind: types.Bold,
 										Attributes: types.Attributes{
-											types.AttrRole: types.ElementRole{
-												types.StringElement{
-													Content: "a ",
-												},
-												// wrapping quotes are not preserved
-												types.SpecialCharacter{
-													Name: "<",
-												},
-												types.StringElement{
-													Content: "role",
-												},
-												types.SpecialCharacter{
-													Name: ">",
+											types.AttrRoles: []interface{}{
+												[]interface{}{
+													types.StringElement{
+														Content: "a ",
+													},
+													types.SpecialCharacter{
+														Name: "<",
+													},
+													types.StringElement{
+														Content: "role",
+													},
+													types.SpecialCharacter{
+														Name: ">",
+													},
 												},
 											},
 										},
@@ -1171,7 +1221,46 @@ var _ = Describe("quoted texts", func() {
 				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
 			})
 
-			It("marked short-hand role only", func() {
+			It("short-hand dot.role with special characters", func() {
+				source := `[."a <role>"]**bold**`
+				expected := types.DraftDocument{
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.QuotedText{
+										Kind: types.Bold,
+										Attributes: types.Attributes{
+											types.AttrRoles: []interface{}{
+												[]interface{}{
+													types.StringElement{
+														Content: "a ",
+													},
+													types.SpecialCharacter{
+														Name: "<",
+													},
+													types.StringElement{
+														Content: "role",
+													},
+													types.SpecialCharacter{
+														Name: ">",
+													},
+												},
+											},
+										},
+										Elements: []interface{}{
+											types.StringElement{Content: "bold"},
+										},
+									},
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			})
+
+			It("marked short-hand dot.role only", func() {
 				source := "[.bob]##the builder##"
 				expected := types.DraftDocument{
 					Elements: []interface{}{
@@ -1184,7 +1273,7 @@ var _ = Describe("quoted texts", func() {
 											types.StringElement{Content: "the builder"},
 										},
 										Attributes: types.Attributes{
-											types.AttrRole: types.ElementRole{"bob"},
+											types.AttrRoles: []interface{}{"bob"},
 										},
 									},
 								},
@@ -1204,24 +1293,24 @@ var _ = Describe("quoted texts", func() {
 								{
 									types.QuotedText{
 										Kind: types.Bold,
+										Attributes: types.Attributes{
+											types.AttrRoles: []interface{}{"role1", "role2", "role3"},
+											types.AttrID:    "anchor",
+											// types.AttrCustomID: true,
+										},
 										Elements: []interface{}{
 											types.StringElement{Content: "bold"},
-										},
-										Attributes: types.Attributes{
-											types.AttrRole:     []interface{}{types.ElementRole{"role1"}, types.ElementRole{"role2"}, types.ElementRole{"role3"}},
-											types.AttrID:       "anchor",
-											types.AttrCustomID: true,
 										},
 									},
 									types.QuotedText{
 										Kind: types.Italic,
+										Attributes: types.Attributes{
+											types.AttrRoles: []interface{}{"second", "class"},
+											types.AttrID:    "here",
+											// types.AttrCustomID: true,
+										},
 										Elements: []interface{}{
 											types.StringElement{Content: "text"},
-										},
-										Attributes: types.Attributes{
-											types.AttrRole:     []interface{}{types.ElementRole{"second"}, types.ElementRole{"class"}},
-											types.AttrID:       "here",
-											types.AttrCustomID: true,
 										},
 									},
 								},
@@ -1253,8 +1342,10 @@ var _ = Describe("quoted texts", func() {
 				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
 			})
 
-			It("quoted role", func() {
-				source := "['here, again']**bold**"
+			XIt("quoted dot.role", func() {
+				// Skipped: let's keep the grammar simple and avoid having to deal with such corner cases
+				// for now and until there is a formal specification
+				source := "[.'here, again']**bold**"
 				expected := types.DraftDocument{
 					Elements: []interface{}{
 						types.Paragraph{
@@ -1267,7 +1358,7 @@ var _ = Describe("quoted texts", func() {
 										},
 										// NB: This will confuse the renderer.
 										Attributes: types.Attributes{
-											types.AttrRole: types.ElementRole{"here, again"},
+											types.AttrRoles: []interface{}{"here, again"},
 										},
 									},
 								},
@@ -1278,8 +1369,10 @@ var _ = Describe("quoted texts", func() {
 				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
 			})
 
-			It("quoted role with special chars", func() {
-				source := "[\"something <wicked>\"]**bold**"
+			XIt("quoted dot.role with special chars", func() {
+				// Skipped: let's keep the grammar simple and avoid having to deal with such corner cases
+				// for now and until there is a formal specification
+				source := "[.\"something <wicked>\"]**bold**"
 				expected := types.DraftDocument{
 					Elements: []interface{}{
 						types.Paragraph{
@@ -1292,7 +1385,7 @@ var _ = Describe("quoted texts", func() {
 										},
 										// NB: This will confuse the renderer.
 										Attributes: types.Attributes{
-											types.AttrRole: types.ElementRole{
+											types.AttrRoles: []interface{}{
 												types.StringElement{
 													Content: "something ",
 												},
@@ -1318,7 +1411,9 @@ var _ = Describe("quoted texts", func() {
 
 			// This demonstrates that we cannot inject malicious data in these attributes.
 			// The content is escaped by the renderer, not the parser.
-			It("bad syntax", func() {
+			XIt("bad syntax", func() {
+				// Skipped: let's keep the grammar simple and avoid having to deal with such corner cases
+				// for now and until there is a formal specification
 				source := "[.<something \"wicked>]**bold**"
 				expected := types.DraftDocument{
 					Elements: []interface{}{
@@ -2010,11 +2105,7 @@ var _ = Describe("quoted texts", func() {
 											types.StringElement{Content: "a "},
 											types.InlineLink{
 												Attributes: types.Attributes{
-													"positional-1": []interface{}{
-														types.StringElement{
-															Content: "b",
-														},
-													},
+													types.AttrInlineLinkText: "b",
 												},
 												Location: types.Location{
 													Path: []interface{}{
@@ -2131,11 +2222,7 @@ var _ = Describe("quoted texts", func() {
 											types.StringElement{Content: "a "},
 											types.InlineLink{
 												Attributes: types.Attributes{
-													"positional-1": []interface{}{
-														types.StringElement{
-															Content: "b",
-														},
-													},
+													types.AttrInlineLinkText: "b",
 												},
 												Location: types.Location{
 													Path: []interface{}{
@@ -2252,11 +2339,7 @@ var _ = Describe("quoted texts", func() {
 											types.StringElement{Content: "a "},
 											types.InlineLink{
 												Attributes: types.Attributes{
-													"positional-1": []interface{}{
-														types.StringElement{
-															Content: "b",
-														},
-													},
+													types.AttrInlineLinkText: "b",
 												},
 												Location: types.Location{
 													Path: []interface{}{
@@ -4876,11 +4959,7 @@ var _ = Describe("quoted texts", func() {
 											types.StringElement{Content: "a "},
 											types.InlineLink{
 												Attributes: types.Attributes{
-													"positional-1": []interface{}{
-														types.StringElement{
-															Content: "b",
-														},
-													},
+													types.AttrInlineLinkText: "b",
 												},
 												Location: types.Location{
 													Path: []interface{}{
@@ -4997,11 +5076,7 @@ var _ = Describe("quoted texts", func() {
 											types.StringElement{Content: "a "},
 											types.InlineLink{
 												Attributes: types.Attributes{
-													"positional-1": []interface{}{
-														types.StringElement{
-															Content: "b",
-														},
-													},
+													types.AttrInlineLinkText: "b",
 												},
 												Location: types.Location{
 													Path: []interface{}{
@@ -5118,11 +5193,7 @@ var _ = Describe("quoted texts", func() {
 											types.StringElement{Content: "a "},
 											types.InlineLink{
 												Attributes: types.Attributes{
-													"positional-1": []interface{}{
-														types.StringElement{
-															Content: "b",
-														},
-													},
+													types.AttrInlineLinkText: "b",
 												},
 												Location: types.Location{
 													Path: []interface{}{
