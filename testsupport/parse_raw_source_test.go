@@ -8,12 +8,12 @@ import (
 	. "github.com/onsi/gomega" //nolint golint
 )
 
-var _ = Describe("parse document block", func() {
+var _ = Describe("raw document assertions", func() {
 
-	expected := types.Paragraph{
-		Lines: [][]interface{}{
+	expected := []interface{}{
+		[][]interface{}{
 			{
-				types.StringElement{ // `ParseDocumentBlock` uses the `AsciidocRawDocument` grammar rule
+				types.StringElement{
 					Content: "hello, world!",
 				},
 			},
@@ -24,7 +24,7 @@ var _ = Describe("parse document block", func() {
 		// given
 		actual := "hello, world!"
 		// when
-		result, err := testsupport.ParseDocumentBlock(actual)
+		result, err := testsupport.ParseRawSource(actual)
 		// then
 		Expect(err).ToNot(HaveOccurred())
 		Expect(result).To(Equal(expected))
@@ -34,10 +34,9 @@ var _ = Describe("parse document block", func() {
 		// given
 		actual := "foo"
 		// when
-		result, err := testsupport.ParseDocumentBlock(actual)
+		result, err := testsupport.ParseRawSource(actual)
 		// then
 		Expect(err).ToNot(HaveOccurred())
 		Expect(result).NotTo(Equal(expected))
 	})
-
 })

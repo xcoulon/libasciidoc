@@ -12,22 +12,22 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// MatchRawDocument a custom matcher to verify that a document matches the given expectation
+// MatchDocumentFragments a custom matcher to verify that a document matches the given expectation
 // Similar to the standard `Equal` matcher, but display a diff when the values don't match
-func MatchRawDocument(expected types.RawDocument) gomegatypes.GomegaMatcher {
-	return &rawDocumentMatcher{
+func MatchDocumentFragments(expected types.DocumentFragments) gomegatypes.GomegaMatcher {
+	return &documentFragmentsMatcher{
 		expected: expected,
 	}
 }
 
-type rawDocumentMatcher struct {
-	expected types.RawDocument
+type documentFragmentsMatcher struct {
+	expected types.DocumentFragments
 	diffs    string
 }
 
-func (m *rawDocumentMatcher) Match(actual interface{}) (success bool, err error) {
-	if _, ok := actual.(types.RawDocument); !ok {
-		return false, errors.Errorf("MatchRawDocument matcher expects a RawDocument (actual: %T)", actual)
+func (m *documentFragmentsMatcher) Match(actual interface{}) (success bool, err error) {
+	if _, ok := actual.(types.DocumentFragments); !ok {
+		return false, errors.Errorf("MatchDocumentFragments matcher expects a DocumentFragments (actual: %T)", actual)
 	}
 	if !reflect.DeepEqual(m.expected, actual) {
 		if log.IsLevelEnabled(log.DebugLevel) {
@@ -44,10 +44,10 @@ func (m *rawDocumentMatcher) Match(actual interface{}) (success bool, err error)
 	return true, nil
 }
 
-func (m *rawDocumentMatcher) FailureMessage(_ interface{}) (message string) {
-	return fmt.Sprintf("expected raw documents to match:\n%s", m.diffs)
+func (m *documentFragmentsMatcher) FailureMessage(_ interface{}) (message string) {
+	return fmt.Sprintf("expected document fragments to match:\n%s", m.diffs)
 }
 
-func (m *rawDocumentMatcher) NegatedFailureMessage(_ interface{}) (message string) {
-	return fmt.Sprintf("expected raw documents not to match:\n%s", m.diffs)
+func (m *documentFragmentsMatcher) NegatedFailureMessage(_ interface{}) (message string) {
+	return fmt.Sprintf("expected document fragments not to match:\n%s", m.diffs)
 }

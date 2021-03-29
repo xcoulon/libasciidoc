@@ -10,87 +10,81 @@ import (
 
 var _ = Describe("labeled lists", func() {
 
-	Context("draft documents", func() {
+	Context("raw documents", func() {
 
 		It("with a term and description on 2 lines", func() {
 			source := `Item1::
 Item 1 description
 on 2 lines`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.LabeledListItem{
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Item1",
-							},
+			expected := types.DocumentFragments{
+				types.LabeledListItem{
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item1",
 						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "Item 1 description"},
-									},
-									{
-										types.StringElement{Content: "on 2 lines"},
-									},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "Item 1 description"},
+								},
+								{
+									types.StringElement{Content: "on 2 lines"},
 								},
 							},
 						},
 					},
 				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with a single term and no description", func() {
 			source := `Item1::`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.LabeledListItem{
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Item1",
-							},
+			expected := types.DocumentFragments{
+				types.LabeledListItem{
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item1",
 						},
-						Level:    1,
-						Elements: []interface{}{},
 					},
+					Level:    1,
+					Elements: []interface{}{},
 				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with a quoted text in term and in description", func() {
 			source := "`foo()`::\n" +
 				`This function is _untyped_.`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.LabeledListItem{
-						Term: []interface{}{
-							types.StringElement{
-								Content: "`foo()`", // the term is a raw string in the DraftDocument
-							},
+			expected := types.DocumentFragments{
+				types.LabeledListItem{
+					Term: []interface{}{
+						types.StringElement{
+							Content: "`foo()`", // the term is a raw string in the DraftDocument
 						},
-						Level: 1,
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "This function is ",
-										},
-										types.QuotedText{
-											Kind: types.SingleQuoteItalic,
-											Elements: []interface{}{
-												types.StringElement{
-													Content: "untyped",
-												},
+					},
+					Level: 1,
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "This function is ",
+									},
+									types.QuotedText{
+										Kind: types.SingleQuoteItalic,
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "untyped",
 											},
 										},
-										types.StringElement{
-											Content: ".",
-										},
+									},
+									types.StringElement{
+										Content: ".",
 									},
 								},
 							},
@@ -98,88 +92,82 @@ on 2 lines`
 					},
 				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with a horizontal layout attribute", func() {
 			source := `[horizontal]
 Item1:: foo`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.LabeledListItem{
-						Attributes: types.Attributes{
-							"style": "horizontal",
+			expected := types.DocumentFragments{
+				types.LabeledListItem{
+					Attributes: types.Attributes{
+						"style": "horizontal",
+					},
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item1",
 						},
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Item1",
-							},
-						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "foo"},
-									},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "foo"},
 								},
 							},
 						},
 					},
 				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with a title attribute", func() {
 			source := `[title="Fighters"]
 Item1:: foo`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.LabeledListItem{
-						Attributes: types.Attributes{
-							types.AttrTitle: "Fighters",
+			expected := types.DocumentFragments{
+				types.LabeledListItem{
+					Attributes: types.Attributes{
+						types.AttrTitle: "Fighters",
+					},
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item1",
 						},
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Item1",
-							},
-						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "foo"},
-									},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "foo"},
 								},
 							},
 						},
 					},
 				},
 			}
-			result, err := ParseDraftDocument(source)
+			result, err := ParseRawSource(source)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(result).To(MatchDraftDocument(expected))
+			Expect(result).To(MatchDocumentFragments(expected))
 		})
 
 		It("with a single term and a blank line", func() {
 			source := `Item1::
 			`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.LabeledListItem{
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Item1",
-							},
+			expected := types.DocumentFragments{
+				types.LabeledListItem{
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item1",
 						},
-						Elements: []interface{}{},
 					},
+					Elements: []interface{}{},
 				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with multiple sibling items", func() {
@@ -189,62 +177,60 @@ Item 2::
 Item 2 description
 Item 3:: 
 Item 3 description`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.LabeledListItem{
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Item 1",
-							},
+			expected := types.DocumentFragments{
+				types.LabeledListItem{
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item 1",
 						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "Item 1 description"},
-									},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "Item 1 description"},
 								},
 							},
 						},
 					},
-					types.LabeledListItem{
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Item 2",
-							},
+				},
+				types.LabeledListItem{
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item 2",
 						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "Item 2 description"},
-									},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "Item 2 description"},
 								},
 							},
 						},
 					},
-					types.LabeledListItem{
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Item 3",
-							},
+				},
+				types.LabeledListItem{
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item 3",
 						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "Item 3 description"},
-									},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "Item 3 description"},
 								},
 							},
 						},
 					},
 				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with multiple nested items", func() {
@@ -254,62 +240,60 @@ Item 2:::
 Item 2 description
 Item 3::::
 Item 3 description`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.LabeledListItem{
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Item 1",
-							},
+			expected := types.DocumentFragments{
+				types.LabeledListItem{
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item 1",
 						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "Item 1 description"},
-									},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "Item 1 description"},
 								},
 							},
 						},
 					},
-					types.LabeledListItem{
-						Level: 2,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Item 2",
-							},
+				},
+				types.LabeledListItem{
+					Level: 2,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item 2",
 						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "Item 2 description"},
-									},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "Item 2 description"},
 								},
 							},
 						},
 					},
-					types.LabeledListItem{
-						Level: 3,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Item 3",
-							},
+				},
+				types.LabeledListItem{
+					Level: 3,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item 3",
 						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "Item 3 description"},
-									},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "Item 3 description"},
 								},
 							},
 						},
 					},
 				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with nested unordered list - case 1", func() {
@@ -317,58 +301,56 @@ Item 3 description`
 * foo
 * bar
 Item with description:: something simple`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.LabeledListItem{
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Empty item",
-							},
+			expected := types.DocumentFragments{
+				types.LabeledListItem{
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Empty item",
 						},
-						Elements: []interface{}{},
 					},
-					types.UnorderedListItem{
-						Level:       1,
-						BulletStyle: types.OneAsterisk,
-						CheckStyle:  types.NoCheck,
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "foo"},
-									},
+					Elements: []interface{}{},
+				},
+				types.UnorderedListItem{
+					Level:       1,
+					BulletStyle: types.OneAsterisk,
+					CheckStyle:  types.NoCheck,
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "foo"},
 								},
 							},
 						},
 					},
-					types.UnorderedListItem{
-						Level:       1,
-						BulletStyle: types.OneAsterisk,
-						CheckStyle:  types.NoCheck,
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "bar"},
-									},
+				},
+				types.UnorderedListItem{
+					Level:       1,
+					BulletStyle: types.OneAsterisk,
+					CheckStyle:  types.NoCheck,
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "bar"},
 								},
 							},
 						},
 					},
-					types.LabeledListItem{
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Item with description",
-							},
+				},
+				types.LabeledListItem{
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item with description",
 						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "something simple"},
-									},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "something simple"},
 								},
 							},
 						},
@@ -376,7 +358,7 @@ Item with description:: something simple`
 				},
 			}
 
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with a single item and paragraph", func() {
@@ -385,39 +367,37 @@ foo
 bar
 
 a normal paragraph.`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.LabeledListItem{
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Item 1",
-							},
+			expected := types.DocumentFragments{
+				types.LabeledListItem{
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item 1",
 						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "foo"},
-									},
-									{
-										types.StringElement{Content: "bar"},
-									},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "foo"},
+								},
+								{
+									types.StringElement{Content: "bar"},
 								},
 							},
 						},
 					},
-					types.BlankLine{},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "a normal paragraph."},
-							},
+				},
+				types.BlankLine{},
+				types.Paragraph{
+					Lines: [][]interface{}{
+						{
+							types.StringElement{Content: "a normal paragraph."},
 						},
 					},
 				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with item continuation", func() {
@@ -431,65 +411,63 @@ Item 2:: something simple
 ----
 another fenced block
 ----`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.LabeledListItem{
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Item 1",
-							},
+			expected := types.DocumentFragments{
+				types.LabeledListItem{
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item 1",
 						},
-						Elements: []interface{}{},
 					},
-					// the `+` continuation produces the element below
-					types.ContinuedListItemElement{
-						Offset: 0,
-						Element: types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a fenced block",
-									},
+					Elements: []interface{}{},
+				},
+				// the `+` continuation produces the element below
+				types.ContinuedListItemElement{
+					Offset: 0,
+					Element: types.ListingBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "a fenced block",
 								},
 							},
 						},
 					},
-					types.LabeledListItem{
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Item 2",
-							},
-						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "something simple",
-										},
-									},
-								},
-							},
+				},
+				types.LabeledListItem{
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item 2",
 						},
 					},
-					// the `+` continuation produces the second element below
-					types.ContinuedListItemElement{
-						Offset: 0,
-						Element: types.ListingBlock{
+					Elements: []interface{}{
+						types.Paragraph{
 							Lines: [][]interface{}{
 								{
 									types.StringElement{
-										Content: "another fenced block",
+										Content: "something simple",
 									},
 								},
 							},
 						},
 					},
 				},
+				// the `+` continuation produces the second element below
+				types.ContinuedListItemElement{
+					Offset: 0,
+					Element: types.ListingBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "another fenced block",
+								},
+							},
+						},
+					},
+				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("without item continuation", func() {
@@ -501,132 +479,126 @@ Item 2:: something simple
 ----
 another fenced block
 ----`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.LabeledListItem{
-						Level: 1,
-						Term: []interface{}{
+			expected := types.DocumentFragments{
+				types.LabeledListItem{
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item 1",
+						},
+					},
+					Elements: []interface{}{},
+				},
+				types.ListingBlock{
+					Lines: [][]interface{}{
+						{
 							types.StringElement{
-								Content: "Item 1",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.ListingBlock{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "a fenced block",
-								},
+								Content: "a fenced block",
 							},
 						},
 					},
-					types.LabeledListItem{
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Item 2",
-							},
-						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "something simple"},
-									},
-								},
-							},
+				},
+				types.LabeledListItem{
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Item 2",
 						},
 					},
-					types.ListingBlock{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "another fenced block",
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "something simple"},
 								},
 							},
 						},
 					},
 				},
+				types.ListingBlock{
+					Lines: [][]interface{}{
+						{
+							types.StringElement{
+								Content: "another fenced block",
+							},
+						},
+					},
+				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with nested unordered list - case 2", func() {
 			source := `Labeled item::
 - unordered item`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.LabeledListItem{
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "Labeled item",
-							},
+			expected := types.DocumentFragments{
+				types.LabeledListItem{
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "Labeled item",
 						},
-						Elements: []interface{}{},
 					},
-					types.UnorderedListItem{
-						Level:       1,
-						BulletStyle: types.Dash,
-						CheckStyle:  types.NoCheck,
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "unordered item"},
-									},
+					Elements: []interface{}{},
+				},
+				types.UnorderedListItem{
+					Level:       1,
+					BulletStyle: types.Dash,
+					CheckStyle:  types.NoCheck,
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "unordered item"},
 								},
 							},
 						},
 					},
 				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with title", func() {
 			source := `.Labeled, single-line
 first term:: definition of the first term
 second term:: definition of the second term`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.LabeledListItem{
-						Attributes: types.Attributes{
-							types.AttrTitle: "Labeled, single-line",
+			expected := types.DocumentFragments{
+				types.LabeledListItem{
+					Attributes: types.Attributes{
+						types.AttrTitle: "Labeled, single-line",
+					},
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "first term",
 						},
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "first term",
-							},
-						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "definition of the first term",
-										},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "definition of the first term",
 									},
 								},
 							},
 						},
 					},
-					types.LabeledListItem{
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "second term",
-							},
+				},
+				types.LabeledListItem{
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "second term",
 						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "definition of the second term",
-										},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "definition of the second term",
 									},
 								},
 							},
@@ -634,7 +606,7 @@ second term:: definition of the second term`
 					},
 				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("max level of labeled items - case 1", func() {
@@ -643,82 +615,80 @@ level 1:: description 1
 level 2::: description 2
 level 3:::: description 3
 level 1:: description 1`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.LabeledListItem{
-						Attributes: types.Attributes{
-							types.AttrTitle: "Labeled, max nesting",
+			expected := types.DocumentFragments{
+				types.LabeledListItem{
+					Attributes: types.Attributes{
+						types.AttrTitle: "Labeled, max nesting",
+					},
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "level 1",
 						},
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "level 1",
-							},
-						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "description 1",
-										},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "description 1",
 									},
 								},
 							},
 						},
 					},
-					types.LabeledListItem{
-						Level: 2,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "level 2",
-							},
+				},
+				types.LabeledListItem{
+					Level: 2,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "level 2",
 						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "description 2",
-										},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "description 2",
 									},
 								},
 							},
 						},
 					},
-					types.LabeledListItem{
-						Level: 3,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "level 3",
-							},
+				},
+				types.LabeledListItem{
+					Level: 3,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "level 3",
 						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "description 3",
-										},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "description 3",
 									},
 								},
 							},
 						},
 					},
-					types.LabeledListItem{
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "level 1",
-							},
+				},
+				types.LabeledListItem{
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "level 1",
 						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "description 1",
-										},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "description 1",
 									},
 								},
 							},
@@ -726,7 +696,7 @@ level 1:: description 1`
 					},
 				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("max level of labeled items - case 2", func() {
@@ -735,82 +705,80 @@ level 1:: description 1
 level 2::: description 2
 level 3:::: description 3
 level 2::: description 2`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.LabeledListItem{
-						Attributes: types.Attributes{
-							types.AttrTitle: "Labeled, max nesting",
+			expected := types.DocumentFragments{
+				types.LabeledListItem{
+					Attributes: types.Attributes{
+						types.AttrTitle: "Labeled, max nesting",
+					},
+					Level: 1,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "level 1",
 						},
-						Level: 1,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "level 1",
-							},
-						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "description 1",
-										},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "description 1",
 									},
 								},
 							},
 						},
 					},
-					types.LabeledListItem{
-						Level: 2,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "level 2",
-							},
+				},
+				types.LabeledListItem{
+					Level: 2,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "level 2",
 						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "description 2",
-										},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "description 2",
 									},
 								},
 							},
 						},
 					},
-					types.LabeledListItem{
-						Level: 3,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "level 3",
-							},
+				},
+				types.LabeledListItem{
+					Level: 3,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "level 3",
 						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "description 3",
-										},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "description 3",
 									},
 								},
 							},
 						},
 					},
-					types.LabeledListItem{
-						Level: 2,
-						Term: []interface{}{
-							types.StringElement{
-								Content: "level 2",
-							},
+				},
+				types.LabeledListItem{
+					Level: 2,
+					Term: []interface{}{
+						types.StringElement{
+							Content: "level 2",
 						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "description 2",
-										},
+					},
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "description 2",
 									},
 								},
 							},
@@ -818,7 +786,7 @@ level 2::: description 2`
 					},
 				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 	})
 

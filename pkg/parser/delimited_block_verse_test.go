@@ -12,7 +12,7 @@ import (
 
 var _ = Describe("verse blocks", func() {
 
-	Context("draft documents", func() {
+	Context("raw documents", func() {
 
 		Context("delimited blocks", func() {
 
@@ -21,38 +21,34 @@ var _ = Describe("verse blocks", func() {
 ____
 some *verse* content
 ____`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.VerseBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle:       types.Verse,
-								types.AttrQuoteAuthor: "john doe",
-								types.AttrQuoteTitle:  "verse title",
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some ",
-									},
-									types.QuotedText{
-										Kind: types.SingleQuoteBold,
-										Elements: []interface{}{
-											types.StringElement{
-												Content: "verse",
-											},
+				expected := types.DocumentFragments{
+					types.VerseBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle:       types.Verse,
+							types.AttrQuoteAuthor: "john doe",
+							types.AttrQuoteTitle:  "verse title",
+						},
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "some ",
+								},
+								types.QuotedText{
+									Kind: types.SingleQuoteBold,
+									Elements: []interface{}{
+										types.StringElement{
+											Content: "verse",
 										},
 									},
-									types.StringElement{
-										Content: " content",
-									},
+								},
+								types.StringElement{
+									Content: " content",
 								},
 							},
 						},
 					},
 				}
-				result, err := ParseDraftDocument(source)
-				Expect(err).NotTo(HaveOccurred())
-				Expect(result).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("multi-line verse with unrendered list and author only", func() {
@@ -63,34 +59,32 @@ ____
 - content 
 ____
 `
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.VerseBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle:       types.Verse,
-								types.AttrQuoteAuthor: "john doe",
+				expected := types.DocumentFragments{
+					types.VerseBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle:       types.Verse,
+							types.AttrQuoteAuthor: "john doe",
+						},
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "- some ",
+								},
 							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "- some ",
-									},
+							{
+								types.StringElement{
+									Content: "- verse ",
 								},
-								{
-									types.StringElement{
-										Content: "- verse ",
-									},
-								},
-								{
-									types.StringElement{
-										Content: "- content ",
-									},
+							},
+							{
+								types.StringElement{
+									Content: "- content ",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("multi-line verse with title only", func() {
@@ -99,24 +93,22 @@ ____
 some verse content 
 ____
 `
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.VerseBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle:      types.Verse,
-								types.AttrQuoteTitle: "verse title",
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some verse content ",
-									},
+				expected := types.DocumentFragments{
+					types.VerseBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle:      types.Verse,
+							types.AttrQuoteTitle: "verse title",
+						},
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "some verse content ",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("multi-line verse with unrendered lists and block without author and title", func() {
@@ -128,43 +120,41 @@ ____
 ----
 * content
 ____`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.VerseBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle: types.Verse,
+				expected := types.DocumentFragments{
+					types.VerseBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle: types.Verse,
+						},
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "* some",
+								},
 							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "* some",
-									},
+							{
+								types.StringElement{
+									Content: "----",
 								},
-								{
-									types.StringElement{
-										Content: "----",
-									},
+							},
+							{
+								types.StringElement{
+									Content: "* verse ",
 								},
-								{
-									types.StringElement{
-										Content: "* verse ",
-									},
+							},
+							{
+								types.StringElement{
+									Content: "----",
 								},
-								{
-									types.StringElement{
-										Content: "----",
-									},
-								},
-								{
-									types.StringElement{
-										Content: "* content",
-									},
+							},
+							{
+								types.StringElement{
+									Content: "* content",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("multi-line verse with unrendered list without author and title", func() {
@@ -175,49 +165,45 @@ ____
 
 	* bar
 ____`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.VerseBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle: types.Verse,
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "* foo",
-									},
+				expected := types.DocumentFragments{
+					types.VerseBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle: types.Verse,
+						},
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "* foo",
 								},
-								{},
-								{},
-								{
-									types.StringElement{
-										Content: "\t* bar",
-									},
+							},
+							{},
+							{},
+							{
+								types.StringElement{
+									Content: "\t* bar",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("empty verse without author and title", func() {
 				source := `[verse]
 ____
 ____`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.VerseBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle: types.Verse,
-							},
-							Lines: [][]interface{}{
-								{},
-							},
+				expected := types.DocumentFragments{
+					types.VerseBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle: types.Verse,
+						},
+						Lines: [][]interface{}{
+							{},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("unclosed verse without author and title", func() {
@@ -225,23 +211,21 @@ ____`
 ____
 foo
 `
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.VerseBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle: types.Verse,
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "foo",
-									},
+				expected := types.DocumentFragments{
+					types.VerseBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle: types.Verse,
+						},
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "foo",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			Context("with custom substitutions", func() {
@@ -263,109 +247,104 @@ ____
 
 				It("should apply the default substitution", func() {
 					s := strings.ReplaceAll(source, "[subs=\"$SUBS\"]\n", "")
-					expected := types.DraftDocument{
-						Attributes: types.Attributes{
-							"github-url": "https://github.com",
+					expected := types.DocumentFragments{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Elements: []interface{}{
-							types.AttributeDeclaration{
-								Name:  "github-url",
-								Value: "https://github.com",
+						types.BlankLine{},
+						types.VerseBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:       types.Verse,
+								types.AttrQuoteAuthor: "john doe",
+								types.AttrQuoteTitle:  "verse title",
 							},
-							types.BlankLine{},
-							types.VerseBlock{
-								Attributes: types.Attributes{
-									types.AttrStyle:       types.Verse,
-									types.AttrQuoteAuthor: "john doe",
-									types.AttrQuoteTitle:  "verse title",
-								},
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a link to ",
-										},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "example.com",
-													},
-												},
-											},
-										},
-										types.StringElement{
-											Content: " ",
-										},
-										types.SpecialCharacter{ // callout is not detected with the `normal` susbtitution
-											Name: "<",
-										},
-										types.StringElement{
-											Content: "1",
-										},
-										types.SpecialCharacter{
-											Name: ">",
-										},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "a link to ",
 									},
-									{
-										types.StringElement{
-											Content: "and ",
-										},
-										types.SpecialCharacter{
-											Name: "<",
-										},
-										types.StringElement{
-											Content: "more text",
-										},
-										types.SpecialCharacter{
-											Name: ">",
-										},
-										types.StringElement{
-											Content: " on the",
-										},
-										types.LineBreak{},
-									},
-									{
-										types.QuotedText{
-											Kind: types.SingleQuoteBold,
-											Elements: []interface{}{
+									types.InlineLink{
+										Location: types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
 												types.StringElement{
-													Content: "next",
-												},
-											},
-										},
-										types.StringElement{
-											Content: " lines with a link to ",
-										},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "github.com",
-													},
+													Content: "example.com",
 												},
 											},
 										},
 									},
-									{},
-									{
-										types.StringElement{
-											Content: "* not a list item",
+									types.StringElement{
+										Content: " ",
+									},
+									types.SpecialCharacter{ // callout is not detected with the `normal` susbtitution
+										Name: "<",
+									},
+									types.StringElement{
+										Content: "1",
+									},
+									types.SpecialCharacter{
+										Name: ">",
+									},
+								},
+								{
+									types.StringElement{
+										Content: "and ",
+									},
+									types.SpecialCharacter{
+										Name: "<",
+									},
+									types.StringElement{
+										Content: "more text",
+									},
+									types.SpecialCharacter{
+										Name: ">",
+									},
+									types.StringElement{
+										Content: " on the",
+									},
+									types.LineBreak{},
+								},
+								{
+									types.QuotedText{
+										Kind: types.SingleQuoteBold,
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "next",
+											},
+										},
+									},
+									types.StringElement{
+										Content: " lines with a link to ",
+									},
+									types.InlineLink{
+										Location: types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "github.com",
+												},
+											},
 										},
 									},
 								},
+								{},
+								{
+									types.StringElement{
+										Content: "* not a list item",
+									},
+								},
 							},
-							types.BlankLine{},
-							types.CalloutListItem{
-								Ref: 1,
-								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "a callout",
-												},
+						},
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
 											},
 										},
 									},
@@ -373,115 +352,110 @@ ____
 							},
 						},
 					}
-					Expect(ParseDraftDocument(s)).To(MatchDraftDocument(expected))
+					Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'normal' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "normal")
-					expected := types.DraftDocument{
-						Attributes: types.Attributes{
-							"github-url": "https://github.com",
+					expected := types.DocumentFragments{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Elements: []interface{}{
-							types.AttributeDeclaration{
-								Name:  "github-url",
-								Value: "https://github.com",
+						types.BlankLine{},
+						types.VerseBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:         types.Verse,
+								types.AttrQuoteAuthor:   "john doe",
+								types.AttrQuoteTitle:    "verse title",
+								types.AttrSubstitutions: "normal",
 							},
-							types.BlankLine{},
-							types.VerseBlock{
-								Attributes: types.Attributes{
-									types.AttrStyle:         types.Verse,
-									types.AttrQuoteAuthor:   "john doe",
-									types.AttrQuoteTitle:    "verse title",
-									types.AttrSubstitutions: "normal",
-								},
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a link to ",
-										},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "example.com",
-													},
-												},
-											},
-										},
-										types.StringElement{
-											Content: " ",
-										},
-										types.SpecialCharacter{ // callout is not detected with the `normal` susbtitution
-											Name: "<",
-										},
-										types.StringElement{
-											Content: "1",
-										},
-										types.SpecialCharacter{
-											Name: ">",
-										},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "a link to ",
 									},
-									{
-										types.StringElement{
-											Content: "and ",
-										},
-										types.SpecialCharacter{
-											Name: "<",
-										},
-										types.StringElement{
-											Content: "more text",
-										},
-										types.SpecialCharacter{
-											Name: ">",
-										},
-										types.StringElement{
-											Content: " on the",
-										},
-										types.LineBreak{},
-									},
-									{
-										types.QuotedText{
-											Kind: types.SingleQuoteBold,
-											Elements: []interface{}{
+									types.InlineLink{
+										Location: types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
 												types.StringElement{
-													Content: "next",
-												},
-											},
-										},
-										types.StringElement{
-											Content: " lines with a link to ",
-										},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "github.com",
-													},
+													Content: "example.com",
 												},
 											},
 										},
 									},
-									{},
-									{
-										types.StringElement{
-											Content: "* not a list item",
+									types.StringElement{
+										Content: " ",
+									},
+									types.SpecialCharacter{ // callout is not detected with the `normal` susbtitution
+										Name: "<",
+									},
+									types.StringElement{
+										Content: "1",
+									},
+									types.SpecialCharacter{
+										Name: ">",
+									},
+								},
+								{
+									types.StringElement{
+										Content: "and ",
+									},
+									types.SpecialCharacter{
+										Name: "<",
+									},
+									types.StringElement{
+										Content: "more text",
+									},
+									types.SpecialCharacter{
+										Name: ">",
+									},
+									types.StringElement{
+										Content: " on the",
+									},
+									types.LineBreak{},
+								},
+								{
+									types.QuotedText{
+										Kind: types.SingleQuoteBold,
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "next",
+											},
+										},
+									},
+									types.StringElement{
+										Content: " lines with a link to ",
+									},
+									types.InlineLink{
+										Location: types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "github.com",
+												},
+											},
 										},
 									},
 								},
+								{},
+								{
+									types.StringElement{
+										Content: "* not a list item",
+									},
+								},
 							},
-							types.BlankLine{},
-							types.CalloutListItem{
-								Ref: 1,
-								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "a callout",
-												},
+						},
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
 											},
 										},
 									},
@@ -489,70 +463,65 @@ ____
 							},
 						},
 					}
-					Expect(ParseDraftDocument(s)).To(MatchDraftDocument(expected))
+					Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'quotes' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "quotes")
-					expected := types.DraftDocument{
-						Attributes: types.Attributes{
-							"github-url": "https://github.com",
+					expected := types.DocumentFragments{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Elements: []interface{}{
-							types.AttributeDeclaration{
-								Name:  "github-url",
-								Value: "https://github.com",
+						types.BlankLine{},
+						types.VerseBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:         types.Verse,
+								types.AttrQuoteAuthor:   "john doe",
+								types.AttrQuoteTitle:    "verse title",
+								types.AttrSubstitutions: "quotes",
 							},
-							types.BlankLine{},
-							types.VerseBlock{
-								Attributes: types.Attributes{
-									types.AttrStyle:         types.Verse,
-									types.AttrQuoteAuthor:   "john doe",
-									types.AttrQuoteTitle:    "verse title",
-									types.AttrSubstitutions: "quotes",
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "a link to https://example.com[] <1>",
+									},
 								},
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a link to https://example.com[] <1>",
-										},
+								{
+									types.StringElement{
+										Content: "and <more text> on the +",
 									},
-									{
-										types.StringElement{
-											Content: "and <more text> on the +",
-										},
-									},
-									{
-										types.QuotedText{
-											Kind: types.SingleQuoteBold,
-											Elements: []interface{}{
-												types.StringElement{
-													Content: "next",
-												},
+								},
+								{
+									types.QuotedText{
+										Kind: types.SingleQuoteBold,
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "next",
 											},
 										},
-										types.StringElement{
-											Content: " lines with a link to {github-url}[]",
-										},
 									},
-									{},
-									{
-										types.StringElement{
-											Content: "* not a list item",
-										},
+									types.StringElement{
+										Content: " lines with a link to {github-url}[]",
+									},
+								},
+								{},
+								{
+									types.StringElement{
+										Content: "* not a list item",
 									},
 								},
 							},
-							types.BlankLine{},
-							types.CalloutListItem{
-								Ref: 1,
-								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "a callout",
-												},
+						},
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
 											},
 										},
 									},
@@ -560,75 +529,70 @@ ____
 							},
 						},
 					}
-					Expect(ParseDraftDocument(s)).To(MatchDraftDocument(expected))
+					Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'macros' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "macros")
-					expected := types.DraftDocument{
-						Attributes: types.Attributes{
-							"github-url": "https://github.com",
+					expected := types.DocumentFragments{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Elements: []interface{}{
-							types.AttributeDeclaration{
-								Name:  "github-url",
-								Value: "https://github.com",
+						types.BlankLine{},
+						types.VerseBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:         types.Verse,
+								types.AttrQuoteAuthor:   "john doe",
+								types.AttrQuoteTitle:    "verse title",
+								types.AttrSubstitutions: "macros",
 							},
-							types.BlankLine{},
-							types.VerseBlock{
-								Attributes: types.Attributes{
-									types.AttrStyle:         types.Verse,
-									types.AttrQuoteAuthor:   "john doe",
-									types.AttrQuoteTitle:    "verse title",
-									types.AttrSubstitutions: "macros",
-								},
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a link to ",
-										},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "example.com",
-													},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "a link to ",
+									},
+									types.InlineLink{
+										Location: types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "example.com",
 												},
 											},
 										},
-										types.StringElement{
-											Content: " <1>",
-										},
 									},
-									{
-										types.StringElement{
-											Content: "and <more text> on the +",
-										},
+									types.StringElement{
+										Content: " <1>",
 									},
-									{
-										types.StringElement{
-											Content: "*next* lines with a link to {github-url}[]",
-										},
+								},
+								{
+									types.StringElement{
+										Content: "and <more text> on the +",
 									},
-									{},
-									{
-										types.StringElement{
-											Content: "* not a list item",
-										},
+								},
+								{
+									types.StringElement{
+										Content: "*next* lines with a link to {github-url}[]",
+									},
+								},
+								{},
+								{
+									types.StringElement{
+										Content: "* not a list item",
 									},
 								},
 							},
-							types.BlankLine{},
-							types.CalloutListItem{
-								Ref: 1,
-								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "a callout",
-												},
+						},
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
 											},
 										},
 									},
@@ -636,62 +600,57 @@ ____
 							},
 						},
 					}
-					Expect(ParseDraftDocument(s)).To(MatchDraftDocument(expected))
+					Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'attributes' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "attributes")
-					expected := types.DraftDocument{
-						Attributes: types.Attributes{
-							"github-url": "https://github.com",
+					expected := types.DocumentFragments{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Elements: []interface{}{
-							types.AttributeDeclaration{
-								Name:  "github-url",
-								Value: "https://github.com",
+						types.BlankLine{},
+						types.VerseBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:         types.Verse,
+								types.AttrQuoteAuthor:   "john doe",
+								types.AttrQuoteTitle:    "verse title",
+								types.AttrSubstitutions: "attributes",
 							},
-							types.BlankLine{},
-							types.VerseBlock{
-								Attributes: types.Attributes{
-									types.AttrStyle:         types.Verse,
-									types.AttrQuoteAuthor:   "john doe",
-									types.AttrQuoteTitle:    "verse title",
-									types.AttrSubstitutions: "attributes",
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "a link to https://example.com[] <1>",
+									},
 								},
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a link to https://example.com[] <1>",
-										},
+								{
+									types.StringElement{
+										Content: "and <more text> on the +",
 									},
-									{
-										types.StringElement{
-											Content: "and <more text> on the +",
-										},
+								},
+								{
+									types.StringElement{
+										Content: "*next* lines with a link to https://github.com[]",
 									},
-									{
-										types.StringElement{
-											Content: "*next* lines with a link to https://github.com[]",
-										},
-									},
-									{},
-									{
-										types.StringElement{
-											Content: "* not a list item",
-										},
+								},
+								{},
+								{
+									types.StringElement{
+										Content: "* not a list item",
 									},
 								},
 							},
-							types.BlankLine{},
-							types.CalloutListItem{
-								Ref: 1,
-								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "a callout",
-												},
+						},
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
 											},
 										},
 									},
@@ -699,85 +658,80 @@ ____
 							},
 						},
 					}
-					Expect(ParseDraftDocument(s)).To(MatchDraftDocument(expected))
+					Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'attributes,macros' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "attributes,macros")
-					expected := types.DraftDocument{
-						Attributes: types.Attributes{
-							"github-url": "https://github.com",
+					expected := types.DocumentFragments{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Elements: []interface{}{
-							types.AttributeDeclaration{
-								Name:  "github-url",
-								Value: "https://github.com",
+						types.BlankLine{},
+						types.VerseBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:         types.Verse,
+								types.AttrQuoteAuthor:   "john doe",
+								types.AttrQuoteTitle:    "verse title",
+								types.AttrSubstitutions: "attributes,macros",
 							},
-							types.BlankLine{},
-							types.VerseBlock{
-								Attributes: types.Attributes{
-									types.AttrStyle:         types.Verse,
-									types.AttrQuoteAuthor:   "john doe",
-									types.AttrQuoteTitle:    "verse title",
-									types.AttrSubstitutions: "attributes,macros",
-								},
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a link to ",
-										},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "example.com",
-													},
-												},
-											},
-										},
-										types.StringElement{
-											Content: " <1>",
-										},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "a link to ",
 									},
-									{
-										types.StringElement{
-											Content: "and <more text> on the +",
-										},
-									},
-									{
-										types.StringElement{
-											Content: "*next* lines with a link to ",
-										},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "github.com",
-													},
-												},
-											},
-										},
-									},
-									{},
-									{
-										types.StringElement{
-											Content: "* not a list item",
-										},
-									},
-								},
-							},
-							types.BlankLine{},
-							types.CalloutListItem{
-								Ref: 1,
-								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
+									types.InlineLink{
+										Location: types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
 												types.StringElement{
-													Content: "a callout",
+													Content: "example.com",
 												},
+											},
+										},
+									},
+									types.StringElement{
+										Content: " <1>",
+									},
+								},
+								{
+									types.StringElement{
+										Content: "and <more text> on the +",
+									},
+								},
+								{
+									types.StringElement{
+										Content: "*next* lines with a link to ",
+									},
+									types.InlineLink{
+										Location: types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "github.com",
+												},
+											},
+										},
+									},
+								},
+								{},
+								{
+									types.StringElement{
+										Content: "* not a list item",
+									},
+								},
+							},
+						},
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
 											},
 										},
 									},
@@ -785,83 +739,78 @@ ____
 							},
 						},
 					}
-					Expect(ParseDraftDocument(s)).To(MatchDraftDocument(expected))
+					Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'specialchars' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "specialchars")
-					expected := types.DraftDocument{
-						Attributes: types.Attributes{
-							"github-url": "https://github.com",
+					expected := types.DocumentFragments{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Elements: []interface{}{
-							types.AttributeDeclaration{
-								Name:  "github-url",
-								Value: "https://github.com",
+						types.BlankLine{},
+						types.VerseBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:         types.Verse,
+								types.AttrQuoteAuthor:   "john doe",
+								types.AttrQuoteTitle:    "verse title",
+								types.AttrSubstitutions: "specialchars",
 							},
-							types.BlankLine{},
-							types.VerseBlock{
-								Attributes: types.Attributes{
-									types.AttrStyle:         types.Verse,
-									types.AttrQuoteAuthor:   "john doe",
-									types.AttrQuoteTitle:    "verse title",
-									types.AttrSubstitutions: "specialchars",
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "a link to https://example.com[] ",
+									},
+									types.SpecialCharacter{
+										Name: "<",
+									},
+									types.StringElement{
+										Content: "1",
+									},
+									types.SpecialCharacter{
+										Name: ">",
+									},
 								},
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a link to https://example.com[] ",
-										},
-										types.SpecialCharacter{
-											Name: "<",
-										},
-										types.StringElement{
-											Content: "1",
-										},
-										types.SpecialCharacter{
-											Name: ">",
-										},
+								{
+									types.StringElement{
+										Content: "and ",
 									},
-									{
-										types.StringElement{
-											Content: "and ",
-										},
-										types.SpecialCharacter{
-											Name: "<",
-										},
-										types.StringElement{
-											Content: "more text",
-										},
-										types.SpecialCharacter{
-											Name: ">",
-										},
-										types.StringElement{
-											Content: " on the +",
-										},
+									types.SpecialCharacter{
+										Name: "<",
 									},
-									{
-										types.StringElement{
-											Content: "*next* lines with a link to {github-url}[]",
-										},
+									types.StringElement{
+										Content: "more text",
 									},
-									{},
-									{
-										types.StringElement{
-											Content: "* not a list item",
-										},
+									types.SpecialCharacter{
+										Name: ">",
+									},
+									types.StringElement{
+										Content: " on the +",
+									},
+								},
+								{
+									types.StringElement{
+										Content: "*next* lines with a link to {github-url}[]",
+									},
+								},
+								{},
+								{
+									types.StringElement{
+										Content: "* not a list item",
 									},
 								},
 							},
-							types.BlankLine{},
-							types.CalloutListItem{
-								Ref: 1,
-								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "a callout",
-												},
+						},
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
 											},
 										},
 									},
@@ -869,62 +818,57 @@ ____
 							},
 						},
 					}
-					Expect(ParseDraftDocument(s)).To(MatchDraftDocument(expected))
+					Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'replacements' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "replacements")
-					expected := types.DraftDocument{
-						Attributes: types.Attributes{
-							"github-url": "https://github.com",
+					expected := types.DocumentFragments{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Elements: []interface{}{
-							types.AttributeDeclaration{
-								Name:  "github-url",
-								Value: "https://github.com",
+						types.BlankLine{},
+						types.VerseBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:         types.Verse,
+								types.AttrQuoteAuthor:   "john doe",
+								types.AttrQuoteTitle:    "verse title",
+								types.AttrSubstitutions: "replacements",
 							},
-							types.BlankLine{},
-							types.VerseBlock{
-								Attributes: types.Attributes{
-									types.AttrStyle:         types.Verse,
-									types.AttrQuoteAuthor:   "john doe",
-									types.AttrQuoteTitle:    "verse title",
-									types.AttrSubstitutions: "replacements",
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "a link to https://example.com[] <1>",
+									},
 								},
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a link to https://example.com[] <1>",
-										},
+								{
+									types.StringElement{
+										Content: "and <more text> on the +",
 									},
-									{
-										types.StringElement{
-											Content: "and <more text> on the +",
-										},
+								},
+								{
+									types.StringElement{
+										Content: "*next* lines with a link to {github-url}[]",
 									},
-									{
-										types.StringElement{
-											Content: "*next* lines with a link to {github-url}[]",
-										},
-									},
-									{},
-									{
-										types.StringElement{
-											Content: "* not a list item",
-										},
+								},
+								{},
+								{
+									types.StringElement{
+										Content: "* not a list item",
 									},
 								},
 							},
-							types.BlankLine{},
-							types.CalloutListItem{
-								Ref: 1,
-								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "a callout",
-												},
+						},
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
 											},
 										},
 									},
@@ -932,63 +876,58 @@ ____
 							},
 						},
 					}
-					Expect(ParseDraftDocument(s)).To(MatchDraftDocument(expected))
+					Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'post_replacements' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "post_replacements")
-					expected := types.DraftDocument{
-						Attributes: types.Attributes{
-							"github-url": "https://github.com",
+					expected := types.DocumentFragments{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Elements: []interface{}{
-							types.AttributeDeclaration{
-								Name:  "github-url",
-								Value: "https://github.com",
+						types.BlankLine{},
+						types.VerseBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:         types.Verse,
+								types.AttrQuoteAuthor:   "john doe",
+								types.AttrQuoteTitle:    "verse title",
+								types.AttrSubstitutions: "post_replacements",
 							},
-							types.BlankLine{},
-							types.VerseBlock{
-								Attributes: types.Attributes{
-									types.AttrStyle:         types.Verse,
-									types.AttrQuoteAuthor:   "john doe",
-									types.AttrQuoteTitle:    "verse title",
-									types.AttrSubstitutions: "post_replacements",
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "a link to https://example.com[] <1>",
+									},
 								},
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a link to https://example.com[] <1>",
-										},
+								{
+									types.StringElement{
+										Content: "and <more text> on the",
 									},
-									{
-										types.StringElement{
-											Content: "and <more text> on the",
-										},
-										types.LineBreak{},
+									types.LineBreak{},
+								},
+								{
+									types.StringElement{
+										Content: "*next* lines with a link to {github-url}[]",
 									},
-									{
-										types.StringElement{
-											Content: "*next* lines with a link to {github-url}[]",
-										},
-									},
-									{},
-									{
-										types.StringElement{
-											Content: "* not a list item",
-										},
+								},
+								{},
+								{
+									types.StringElement{
+										Content: "* not a list item",
 									},
 								},
 							},
-							types.BlankLine{},
-							types.CalloutListItem{
-								Ref: 1,
-								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "a callout",
-												},
+						},
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
 											},
 										},
 									},
@@ -996,83 +935,78 @@ ____
 							},
 						},
 					}
-					Expect(ParseDraftDocument(s)).To(MatchDraftDocument(expected))
+					Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'quotes,macros' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "quotes,macros")
-					expected := types.DraftDocument{
-						Attributes: types.Attributes{
-							"github-url": "https://github.com",
+					expected := types.DocumentFragments{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Elements: []interface{}{
-							types.AttributeDeclaration{
-								Name:  "github-url",
-								Value: "https://github.com",
+						types.BlankLine{},
+						types.VerseBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:         types.Verse,
+								types.AttrQuoteAuthor:   "john doe",
+								types.AttrQuoteTitle:    "verse title",
+								types.AttrSubstitutions: "quotes,macros",
 							},
-							types.BlankLine{},
-							types.VerseBlock{
-								Attributes: types.Attributes{
-									types.AttrStyle:         types.Verse,
-									types.AttrQuoteAuthor:   "john doe",
-									types.AttrQuoteTitle:    "verse title",
-									types.AttrSubstitutions: "quotes,macros",
-								},
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a link to ",
-										},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "example.com",
-													},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "a link to ",
+									},
+									types.InlineLink{
+										Location: types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "example.com",
 												},
 											},
 										},
-										types.StringElement{
-											Content: " <1>",
-										},
 									},
-									{
-										types.StringElement{
-											Content: "and <more text> on the +",
-										},
+									types.StringElement{
+										Content: " <1>",
 									},
-									{
-										types.QuotedText{
-											Kind: types.SingleQuoteBold,
-											Elements: []interface{}{
-												types.StringElement{
-													Content: "next",
-												},
+								},
+								{
+									types.StringElement{
+										Content: "and <more text> on the +",
+									},
+								},
+								{
+									types.QuotedText{
+										Kind: types.SingleQuoteBold,
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "next",
 											},
 										},
-										types.StringElement{
-											Content: " lines with a link to {github-url}[]",
-										},
 									},
-									{},
-									{
-										types.StringElement{
-											Content: "* not a list item",
-										},
+									types.StringElement{
+										Content: " lines with a link to {github-url}[]",
+									},
+								},
+								{},
+								{
+									types.StringElement{
+										Content: "* not a list item",
 									},
 								},
 							},
-							types.BlankLine{},
-							types.CalloutListItem{
-								Ref: 1,
-								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "a callout",
-												},
+						},
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
 											},
 										},
 									},
@@ -1080,83 +1014,78 @@ ____
 							},
 						},
 					}
-					Expect(ParseDraftDocument(s)).To(MatchDraftDocument(expected))
+					Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'macros,quotes' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "macros,quotes")
-					expected := types.DraftDocument{
-						Attributes: types.Attributes{
-							"github-url": "https://github.com",
+					expected := types.DocumentFragments{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Elements: []interface{}{
-							types.AttributeDeclaration{
-								Name:  "github-url",
-								Value: "https://github.com",
+						types.BlankLine{},
+						types.VerseBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:         types.Verse,
+								types.AttrQuoteAuthor:   "john doe",
+								types.AttrQuoteTitle:    "verse title",
+								types.AttrSubstitutions: "macros,quotes",
 							},
-							types.BlankLine{},
-							types.VerseBlock{
-								Attributes: types.Attributes{
-									types.AttrStyle:         types.Verse,
-									types.AttrQuoteAuthor:   "john doe",
-									types.AttrQuoteTitle:    "verse title",
-									types.AttrSubstitutions: "macros,quotes",
-								},
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a link to ",
-										},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "example.com",
-													},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "a link to ",
+									},
+									types.InlineLink{
+										Location: types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "example.com",
 												},
 											},
 										},
-										types.StringElement{
-											Content: " <1>",
-										},
 									},
-									{
-										types.StringElement{
-											Content: "and <more text> on the +",
-										},
+									types.StringElement{
+										Content: " <1>",
 									},
-									{
-										types.QuotedText{
-											Kind: types.SingleQuoteBold,
-											Elements: []interface{}{
-												types.StringElement{
-													Content: "next",
-												},
+								},
+								{
+									types.StringElement{
+										Content: "and <more text> on the +",
+									},
+								},
+								{
+									types.QuotedText{
+										Kind: types.SingleQuoteBold,
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "next",
 											},
 										},
-										types.StringElement{
-											Content: " lines with a link to {github-url}[]",
-										},
 									},
-									{},
-									{
-										types.StringElement{
-											Content: "* not a list item",
-										},
+									types.StringElement{
+										Content: " lines with a link to {github-url}[]",
+									},
+								},
+								{},
+								{
+									types.StringElement{
+										Content: "* not a list item",
 									},
 								},
 							},
-							types.BlankLine{},
-							types.CalloutListItem{
-								Ref: 1,
-								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "a callout",
-												},
+						},
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
 											},
 										},
 									},
@@ -1164,62 +1093,57 @@ ____
 							},
 						},
 					}
-					Expect(ParseDraftDocument(s)).To(MatchDraftDocument(expected))
+					Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'none' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "none")
-					expected := types.DraftDocument{
-						Attributes: types.Attributes{
-							"github-url": "https://github.com",
+					expected := types.DocumentFragments{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Elements: []interface{}{
-							types.AttributeDeclaration{
-								Name:  "github-url",
-								Value: "https://github.com",
+						types.BlankLine{},
+						types.VerseBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:         types.Verse,
+								types.AttrQuoteAuthor:   "john doe",
+								types.AttrQuoteTitle:    "verse title",
+								types.AttrSubstitutions: "none",
 							},
-							types.BlankLine{},
-							types.VerseBlock{
-								Attributes: types.Attributes{
-									types.AttrStyle:         types.Verse,
-									types.AttrQuoteAuthor:   "john doe",
-									types.AttrQuoteTitle:    "verse title",
-									types.AttrSubstitutions: "none",
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "a link to https://example.com[] <1>",
+									},
 								},
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a link to https://example.com[] <1>",
-										},
+								{
+									types.StringElement{
+										Content: "and <more text> on the +",
 									},
-									{
-										types.StringElement{
-											Content: "and <more text> on the +",
-										},
+								},
+								{
+									types.StringElement{
+										Content: "*next* lines with a link to {github-url}[]",
 									},
-									{
-										types.StringElement{
-											Content: "*next* lines with a link to {github-url}[]",
-										},
-									},
-									{},
-									{
-										types.StringElement{
-											Content: "* not a list item",
-										},
+								},
+								{},
+								{
+									types.StringElement{
+										Content: "* not a list item",
 									},
 								},
 							},
-							types.BlankLine{},
-							types.CalloutListItem{
-								Ref: 1,
-								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "a callout",
-												},
+						},
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
 											},
 										},
 									},
@@ -1227,7 +1151,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDraftDocument(s)).To(MatchDraftDocument(expected))
+					Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
 				})
 			})
 		})

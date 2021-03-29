@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -182,10 +181,10 @@ func NewAttributes(attributes ...interface{}) (Attributes, error) {
 			return nil, fmt.Errorf("unexpected type of attribute: '%[1]T' (%[1]v)", attr)
 		}
 	}
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debug("initialized attributes:")
-		spew.Fdump(log.StandardLogger().Out, result)
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debug("initialized attributes:")
+	// 	spew.Fdump(log.StandardLogger().Out, result)
+	// }
 	return result, nil
 }
 
@@ -367,10 +366,10 @@ func NewPositionalAttribute(value interface{}) (PositionalAttribute, error) {
 	result := PositionalAttribute{
 		Value: value,
 	}
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debug("new positional attribute:")
-		spew.Fdump(log.StandardLogger().Out, result)
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debug("new positional attribute:")
+	// 	spew.Fdump(log.StandardLogger().Out, result)
+	// }
 	return result, nil
 }
 
@@ -388,10 +387,10 @@ func NewNamedAttribute(key string, value interface{}) (Attribute, error) {
 	if key == AttrOpts { // Handle the alias
 		key = AttrOptions
 	}
-	if log.IsLevelEnabled(log.DebugLevel) {
-		// log.Debugf("new named attribute '%s':", key)
-		spew.Fdump(log.StandardLogger().Out, value)
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	// log.Debugf("new named attribute '%s':", key)
+	// 	spew.Fdump(log.StandardLogger().Out, value)
+	// }
 	return Attribute{
 		Key:   key,
 		Value: value,
@@ -469,10 +468,10 @@ func (a Attributes) Set(key string, value interface{}) Attributes {
 	default:
 		a[key] = value
 	}
-	if log.IsLevelEnabled(log.DebugLevel) {
-		spew.Fdump(log.StandardLogger().Out, a)
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	spew.Fdump(log.StandardLogger().Out, a)
 
-	}
+	// }
 	return a
 }
 
@@ -535,6 +534,20 @@ func (a Attributes) GetAsString(key string) (string, bool, error) {
 		return result, true, err
 	}
 	return "", false, nil
+}
+
+// GetAsInt gets the int value for the given key (+ `true`),
+// or empty string (+ `false`) if none was found,
+// or an error if the value could not be converted to an integer
+func (a Attributes) GetAsInt(key string) (int, bool, error) {
+	if value, found := a[key].(int); found {
+		return value, true, nil
+	}
+	if value, found := a[key].(string); found {
+		result, err := strconv.Atoi(value)
+		return result, true, err
+	}
+	return -1, false, nil
 }
 
 func asString(v interface{}) (string, error) {

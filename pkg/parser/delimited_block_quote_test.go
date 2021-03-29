@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("quote blocks", func() {
 
-	Context("draft documents", func() {
+	Context("raw documents", func() {
 
 		Context("delimited blocks", func() {
 
@@ -19,32 +19,30 @@ var _ = Describe("quote blocks", func() {
 ____
 some *quote* content
 ____`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.QuoteBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle:       types.Quote,
-								types.AttrQuoteAuthor: "john doe",
-								types.AttrQuoteTitle:  "quote title",
-							},
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "some ",
-											},
-											types.QuotedText{
-												Kind: types.SingleQuoteBold,
-												Elements: []interface{}{
-													types.StringElement{
-														Content: "quote",
-													},
+				expected := types.DocumentFragments{
+					types.QuoteBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle:       types.Quote,
+							types.AttrQuoteAuthor: "john doe",
+							types.AttrQuoteTitle:  "quote title",
+						},
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "some ",
+										},
+										types.QuotedText{
+											Kind: types.SingleQuoteBold,
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "quote",
 												},
 											},
-											types.StringElement{
-												Content: " content",
-											},
+										},
+										types.StringElement{
+											Content: " content",
 										},
 									},
 								},
@@ -52,9 +50,7 @@ ____`
 						},
 					},
 				}
-				result, err := ParseDraftDocument(source)
-				Expect(err).NotTo(HaveOccurred())
-				Expect(result).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("multi-line quote with author only", func() {
@@ -65,57 +61,55 @@ ____
 - content 
 ____
 `
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.QuoteBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle:       types.Quote,
-								types.AttrQuoteAuthor: "john doe",
+				expected := types.DocumentFragments{
+					types.QuoteBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle:       types.Quote,
+							types.AttrQuoteAuthor: "john doe",
+						},
+						Elements: []interface{}{
+							types.UnorderedListItem{
+								Level:       1,
+								BulletStyle: types.Dash,
+								CheckStyle:  types.NoCheck,
+								Elements: []interface{}{
+									types.Paragraph{
+										Lines: [][]interface{}{
+											{
+												types.StringElement{
+													Content: "some ",
+												},
+											},
+										},
+									},
+								},
 							},
-							Elements: []interface{}{
-								types.UnorderedListItem{
-									Level:       1,
-									BulletStyle: types.Dash,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "some ",
-													},
+							types.UnorderedListItem{
+								Level:       1,
+								BulletStyle: types.Dash,
+								CheckStyle:  types.NoCheck,
+								Elements: []interface{}{
+									types.Paragraph{
+										Lines: [][]interface{}{
+											{
+												types.StringElement{
+													Content: "quote ",
 												},
 											},
 										},
 									},
 								},
-								types.UnorderedListItem{
-									Level:       1,
-									BulletStyle: types.Dash,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "quote ",
-													},
-												},
-											},
-										},
-									},
-								},
-								types.UnorderedListItem{
-									Level:       1,
-									BulletStyle: types.Dash,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "content ",
-													},
+							},
+							types.UnorderedListItem{
+								Level:       1,
+								BulletStyle: types.Dash,
+								CheckStyle:  types.NoCheck,
+								Elements: []interface{}{
+									types.Paragraph{
+										Lines: [][]interface{}{
+											{
+												types.StringElement{
+													Content: "content ",
 												},
 											},
 										},
@@ -125,7 +119,7 @@ ____
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("single-line quote with title only", func() {
@@ -134,20 +128,18 @@ ____
 some quote content 
 ____
 `
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.QuoteBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle:      types.Quote,
-								types.AttrQuoteTitle: "quote title",
-							},
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "some quote content ",
-											},
+				expected := types.DocumentFragments{
+					types.QuoteBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle:      types.Quote,
+							types.AttrQuoteTitle: "quote title",
+						},
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "some quote content ",
 										},
 									},
 								},
@@ -155,7 +147,7 @@ ____
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("multi-line quote with rendered list and without author and title", func() {
@@ -169,60 +161,58 @@ ____
 
 * content
 ____`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.QuoteBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle: types.Quote,
+				expected := types.DocumentFragments{
+					types.QuoteBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle: types.Quote,
+						},
+						Elements: []interface{}{
+							types.UnorderedListItem{
+								Level:       1,
+								BulletStyle: types.OneAsterisk,
+								CheckStyle:  types.NoCheck,
+								Elements: []interface{}{
+									types.Paragraph{
+										Lines: [][]interface{}{
+											{
+												types.StringElement{
+													Content: "some",
+												},
+											},
+										},
+									},
+								},
 							},
-							Elements: []interface{}{
-								types.UnorderedListItem{
-									Level:       1,
-									BulletStyle: types.OneAsterisk,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "some",
-													},
+							types.BlankLine{},
+							types.BlankLine{},
+							types.UnorderedListItem{
+								Level:       1,
+								BulletStyle: types.OneAsterisk,
+								CheckStyle:  types.NoCheck,
+								Elements: []interface{}{
+									types.Paragraph{
+										Lines: [][]interface{}{
+											{
+												types.StringElement{
+													Content: "quote ",
 												},
 											},
 										},
 									},
 								},
-								types.BlankLine{},
-								types.BlankLine{},
-								types.UnorderedListItem{
-									Level:       1,
-									BulletStyle: types.OneAsterisk,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "quote ",
-													},
-												},
-											},
-										},
-									},
-								},
-								types.BlankLine{},
-								types.BlankLine{},
-								types.UnorderedListItem{
-									Level:       1,
-									BulletStyle: types.OneAsterisk,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "content",
-													},
+							},
+							types.BlankLine{},
+							types.BlankLine{},
+							types.UnorderedListItem{
+								Level:       1,
+								BulletStyle: types.OneAsterisk,
+								CheckStyle:  types.NoCheck,
+								Elements: []interface{}{
+									types.Paragraph{
+										Lines: [][]interface{}{
+											{
+												types.StringElement{
+													Content: "content",
 												},
 											},
 										},
@@ -232,23 +222,21 @@ ____`
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("empty quote without author and title", func() {
 				source := `[quote]
 ____
 ____`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.QuoteBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle: types.Quote,
-							},
+				expected := types.DocumentFragments{
+					types.QuoteBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle: types.Quote,
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("unclosed quote without author and title", func() {
@@ -256,19 +244,17 @@ ____`
 ____
 foo
 `
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.QuoteBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle: types.Quote,
-							},
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "foo",
-											},
+				expected := types.DocumentFragments{
+					types.QuoteBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle: types.Quote,
+						},
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "foo",
 										},
 									},
 								},
@@ -276,7 +262,7 @@ foo
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

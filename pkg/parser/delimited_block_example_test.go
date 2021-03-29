@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("example blocks", func() {
 
-	Context("draft documents", func() {
+	Context("raw documents", func() {
 
 		Context("delimited blocks", func() {
 
@@ -18,27 +18,25 @@ var _ = Describe("example blocks", func() {
 				source := `====
 some *example* content
 ====`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ExampleBlock{
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "some ",
-											},
-											types.QuotedText{
-												Kind: types.SingleQuoteBold,
-												Elements: []interface{}{
-													types.StringElement{
-														Content: "example",
-													},
+				expected := types.DocumentFragments{
+					types.ExampleBlock{
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "some ",
+										},
+										types.QuotedText{
+											Kind: types.SingleQuoteBold,
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "example",
 												},
 											},
-											types.StringElement{
-												Content: " content",
-											},
+										},
+										types.StringElement{
+											Content: " content",
 										},
 									},
 								},
@@ -47,25 +45,23 @@ some *example* content
 					},
 				}
 
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with single line starting with a dot", func() {
 				source := `====
 .foo
 ====`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ExampleBlock{
-							Elements: []interface{}{
-								types.StandaloneAttributes{
-									types.AttrTitle: "foo",
-								},
+				expected := types.DocumentFragments{
+					types.ExampleBlock{
+						Elements: []interface{}{
+							types.StandaloneAttributes{
+								types.AttrTitle: "foo",
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with rich lines", func() {
@@ -76,55 +72,53 @@ with _italic content_
 
 * and a list item
 ====`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ExampleBlock{
-							Elements: []interface{}{
-								types.Paragraph{
-									Attributes: types.Attributes{
-										types.AttrTitle: "foo",
-									},
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "some listing ",
-											},
-											types.QuotedText{
-												Kind: types.SingleQuoteBold,
-												Elements: []interface{}{
-													types.StringElement{
-														Content: "bold code",
-													},
+				expected := types.DocumentFragments{
+					types.ExampleBlock{
+						Elements: []interface{}{
+							types.Paragraph{
+								Attributes: types.Attributes{
+									types.AttrTitle: "foo",
+								},
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "some listing ",
+										},
+										types.QuotedText{
+											Kind: types.SingleQuoteBold,
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "bold code",
 												},
 											},
 										},
-										{
-											types.StringElement{
-												Content: "with ",
-											},
-											types.QuotedText{
-												Kind: types.SingleQuoteItalic,
-												Elements: []interface{}{
-													types.StringElement{
-														Content: "italic content",
-													},
+									},
+									{
+										types.StringElement{
+											Content: "with ",
+										},
+										types.QuotedText{
+											Kind: types.SingleQuoteItalic,
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "italic content",
 												},
 											},
 										},
 									},
 								},
-								types.BlankLine{},
-								types.UnorderedListItem{
-									Level:       1,
-									BulletStyle: types.OneAsterisk,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "and a list item",
-													},
+							},
+							types.BlankLine{},
+							types.UnorderedListItem{
+								Level:       1,
+								BulletStyle: types.OneAsterisk,
+								CheckStyle:  types.NoCheck,
+								Elements: []interface{}{
+									types.Paragraph{
+										Lines: [][]interface{}{
+											{
+												types.StringElement{
+													Content: "and a list item",
 												},
 											},
 										},
@@ -134,22 +128,20 @@ with _italic content_
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with unclosed delimiter", func() {
 				source := `====
 End of doc here`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ExampleBlock{
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "End of doc here",
-											},
+				expected := types.DocumentFragments{
+					types.ExampleBlock{
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "End of doc here",
 										},
 									},
 								},
@@ -157,7 +149,7 @@ End of doc here`
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with title", func() {
@@ -165,19 +157,17 @@ End of doc here`
 ====
 foo
 ====`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ExampleBlock{
-							Attributes: types.Attributes{
-								types.AttrTitle: "example block title",
-							},
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "foo",
-											},
+				expected := types.DocumentFragments{
+					types.ExampleBlock{
+						Attributes: types.Attributes{
+							types.AttrTitle: "example block title",
+						},
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "foo",
 										},
 									},
 								},
@@ -185,7 +175,7 @@ foo
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with caption", func() {
@@ -193,19 +183,17 @@ foo
 ====
 foo
 ====`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ExampleBlock{
-							Attributes: types.Attributes{
-								types.AttrCaption: "a caption ", // trailing space is retained
-							},
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "foo",
-											},
+				expected := types.DocumentFragments{
+					types.ExampleBlock{
+						Attributes: types.Attributes{
+							types.AttrCaption: "a caption ", // trailing space is retained
+						},
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "foo",
 										},
 									},
 								},
@@ -213,17 +201,15 @@ foo
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("example block starting delimiter only", func() {
 				source := `====`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ExampleBlock{},
-					},
+				expected := types.DocumentFragments{
+					types.ExampleBlock{},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 
@@ -232,34 +218,32 @@ foo
 			It("with single rich line", func() {
 				source := `[example]
 some *example* content`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.Paragraph{
-							Attributes: types.Attributes{
-								types.AttrStyle: types.Example,
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some ",
-									},
-									types.QuotedText{
-										Kind: types.SingleQuoteBold,
-										Elements: []interface{}{
-											types.StringElement{
-												Content: "example",
-											},
+				expected := types.DocumentFragments{
+					types.Paragraph{
+						Attributes: types.Attributes{
+							types.AttrStyle: types.Example,
+						},
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "some ",
+								},
+								types.QuotedText{
+									Kind: types.SingleQuoteBold,
+									Elements: []interface{}{
+										types.StringElement{
+											Content: "example",
 										},
 									},
-									types.StringElement{
-										Content: " content",
-									},
+								},
+								types.StringElement{
+									Content: " content",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

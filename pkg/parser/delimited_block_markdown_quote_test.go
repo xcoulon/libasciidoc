@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("markdown-style quote blocks", func() {
 
-	Context("draft documents", func() {
+	Context("raw documents", func() {
 
 		Context("delimited blocks", func() {
 
@@ -19,39 +19,37 @@ var _ = Describe("markdown-style quote blocks", func() {
 on *multiple lines*
 with a link to https://example.com[]`
 
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.MarkdownQuoteBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some text",
-									},
+				expected := types.DocumentFragments{
+					types.MarkdownQuoteBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "some text",
 								},
-								{
-									types.StringElement{
-										Content: "on ",
-									},
-									types.QuotedText{
-										Kind: types.SingleQuoteBold,
-										Elements: []interface{}{
-											types.StringElement{
-												Content: "multiple lines",
-											},
+							},
+							{
+								types.StringElement{
+									Content: "on ",
+								},
+								types.QuotedText{
+									Kind: types.SingleQuoteBold,
+									Elements: []interface{}{
+										types.StringElement{
+											Content: "multiple lines",
 										},
 									},
 								},
-								{
-									types.StringElement{
-										Content: "with a link to ",
-									},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "example.com",
-												},
+							},
+							{
+								types.StringElement{
+									Content: "with a link to ",
+								},
+								types.InlineLink{
+									Location: types.Location{
+										Scheme: "https://",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "example.com",
 											},
 										},
 									},
@@ -60,34 +58,30 @@ with a link to https://example.com[]`
 						},
 					},
 				}
-				result, err := ParseDraftDocument(source)
-				Expect(err).NotTo(HaveOccurred())
-				Expect(result).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with marker on each line without author", func() {
 				source := `> some text
 > on *multiple lines*`
 
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.MarkdownQuoteBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some text",
-									},
+				expected := types.DocumentFragments{
+					types.MarkdownQuoteBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "some text",
 								},
-								{
-									types.StringElement{
-										Content: "on ",
-									},
-									types.QuotedText{
-										Kind: types.SingleQuoteBold,
-										Elements: []interface{}{
-											types.StringElement{
-												Content: "multiple lines",
-											},
+							},
+							{
+								types.StringElement{
+									Content: "on ",
+								},
+								types.QuotedText{
+									Kind: types.SingleQuoteBold,
+									Elements: []interface{}{
+										types.StringElement{
+											Content: "multiple lines",
 										},
 									},
 								},
@@ -95,37 +89,33 @@ with a link to https://example.com[]`
 						},
 					},
 				}
-				result, err := ParseDraftDocument(source)
-				Expect(err).NotTo(HaveOccurred())
-				Expect(result).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with marker on each line with author only", func() {
 				source := `> some text
 > on *multiple lines*
 > -- John Doe`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.MarkdownQuoteBlock{
-							Attributes: types.Attributes{
-								types.AttrQuoteAuthor: "John Doe",
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some text",
-									},
+				expected := types.DocumentFragments{
+					types.MarkdownQuoteBlock{
+						Attributes: types.Attributes{
+							types.AttrQuoteAuthor: "John Doe",
+						},
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "some text",
 								},
-								{
-									types.StringElement{
-										Content: "on ",
-									},
-									types.QuotedText{
-										Kind: types.SingleQuoteBold,
-										Elements: []interface{}{
-											types.StringElement{
-												Content: "multiple lines",
-											},
+							},
+							{
+								types.StringElement{
+									Content: "on ",
+								},
+								types.QuotedText{
+									Kind: types.SingleQuoteBold,
+									Elements: []interface{}{
+										types.StringElement{
+											Content: "multiple lines",
 										},
 									},
 								},
@@ -133,7 +123,7 @@ with a link to https://example.com[]`
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with marker on each line with author and title", func() {
@@ -141,29 +131,27 @@ with a link to https://example.com[]`
 > some text
 > on *multiple lines*
 > -- John Doe`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.MarkdownQuoteBlock{
-							Attributes: types.Attributes{
-								types.AttrTitle:       "title",
-								types.AttrQuoteAuthor: "John Doe",
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some text",
-									},
+				expected := types.DocumentFragments{
+					types.MarkdownQuoteBlock{
+						Attributes: types.Attributes{
+							types.AttrTitle:       "title",
+							types.AttrQuoteAuthor: "John Doe",
+						},
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "some text",
 								},
-								{
-									types.StringElement{
-										Content: "on ",
-									},
-									types.QuotedText{
-										Kind: types.SingleQuoteBold,
-										Elements: []interface{}{
-											types.StringElement{
-												Content: "multiple lines",
-											},
+							},
+							{
+								types.StringElement{
+									Content: "on ",
+								},
+								types.QuotedText{
+									Kind: types.SingleQuoteBold,
+									Elements: []interface{}{
+										types.StringElement{
+											Content: "multiple lines",
 										},
 									},
 								},
@@ -171,21 +159,19 @@ with a link to https://example.com[]`
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with with author only", func() {
 				source := `> -- John Doe`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.MarkdownQuoteBlock{
-							Attributes: types.Attributes{
-								types.AttrQuoteAuthor: "John Doe",
-							},
+				expected := types.DocumentFragments{
+					types.MarkdownQuoteBlock{
+						Attributes: types.Attributes{
+							types.AttrQuoteAuthor: "John Doe",
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

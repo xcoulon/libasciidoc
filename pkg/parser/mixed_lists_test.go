@@ -123,34 +123,32 @@ var _ = Describe("mixed lists - document", func() {
 		It("unordered list item and order list item with roman numbering", func() {
 			source := `- unordered list item
  II) ordered list item`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.UnorderedListItem{
-						Level:       1,
-						BulletStyle: types.Dash,
-						CheckStyle:  types.NoCheck,
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "unordered list item",
-										},
+			expected := types.DocumentFragments{
+				types.UnorderedListItem{
+					Level:       1,
+					BulletStyle: types.Dash,
+					CheckStyle:  types.NoCheck,
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "unordered list item",
 									},
 								},
 							},
 						},
 					},
-					types.OrderedListItem{
-						Level: 1,
-						Style: types.UpperRoman,
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "ordered list item",
-										},
+				},
+				types.OrderedListItem{
+					Level: 1,
+					Style: types.UpperRoman,
+					Elements: []interface{}{
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "ordered list item",
 									},
 								},
 							},
@@ -158,7 +156,7 @@ var _ = Describe("mixed lists - document", func() {
 					},
 				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 	})
 

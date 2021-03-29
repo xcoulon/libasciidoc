@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("passthrough blocks", func() {
 
-	Context("draft documents", func() {
+	Context("raw documents", func() {
 
 		Context("delimited blocks", func() {
 
@@ -21,29 +21,27 @@ _foo_
 
 *bar*
 ++++`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.PassthroughBlock{
-							Attributes: types.Attributes{
-								types.AttrTitle: "a title",
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "_foo_",
-									},
+				expected := types.DocumentFragments{
+					types.PassthroughBlock{
+						Attributes: types.Attributes{
+							types.AttrTitle: "a title",
+						},
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "_foo_",
 								},
-								{},
-								{
-									types.StringElement{
-										Content: "*bar*",
-									},
+							},
+							{},
+							{
+								types.StringElement{
+									Content: "*bar*",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with special characters", func() {
@@ -52,86 +50,78 @@ _foo_
 
 <input>
 ++++`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.PassthroughBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "<input>",
-									},
+				expected := types.DocumentFragments{
+					types.PassthroughBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "<input>",
 								},
-								{},
-								{
-									types.StringElement{
-										Content: "<input>",
-									},
+							},
+							{},
+							{
+								types.StringElement{
+									Content: "<input>",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with inline link", func() {
 				source := `++++
 http://example.com[]
 ++++`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.PassthroughBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "http://example.com[]",
-									},
+				expected := types.DocumentFragments{
+					types.PassthroughBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "http://example.com[]",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with inline pass", func() {
 				source := `++++
 pass:[foo]
 ++++`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.PassthroughBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "pass:[foo]",
-									},
+				expected := types.DocumentFragments{
+					types.PassthroughBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "pass:[foo]",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with quoted text", func() {
 				source := `++++
 *foo*
 ++++`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.PassthroughBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "*foo*",
-									},
+				expected := types.DocumentFragments{
+					types.PassthroughBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "*foo*",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 
@@ -143,38 +133,36 @@ _foo_
 *bar*
 
 another paragraph`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.PassthroughBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle: types.Passthrough,
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "_foo_",
-									},
+				expected := types.DocumentFragments{
+					types.PassthroughBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle: types.Passthrough,
+						},
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "_foo_",
 								},
-								{
-									types.StringElement{
-										Content: "*bar*",
-									},
+							},
+							{
+								types.StringElement{
+									Content: "*bar*",
 								},
 							},
 						},
-						types.BlankLine{},
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "another paragraph",
-									},
+					},
+					types.BlankLine{},
+					types.Paragraph{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "another paragraph",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 

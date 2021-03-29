@@ -10,46 +10,113 @@ import (
 
 var _ = Describe("comments", func() {
 
-	Context("draft documents", func() {
+	Context("raw documents", func() {
 
 		Context("single line comments", func() {
 
 			It("single line comment alone", func() {
 				source := `// A single-line comment.`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.SingleLineComment{
-							Content: " A single-line comment.",
-						},
+				expected := types.DocumentFragments{
+					types.SingleLineComment{
+						Content: " A single-line comment.",
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("single line comment at end of line", func() {
 				source := `foo // A single-line comment.`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "foo // A single-line comment.",
-									},
+				expected := types.DocumentFragments{
+					types.Paragraph{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "foo // A single-line comment.",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("single line comment within a paragraph", func() {
 				source := `a first line
 // A single-line comment.
 another line // not a comment`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
+				expected := types.DocumentFragments{
+					types.Paragraph{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "a first line",
+								},
+							},
+							{
+								types.SingleLineComment{
+									Content: " A single-line comment.",
+								},
+							},
+							{
+								types.StringElement{
+									Content: "another line // not a comment",
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			})
+
+			Context("invalid", func() {
+
+				It("single line comment with prefixing spaces alone", func() {
+					source := `  // A single-line comment.`
+					expected := types.DocumentFragments{
+						types.LiteralBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:            types.Literal,
+								types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
+							},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "  // A single-line comment.",
+									},
+								},
+							},
+						},
+					}
+					result, err := ParseRawSource(source)
+					Expect(err).NotTo(HaveOccurred())
+					Expect(result).To(MatchDocumentFragments(expected))
+				})
+
+				It("single line comment with prefixing tabs alone", func() {
+					source := "\t\t// A single-line comment."
+					expected := types.DocumentFragments{
+						types.LiteralBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:            types.Literal,
+								types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
+							},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "\t\t// A single-line comment.",
+									},
+								},
+							},
+						},
+					}
+					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				})
+
+				It("single line comment within a paragraph with tab", func() {
+					source := `a first line
+	// A single-line comment.
+another line`
+					expected := types.DocumentFragments{
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
@@ -58,100 +125,19 @@ another line // not a comment`
 									},
 								},
 								{
-									types.SingleLineComment{
-										Content: " A single-line comment.",
+									types.StringElement{
+										Content: "\t// A single-line comment.",
 									},
 								},
 								{
 									types.StringElement{
-										Content: "another line // not a comment",
-									},
-								},
-							},
-						},
-					},
-				}
-				result, err := ParseDraftDocument(source)
-				Expect(err).NotTo(HaveOccurred())
-				Expect(result).To(MatchDraftDocument(expected))
-			})
-
-			Context("invalid", func() {
-
-				It("single line comment with prefixing spaces alone", func() {
-					source := `  // A single-line comment.`
-					expected := types.DraftDocument{
-						Elements: []interface{}{
-							types.LiteralBlock{
-								Attributes: types.Attributes{
-									types.AttrStyle:            types.Literal,
-									types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
-								},
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "  // A single-line comment.",
-										},
+										Content: "another line",
 									},
 								},
 							},
 						},
 					}
-					result, err := ParseDraftDocument(source)
-					Expect(err).NotTo(HaveOccurred())
-					Expect(result).To(MatchDraftDocument(expected))
-				})
-
-				It("single line comment with prefixing tabs alone", func() {
-					source := "\t\t// A single-line comment."
-					expected := types.DraftDocument{
-						Elements: []interface{}{
-							types.LiteralBlock{
-								Attributes: types.Attributes{
-									types.AttrStyle:            types.Literal,
-									types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
-								},
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "\t\t// A single-line comment.",
-										},
-									},
-								},
-							},
-						},
-					}
-					Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
-				})
-
-				It("single line comment within a paragraph with tab", func() {
-					source := `a first line
-	// A single-line comment.
-another line`
-					expected := types.DraftDocument{
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a first line",
-										},
-									},
-									{
-										types.StringElement{
-											Content: "\t// A single-line comment.",
-										},
-									},
-									{
-										types.StringElement{
-											Content: "another line",
-										},
-									},
-								},
-							},
-						},
-					}
-					Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 				})
 			})
 		})
@@ -163,27 +149,23 @@ another line`
 a *comment* block
 with multiple lines
 ////`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.CommentBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a *comment* block",
-									},
+				expected := types.DocumentFragments{
+					types.CommentBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "a *comment* block",
 								},
-								{
-									types.StringElement{
-										Content: "with multiple lines",
-									},
+							},
+							{
+								types.StringElement{
+									Content: "with multiple lines",
 								},
 							},
 						},
 					},
 				}
-				result, err := ParseDraftDocument(source)
-				Expect(err).NotTo(HaveOccurred())
-				Expect(result).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("comment block with paragraphs around", func() {
@@ -194,44 +176,42 @@ a *comment* block
 with multiple lines
 ////
 a second paragraph`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a first paragraph",
-									},
+				expected := types.DocumentFragments{
+					types.Paragraph{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "a first paragraph",
 								},
 							},
 						},
-						types.BlankLine{}, // blankline is required between a paragraph and the next block
-						types.CommentBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a *comment* block",
-									},
+					},
+					types.BlankLine{}, // blankline is required between a paragraph and the next block
+					types.CommentBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "a *comment* block",
 								},
-								{
-									types.StringElement{
-										Content: "with multiple lines",
-									},
+							},
+							{
+								types.StringElement{
+									Content: "with multiple lines",
 								},
 							},
 						},
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a second paragraph",
-									},
+					},
+					types.Paragraph{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "a second paragraph",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

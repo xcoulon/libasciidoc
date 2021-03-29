@@ -16,6 +16,10 @@ func (s *stack) size() int {
 	return s.index + 1
 }
 
+func (s *stack) empty() bool {
+	return s.index == -1
+}
+
 func (s *stack) push(a interface{}) {
 	s.index++
 	s.elements[s.index] = a

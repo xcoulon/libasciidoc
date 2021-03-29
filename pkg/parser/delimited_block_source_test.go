@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("source blocks", func() {
 
-	Context("draft documents", func() {
+	Context("raw documents", func() {
 
 		Context("delimited blocks", func() {
 			sourceCode := [][]interface{}{
@@ -52,17 +52,15 @@ type Foo struct{
     Bar string
 }
 ----`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle: types.Source,
-							},
-							Lines: sourceCode,
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle: types.Source,
 						},
+						Lines: sourceCode,
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with source attribute and comma", func() {
@@ -75,17 +73,15 @@ type Foo struct{
     Bar string
 }
 ----`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle: types.Source,
-							},
-							Lines: sourceCode,
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle: types.Source,
 						},
+						Lines: sourceCode,
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with title, source and language attributes", func() {
@@ -99,19 +95,17 @@ type Foo struct{
     Bar string
 }
 ----`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle:    types.Source,
-								types.AttrLanguage: "go",
-								types.AttrTitle:    "foo.go",
-							},
-							Lines: sourceCode,
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle:    types.Source,
+							types.AttrLanguage: "go",
+							types.AttrTitle:    "foo.go",
 						},
+						Lines: sourceCode,
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with id, title, source and language and other attributes", func() {
@@ -126,21 +120,19 @@ type Foo struct{
     Bar string
 }
 ----`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle:    types.Source,
-								types.AttrLanguage: "go",
-								types.AttrID:       "id-for-source-block",
-								types.AttrTitle:    "foo.go",
-								types.AttrLineNums: true,
-							},
-							Lines: sourceCode,
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle:    types.Source,
+							types.AttrLanguage: "go",
+							types.AttrID:       "id-for-source-block",
+							types.AttrTitle:    "foo.go",
+							types.AttrLineNums: true,
 						},
+						Lines: sourceCode,
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with callout and admonition block afterwards", func() {
@@ -155,49 +147,47 @@ const cookies = "cookies" <1>
 a note
 ====`
 
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle: types.Source,
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: `const cookies = "cookies" `,
-									},
-									types.Callout{
-										Ref: 1,
-									},
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle: types.Source,
+						},
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: `const cookies = "cookies" `,
+								},
+								types.Callout{
+									Ref: 1,
 								},
 							},
 						},
-						types.CalloutListItem{
-							Ref: 1,
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "a constant",
-											},
+					},
+					types.CalloutListItem{
+						Ref: 1,
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "a constant",
 										},
 									},
 								},
 							},
 						},
-						types.BlankLine{},
-						types.ExampleBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle: types.Note,
-							},
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "a note",
-											},
+					},
+					types.BlankLine{},
+					types.ExampleBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle: types.Note,
+						},
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "a note",
 										},
 									},
 								},
@@ -205,7 +195,7 @@ a note
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with nowrap option", func() {
@@ -213,25 +203,23 @@ a note
 ----
 const Cookie = "cookie"
 ----`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle:    types.Source,
-								types.AttrOptions:  []interface{}{"nowrap"},
-								types.AttrLanguage: "go",
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: `const Cookie = "cookie"`,
-									},
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle:    types.Source,
+							types.AttrOptions:  []interface{}{"nowrap"},
+							types.AttrLanguage: "go",
+						},
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: `const Cookie = "cookie"`,
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

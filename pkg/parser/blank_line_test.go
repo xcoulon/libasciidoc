@@ -10,36 +10,34 @@ import (
 
 var _ = Describe("blank lines", func() {
 
-	Context("draft documents", func() {
+	Context("raw documents", func() {
 
 		It("blank line between 2 paragraphs", func() {
 			source := `first paragraph
  
 second paragraph`
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "first paragraph",
-								},
+			expected := types.DocumentFragments{
+				types.Paragraph{
+					Lines: [][]interface{}{
+						{
+							types.StringElement{
+								Content: "first paragraph",
 							},
 						},
 					},
-					types.BlankLine{},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "second paragraph",
-								},
+				},
+				types.BlankLine{},
+				types.Paragraph{
+					Lines: [][]interface{}{
+						{
+							types.StringElement{
+								Content: "second paragraph",
 							},
 						},
 					},
 				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("blank line with spaces and tabs between 2 paragraphs and after second paragraph", func() {
@@ -49,46 +47,42 @@ second paragraph`
 		
 second paragraph
 `
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "first paragraph",
-								},
+			expected := types.DocumentFragments{
+				types.Paragraph{
+					Lines: [][]interface{}{
+						{
+							types.StringElement{
+								Content: "first paragraph",
 							},
 						},
 					},
-					types.BlankLine{},
-					types.BlankLine{},
-					types.BlankLine{},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "second paragraph",
-								},
+				},
+				types.BlankLine{},
+				types.BlankLine{},
+				types.BlankLine{},
+				types.Paragraph{
+					Lines: [][]interface{}{
+						{
+							types.StringElement{
+								Content: "second paragraph",
 							},
 						},
 					},
 				},
 			}
-			Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("blank line with attributes", func() {
 			source := `.ignored
  
 `
-			expected := types.DraftDocument{
-				Elements: []interface{}{
-					types.BlankLine{},
-				},
+			expected := types.DocumentFragments{
+				types.BlankLine{},
 			}
-			result, err := ParseDraftDocument(source) // , parser.Debug(true))
+			result, err := ParseRawSource(source) // , parser.Debug(true))
 			Expect(err).NotTo(HaveOccurred())
-			Expect(result).To(MatchDraftDocument(expected))
+			Expect(result).To(MatchDocumentFragments(expected))
 		})
 	})
 

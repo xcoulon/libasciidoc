@@ -18,94 +18,64 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// ParseRawSource parses a document's content and applies the preprocessing directives (file inclusions)
-func ParseRawSource(r io.Reader, config configuration.Configuration, options ...Option) ([]byte, error) {
-	ctx := substitutionContext{
-		attributes: types.AttributesWithOverrides{
-			Content:   map[string]interface{}{},
-			Overrides: map[string]string{},
-			Counters:  map[string]interface{}{},
-		},
-		config: config,
-	}
-	return parseRawSource(ctx, r, []levelOffset{}, append(options, Entrypoint("RawSource"))...)
+// ParseDocumentFragments parses a document's content and applies the preprocessing directives (file inclusions)
+// Returns the document fragments (to be assembled) or an error
+func ParseDocumentFragments(r io.Reader, config configuration.Configuration, options ...Option) (types.DocumentFragments, error) {
+	return parseDocumentFragments(&fileinclusionContext{
+		config:       config,
+		attributes:   types.Attributes{},
+		levelOffsets: []levelOffset{},
+		blockLevels:  newStack(),
+	}, r, options...)
 }
 
-func parseRawSource(ctx substitutionContext, r io.Reader, levelOffsets []levelOffset, options ...Option) ([]byte, error) {
-	lines, err := ParseReader(ctx.config.Filename, r, options...)
-	if err != nil {
-		log.Errorf("failed to parse raw document: %s", err)
-		return nil, err
-	}
-	l, ok := lines.([]interface{})
-	if !ok {
-		return nil, fmt.Errorf("unexpected type of raw lines: '%T'", lines)
-	}
-	return processFileInclusions(ctx, l, levelOffsets, options...)
+type fileinclusionContext struct {
+	config       configuration.Configuration
+	attributes   types.Attributes
+	levelOffsets []levelOffset
+	blockLevels  *stack
 }
 
-// processFileInclusions processes the file inclusions in the given lines and returns a serialized content which can be parsed again
-func processFileInclusions(ctx substitutionContext, lines []interface{}, levelOffsets []levelOffset, options ...Option) ([]byte, error) {
-	result := bytes.NewBuffer(nil)
-	for _, line := range lines {
-		switch l := line.(type) {
-		case []interface{}:
-			for _, e := range l {
-				if s, ok := e.(types.StringElement); ok {
-					result.WriteString(s.Content)
-					continue
-				}
-				return nil, fmt.Errorf("unexpected type of element in raw line: '%T'", e)
-			}
-			// append linefeed
-			result.WriteString("\n")
-		case types.RawSection:
-			for _, offset := range levelOffsets {
-				oldLevel := l.Level
-				offset.apply(&l)
-				// replace the absolute when the first section is processed with a relative offset
-				// which is based on the actual level offset that resulted in the application of the absolute offset
-				if offset.absolute {
-					levelOffsets = []levelOffset{
-						relativeOffset(l.Level - oldLevel),
-					}
-				}
-			}
-			result.WriteString(l.Stringify())
-			// append linefeed
-			result.WriteString("\n")
-		case types.AttributeDeclaration:
-			ctx.attributes.Set(l.Name, l.Value)
-			result.WriteString(l.Stringify())
-			// append linefeed
-			result.WriteString("\n")
-		case types.FileInclusion:
-			includedLines, err := parseFileToInclude(ctx, l, levelOffsets, options...)
-			if err != nil {
-				return nil, err
-			}
-			result.Write(includedLines)
-		default:
-			return nil, fmt.Errorf("unexpected type of line: '%T'", line)
-		}
+func (c *fileinclusionContext) clone() *fileinclusionContext {
+	return &fileinclusionContext{
+		config:       c.config,
+		attributes:   c.attributes, // TODO: should we clone this too? ie, can an attribute declared in a child doc be used in rest of the parent doc?
+		levelOffsets: append([]levelOffset{}, c.levelOffsets...),
+		blockLevels:  c.blockLevels,
 	}
-	return result.Bytes(), nil
+}
 
+func (ctx *fileinclusionContext) isSectionRuleEnabled() bool {
+	return ctx.blockLevels.empty()
+}
+
+func (ctx *fileinclusionContext) onBlockDelimiter(d types.BlockDelimiter) {
+	currentLevel := ctx.blockLevels.get()
+	if currentLevel == d.Kind {
+		ctx.blockLevels.pop() // discard current level, assuming we've just parsed the ending delimiter of the current block
+		return
+	}
+	ctx.blockLevels.push(d.Kind) // push current delimiter kind, assuming we've just parsed the starting delimiter of a new block
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("current substitution context is now: %v", ctx.blockLevels.get())
+	}
 }
 
 // levelOffset a func that applies a given offset to the sections of a child document to include in a parent doc (the caller)
 type levelOffset struct {
 	absolute bool
 	value    int
-	apply    func(*types.RawSection)
+	apply    func(*types.Section) int // returns the former level of the section
 }
 
 func relativeOffset(offset int) levelOffset {
 	return levelOffset{
 		absolute: false,
 		value:    offset,
-		apply: func(s *types.RawSection) {
+		apply: func(s *types.Section) int {
+			old := s.Level
 			s.Level += offset
+			return old
 		},
 	}
 }
@@ -114,25 +84,81 @@ func absoluteOffset(offset int) levelOffset {
 	return levelOffset{
 		absolute: true,
 		value:    offset,
-		apply: func(s *types.RawSection) {
+		apply: func(s *types.Section) int {
+			old := s.Level
 			s.Level = offset
+			return old
 		},
 	}
 }
 
-// applies the elements and attributes substitutions on the given image block.
-func applySubstitutionsOnFileInclusion(ctx substitutionContext, f types.FileInclusion) (types.FileInclusion, error) {
-	elements := [][]interface{}{f.Location.Path} // wrap to
-	elements, err := substituteAttributes(ctx, elements)
+func parseDocumentFragments(ctx *fileinclusionContext, r io.Reader, options ...Option) (types.DocumentFragments, error) {
+	content, err := ParseReader(ctx.config.Filename, r, append(options, Entrypoint("DocumentFragments"), GlobalStore(substitutionContextKey, ctx))...)
 	if err != nil {
-		return types.FileInclusion{}, err
+		log.Errorf("failed to parse raw document: %s", err)
+		return nil, err
 	}
-	f.Location.Path = elements[0]
-	return f, nil
+	fragments, ok := content.(types.DocumentFragments)
+	if !ok {
+		return nil, fmt.Errorf("unexpected type of raw lines: '%T'", content)
+	}
+	// look-up file inclusions and replace with the file content
+	result := make([]interface{}, 0, len(fragments)) // assume the initial capacity as if there is no file inclusion to process
+	for _, fragment := range fragments {
+		switch fragment := fragment.(type) {
+		case types.FileInclusion:
+			// clone the context so that further level offset in this "child" doc are not applied to the rest of this "parent" doc
+			ctx := ctx.clone()
+			fileContent, err := parseFileToInclude(ctx, fragment, options...)
+			if err != nil {
+				return nil, err
+			}
+			result = append(result, fileContent...)
+		case types.AttributeDeclaration:
+			// add the attribute to the current content
+			ctx.attributes[fragment.Name] = fragment.Value
+			result = append(result, fragment)
+		case types.Section:
+			// apply the level offsets on the sections of the doc to include (by default, there is no offset)
+			oldLevel := fragment.Level
+			for _, offset := range ctx.levelOffsets {
+				oldLevel := offset.apply(&fragment)
+				// replace the absolute level offset with a relative one,
+				// taking into account the offset that was applied on this section,
+				// so that following sections in the document have the same relative offset
+				// applied, but keep the same hierarchy
+				if offset.absolute {
+					// replace current offset and all previous ones with a single relative offset
+					ctx.levelOffsets = []levelOffset{relativeOffset(fragment.Level - oldLevel)}
+				}
+			}
+			if log.IsLevelEnabled(log.DebugLevel) {
+				log.Debugf("applied level offset on section: level %d -> %d", oldLevel, fragment.Level)
+				// log.Debug("level offsets:")
+				// spew.Fdump(log.StandardLogger().Out, ctx.levelOffsets)
+			}
+			result = append(result, fragment)
+		case types.BlockDelimiter:
+			ctx.onBlockDelimiter(fragment)
+			result = append(result, fragment)
+		default:
+			result = append(result, fragment)
+		}
+	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debug("parsed file to include")
+	// 	spew.Fdump(log.StandardLogger().Out, result)
+	// }
+	return result, nil
 }
 
-func parseFileToInclude(ctx substitutionContext, incl types.FileInclusion, levelOffsets []levelOffset, options ...Option) ([]byte, error) {
-	incl, err := applySubstitutionsOnFileInclusion(ctx, incl)
+func parseFileToInclude(ctx *fileinclusionContext, incl types.FileInclusion, options ...Option) ([]interface{}, error) {
+	incl, err := applySubstitutionsOnFileInclusionPath(substitutionContextDeprecated{
+		attributes: types.AttributesWithOverrides{
+			Content: ctx.attributes,
+		},
+		config: ctx.config,
+	}, incl)
 	if err != nil {
 		return nil, err
 	}
@@ -146,8 +172,7 @@ func parseFileToInclude(ctx substitutionContext, incl types.FileInclusion, level
 	content := bytes.NewBuffer(nil)
 	scanner := bufio.NewScanner(bufio.NewReader(f))
 	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debug("parsing file to include")
-		spew.Fdump(log.StandardLogger().Out, incl)
+		log.Debugf("parsing file to %s", incl.RawText)
 	}
 	if lr, ok := lineRanges(incl, ctx.config); ok {
 		if err := readWithinLines(scanner, content, lr); err != nil {
@@ -165,36 +190,48 @@ func parseFileToInclude(ctx substitutionContext, incl types.FileInclusion, level
 	if err := scanner.Err(); err != nil {
 		return nil, fmt.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
 	}
-	// just include the file content if the file to include is not an Asciidoc document.
+	// if the file to include is not an Asciidoc document, just return the content as "raw lines"
 	if !IsAsciidoc(absPath) {
-		return content.Bytes(), nil
+		return []interface{}{
+			types.RawContent(content.Bytes()),
+		}, nil
 	}
 	// parse the content, and returns the corresponding elements
-	l, found, err := incl.Attributes.GetAsString(types.AttrLevelOffset)
+	lvl, found, err := incl.Attributes.GetAsString(types.AttrLevelOffset)
 	if err != nil {
 		return nil, err
 	}
 	if found {
-		offset, err := strconv.Atoi(l)
+		offset, err := strconv.Atoi(lvl)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to read file to include")
 		}
-		if strings.HasPrefix(l, "+") || strings.HasPrefix(l, "-") {
-			levelOffsets = append(levelOffsets, relativeOffset(offset))
+		if strings.HasPrefix(lvl, "+") || strings.HasPrefix(lvl, "-") {
+			ctx.levelOffsets = append(ctx.levelOffsets, relativeOffset(offset))
 		} else {
-			levelOffsets = []levelOffset{absoluteOffset(offset)}
+			ctx.levelOffsets = []levelOffset{absoluteOffset(offset)}
 
 		}
 	}
-
 	actualFilename := ctx.config.Filename
 	defer func() {
 		// restore actual filename after exiting
 		ctx.config.Filename = actualFilename
 	}()
 	ctx.config.Filename = absPath
-	// now, let's parse this content and process nested file inclusions
-	return parseRawSource(ctx, content, levelOffsets, options...)
+	// now, let's parse this content and process nested file inclusions (recursively)
+	return parseDocumentFragments(ctx, content, options...)
+}
+
+// applies the attribute substitutions on the location path of the file to include
+func applySubstitutionsOnFileInclusionPath(ctx substitutionContextDeprecated, f types.FileInclusion) (types.FileInclusion, error) {
+	elements := [][]interface{}{f.Location.Path} // wrap to
+	elements, err := substituteAttributes(ctx, elements)
+	if err != nil {
+		return types.FileInclusion{}, err
+	}
+	f.Location.Path = elements[0]
+	return f, nil
 }
 
 // lineRanges parses the `lines` attribute if it exists in the given FileInclusion, and returns
@@ -211,6 +248,10 @@ func lineRanges(incl types.FileInclusion, config configuration.Configuration) (t
 			log.Errorf("Unresolved directive in %s - %s", config.Filename, incl.RawText)
 			return types.LineRanges{}, false
 		}
+		if log.IsLevelEnabled(log.DebugLevel) {
+			log.Debug("line ranges to include:")
+			spew.Fdump(log.StandardLogger().Out, lr)
+		}
 		return types.NewLineRanges(lr), true
 	}
 	return types.LineRanges{}, false
@@ -224,8 +265,8 @@ func tagRanges(incl types.FileInclusion, config configuration.Configuration) (ty
 		log.Errorf("Unresolved directive in %s - %s", config.Filename, incl.RawText)
 		return types.TagRanges{}, false
 	}
-	log.Debugf("tag ranges to include: %v", spew.Sdump(tagRanges))
 	if exists {
+		log.Debugf("tag ranges to include: %v", spew.Sdump(tagRanges))
 		tr, err := Parse("", []byte(tagRanges), Entrypoint("TagRanges"))
 		if err != nil {
 			log.Errorf("Unresolved directive in %s - %s", config.Filename, incl.RawText)
@@ -236,6 +277,8 @@ func tagRanges(incl types.FileInclusion, config configuration.Configuration) (ty
 	return types.TagRanges{}, false
 }
 
+// TODO: instead of reading and parsing afterwards, simply parse the lines immediatly? ie: `readWithinLines` -> `parseWithinLines`
+// (also, use a specific entrypoint if the doc is not a .adoc)
 func readWithinLines(scanner *bufio.Scanner, content *bytes.Buffer, lineRanges types.LineRanges) error {
 	line := 0
 	for scanner.Scan() {

@@ -18,42 +18,45 @@ import (
 
 // ApplySubstitutions applies all the substitutions on delimited blocks, standalone paragraphs and paragraphs
 // in continued list items, and then attribute substitutions, and as a result returns a `DraftDocument`.
-func ApplySubstitutions(rawDoc types.RawDocument, config configuration.Configuration) (types.DraftDocument, error) {
-	attrs := types.AttributesWithOverrides{
-		Content:   types.Attributes{},
-		Overrides: config.AttributeOverrides,
-		Counters:  map[string]interface{}{},
-	}
-	// also, add all front-matter key/values
-	attrs.Add(rawDoc.FrontMatter.Content)
-	// also, add all AttributeDeclaration at the top of the document
-	attrs.Add(rawDoc.Attributes())
+func ApplySubstitutions(rawDoc types.DocumentFragments, config configuration.Configuration) (types.DraftDocument, error) {
+	// ctx := newSubstitutionContext(config)
+	// // also, add all front-matter key/values
+	// ctx.attributes.Add(rawDoc.FrontMatter.Content)
+	// // also, add all AttributeDeclaration at the top of the document
+	// ctx.attributes.Add(rawDoc.Attributes())
 
-	ctx := substitutionContext{
-		attributes: attrs,
-		config:     config,
-	}
-	elements, err := applySubstitutions(ctx, rawDoc.Elements)
-	if err != nil {
-		return types.DraftDocument{}, err
-	}
-	if len(elements) == 0 {
-		elements = nil // avoid carrying empty slice
-	}
+	// elements, err := applySubstitutions(ctx, rawDoc.Elements)
+	// if err != nil {
+	// 	return types.DraftDocument{}, err
+	// }
+	// if len(elements) == 0 {
+	// 	elements = nil // avoid carrying empty slice
+	// }
 	return types.DraftDocument{
-		Attributes:  attrs.All(),
-		FrontMatter: rawDoc.FrontMatter,
-		Elements:    elements,
+		// Attributes:  ctx.attributes.All(),
+		// FrontMatter: rawDoc.FrontMatter,
+		// Elements:    elements,
 	}, nil
 }
 
-type substitutionContext struct {
-	attributes types.AttributesWithOverrides
+type substitutionContextDeprecated struct {
+	attributes types.AttributesWithOverrides // TODO: replace with types.Attributes?
 	config     configuration.Configuration
 }
 
+func newSubstitutionContextDeprecated(config configuration.Configuration) substitutionContextDeprecated {
+	return substitutionContextDeprecated{
+		attributes: types.AttributesWithOverrides{
+			Content:   types.Attributes{},
+			Overrides: config.AttributeOverrides,
+			Counters:  map[string]interface{}{},
+		},
+		config: config,
+	}
+}
+
 // applySubstitutions applies the substitutions on paragraphs and delimited blocks (including when in continued list elements)
-func applySubstitutions(ctx substitutionContext, elements []interface{}) ([]interface{}, error) {
+func applySubstitutions(ctx substitutionContextDeprecated, elements []interface{}) ([]interface{}, error) {
 	if len(elements) == 0 {
 		return nil, nil
 	}
@@ -219,7 +222,7 @@ func (f funcs) remove(other string) funcs {
 	return f
 }
 
-func applySubstitutionsOnElements(ctx substitutionContext, elements []interface{}, subs []elementsSubstitution) ([]interface{}, error) {
+func applySubstitutionsOnElements(ctx substitutionContextDeprecated, elements []interface{}, subs []elementsSubstitution) ([]interface{}, error) {
 	// apply all the substitutions on elements that need to be processed
 	for i, element := range elements {
 		switch e := element.(type) {
@@ -244,7 +247,7 @@ func applySubstitutionsOnElements(ctx substitutionContext, elements []interface{
 	return elements, nil
 }
 
-func applySubstitutionsOnLines(ctx substitutionContext, lines [][]interface{}, subs []elementsSubstitution) ([][]interface{}, error) {
+func applySubstitutionsOnLines(ctx substitutionContextDeprecated, lines [][]interface{}, subs []elementsSubstitution) ([][]interface{}, error) {
 	var err error
 	for _, sub := range subs {
 		if lines, err = sub(ctx, lines); err != nil {
@@ -254,7 +257,7 @@ func applySubstitutionsOnLines(ctx substitutionContext, lines [][]interface{}, s
 	return lines, nil
 }
 
-func applySubstitutionsOnMarkdownQuoteBlock(ctx substitutionContext, b types.MarkdownQuoteBlock) (types.MarkdownQuoteBlock, error) {
+func applySubstitutionsOnMarkdownQuoteBlock(ctx substitutionContextDeprecated, b types.MarkdownQuoteBlock) (types.MarkdownQuoteBlock, error) {
 	funcs := []elementsSubstitution{
 		substituteInlinePassthrough,
 		substituteSpecialCharacters,
@@ -310,7 +313,7 @@ func extractMarkdownQuoteAttribution(lines [][]interface{}) ([][]interface{}, st
 // ----------------------------------------------------------------------------
 
 // applies the elements and attributes substitutions on the given section title.
-func applySubstitutionsOnSection(ctx substitutionContext, s types.Section) (types.Section, error) {
+func applySubstitutionsOnSection(ctx substitutionContextDeprecated, s types.Section) (types.Section, error) {
 	elements := [][]interface{}{s.Title} // wrap to match the `elementsSubstitution` arg type
 	subs := []elementsSubstitution{
 		substituteInlinePassthrough,
@@ -343,7 +346,7 @@ func applySubstitutionsOnSection(ctx substitutionContext, s types.Section) (type
 // ----------------------------------------------------------------------------
 
 // applies the elements and attributes substitutions on the given image block.
-func applySubstitutionsOnLocation(ctx substitutionContext, l types.Location) (types.Location, error) {
+func applySubstitutionsOnLocation(ctx substitutionContextDeprecated, l types.Location) (types.Location, error) {
 	elements := [][]interface{}{l.Path} // wrap to match the `elementsSubstitution` arg type
 	subs := []elementsSubstitution{substituteAttributes}
 	var err error
@@ -362,7 +365,7 @@ func applySubstitutionsOnLocation(ctx substitutionContext, l types.Location) (ty
 // ----------------------------------------------------------------------------
 
 // includes a call to `elementsSubstitution` with some post-processing on the result
-var substituteAttributes = func(ctx substitutionContext, lines [][]interface{}) ([][]interface{}, error) {
+var substituteAttributes = func(ctx substitutionContextDeprecated, lines [][]interface{}) ([][]interface{}, error) {
 	lines, err := newElementsSubstitution("AttributeSubs")(ctx, lines) // TODO: add a `substituteAttributes` var?
 	if err != nil {
 		return nil, err
@@ -392,10 +395,10 @@ var (
 	substituteCallouts          = newElementsSubstitution("CalloutSubs")
 )
 
-type elementsSubstitution func(ctx substitutionContext, lines [][]interface{}) ([][]interface{}, error)
+type elementsSubstitution func(ctx substitutionContextDeprecated, lines [][]interface{}) ([][]interface{}, error)
 
 func newElementsSubstitution(rule string) elementsSubstitution {
-	return func(ctx substitutionContext, lines [][]interface{}) ([][]interface{}, error) {
+	return func(ctx substitutionContextDeprecated, lines [][]interface{}) ([][]interface{}, error) {
 		log.Debugf("applying the '%s' rule on elements", rule)
 		placeholders := &placeholders{
 			seq:      0,
@@ -529,7 +532,7 @@ func serializeLines(lines [][]interface{}, placeholders *placeholders) string {
 	return result.String()
 }
 
-func splitLines(_ substitutionContext, lines [][]interface{}) ([][]interface{}, error) {
+func splitLines(_ substitutionContextDeprecated, lines [][]interface{}) ([][]interface{}, error) {
 	result := make([][]interface{}, 0, len(lines))
 	for _, line := range lines {
 		pendingLine := []interface{}{}
@@ -565,7 +568,7 @@ func splitLines(_ substitutionContext, lines [][]interface{}) ([][]interface{}, 
 // Attribute substitutions
 // ----------------------------------------------------------------------------
 
-func applyAttributeSubstitutionsOnElements(ctx substitutionContext, elements []interface{}) ([]interface{}, error) {
+func applyAttributeSubstitutionsOnElements(ctx substitutionContextDeprecated, elements []interface{}) ([]interface{}, error) {
 	result := make([]interface{}, len(elements)) // maximum capacity should exceed initial input
 	for i, element := range elements {
 		e, err := applyAttributeSubstitutionsOnElement(ctx, element)
@@ -577,7 +580,7 @@ func applyAttributeSubstitutionsOnElements(ctx substitutionContext, elements []i
 	return result, nil
 }
 
-func applyAttributeSubstitutionsOnAttributes(ctx substitutionContext, attributes types.Attributes) (types.Attributes, error) {
+func applyAttributeSubstitutionsOnAttributes(ctx substitutionContextDeprecated, attributes types.Attributes) (types.Attributes, error) {
 	for key, value := range attributes {
 		switch key {
 		case types.AttrRoles, types.AttrOptions: // multi-value attributes
@@ -615,7 +618,7 @@ func applyAttributeSubstitutionsOnAttributes(ctx substitutionContext, attributes
 	return attributes, nil
 }
 
-func applyAttributeSubstitutionsOnLines(ctx substitutionContext, lines [][]interface{}) ([][]interface{}, error) {
+func applyAttributeSubstitutionsOnLines(ctx substitutionContextDeprecated, lines [][]interface{}) ([][]interface{}, error) {
 	for i, line := range lines {
 		line, err := applyAttributeSubstitutionsOnElements(ctx, line)
 		if err != nil {
@@ -626,7 +629,7 @@ func applyAttributeSubstitutionsOnLines(ctx substitutionContext, lines [][]inter
 	return lines, nil
 }
 
-func applyAttributeSubstitutionsOnElement(ctx substitutionContext, element interface{}) (interface{}, error) {
+func applyAttributeSubstitutionsOnElement(ctx substitutionContextDeprecated, element interface{}) (interface{}, error) {
 	var err error
 	switch e := element.(type) {
 	case types.AttributeReset:
@@ -676,7 +679,7 @@ func applyAttributeSubstitutionsOnElement(ctx substitutionContext, element inter
 // and the error.  The extra boolean here is to fit the calling expectations of our caller.  This function was
 // factored out of a case from applyAttributeSubstitutionsOnElement in order to reduce the complexity of that
 // function, but otherwise it should have no callers.
-func applyCounterSubstitution(ctx substitutionContext, c types.CounterSubstitution) (interface{}, error) {
+func applyCounterSubstitution(ctx substitutionContextDeprecated, c types.CounterSubstitution) (interface{}, error) {
 	counter := ctx.attributes.Counters[c.Name]
 	if counter == nil {
 		counter = 0

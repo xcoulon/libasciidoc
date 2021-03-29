@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("admonition blocks", func() {
 
-	Context("draft documents", func() {
+	Context("raw documents", func() {
 
 		Context("delimited blocks", func() {
 
@@ -19,19 +19,17 @@ var _ = Describe("admonition blocks", func() {
 ====
 foo
 ====`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ExampleBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle: types.Note,
-							},
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "foo",
-											},
+				expected := types.DocumentFragments{
+					types.ExampleBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle: types.Note,
+						},
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "foo",
 										},
 									},
 								},
@@ -39,7 +37,7 @@ foo
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("as admonition", func() {
@@ -50,29 +48,27 @@ multiple
 paragraphs
 ----
 `
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Attributes: types.Attributes{
-								types.AttrStyle: types.Note,
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "multiple",
-									},
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Attributes: types.Attributes{
+							types.AttrStyle: types.Note,
+						},
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "multiple",
 								},
-								{},
-								{
-									types.StringElement{
-										Content: "paragraphs",
-									},
+							},
+							{},
+							{
+								types.StringElement{
+									Content: "paragraphs",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

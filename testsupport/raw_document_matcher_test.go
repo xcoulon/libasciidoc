@@ -15,33 +15,21 @@ import (
 var _ = Describe("raw document matcher", func() {
 
 	// given
-	expected := types.RawDocument{
-		Elements: []interface{}{
-			types.Paragraph{
-				Lines: [][]interface{}{
-					{
-						types.StringElement{
-							Content: "a paragraph.",
-						},
-					},
-				},
+	expected := types.DocumentFragments{
+		types.InlineElements{
+			types.StringElement{
+				Content: "a paragraph.",
 			},
 		},
 	}
-	matcher := testsupport.MatchRawDocument(expected)
+	matcher := testsupport.MatchDocumentFragments(expected)
 
 	It("should match", func() {
 		// given
-		actual := types.RawDocument{
-			Elements: []interface{}{
-				types.Paragraph{
-					Lines: [][]interface{}{
-						{
-							types.StringElement{
-								Content: "a paragraph.",
-							},
-						},
-					},
+		actual := types.DocumentFragments{
+			types.InlineElements{
+				types.StringElement{
+					Content: "a paragraph.",
 				},
 			},
 		}
@@ -54,16 +42,10 @@ var _ = Describe("raw document matcher", func() {
 
 	It("should not match", func() {
 		// given
-		actual := types.RawDocument{
-			Elements: []interface{}{
-				types.Paragraph{
-					Lines: [][]interface{}{
-						{
-							types.StringElement{
-								Content: "another paragraph.", // different content
-							},
-						},
-					},
+		actual := types.DocumentFragments{
+			types.InlineElements{
+				types.StringElement{
+					Content: "another paragraph.", // different content
 				},
 			},
 		}
@@ -74,8 +56,8 @@ var _ = Describe("raw document matcher", func() {
 		Expect(result).To(BeFalse())
 		dmp := diffmatchpatch.New()
 		diffs := dmp.DiffMain(spew.Sdump(actual), spew.Sdump(expected), true)
-		Expect(matcher.FailureMessage(actual)).To(Equal(fmt.Sprintf("expected raw documents to match:\n%s", dmp.DiffPrettyText(diffs))))
-		Expect(matcher.NegatedFailureMessage(actual)).To(Equal(fmt.Sprintf("expected raw documents not to match:\n%s", dmp.DiffPrettyText(diffs))))
+		Expect(matcher.FailureMessage(actual)).To(Equal(fmt.Sprintf("expected document fragments to match:\n%s", dmp.DiffPrettyText(diffs))))
+		Expect(matcher.NegatedFailureMessage(actual)).To(Equal(fmt.Sprintf("expected document fragments not to match:\n%s", dmp.DiffPrettyText(diffs))))
 	})
 
 	It("should return error when invalid type is input", func() {

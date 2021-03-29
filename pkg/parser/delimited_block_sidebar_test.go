@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("sidebar blocks", func() {
 
-	Context("draft documents", func() {
+	Context("raw documents", func() {
 
 		Context("delimited blocks", func() {
 
@@ -18,27 +18,25 @@ var _ = Describe("sidebar blocks", func() {
 				source := `****
 some *bold* content
 ****`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.SidebarBlock{
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "some ",
-											},
-											types.QuotedText{
-												Kind: types.SingleQuoteBold,
-												Elements: []interface{}{
-													types.StringElement{
-														Content: "bold",
-													},
+				expected := types.DocumentFragments{
+					types.SidebarBlock{
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "some ",
+										},
+										types.QuotedText{
+											Kind: types.SingleQuoteBold,
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "bold",
 												},
 											},
-											types.StringElement{
-												Content: " content",
-											},
+										},
+										types.StringElement{
+											Content: " content",
 										},
 									},
 								},
@@ -46,7 +44,7 @@ some *bold* content
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with title, paragraph and example block", func() {
@@ -59,47 +57,45 @@ foo
 bar
 ====
 ****`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.SidebarBlock{
-							Attributes: types.Attributes{
-								types.AttrTitle: "a title",
-							},
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "some ",
-											},
-											types.QuotedText{
-												Kind: types.SingleQuoteBold,
-												Elements: []interface{}{
-													types.StringElement{
-														Content: "bold",
-													},
+				expected := types.DocumentFragments{
+					types.SidebarBlock{
+						Attributes: types.Attributes{
+							types.AttrTitle: "a title",
+						},
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "some ",
+										},
+										types.QuotedText{
+											Kind: types.SingleQuoteBold,
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "bold",
 												},
 											},
-											types.StringElement{
-												Content: " content",
-											},
+										},
+										types.StringElement{
+											Content: " content",
 										},
 									},
 								},
-								types.BlankLine{},
-								types.ExampleBlock{
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "foo",
-													},
+							},
+							types.BlankLine{},
+							types.ExampleBlock{
+								Elements: []interface{}{
+									types.Paragraph{
+										Lines: [][]interface{}{
+											{
+												types.StringElement{
+													Content: "foo",
 												},
-												{
-													types.StringElement{
-														Content: "bar",
-													},
+											},
+											{
+												types.StringElement{
+													Content: "bar",
 												},
 											},
 										},
@@ -109,7 +105,7 @@ bar
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with title, paragraph and source block", func() {
@@ -122,45 +118,43 @@ foo
 bar
 ----
 ****`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.SidebarBlock{
-							Attributes: types.Attributes{
-								types.AttrTitle: "a title",
-							},
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "some ",
-											},
-											types.QuotedText{
-												Kind: types.SingleQuoteBold,
-												Elements: []interface{}{
-													types.StringElement{
-														Content: "bold",
-													},
+				expected := types.DocumentFragments{
+					types.SidebarBlock{
+						Attributes: types.Attributes{
+							types.AttrTitle: "a title",
+						},
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "some ",
+										},
+										types.QuotedText{
+											Kind: types.SingleQuoteBold,
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "bold",
 												},
 											},
-											types.StringElement{
-												Content: " content",
-											},
+										},
+										types.StringElement{
+											Content: " content",
 										},
 									},
 								},
-								types.BlankLine{},
-								types.ListingBlock{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "foo",
-											},
+							},
+							types.BlankLine{},
+							types.ListingBlock{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "foo",
 										},
-										{
-											types.StringElement{
-												Content: "bar",
-											},
+									},
+									{
+										types.StringElement{
+											Content: "bar",
 										},
 									},
 								},
@@ -168,7 +162,7 @@ bar
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

@@ -19,15 +19,15 @@ func (r *sgmlRenderer) renderParagraph(ctx *renderer.Context, p types.Paragraph)
 	}
 	if k, ok := p.Attributes[types.AttrStyle].(string); ok {
 		switch k {
-		case types.Example:
+		case string(types.Example):
 			return r.renderExampleParagraph(ctx, p)
-		case types.Listing:
+		case string(types.Listing):
 			return r.renderListingParagraph(ctx, p)
-		case types.Source:
+		case string(types.Source):
 			return r.renderSourceParagraph(ctx, p)
-		case types.Verse:
+		case string(types.Verse):
 			return r.renderVerseParagraph(ctx, p)
-		case types.Quote:
+		case string(types.Quote):
 			return r.renderQuoteParagraph(ctx, p)
 		case types.Tip, types.Note, types.Important, types.Warning, types.Caution:
 			return r.renderAdmonitionParagraph(ctx, p)

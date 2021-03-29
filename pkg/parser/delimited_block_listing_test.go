@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("listing blocks", func() {
 
-	Context("draft documents", func() {
+	Context("raw documents", func() {
 
 		Context("delimited blocks", func() {
 
@@ -18,35 +18,31 @@ var _ = Describe("listing blocks", func() {
 				source := `----
 some *listing* code
 ----`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some *listing* code",
-									},
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "some *listing* code",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with no line", func() {
 				source := `----
 ----`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Lines: [][]interface{}{
-								{},
-							},
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Lines: [][]interface{}{
+							{},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with multiple lines alone", func() {
@@ -56,31 +52,29 @@ with an empty line
 
 in the middle
 ----`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some listing code",
-									},
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "some listing code",
 								},
-								{
-									types.StringElement{
-										Content: "with an empty line",
-									},
+							},
+							{
+								types.StringElement{
+									Content: "with an empty line",
 								},
-								{},
-								{
-									types.StringElement{
-										Content: "in the middle",
-									},
+							},
+							{},
+							{
+								types.StringElement{
+									Content: "in the middle",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with unrendered list", func() {
@@ -89,30 +83,28 @@ in the middle
 * listing 
 * content
 ----`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "* some ",
-									},
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "* some ",
 								},
-								{
-									types.StringElement{
-										Content: "* listing ",
-									},
+							},
+							{
+								types.StringElement{
+									Content: "* listing ",
 								},
-								{
-									types.StringElement{
-										Content: "* content",
-									},
+							},
+							{
+								types.StringElement{
+									Content: "* content",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with multiple lines then a paragraph", func() {
@@ -123,40 +115,38 @@ with an empty line
 in the middle
 ----
 then a normal paragraph.`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some listing code",
-									},
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "some listing code",
 								},
-								{
-									types.StringElement{
-										Content: "with an empty line",
-									},
+							},
+							{
+								types.StringElement{
+									Content: "with an empty line",
 								},
-								{},
-								{
-									types.StringElement{
-										Content: "in the middle",
-									},
+							},
+							{},
+							{
+								types.StringElement{
+									Content: "in the middle",
 								},
 							},
 						},
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "then a normal paragraph.",
-									},
+					},
+					types.Paragraph{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "then a normal paragraph.",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("after a paragraph", func() {
@@ -165,49 +155,45 @@ then a normal paragraph.`
 ----
 some listing code
 ----`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a paragraph.",
-									},
+				expected := types.DocumentFragments{
+					types.Paragraph{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "a paragraph.",
 								},
 							},
 						},
-						types.BlankLine{}, // blankline is required between paragraph and the next block
-						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some listing code",
-									},
+					},
+					types.BlankLine{}, // blankline is required between paragraph and the next block
+					types.ListingBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "some listing code",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with unclosed delimiter", func() {
 				source := `----
 End of file here.`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "End of file here.",
-									},
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "End of file here.",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with single callout", func() {
@@ -215,38 +201,36 @@ End of file here.`
 <import> <1>
 ----
 <1> an import`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.SpecialCharacter{
-										Name: "<",
-									},
-									types.StringElement{
-										Content: "import",
-									},
-									types.SpecialCharacter{
-										Name: ">",
-									},
-									types.StringElement{
-										Content: " ",
-									},
-									types.Callout{
-										Ref: 1,
-									},
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Lines: [][]interface{}{
+							{
+								types.SpecialCharacter{
+									Name: "<",
+								},
+								types.StringElement{
+									Content: "import",
+								},
+								types.SpecialCharacter{
+									Name: ">",
+								},
+								types.StringElement{
+									Content: " ",
+								},
+								types.Callout{
+									Ref: 1,
 								},
 							},
 						},
-						types.CalloutListItem{
-							Ref: 1,
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "an import",
-											},
+					},
+					types.CalloutListItem{
+						Ref: 1,
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "an import",
 										},
 									},
 								},
@@ -254,7 +238,7 @@ End of file here.`
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with multiple callouts on different lines", func() {
@@ -265,52 +249,50 @@ func foo() {} <2>
 ----
 <1> an import
 <2> a func`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "import ",
-									},
-									types.Callout{
-										Ref: 1,
-									},
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "import ",
 								},
-								{},
-								{
-									types.StringElement{
-										Content: "func foo() {} ",
-									},
-									types.Callout{
-										Ref: 2,
-									},
+								types.Callout{
+									Ref: 1,
+								},
+							},
+							{},
+							{
+								types.StringElement{
+									Content: "func foo() {} ",
+								},
+								types.Callout{
+									Ref: 2,
 								},
 							},
 						},
-						types.CalloutListItem{
-							Ref: 1,
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "an import",
-											},
+					},
+					types.CalloutListItem{
+						Ref: 1,
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "an import",
 										},
 									},
 								},
 							},
 						},
-						types.CalloutListItem{
-							Ref: 2,
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "a func",
-											},
+					},
+					types.CalloutListItem{
+						Ref: 2,
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "a func",
 										},
 									},
 								},
@@ -318,7 +300,7 @@ func foo() {} <2>
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with multiple callouts on same line", func() {
@@ -331,86 +313,84 @@ func foo() {} <4>
 <2> a single import
 <3> a single basic import
 <4> a func`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "import ",
-									},
-									types.Callout{
-										Ref: 1,
-									},
-									types.Callout{
-										Ref: 2,
-									},
-									types.Callout{
-										Ref: 3,
-									},
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "import ",
 								},
-								{},
-								{
-									types.StringElement{
-										Content: "func foo() {} ",
-									},
-									types.Callout{
-										Ref: 4,
-									},
+								types.Callout{
+									Ref: 1,
+								},
+								types.Callout{
+									Ref: 2,
+								},
+								types.Callout{
+									Ref: 3,
+								},
+							},
+							{},
+							{
+								types.StringElement{
+									Content: "func foo() {} ",
+								},
+								types.Callout{
+									Ref: 4,
 								},
 							},
 						},
-						types.CalloutListItem{
-							Ref: 1,
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "an import",
-											},
+					},
+					types.CalloutListItem{
+						Ref: 1,
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "an import",
 										},
 									},
 								},
 							},
 						},
-						types.CalloutListItem{
-							Ref: 2,
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "a single import",
-											},
+					},
+					types.CalloutListItem{
+						Ref: 2,
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "a single import",
 										},
 									},
 								},
 							},
 						},
-						types.CalloutListItem{
-							Ref: 3,
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "a single basic import",
-											},
+					},
+					types.CalloutListItem{
+						Ref: 3,
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "a single basic import",
 										},
 									},
 								},
 							},
 						},
-						types.CalloutListItem{
-							Ref: 4,
-							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "a func",
-											},
+					},
+					types.CalloutListItem{
+						Ref: 4,
+						Elements: []interface{}{
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "a func",
 										},
 									},
 								},
@@ -418,7 +398,7 @@ func foo() {} <4>
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with invalid callout", func() {
@@ -426,47 +406,45 @@ func foo() {} <4>
 import <a>
 ----
 <a> an import`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "import ",
-									},
-									types.SpecialCharacter{
-										Name: "<",
-									},
-									types.StringElement{
-										Content: "a",
-									},
-									types.SpecialCharacter{
-										Name: ">",
-									},
+				expected := types.DocumentFragments{
+					types.ListingBlock{
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "import ",
+								},
+								types.SpecialCharacter{
+									Name: "<",
+								},
+								types.StringElement{
+									Content: "a",
+								},
+								types.SpecialCharacter{
+									Name: ">",
 								},
 							},
 						},
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.SpecialCharacter{
-										Name: "<",
-									},
-									types.StringElement{
-										Content: "a",
-									},
-									types.SpecialCharacter{
-										Name: ">",
-									},
-									types.StringElement{
-										Content: " an import",
-									},
+					},
+					types.Paragraph{
+						Lines: [][]interface{}{
+							{
+								types.SpecialCharacter{
+									Name: "<",
+								},
+								types.StringElement{
+									Content: "a",
+								},
+								types.SpecialCharacter{
+									Name: ">",
+								},
+								types.StringElement{
+									Content: " an import",
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 
 		})
@@ -476,24 +454,22 @@ import <a>
 			It("with single rich line", func() {
 				source := `[listing]
 some *listing* content`
-				expected := types.DraftDocument{
-					Elements: []interface{}{
-						types.Paragraph{
-							Attributes: types.Attributes{
-								types.AttrStyle: types.Listing,
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some *listing* content", // no quote substitution
-									},
+				expected := types.DocumentFragments{
+					types.Paragraph{
+						Attributes: types.Attributes{
+							types.AttrStyle: types.Listing,
+						},
+						Lines: [][]interface{}{
+							{
+								types.StringElement{
+									Content: "some *listing* content", // no quote substitution
 								},
 							},
 						},
 					},
 				}
 
-				Expect(ParseDraftDocument(source)).To(MatchDraftDocument(expected))
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

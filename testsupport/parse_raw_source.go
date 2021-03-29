@@ -7,8 +7,8 @@ import (
 	"github.com/bytesparadise/libasciidoc/pkg/parser"
 )
 
-// ParseRawDocument parses the actual source with the options
-func ParseRawDocument(actual string, options ...interface{}) (interface{}, error) {
+// ParseRawSource parses the actual source with the options
+func ParseRawSource(actual string, options ...interface{}) (interface{}, error) {
 	r := strings.NewReader(actual)
 	c := &rawDocumentParserConfig{
 		filename: "test.adoc",
@@ -23,7 +23,7 @@ func ParseRawDocument(actual string, options ...interface{}) (interface{}, error
 		}
 	}
 	config := configuration.NewConfiguration(configuration.WithFilename(c.filename))
-	return parser.ParseRawDocument(r, config, parserOptions...)
+	return parser.ParseDocumentFragments(r, config, parserOptions...)
 }
 
 type rawDocumentParserConfig struct {

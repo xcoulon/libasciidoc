@@ -14,81 +14,81 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-// RawDocument document with a front-matter and raw blocks (will be refined in subsequent processing phases)
-type RawDocument struct {
-	FrontMatter FrontMatter
-	Elements    []interface{}
-}
+// // RawDocument document with a front-matter and raw blocks (will be refined in subsequent processing phases)
+// type RawDocument struct {
+// 	FrontMatter FrontMatter
+// 	Elements    []interface{}
+// }
 
-// NewRawDocument initializes a new `RawDocument` from the given lines
-func NewRawDocument(frontMatter interface{}, elements []interface{}) (RawDocument, error) {
-	// log.Debugf("new RawDocument with %d block element(s)", len(elements))
-	result := RawDocument{
-		Elements: elements,
-	}
-	if fm, ok := frontMatter.(FrontMatter); ok {
-		result.FrontMatter = fm
-	}
-	return result, nil
-}
+// // NewRawDocument initializes a new `RawDocument` from the given lines
+// func NewRawDocument(frontMatter interface{}, elements []interface{}) (RawDocument, error) {
+// 	// log.Debugf("new RawDocument with %d block element(s)", len(elements))
+// 	result := RawDocument{
+// 		Elements: elements,
+// 	}
+// 	if fm, ok := frontMatter.(FrontMatter); ok {
+// 		result.FrontMatter = fm
+// 	}
+// 	return result, nil
+// }
 
 // Attributes returns the document attributes on the top-level section
 // and all the document attribute declarations at the top of the document only.
-func (d RawDocument) Attributes() Attributes {
-	result := Attributes{}
-elements:
-	for _, b := range d.Elements {
-		switch b := b.(type) {
-		case Section:
-			if b.Level == 0 {
-				// also, expand document authors and revision
-				if authors, ok := b.Attributes[AttrAuthors].([]DocumentAuthor); ok {
-					// move to the Document attributes
-					result.SetAll(expandAuthors(authors))
-					delete(b.Attributes, AttrAuthors)
-				}
-				// also, expand document authors and revision
-				if revision, ok := b.Attributes[AttrRevision].(DocumentRevision); ok {
-					// move to the Document attributes
-					result.SetAll(expandRevision(revision))
-					delete(b.Attributes, AttrRevision)
-				}
-				continue // allow to continue if the section is level 0
-			}
-			break elements // otherwise, just stop
-		case AttributeDeclaration:
-			result.Set(b.Name, b.Value)
-		default:
-			break elements
-		}
-	}
-	// log.Debugf("document attributes: %+v", result)
-	return result
-}
+// func (d RawDocument) Attributes() Attributes {
+// 	result := Attributes{}
+// elements:
+// 	for _, b := range d.Elements {
+// 		switch b := b.(type) {
+// 		case Section:
+// 			if b.Level == 0 {
+// 				// also, expand document authors and revision
+// 				if authors, ok := b.Attributes[AttrAuthors].([]DocumentAuthor); ok {
+// 					// move to the Document attributes
+// 					result.SetAll(expandAuthors(authors))
+// 					delete(b.Attributes, AttrAuthors)
+// 				}
+// 				// also, expand document authors and revision
+// 				if revision, ok := b.Attributes[AttrRevision].(DocumentRevision); ok {
+// 					// move to the Document attributes
+// 					result.SetAll(expandRevision(revision))
+// 					delete(b.Attributes, AttrRevision)
+// 				}
+// 				continue // allow to continue if the section is level 0
+// 			}
+// 			break elements // otherwise, just stop
+// 		case AttributeDeclaration:
+// 			result.Set(b.Name, b.Value)
+// 		default:
+// 			break elements
+// 		}
+// 	}
+// 	// log.Debugf("document attributes: %+v", result)
+// 	return result
+// }
 
-// RawSection a document section (when processing file inclusions)
-// We only care about the level here
-type RawSection struct {
-	Level   int
-	Title   string
-	RawText string
-}
+// // RawSection a document section (when processing file inclusions)
+// // We only care about the level here
+// type RawSection struct {
+// 	Level   int
+// 	Title   string
+// 	RawText string
+// }
 
-// NewRawSection returns a new RawSection
-func NewRawSection(level int, title string) (RawSection, error) {
-	// log.Debugf("new rawsection: '%s' (%d)", title, level)
-	return RawSection{
-		Level: level,
-		Title: title,
-	}, nil
-}
+// // NewRawSection returns a new RawSection
+// func NewRawSection(level int, title string) (RawSection, error) {
+// 	// log.Debugf("new rawsection: '%s' (%d)", title, level)
+// 	return RawSection{
+// 		Level: level,
+// 		Title: title,
+// 	}, nil
+// }
 
-var _ Stringer = RawSection{}
+// var _ Stringer = RawSection{}
 
-// Stringify returns the string representation of this section, as it existed in the source document
-func (s RawSection) Stringify() string {
-	return strings.Repeat("=", s.Level+1) + " " + s.Title
-}
+// // Stringify returns the string representation of this section, as it existed in the source document
+// func (s RawSection) Stringify() string {
+// 	return strings.Repeat("=", s.Level+1) + " " + s.Title
+// }
 
 // ------------------------------------------
 // Lines
@@ -199,9 +199,52 @@ var defaultLiteralBlockSubstitutions = defaultSubstitutionsForBlockLines
 // other blocks
 var defaultPassthroughBlockSubstitutions = []string{}
 
+// ----------------------------------------------------------------
+// Document Header: a section 0 with optional authors and revision
+// ----------------------------------------------------------------
+
+// NewDocumentHeader initializes a new Section with level 0 which can have authors and a revision, among other attributes
+func NewDocumentHeader(fragments []interface{}) (DocumentFragments, error) {
+	result := make([]interface{}, 0, len(fragments)) // heuristic capacity
+	for _, fragment := range fragments {
+		switch f := fragment.(type) {
+		case []interface{}:
+			result = append(result, f...)
+		case interface{}:
+			result = append(result, f)
+			// default: nil (and excluded)
+		}
+	}
+	return result, nil
+}
+
+// ----------------------------------------------------
+// Document fragments: content parsed line by line
+// ----------------------------------------------------
+
+type DocumentFragments []interface{}
+
+func NewDocumentFragments(frontmatter, header interface{}, fragments interface{}) (DocumentFragments, error) {
+	var result []interface{}
+	documentHeader, hasHeader := header.(DocumentFragments)
+	documentFragments, hasFragments := fragments.([]interface{})
+	result = make([]interface{}, 0, 1+len(documentHeader)+len(documentFragments)) // max capacity
+	if frontmatter != nil {
+		result = append(result, frontmatter)
+	}
+	if hasHeader {
+		result = append(result, documentHeader...)
+	}
+	if hasFragments {
+		result = append(result, documentFragments...)
+	}
+	return result, nil
+}
+
 // ------------------------------------------
 // Draft Document: document in which
 // all substitutions have been applied
+// DEPRECATED
 // ------------------------------------------
 
 // DraftDocument the linear-level structure for a document
@@ -377,10 +420,10 @@ type AttributeDeclaration struct {
 
 // NewAttributeDeclaration initializes a new AttributeDeclaration with the given name and optional value
 func NewAttributeDeclaration(name string, value interface{}) (AttributeDeclaration, error) {
-	if log.IsLevelEnabled(log.DebugLevel) {
-		// log.Debugf("new AttributeDeclaration: '%s'", name)
-		spew.Fdump(log.StandardLogger().Out, value)
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	// log.Debugf("new AttributeDeclaration: '%s'", name)
+	// 	spew.Fdump(log.StandardLogger().Out, value)
+	// }
 	return AttributeDeclaration{
 		Name:  name,
 		Value: value,
@@ -497,38 +540,6 @@ func NewStandaloneAttributes(attributes interface{}) (StandaloneAttributes, erro
 }
 
 // ------------------------------------------
-// Element kinds
-// ------------------------------------------
-
-const (
-	// Fenced a fenced block
-	Fenced = "fenced"
-	// Listing a listing block
-	Listing = "listing"
-	// Example an example block
-	Example = "example"
-	// Comment a comment block
-	Comment = "comment"
-	// Quote a quote block
-	Quote = "quote"
-	// MarkdownQuote a quote block in the Markdown style
-	MarkdownQuote = "markdown-quote"
-	// Verse a verse block
-	Verse = "verse"
-	// Sidebar a sidebar block
-	Sidebar = "sidebar"
-	// Literal a literal block
-	Literal = "literal"
-	// Source a source block
-	Source = "source"
-	// Passthrough a passthrough block
-	Passthrough = "pass"
-
-	// AttrSourceBlockOption the option set on a source block, using the `source%<option>` attribute
-	AttrSourceBlockOption = "source-option" // DEPRECATED
-)
-
-// ------------------------------------------
 // Table of Contents
 // ------------------------------------------
 
@@ -621,6 +632,7 @@ func NewYamlFrontMatter(content string) (FrontMatter, error) {
 	if err != nil {
 		return FrontMatter{}, errors.Wrapf(err, "failed to parse yaml content in front-matter of document")
 	}
+
 	// log.Debugf("new FrontMatter with attributes: %+v", attributes)
 	return FrontMatter{Content: attributes}, nil
 }
@@ -638,19 +650,19 @@ type Section struct {
 }
 
 // NewSection initializes a new `Section` from the given section title and elements
-func NewSection(level int, title []interface{}, ids []interface{}, attributes interface{}) (Section, error) {
-	attrs := toAttributes(attributes)
-	// multiple IDs can be defined (by mistake), but only the last one is used
-	attrs = attrs.SetAll(ids)
-	// also, set the `AttrCustomID` flag if an ID was set
-	if _, exists := attrs[AttrID]; exists {
-		attrs[AttrCustomID] = true
-	}
+func NewSection(level int, title []interface{}, ids []interface{}) (Section, error) {
+	// attrs := toAttributes(attributes)
+	// // multiple IDs can be defined (by mistake), but only the last one is used
+	// attrs = attrs.SetAll(ids)
+	// // also, set the `AttrCustomID` flag if an ID was set
+	// if _, exists := attrs[AttrID]; exists {
+	// 	attrs[AttrCustomID] = true
+	// }
 	return Section{
-		Level:      level,
-		Attributes: attrs,
-		Title:      title,
-		Elements:   []interface{}{},
+		Level: level,
+		// Attributes: attrs,
+		Title:    title,
+		Elements: []interface{}{},
 	}, nil
 }
 
@@ -682,10 +694,10 @@ func (s Section) ReplaceAttributes(attributes Attributes) interface{} {
 
 // ResolveID resolves/updates the "ID" attribute in the section (in case the title changed after some document attr substitution)
 func (s Section) ResolveID(docAttributes AttributesWithOverrides) (Section, error) {
-	if log.IsLevelEnabled(log.DebugLevel) {
-		// log.Debugf("section attributes:")
-		spew.Fdump(log.StandardLogger().Out, s.Attributes)
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debugf("section attributes:")
+	// 	spew.Fdump(log.StandardLogger().Out, s.Attributes)
+	// }
 
 	if !s.Attributes.Has(AttrID) {
 		// log.Debugf("resolving section id")
@@ -717,21 +729,6 @@ func (s Section) SubstituteFootnotes(notes *Footnotes) interface{} {
 		}
 	}
 	return s
-}
-
-// NewDocumentHeader initializes a new Section with level 0 which can have authors and a revision, among other attributes
-func NewDocumentHeader(title []interface{}, authors interface{}, revision interface{}) (Section, error) {
-	section, err := NewSection(0, title, nil, nil)
-	if err != nil {
-		return Section{}, err
-	}
-	if authors, ok := authors.([]DocumentAuthor); ok {
-		section.Attributes = section.Attributes.Set(AttrAuthors, authors)
-	}
-	if revision, ok := revision.(DocumentRevision); ok {
-		section.Attributes = section.Attributes.Set(AttrRevision, revision)
-	}
-	return section, nil
 }
 
 // expandAuthors returns a map of attributes for the given authors.
@@ -1486,17 +1483,6 @@ func (p Paragraph) SubstituteFootnotes(notes *Footnotes) interface{} {
 	return p
 }
 
-// NewAdmonitionParagraph returns a new Paragraph with an extra admonition attribute
-func NewAdmonitionParagraph(lines []interface{}, admonitionKind string, attributes interface{}) (Paragraph, error) {
-	// log.Debugf("new admonition paragraph")
-	p, err := NewParagraph(lines, attributes)
-	if err != nil {
-		return Paragraph{}, err
-	}
-	p.Attributes = p.Attributes.Set(AttrStyle, admonitionKind)
-	return p, nil
-}
-
 // ------------------------------------------
 // Admonitions
 // ------------------------------------------
@@ -1516,8 +1502,25 @@ const (
 	Unknown = ""
 )
 
+// NewAdmonitionParagraph returns a new Paragraph with an extra admonition attribute
+func NewAdmonitionParagraph(lines []interface{}, admonitionKind string, attributes interface{}) (Paragraph, error) {
+	// log.Debugf("new admonition paragraph")
+	p, err := NewParagraph(lines, attributes)
+	if err != nil {
+		return Paragraph{}, err
+	}
+	p.Attributes = p.Attributes.Set(AttrStyle, admonitionKind)
+	return p, nil
+}
+
+// ------------------------------------------
+// Inline Elements
+// ------------------------------------------
+
+type InlineElements []interface{}
+
 // NewInlineElements initializes a new `InlineElements` from the given values
-func NewInlineElements(elements ...interface{}) ([]interface{}, error) {
+func NewInlineElements(elements ...interface{}) (InlineElements, error) {
 	return Merge(elements...), nil
 }
 
@@ -2097,6 +2100,47 @@ func (b FencedBlock) ReplaceAttributes(attributes Attributes) interface{} {
 	b.Attributes = attributes
 	return b
 }
+
+// ListingBlockDelimiter an empty type that is returned by the parser when a listing block is starting or ending
+type BlockDelimiter struct {
+	Kind DelimiterKind
+}
+
+func NewBlockDelimiter(kind DelimiterKind) (BlockDelimiter, error) {
+	return BlockDelimiter{
+		Kind: kind,
+	}, nil
+}
+
+type DelimiterKind string
+
+const (
+	// Fenced a fenced block
+	Fenced DelimiterKind = "fenced"
+	// Listing a listing block
+	Listing DelimiterKind = "listing"
+	// Example an example block
+	Example DelimiterKind = "example"
+	// Comment a comment block
+	Comment DelimiterKind = "comment"
+	// Quote a quote block
+	Quote DelimiterKind = "quote"
+	// MarkdownQuote a quote block in the Markdown style
+	MarkdownQuote DelimiterKind = "markdown-quote"
+	// Verse a verse block
+	Verse DelimiterKind = "verse"
+	// Sidebar a sidebar block
+	Sidebar DelimiterKind = "sidebar"
+	// Literal a literal block
+	Literal DelimiterKind = "literal"
+	// Source a source block
+	Source DelimiterKind = "source"
+	// Passthrough a passthrough block
+	Passthrough DelimiterKind = "pass"
+
+	// AttrSourceBlockOption the option set on a source block, using the `source%<option>` attribute
+	AttrSourceBlockOption = "source-option" // DEPRECATED
+)
 
 // ListingBlock the structure for the Listing blocks
 type ListingBlock struct {
@@ -2963,6 +3007,11 @@ func (f *FileInclusion) TagRanges() (TagRanges, bool) {
 }
 
 // -------------------------------------------------------------------------------------
+// Raw Content
+// -------------------------------------------------------------------------------------
+type RawContent []byte
+
+// -------------------------------------------------------------------------------------
 // LineRanges: one or more ranges of lines to limit the content of a file to include
 // -------------------------------------------------------------------------------------
 
@@ -3410,10 +3459,10 @@ func restoreElements(elements []interface{}, placeholders map[string]interface{}
 
 // replace the placeholders with their original element in the given attributes
 func restoreAttributes(attrs Attributes, placeholders map[string]interface{}) Attributes {
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debug("restoring placeholders in")
-		spew.Fdump(log.StandardLogger().Out, attrs)
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debug("restoring placeholders in")
+	// 	spew.Fdump(log.StandardLogger().Out, attrs)
+	// }
 	for key, value := range attrs {
 		switch value := value.(type) {
 		case ElementPlaceHolder:

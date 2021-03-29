@@ -28,7 +28,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content: map[string]interface{}{
 						"foo": "bar",
@@ -73,7 +73,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content: map[string]interface{}{
 						"foo": "bar",
@@ -118,7 +118,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content:   map[string]interface{}{},
 					Overrides: map[string]string{},
@@ -162,7 +162,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content:   map[string]interface{}{},
 					Overrides: map[string]string{},
@@ -212,7 +212,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content: map[string]interface{}{
 						"foo":    "bar",
@@ -282,7 +282,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content: map[string]interface{}{
 						"title": "cookie",
@@ -334,7 +334,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content: map[string]interface{}{
 						"title": "TITLE",
@@ -390,7 +390,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content: map[string]interface{}{
 						"role1": "ROLE1",
@@ -441,7 +441,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content: map[string]interface{}{
 						"alt": "cookie",
@@ -480,7 +480,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content: map[string]interface{}{
 						"path": "cookie.png",
@@ -528,7 +528,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content: map[string]interface{}{
 						"foo": "bar",
@@ -578,7 +578,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content: map[string]interface{}{
 						"foo": "bar",
@@ -628,7 +628,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content: map[string]interface{}{
 						"foo": "bar",
@@ -681,7 +681,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content: map[string]interface{}{
 						"foo": "bar",
@@ -742,7 +742,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content: map[string]interface{}{
 						"foo": "bar",
@@ -806,7 +806,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content: map[string]interface{}{
 						"foo": "bar",
@@ -851,7 +851,7 @@ var _ = Describe("document substitutions", func() {
 					Name: "foo",
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content:   map[string]interface{}{},
 					Overrides: map[string]string{},
@@ -902,7 +902,7 @@ var _ = Describe("document substitutions", func() {
 					Name: "set",
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content:   map[string]interface{}{},
 					Overrides: map[string]string{},
@@ -956,7 +956,7 @@ var _ = Describe("document substitutions", func() {
 					},
 				},
 			}
-			ctx := substitutionContext{
+			ctx := substitutionContextDeprecated{
 				attributes: types.AttributesWithOverrides{
 					Content:   map[string]interface{}{},
 					Overrides: map[string]string{},
