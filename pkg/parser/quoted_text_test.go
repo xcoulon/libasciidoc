@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("quoted texts", func() {
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		Context("with single punctuations", func() {
 

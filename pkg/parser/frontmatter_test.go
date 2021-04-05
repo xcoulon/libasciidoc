@@ -10,11 +10,93 @@ import (
 
 var _ = Describe("front-matters", func() {
 
+	Context("in raw documents", func() {
+
+		Context("yaml front-matter", func() {
+
+			It("with simple attributes and no blanklines", func() {
+				source := `---
+title: a title
+author: Xavier
+---
+`
+				expected := types.DocumentFragments{
+					types.BlockDelimiter{
+						Kind: types.FrontMatter,
+					},
+					types.StringElement{
+						Content: "title: a title",
+					},
+					types.StringElement{
+						Content: "author: Xavier",
+					},
+					types.BlockDelimiter{
+						Kind: types.FrontMatter,
+					},
+				}
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			})
+
+			It("with simple attributes and blanklines", func() {
+				source := `---
+
+title: a title
+
+author: Xavier
+
+---
+`
+				expected := types.DocumentFragments{
+					types.BlockDelimiter{
+						Kind: types.FrontMatter,
+					},
+					types.BlankLine{},
+					types.StringElement{
+						Content: "title: a title",
+					},
+					types.BlankLine{},
+					types.StringElement{
+						Content: "author: Xavier",
+					},
+					types.BlankLine{},
+					types.BlockDelimiter{
+						Kind: types.FrontMatter,
+					},
+				}
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			})
+
+			It("empty front-matter", func() {
+				source := `---
+---`
+				expected := types.DocumentFragments{
+					types.BlockDelimiter{
+						Kind: types.FrontMatter,
+					},
+					types.BlockDelimiter{
+						Kind: types.FrontMatter,
+					},
+				}
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			})
+
+			It("no front-matter", func() {
+				source := `some content`
+				expected := types.DocumentFragments{
+					types.StringElement{
+						Content: "some content",
+					},
+				}
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			})
+		})
+	})
+
 	Context("final documents", func() {
 
 		Context("yaml front-matter", func() {
 
-			It("front-matter with simple attributes", func() {
+			It("with simple attributes", func() {
 				source := `---
 title: a title
 author: Xavier

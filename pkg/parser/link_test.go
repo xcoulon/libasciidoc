@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("links", func() {
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		Context("external link", func() {
 

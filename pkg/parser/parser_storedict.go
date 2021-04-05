@@ -45,8 +45,8 @@ func (c storeDict) hasUserMacro(name string) bool {
 	return false
 }
 
-func (c storeDict) parserContext() (*parserContext, error) {
-	if ctx, ok := c[parseContextKey].(*parserContext); ok {
+func (c *current) parserContext() (*parserContext, error) {
+	if ctx, ok := c.globalStore[parseContextKey].(*parserContext); ok {
 		return ctx, nil
 	}
 	return nil, fmt.Errorf("unable to look-up the parse context in the parser's global store")

@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("quoted strings", func() {
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		It("simple single quoted string", func() {
 			source := "'`curly was single`'"
@@ -841,7 +841,7 @@ var _ = Describe("quoted strings", func() {
 		})
 	})
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		It("curly in title", func() {
 			source := "== a '`curly`' episode"

@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("labeled lists", func() {
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		It("with a term and description on 2 lines", func() {
 			source := `Item1::

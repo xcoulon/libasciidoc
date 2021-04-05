@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("ordered lists", func() {
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		Context("ordered list item alone", func() {
 

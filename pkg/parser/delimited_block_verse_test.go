@@ -12,7 +12,7 @@ import (
 
 var _ = Describe("verse blocks", func() {
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		Context("delimited blocks", func() {
 

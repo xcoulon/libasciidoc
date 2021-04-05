@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("unordered lists", func() {
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		Context("valid content", func() {
 

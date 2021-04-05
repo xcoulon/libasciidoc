@@ -64,35 +64,36 @@ func (ctx *parserContext) onBlockAttributes(attrs types.Attributes) {
 		return
 	}
 	switch subs {
-		// 		case "normal":
-		// 			subs = subs.append(
-		// 				"specialcharacters",
-		// 				"quotes",
-		// 				"attributes",
-		// 				"replacements",
-		// 				"macros",
-		// 				"post_replacements",
-		// 			)
-		// 		case "inline_passthrough", "callouts", "specialcharacters", "specialchars", "quotes", "attributes", "macros", "replacements", "post_replacements", "none":
-		// 			subs = subs.append(s)
-		// 		case "+callouts", "+specialcharacters", "+specialchars", "+quotes", "+attributes", "+macros", "+replacements", "+post_replacements", "+none":
-		// 			if len(subs) == 0 {
-		// 				subs = subs.append(block.DefaultSubstitutions()...)
-		// 			}
-		// 			subs = subs.append(strings.ReplaceAll(s, "+", ""))
-		// 		case "callouts+", "specialcharacters+", "specialchars+", "quotes+", "attributes+", "macros+", "replacements+", "post_replacements+", "none+":
-		// 			if len(subs) == 0 {
-		// 				subs = subs.append(block.DefaultSubstitutions()...)
-		// 			}
-		// 			subs = subs.prepend(strings.ReplaceAll(s, "+", ""))
-		// 		case "-callouts", "-specialcharacters", "-specialchars", "-quotes", "-attributes", "-macros", "-replacements", "-post_replacements", "-none":
-		// 			if len(subs) == 0 {
-		// 				subs = subs.append(block.DefaultSubstitutions()...)
-		// 			}
-		// 			subs = subs.remove(strings.ReplaceAll(s, "-", ""))
-		// 		default:
-		// 			return nil, fmt.Errorf("unsupported substitution: '%s", s)
-		// 		}
+	// 		case "normal":
+	// 			subs = subs.append(
+	// 				"specialcharacters",
+	// 				"quotes",
+	// 				"attributes",
+	// 				"replacements",
+	// 				"macros",
+	// 				"post_replacements",
+	// 			)
+	// 		case "inline_passthrough", "callouts", "specialcharacters", "specialchars", "quotes", "attributes", "macros", "replacements", "post_replacements", "none":
+	// 			subs = subs.append(s)
+	// 		case "+callouts", "+specialcharacters", "+specialchars", "+quotes", "+attributes", "+macros", "+replacements", "+post_replacements", "+none":
+	// 			if len(subs) == 0 {
+	// 				subs = subs.append(block.DefaultSubstitutions()...)
+	// 			}
+	// 			subs = subs.append(strings.ReplaceAll(s, "+", ""))
+	// 		case "callouts+", "specialcharacters+", "specialchars+", "quotes+", "attributes+", "macros+", "replacements+", "post_replacements+", "none+":
+	// 			if len(subs) == 0 {
+	// 				subs = subs.append(block.DefaultSubstitutions()...)
+	// 			}
+	// 			subs = subs.prepend(strings.ReplaceAll(s, "+", ""))
+	// 		case "-callouts", "-specialcharacters", "-specialchars", "-quotes", "-attributes", "-macros", "-replacements", "-post_replacements", "-none":
+	// 			if len(subs) == 0 {
+	// 				subs = subs.append(block.DefaultSubstitutions()...)
+	// 			}
+	// 			subs = subs.remove(strings.ReplaceAll(s, "-", ""))
+	// 		default:
+	// 			return nil, fmt.Errorf("unsupported substitution: '%s", s)
+	// 		}
+	}
 }
 
 type SubstitutionKind string

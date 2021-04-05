@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("documents", func() {
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		It("should parse empty document", func() {
 			source := ``

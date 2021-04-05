@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("passthrough blocks", func() {
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		Context("delimited blocks", func() {
 

@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("literal blocks", func() {
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		Context("literal blocks with spaces indentation", func() {
 

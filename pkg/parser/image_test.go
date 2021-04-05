@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("block images", func() {
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		It("with empty alt", func() {
 			source := "image::images/foo.png[]"
@@ -372,7 +372,7 @@ image::images/bar.png[]`
 
 var _ = Describe("inline images", func() {
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		It("with empty alt only", func() {
 			source := "image:images/foo.png[]"

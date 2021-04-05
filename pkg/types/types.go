@@ -11,7 +11,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
 // // RawDocument document with a front-matter and raw blocks (will be refined in subsequent processing phases)
@@ -250,7 +250,7 @@ func NewDocumentFragments(frontmatter, header interface{}, fragments interface{}
 // DraftDocument the linear-level structure for a document
 type DraftDocument struct {
 	Attributes  Attributes
-	FrontMatter FrontMatter
+	FrontMatter FrontMatterBlock
 	Elements    []interface{}
 }
 
@@ -607,21 +607,21 @@ func (p Preamble) HasContent() bool {
 // Front Matter
 // ------------------------------------------
 
-// FrontMatter the structure for document front-matter
-type FrontMatter struct {
+// FrontMatterBlock the structure for document front-matter
+type FrontMatterBlock struct {
 	Content map[string]interface{}
 }
 
-// NewYamlFrontMatter initializes a new FrontMatter from the given `content`
-func NewYamlFrontMatter(content string) (FrontMatter, error) {
+// NewYamlFrontMatterBlock initializes a new FrontMatterBlock from the given `content`
+func NewYamlFrontMatterBlock(content string) (FrontMatterBlock, error) {
 	attributes := make(map[string]interface{})
 	err := yaml.Unmarshal([]byte(content), &attributes)
 	if err != nil {
-		return FrontMatter{}, errors.Wrapf(err, "failed to parse yaml content in front-matter of document")
+		return FrontMatterBlock{}, errors.Wrapf(err, "failed to parse the yaml content in the front-matter block")
 	}
 
 	// log.Debugf("new FrontMatter with attributes: %+v", attributes)
-	return FrontMatter{Content: attributes}, nil
+	return FrontMatterBlock{Content: attributes}, nil
 }
 
 // ------------------------------------------
@@ -2112,6 +2112,8 @@ func NewBlockDelimiter(kind DelimiterKind) (BlockDelimiter, error) {
 type DelimiterKind string
 
 const (
+	// FrontMatter a front-matter block
+	FrontMatter DelimiterKind = "front-matter"
 	// Fenced a fenced block
 	Fenced DelimiterKind = "fenced"
 	// Listing a listing block

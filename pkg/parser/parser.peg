@@ -15,17 +15,6 @@ import (
 }
 
 // ------------------------------------------
-// Document Fragments (main entrypoint)
-// ------------------------------------------
-
-DocumentFragments <- 
-    frontmatter:(FrontMatter)?
-    header:(DocumentHeader?) 
-    fragments:(DocumentFragment)* EOF {
-        return types.NewDocumentFragments(frontmatter, header, fragments.([]interface{}))
-    }
-
-// ------------------------------------------
 // Attribute Declarations and Resets
 // ------------------------------------------
 AttributeDeclaration <- ":" name:(AttributeName) ":" 
@@ -82,7 +71,10 @@ BlockAttributes <-
         if err != nil {
             return nil, err
         }
-        ctx := c.globalStore.parserContext()
+        ctx, err := c.parserContext()
+        if err != nil {
+            return nil, err
+        }
         ctx.onBlockAttributes(attrs)
         return attrs, nil
     }  
@@ -340,7 +332,7 @@ CounterStart <- ":" start:([A-Za-z] {
 // ------------------------------------------
 // BlankLine
 // ------------------------------------------
-BlankLine <- !EOF Space* EOL {
+BlankLine <- Space* EOF {
         return types.NewBlankLine()
     }
 
@@ -500,26 +492,44 @@ SourceBlockFragments <- (!SourceBlockDelimiter VerbatimDocumentFragment)*
 // ------------------------------------------
 // Document Header and Metadata
 // ------------------------------------------
-DocumentHeader <- 
-    // check if enabled with the current substitution context
-    &{
-        ctx, err := c.globalStore.parserContext()
-        if err != nil {
-            return false, err
-        }
-        return ctx.isSectionRuleEnabled(), nil
-    }
-    fragments:(
+
+// DocumentHead <- 
+//     frontmatter:(FrontMatter)?
+//     header:(DocumentHeader?) 
+//     fragments:(DocumentFragment)* EOF {
+//         return types.NewDocumentFragments(frontmatter, header, fragments.([]interface{}))
+//     }
+
+// DocumentHeader <- 
+//     // check if enabled with the current substitution context
+//     &{
+//         ctx, err := c.parserContext()
+//         if err != nil {
+//             return false, err
+//         }
+//         return ctx.isSectionRuleEnabled(), nil
+//     }
+//     fragments:(
+//         ("=" Space+ title:(SectionTitleElements) id:(InlineElementID*) EOL {
+//             return types.NewSection(0, title.(types.InlineElements), id.([]interface{})) 
+//         })
+//         (SingleLineComment / CommentBlock)*
+//         DocumentAuthors?
+//         (SingleLineComment / CommentBlock)*
+//         DocumentRevision? 
+//     ) {
+//         return types.NewDocumentHeader(fragments.([]interface{}))
+//     }
+
+DocumentHeaderFragment <- 
         ("=" Space+ title:(SectionTitleElements) id:(InlineElementID*) EOL {
             return types.NewSection(0, title.(types.InlineElements), id.([]interface{})) 
         })
-        (SingleLineComment / CommentBlock)*
-        DocumentAuthors?
-        (SingleLineComment / CommentBlock)*
-        DocumentRevision? 
-    ) {
-        return types.NewDocumentHeader(fragments.([]interface{}))
-    }
+        / DocumentAuthors
+        / DocumentRevision
+        / SingleLineComment
+        / CommentBlock
+        / AttributeDeclaration
 
 DocumentAuthors <- DocumentAuthorsInlineForm / DocumentAuthorsAttributeForm
 
@@ -673,16 +683,26 @@ IncludedFileEndTag <- "end::" tag:(Alphanums {return string(c.text), nil}) "[]" 
 // ------------------------------------------
 // Front Matter
 // ------------------------------------------
-FrontMatter <- YamlFrontMatter 
+// FrontMatter <- YamlFrontMatter 
 
-YamlFrontMatter <- YamlFrontMatterToken content:(YamlFrontMatterContent)? YamlFrontMatterToken {
-    return types.NewYamlFrontMatter(content.(string))
+// YamlFrontMatter <- YamlFrontMatterDelimiter content:(YamlFrontMatterContent)? YamlFrontMatterDelimiter {
+//     return types.NewYamlFrontMatter(content.(string))
+// }
+
+// YamlFrontMatterDelimiter  <- "---" Space* EOL
+
+// YamlFrontMatterContent <- ((!YamlFrontMatterDelimiter .)+)* {
+    //     return string(c.text), nil
+// }
+
+FrontMatterFragment <- FrontMatterDelimiter / BlankLine / FrontMatterLine
+
+FrontMatterDelimiter  <- "---" Space* EOF {
+    return types.NewBlockDelimiter(types.FrontMatter)
 }
 
-YamlFrontMatterToken  <- "---" Space* EOL
-
-YamlFrontMatterContent <- ((!YamlFrontMatterToken .)+)* {
-    return string(c.text), nil
+FrontMatterLine <- (.)* {
+    return types.NewStringElement(string(c.text))
 }
 
 // ------------------------------------------
@@ -1404,7 +1424,7 @@ Replacement <- Symbol
 Section <- 
     // check if enabled with the current substitution context
     &{
-        ctx, err := c.globalStore.parserContext()
+        ctx, err := c.parserContext()
         if err != nil {
             return false, err
         }

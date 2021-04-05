@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("blank lines", func() {
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		It("blank line between 2 paragraphs", func() {
 			source := `first paragraph

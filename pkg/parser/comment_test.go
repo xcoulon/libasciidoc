@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("comments", func() {
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		Context("single line comments", func() {
 

@@ -12,7 +12,7 @@ import (
 
 var _ = Describe("paragraphs", func() {
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		Context("regular paragraphs", func() {
 

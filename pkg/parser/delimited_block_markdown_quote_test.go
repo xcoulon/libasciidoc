@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("markdown-style quote blocks", func() {
 
-	Context("raw documents", func() {
+	Context("in raw documents", func() {
 
 		Context("delimited blocks", func() {
 
