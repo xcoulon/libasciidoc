@@ -30,7 +30,9 @@ DocumentFragments <-
 // ------------------------------------------
 AttributeDeclaration <- ":" name:(AttributeName) ":" 
         value:(AttributeDeclarationValue)? EOL {
-    return types.NewAttributeDeclaration(name.(string), types.Reduce(value, strings.TrimSpace))
+    d := types.NewAttributeDeclaration(name.(string), types.Reduce(value, strings.TrimSpace))
+    // c.globalStore.AddAttributeDeclaration(d)
+    return d, nil
 } 
 
 // AttributeName must be at least one character long, 
@@ -76,7 +78,13 @@ BlockAttributes <-
             return attributes, nil
         })
     )+ {
-        return types.NewAttributes(attributes.([]interface{})...)
+        attrs, err := types.NewAttributes(attributes.([]interface{})...)
+        if err != nil {
+            return nil, err
+        }
+        ctx := c.globalStore.parserContext()
+        ctx.onBlockAttributes(attrs)
+        return attrs, nil
     }  
 
 InlineAttributes <-
@@ -495,7 +503,7 @@ SourceBlockFragments <- (!SourceBlockDelimiter VerbatimDocumentFragment)*
 DocumentHeader <- 
     // check if enabled with the current substitution context
     &{
-        ctx, err := c.globalStore.fileinclusionContext()
+        ctx, err := c.globalStore.parserContext()
         if err != nil {
             return false, err
         }
@@ -676,6 +684,7 @@ YamlFrontMatterToken  <- "---" Space* EOL
 YamlFrontMatterContent <- ((!YamlFrontMatterToken .)+)* {
     return string(c.text), nil
 }
+
 // ------------------------------------------
 // Inline Elements
 // ------------------------------------------
@@ -689,33 +698,56 @@ InlineElements <-
     }
 
 
-// TODO: group quoted text and macros and enable based on substitution context.
+// TODO: group as below and enable based on substitution context.
 // Also, add Callouts
+
+// "specialcharacters",
+// "quotes",
+// "attributes",
+// "replacements",
+// "macros",
+// "post_replacements",
 InlineElement <-  
     element:(InlineWord // more permissive than the 'Word' rule
         / LineBreak // must be before spaces
         / Space+ 
         / !EOL (
-            QuotedString
-            / QuotedText
-            / InlineIcon
-            / InlineImage 
-            / Link 
-            / InlinePassthrough // must be before the SpecialCharacter rule (because of `+`)
-            / InlineFootnote 
-            / CrossReference // must appear before SpecialCharacter
-            / Callout
-            / SpecialCharacter
-            / Symbol
-            / InlineUserMacro 
+            SpecialCharacter
+            / Quote
             / AttributeSubstitution 
-            / InlineElementID
-            / ConcealedIndexTerm
-            / IndexTerm
-            / ElementPlaceHolder
+            / Replacement
+            / Macro
+            / PostReplacement
+            / ElementPlaceHolder // TODO: needed?
+            // if anything above did not match...
             / AnyChar)) {
     return element, nil
 }
+// InlineElement <-  
+//     element:(InlineWord // more permissive than the 'Word' rule
+//         / LineBreak // must be before spaces
+//         / Space+ 
+//         / !EOL (
+//             QuotedString
+//             / QuotedText
+//             / InlineIcon
+//             / InlineImage 
+//             / Link 
+//             / InlinePassthrough // must be before the SpecialCharacter rule (because of `+`)
+//             / InlineFootnote 
+//             / CrossReference // must appear before SpecialCharacter
+//             / Callout
+//             / SpecialCharacter
+//             / Symbol
+//             / InlineUserMacro 
+//             / AttributeSubstitution 
+//             / InlineElementID
+//             / ConcealedIndexTerm
+//             / IndexTerm
+//             / ElementPlaceHolder
+//             / AnyChar)) {
+//     return element, nil
+// }
 
 // ------------------------------------------
 // InlineElement ID
@@ -839,6 +871,28 @@ RelativeLink <- "link:" url:(Location) inlineAttributes:(InlineAttributes) {
 ExternalLink <- url:(LocationWithScheme) inlineAttributes:(InlineAttributes)? {
         return types.NewInlineLink(url.(types.Location), inlineAttributes)
     }
+
+
+// ----------------------------------------------------------------------------
+// Macro
+// ----------------------------------------------------------------------------
+Macro <- InlineIcon
+    / InlineImage 
+    / Link 
+    / InlinePassthrough 
+    / InlineFootnote 
+    / CrossReference 
+    / InlineUserMacro 
+    / InlineElementID
+    / ConcealedIndexTerm
+    / IndexTerm
+
+// ----------------------------------------------------------------------------
+//
+// Quote
+// 
+// ----------------------------------------------------------------------------
+Quote <- QuotedText / QuotedString
 
 // ----------------------------------------------------------------------------
 //
@@ -1339,13 +1393,18 @@ DoubleQuotedStringFallbackCharacter <-  ([^\r\n\t `] / "`" !"\"") {
     }
 
 // ------------------------------------------
+// Replacement
+// ------------------------------------------
+Replacement <- Symbol
+
+// ------------------------------------------
 // Sections
 // ------------------------------------------
 // we need to identify section titles to properly handle file inclusions with level offsets
 Section <- 
     // check if enabled with the current substitution context
     &{
-        ctx, err := c.globalStore.fileinclusionContext()
+        ctx, err := c.globalStore.parserContext()
         if err != nil {
             return false, err
         }
@@ -1553,8 +1612,15 @@ LocationWithScheme <- scheme:(Scheme) path:(Filename / ElementPlaceHolder)+ {
         return types.NewLocation(scheme, path.([]interface{}))
     }
 
-Filename <- ([^\r\n[\]\uFFFD ])+ { // not supported for now: EOL, space, "[", "]"
+Filename <- elements:(
+    ([^\r\n[\]\uFFFD{ ])+ { // not supported for now: EOL, space, "[", "]"
         return types.NewStringElement(string(c.text))
+    }
+    / AttributeSubstitution 
+    / "{" {
+        return types.NewStringElement(string(c.text))
+    })+ {
+        return types.Merge(elements.([]interface{})...), nil
     }
 
 Scheme <- "http://" / "https://" / "ftp://" / "irc://" / "mailto:"

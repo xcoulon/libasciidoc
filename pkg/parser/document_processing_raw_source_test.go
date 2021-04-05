@@ -709,24 +709,8 @@ include::hello_world.go.txt[]
 						_, reset := ConfigureLogger(log.WarnLevel)
 						defer reset()
 						source := `include::../../test/includes/chapter-a.adoc[lines=1;3..4;6..foo]` // not a number
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "Chapter A",
-									},
-								},
-								Elements: []interface{}{},
-							},
-							types.BlankLine{},
-							types.InlineElements{
-								types.StringElement{
-									Content: "content",
-								},
-							},
-						}
-						Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+						_, err := ParseRawSource(source)
+						Expect(err).To(HaveOccurred())
 					})
 
 					It("file inclusion with invalid unquoted range - case 2", func() {
@@ -833,24 +817,8 @@ include::hello_world.go.txt[]
 						_, reset := ConfigureLogger(log.WarnLevel)
 						defer reset()
 						source := `include::../../test/includes/chapter-a.adoc[lines="1,3..4,6..foo"]` // not a number
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "Chapter A",
-									},
-								},
-								Elements: []interface{}{},
-							},
-							types.BlankLine{},
-							types.InlineElements{
-								types.StringElement{
-									Content: "content",
-								},
-							},
-						}
-						Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+						_, err := ParseRawSource(source)
+						Expect(err).To(HaveOccurred())
 					})
 
 					It("file inclusion with ignored tags", func() {
@@ -1333,7 +1301,9 @@ include::../../test/includes/hello_world.go.txt[]
 							Kind: types.Listing,
 						},
 					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+					result, err := ParseRawSource(source)
+					Expect(err).NotTo(HaveOccurred())
+					Expect(result).To(MatchDocumentFragments(expected))
 				})
 
 				It("include go file with a simple range", func() {

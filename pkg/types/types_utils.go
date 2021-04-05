@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -86,4 +87,23 @@ func Apply(source string, fs ...applyFunc) string {
 		result = f(result)
 	}
 	return result
+}
+
+func stringify(element interface{}) string {
+	switch element := element.(type) {
+	case []interface{}:
+		result := strings.Builder{}
+		for _, e := range element {
+			result.WriteString(stringify(e))
+		}
+		return result.String()
+	case string:
+		return element
+	case StringElement:
+		return element.Content
+	case AttributeSubstitution:
+		return "{" + element.Name + "}"
+	default:
+		return fmt.Sprintf("%v", element) // "best-effort" here
+	}
 }

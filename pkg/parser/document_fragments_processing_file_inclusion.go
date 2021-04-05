@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -14,52 +13,8 @@ import (
 	"github.com/bytesparadise/libasciidoc/pkg/types"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/pkg/errors"
-
 	log "github.com/sirupsen/logrus"
 )
-
-// ParseDocumentFragments parses a document's content and applies the preprocessing directives (file inclusions)
-// Returns the document fragments (to be assembled) or an error
-func ParseDocumentFragments(r io.Reader, config configuration.Configuration, options ...Option) (types.DocumentFragments, error) {
-	return parseDocumentFragments(&fileinclusionContext{
-		config:       config,
-		attributes:   types.Attributes{},
-		levelOffsets: []levelOffset{},
-		blockLevels:  newStack(),
-	}, r, options...)
-}
-
-type fileinclusionContext struct {
-	config       configuration.Configuration
-	attributes   types.Attributes
-	levelOffsets []levelOffset
-	blockLevels  *stack
-}
-
-func (c *fileinclusionContext) clone() *fileinclusionContext {
-	return &fileinclusionContext{
-		config:       c.config,
-		attributes:   c.attributes, // TODO: should we clone this too? ie, can an attribute declared in a child doc be used in rest of the parent doc?
-		levelOffsets: append([]levelOffset{}, c.levelOffsets...),
-		blockLevels:  c.blockLevels,
-	}
-}
-
-func (ctx *fileinclusionContext) isSectionRuleEnabled() bool {
-	return ctx.blockLevels.empty()
-}
-
-func (ctx *fileinclusionContext) onBlockDelimiter(d types.BlockDelimiter) {
-	currentLevel := ctx.blockLevels.get()
-	if currentLevel == d.Kind {
-		ctx.blockLevels.pop() // discard current level, assuming we've just parsed the ending delimiter of the current block
-		return
-	}
-	ctx.blockLevels.push(d.Kind) // push current delimiter kind, assuming we've just parsed the starting delimiter of a new block
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("current substitution context is now: %v", ctx.blockLevels.get())
-	}
-}
 
 // levelOffset a func that applies a given offset to the sections of a child document to include in a parent doc (the caller)
 type levelOffset struct {
@@ -92,103 +47,44 @@ func absoluteOffset(offset int) levelOffset {
 	}
 }
 
-func parseDocumentFragments(ctx *fileinclusionContext, r io.Reader, options ...Option) (types.DocumentFragments, error) {
-	content, err := ParseReader(ctx.config.Filename, r, append(options, Entrypoint("DocumentFragments"), GlobalStore(substitutionContextKey, ctx))...)
-	if err != nil {
-		log.Errorf("failed to parse raw document: %s", err)
-		return nil, err
-	}
-	fragments, ok := content.(types.DocumentFragments)
-	if !ok {
-		return nil, fmt.Errorf("unexpected type of raw lines: '%T'", content)
-	}
-	// look-up file inclusions and replace with the file content
-	result := make([]interface{}, 0, len(fragments)) // assume the initial capacity as if there is no file inclusion to process
-	for _, fragment := range fragments {
-		switch fragment := fragment.(type) {
-		case types.FileInclusion:
-			// clone the context so that further level offset in this "child" doc are not applied to the rest of this "parent" doc
-			ctx := ctx.clone()
-			fileContent, err := parseFileToInclude(ctx, fragment, options...)
-			if err != nil {
-				return nil, err
-			}
-			result = append(result, fileContent...)
-		case types.AttributeDeclaration:
-			// add the attribute to the current content
-			ctx.attributes[fragment.Name] = fragment.Value
-			result = append(result, fragment)
-		case types.Section:
-			// apply the level offsets on the sections of the doc to include (by default, there is no offset)
-			oldLevel := fragment.Level
-			for _, offset := range ctx.levelOffsets {
-				oldLevel := offset.apply(&fragment)
-				// replace the absolute level offset with a relative one,
-				// taking into account the offset that was applied on this section,
-				// so that following sections in the document have the same relative offset
-				// applied, but keep the same hierarchy
-				if offset.absolute {
-					// replace current offset and all previous ones with a single relative offset
-					ctx.levelOffsets = []levelOffset{relativeOffset(fragment.Level - oldLevel)}
-				}
-			}
-			if log.IsLevelEnabled(log.DebugLevel) {
-				log.Debugf("applied level offset on section: level %d -> %d", oldLevel, fragment.Level)
-				// log.Debug("level offsets:")
-				// spew.Fdump(log.StandardLogger().Out, ctx.levelOffsets)
-			}
-			result = append(result, fragment)
-		case types.BlockDelimiter:
-			ctx.onBlockDelimiter(fragment)
-			result = append(result, fragment)
-		default:
-			result = append(result, fragment)
-		}
-	}
-	// if log.IsLevelEnabled(log.DebugLevel) {
-	// 	log.Debug("parsed file to include")
-	// 	spew.Fdump(log.StandardLogger().Out, result)
-	// }
-	return result, nil
-}
-
-func parseFileToInclude(ctx *fileinclusionContext, incl types.FileInclusion, options ...Option) ([]interface{}, error) {
-	incl, err := applySubstitutionsOnFileInclusionPath(substitutionContextDeprecated{
-		attributes: types.AttributesWithOverrides{
-			Content: ctx.attributes,
-		},
-		config: ctx.config,
-	}, incl)
-	if err != nil {
-		return nil, err
-	}
+func parseFileToInclude(ctx *parserContext, incl types.FileInclusion, options ...Option) ([]interface{}, error) {
+	incl.Location.Path = substituteAttributes(incl.Location.Path, ctx.attributes)
 	path := incl.Location.Stringify()
 	currentDir := filepath.Dir(ctx.config.Filename)
 	f, absPath, done, err := open(filepath.Join(currentDir, path))
 	defer done()
 	if err != nil {
-		return nil, fmt.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
+		return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
 	}
 	content := bytes.NewBuffer(nil)
 	scanner := bufio.NewScanner(bufio.NewReader(f))
 	if log.IsLevelEnabled(log.DebugLevel) {
 		log.Debugf("parsing file to %s", incl.RawText)
 	}
-	if lr, ok := lineRanges(incl, ctx.config); ok {
+	if lr, ok, err := lineRanges(incl, ctx.config); err != nil {
+		log.WithError(err).Error("error occurred while checking if file inclusion has line ranges")
+		return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
+	} else if ok {
 		if err := readWithinLines(scanner, content, lr); err != nil {
-			return nil, fmt.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
+			log.WithError(err).Error("error occurred while reading file within line ranges")
+			return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
 		}
-	} else if tr, ok := tagRanges(incl, ctx.config); ok {
+	} else if tr, ok, err := tagRanges(incl, ctx.config); err != nil {
+		log.WithError(err).Error("error occurred while checking if file inclusion has tag ranges")
+		return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
+	} else if ok {
 		if err := readWithinTags(path, scanner, content, tr); err != nil {
+			log.WithError(err).Error("error occurred while reading file within tag ranges")
 			return nil, err // keep the underlying error here
 		}
 	} else {
 		if err := readAll(scanner, content); err != nil {
-			return nil, fmt.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
+			log.WithError(err).Error("error occurred while reading file")
+			return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
 		}
 	}
 	if err := scanner.Err(); err != nil {
-		return nil, fmt.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
+		return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
 	}
 	// if the file to include is not an Asciidoc document, just return the content as "raw lines"
 	if !IsAsciidoc(absPath) {
@@ -223,58 +119,43 @@ func parseFileToInclude(ctx *fileinclusionContext, incl types.FileInclusion, opt
 	return parseDocumentFragments(ctx, content, options...)
 }
 
-// applies the attribute substitutions on the location path of the file to include
-func applySubstitutionsOnFileInclusionPath(ctx substitutionContextDeprecated, f types.FileInclusion) (types.FileInclusion, error) {
-	elements := [][]interface{}{f.Location.Path} // wrap to
-	elements, err := substituteAttributes(ctx, elements)
-	if err != nil {
-		return types.FileInclusion{}, err
-	}
-	f.Location.Path = elements[0]
-	return f, nil
-}
-
 // lineRanges parses the `lines` attribute if it exists in the given FileInclusion, and returns
 // a corresponding `LineRanges` (or `false` if parsing failed to invalid input)
-func lineRanges(incl types.FileInclusion, config configuration.Configuration) (types.LineRanges, bool) {
+func lineRanges(incl types.FileInclusion, config configuration.Configuration) (types.LineRanges, bool, error) {
 	lineRanges, exists, err := incl.Attributes.GetAsString(types.AttrLineRanges)
 	if err != nil {
-		log.Errorf("Unresolved directive in %s - %s", config.Filename, incl.RawText)
-		return types.LineRanges{}, false
+		return types.LineRanges{}, false, err
 	}
 	if exists {
 		lr, err := Parse("", []byte(lineRanges), Entrypoint("LineRanges"))
 		if err != nil {
-			log.Errorf("Unresolved directive in %s - %s", config.Filename, incl.RawText)
-			return types.LineRanges{}, false
+			return types.LineRanges{}, false, err
 		}
 		if log.IsLevelEnabled(log.DebugLevel) {
 			log.Debug("line ranges to include:")
 			spew.Fdump(log.StandardLogger().Out, lr)
 		}
-		return types.NewLineRanges(lr), true
+		return types.NewLineRanges(lr), true, nil
 	}
-	return types.LineRanges{}, false
+	return types.LineRanges{}, false, nil
 }
 
 // tagRanges parses the `tags` attribute if it exists in the given FileInclusion, and returns
 // a corresponding `TagRanges` (or `false` if parsing failed to invalid input)
-func tagRanges(incl types.FileInclusion, config configuration.Configuration) (types.TagRanges, bool) {
+func tagRanges(incl types.FileInclusion, config configuration.Configuration) (types.TagRanges, bool, error) {
 	tagRanges, exists, err := incl.Attributes.GetAsString(types.AttrTagRanges)
 	if err != nil {
-		log.Errorf("Unresolved directive in %s - %s", config.Filename, incl.RawText)
-		return types.TagRanges{}, false
+		return types.TagRanges{}, false, err
 	}
 	if exists {
 		log.Debugf("tag ranges to include: %v", spew.Sdump(tagRanges))
 		tr, err := Parse("", []byte(tagRanges), Entrypoint("TagRanges"))
 		if err != nil {
-			log.Errorf("Unresolved directive in %s - %s", config.Filename, incl.RawText)
-			return types.TagRanges{}, false
+			return types.TagRanges{}, false, err
 		}
-		return types.NewTagRanges(tr), true
+		return types.NewTagRanges(tr), true, nil
 	}
-	return types.TagRanges{}, false
+	return types.TagRanges{}, false, nil
 }
 
 // TODO: instead of reading and parsing afterwards, simply parse the lines immediatly? ie: `readWithinLines` -> `parseWithinLines`

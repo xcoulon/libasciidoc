@@ -10,9 +10,7 @@ import (
 
 const attributesKey = "attributes"
 
-const substitutionContextKey = "substitutionContext"
-
-const fileInclusionContextKey = "substitutionContext"
+const parseContextKey = "parserContext"
 
 const usermacrosKey = "user_macros"
 
@@ -47,11 +45,11 @@ func (c storeDict) hasUserMacro(name string) bool {
 	return false
 }
 
-func (c storeDict) fileinclusionContext() (*fileinclusionContext, error) {
-	if ctx, ok := c[substitutionContextKey].(*fileinclusionContext); ok {
+func (c storeDict) parserContext() (*parserContext, error) {
+	if ctx, ok := c[parseContextKey].(*parserContext); ok {
 		return ctx, nil
 	}
-	return nil, fmt.Errorf("unable to look-up the file inclusion context in the parser's global store")
+	return nil, fmt.Errorf("unable to look-up the parse context in the parser's global store")
 }
 
 // func (c storeDict) pushSubsitutionContext(ctx substitutionContext) {
@@ -103,4 +101,23 @@ func (c storeDict) fileinclusionContext() (*fileinclusionContext, error) {
 // 	if log.IsLevelEnabled(log.DebugLevel) {
 // 		log.Debugf("current substitution context is now: %v", ctx.blockLevels.get())
 // 	}
+// }
+
+// const attributeDeclatationsKey = "attributeDeclatations"
+
+// func (c storeDict) AddAttributeDeclaration(d types.AttributeDeclaration) {
+// 	if attrDeclarations, ok := c[attributeDeclatationsKey].(map[string]interface{}); ok {
+// 		attrDeclarations[d.Name] = d.Value
+// 		return
+// 	}
+// 	c[attributeDeclatationsKey] = map[string]interface{}{
+// 		d.Name: d.Value,
+// 	}
+// }
+
+// func (c storeDict) AttributeDeclarations() map[string]interface{} {
+// 	if attrDeclarations, ok := c[attributeDeclatationsKey].(map[string]interface{}); ok {
+// 		return attrDeclarations
+// 	}
+// 	return nil
 // }

@@ -520,7 +520,9 @@ another one using attribute substitution: {github-url}[]...
 							},
 						},
 					}
-					Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+					result, err := ParseRawSource(s)
+					Expect(err).NotTo(HaveOccurred())
+					Expect(result).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'normal' substitution on multiple lines", func() {
@@ -532,69 +534,65 @@ another one using attribute substitution: {github-url}[]...
 							Value: "https://github.com",
 						},
 						types.BlankLine{},
-						types.Paragraph{
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "normal",
+						types.Attributes{
+							types.AttrSubstitutions: "normal",
+						},
+						types.InlineElements{
+							types.StringElement{
+								Content: "a link to ",
 							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a link to ",
-									},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "github.com",
-												},
-											},
+							types.InlineLink{
+								Location: types.Location{
+									Scheme: "https://",
+									Path: []interface{}{
+										types.StringElement{
+											Content: "github.com",
 										},
 									},
+								},
+							},
+							types.StringElement{
+								Content: " ",
+							},
+							types.SpecialCharacter{
+								Name: "<",
+							},
+							types.StringElement{
+								Content: "using the ",
+							},
+							types.QuotedText{
+								Kind: types.SingleQuoteBold,
+								Elements: []interface{}{
 									types.StringElement{
-										Content: " ",
+										Content: "inline link macro",
 									},
-									types.SpecialCharacter{
-										Name: "<",
-									},
-									types.StringElement{
-										Content: "using the ",
-									},
-									types.QuotedText{
-										Kind: types.SingleQuoteBold,
-										Elements: []interface{}{
-											types.StringElement{
-												Content: "inline link macro",
-											},
+								},
+							},
+							types.SpecialCharacter{
+								Name: ">",
+							},
+						},
+						types.InlineElements{
+							types.StringElement{
+								Content: "another one using attribute substitution: ",
+							},
+							types.InlineLink{
+								Location: types.Location{
+									Scheme: "https://",
+									Path: []interface{}{
+										types.StringElement{
+											Content: "github.com",
 										},
 									},
-									types.SpecialCharacter{
-										Name: ">",
-									},
 								},
-								{
-									types.StringElement{
-										Content: "another one using attribute substitution: ",
-									},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "github.com",
-												},
-											},
-										},
-									},
-									types.StringElement{
-										Content: "\u2026\u200b", // symbol for ellipsis, applied by the 'replacements' substitution
-									},
-								},
-								{
-									types.SingleLineComment{
-										Content: " a single-line comment.",
-									},
-								},
+							},
+							types.StringElement{
+								Content: "\u2026\u200b", // symbol for ellipsis, applied by the 'replacements' substitution
+							},
+						},
+						types.InlineElements{
+							types.SingleLineComment{
+								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -610,37 +608,33 @@ another one using attribute substitution: {github-url}[]...
 							Value: "https://github.com",
 						},
 						types.BlankLine{},
-						types.Paragraph{
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "quotes",
+						types.Attributes{
+							types.AttrSubstitutions: "quotes",
+						},
+						types.InlineElements{
+							types.StringElement{
+								Content: "a link to https://github.com[] <using the ",
 							},
-							Lines: [][]interface{}{
-								{
+							types.QuotedText{
+								Kind: types.SingleQuoteBold,
+								Elements: []interface{}{
 									types.StringElement{
-										Content: "a link to https://github.com[] <using the ",
-									},
-									types.QuotedText{
-										Kind: types.SingleQuoteBold,
-										Elements: []interface{}{
-											types.StringElement{
-												Content: "inline link macro",
-											},
-										},
-									},
-									types.StringElement{
-										Content: ">",
+										Content: "inline link macro",
 									},
 								},
-								{
-									types.StringElement{
-										Content: "another one using attribute substitution: {github-url}[]...",
-									},
-								},
-								{
-									types.SingleLineComment{
-										Content: " a single-line comment.",
-									},
-								},
+							},
+							types.StringElement{
+								Content: ">",
+							},
+						},
+						types.InlineElements{
+							types.StringElement{
+								Content: "another one using attribute substitution: {github-url}[]...",
+							},
+						},
+						types.InlineElements{
+							types.SingleLineComment{
+								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -656,39 +650,35 @@ another one using attribute substitution: {github-url}[]...
 							Value: "https://github.com",
 						},
 						types.BlankLine{},
-						types.Paragraph{
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "macros",
+						types.Attributes{
+							types.AttrSubstitutions: "macros",
+						},
+						types.InlineElements{
+							types.StringElement{
+								Content: "a link to ",
 							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a link to ",
-									},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "github.com",
-												},
-											},
+							types.InlineLink{
+								Location: types.Location{
+									Scheme: "https://",
+									Path: []interface{}{
+										types.StringElement{
+											Content: "github.com",
 										},
 									},
-									types.StringElement{
-										Content: " <using the *inline link macro*>",
-									},
 								},
-								{
-									types.StringElement{
-										Content: "another one using attribute substitution: {github-url}[]...",
-									},
-								},
-								{
-									types.SingleLineComment{
-										Content: " a single-line comment.",
-									},
-								},
+							},
+							types.StringElement{
+								Content: " <using the *inline link macro*>",
+							},
+						},
+						types.InlineElements{
+							types.StringElement{
+								Content: "another one using attribute substitution: {github-url}[]...",
+							},
+						},
+						types.InlineElements{
+							types.SingleLineComment{
+								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -704,22 +694,18 @@ another one using attribute substitution: {github-url}[]...
 							Value: "https://github.com",
 						},
 						types.BlankLine{},
-						types.Paragraph{
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "attributes",
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to https://github.com[] <using the *inline link macro*>"},
-								},
-								{
-									types.StringElement{Content: "another one using attribute substitution: https://github.com[]..."},
-								},
-								{
-									types.SingleLineComment{
-										Content: " a single-line comment.",
-									},
-								},
+						types.Attributes{
+							types.AttrSubstitutions: "attributes",
+						},
+						types.InlineElements{
+							types.StringElement{Content: "a link to https://github.com[] <using the *inline link macro*>"},
+						},
+						types.InlineElements{
+							types.StringElement{Content: "another one using attribute substitution: https://github.com[]..."},
+						},
+						types.InlineElements{
+							types.SingleLineComment{
+								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -735,44 +721,40 @@ another one using attribute substitution: {github-url}[]...
 							Value: "https://github.com",
 						},
 						types.BlankLine{},
-						types.Paragraph{
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "attributes,macros",
+						types.Attributes{
+							types.AttrSubstitutions: "attributes,macros",
+						},
+						types.InlineElements{
+							types.StringElement{Content: "a link to "},
+							types.InlineLink{
+								Location: types.Location{
+									Scheme: "https://",
+									Path: []interface{}{
+										types.StringElement{
+											Content: "github.com",
+										},
+									},
+								},
 							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "github.com",
-												},
-											},
+							types.StringElement{Content: " <using the *inline link macro*>"},
+						},
+						types.InlineElements{
+							types.StringElement{Content: "another one using attribute substitution: "},
+							types.InlineLink{
+								Location: types.Location{
+									Scheme: "https://",
+									Path: []interface{}{
+										types.StringElement{
+											Content: "github.com",
 										},
 									},
-									types.StringElement{Content: " <using the *inline link macro*>"},
 								},
-								{
-									types.StringElement{Content: "another one using attribute substitution: "},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "github.com",
-												},
-											},
-										},
-									},
-									types.StringElement{Content: "..."},
-								},
-								{
-									types.SingleLineComment{
-										Content: " a single-line comment.",
-									},
-								},
+							},
+							types.StringElement{Content: "..."},
+						},
+						types.InlineElements{
+							types.SingleLineComment{
+								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -788,25 +770,21 @@ another one using attribute substitution: {github-url}[]...
 							Value: "https://github.com",
 						},
 						types.BlankLine{},
-						types.Paragraph{
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "specialchars",
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to https://github.com[] "},
-									types.SpecialCharacter{Name: "<"},
-									types.StringElement{Content: "using the *inline link macro*"},
-									types.SpecialCharacter{Name: ">"},
-								},
-								{
-									types.StringElement{Content: "another one using attribute substitution: {github-url}[]..."},
-								},
-								{
-									types.SingleLineComment{
-										Content: " a single-line comment.",
-									},
-								},
+						types.Attributes{
+							types.AttrSubstitutions: "specialchars",
+						},
+						types.InlineElements{
+							types.StringElement{Content: "a link to https://github.com[] "},
+							types.SpecialCharacter{Name: "<"},
+							types.StringElement{Content: "using the *inline link macro*"},
+							types.SpecialCharacter{Name: ">"},
+						},
+						types.InlineElements{
+							types.StringElement{Content: "another one using attribute substitution: {github-url}[]..."},
+						},
+						types.InlineElements{
+							types.SingleLineComment{
+								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -822,22 +800,18 @@ another one using attribute substitution: {github-url}[]...
 							Value: "https://github.com",
 						},
 						types.BlankLine{},
-						types.Paragraph{
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "replacements",
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to https://github.com[] <using the *inline link macro*>"},
-								},
-								{
-									types.StringElement{Content: "another one using attribute substitution: {github-url}[]\u2026\u200b"},
-								},
-								{
-									types.SingleLineComment{
-										Content: " a single-line comment.",
-									},
-								},
+						types.Attributes{
+							types.AttrSubstitutions: "replacements",
+						},
+						types.InlineElements{
+							types.StringElement{Content: "a link to https://github.com[] <using the *inline link macro*>"},
+						},
+						types.InlineElements{
+							types.StringElement{Content: "another one using attribute substitution: {github-url}[]\u2026\u200b"},
+						},
+						types.InlineElements{
+							types.SingleLineComment{
+								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -853,48 +827,44 @@ another one using attribute substitution: {github-url}[]...
 							Value: "https://github.com",
 						},
 						types.BlankLine{},
-						types.Paragraph{
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "quotes,macros",
+						types.Attributes{
+							types.AttrSubstitutions: "quotes,macros",
+						},
+						types.InlineElements{
+							types.StringElement{
+								Content: "a link to ",
 							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a link to ",
-									},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "github.com",
-												},
-											},
+							types.InlineLink{
+								Location: types.Location{
+									Scheme: "https://",
+									Path: []interface{}{
+										types.StringElement{
+											Content: "github.com",
 										},
 									},
+								},
+							},
+							types.StringElement{
+								Content: " <using the ",
+							},
+							types.QuotedText{
+								Kind: types.SingleQuoteBold,
+								Elements: []interface{}{
 									types.StringElement{
-										Content: " <using the ",
-									},
-									types.QuotedText{
-										Kind: types.SingleQuoteBold,
-										Elements: []interface{}{
-											types.StringElement{
-												Content: "inline link macro",
-											},
-										},
-									},
-									types.StringElement{
-										Content: ">",
+										Content: "inline link macro",
 									},
 								},
-								{
-									types.StringElement{Content: "another one using attribute substitution: {github-url}[]..."},
-								},
-								{
-									types.SingleLineComment{
-										Content: " a single-line comment.",
-									},
-								},
+							},
+							types.StringElement{
+								Content: ">",
+							},
+						},
+						types.InlineElements{
+							types.StringElement{Content: "another one using attribute substitution: {github-url}[]..."},
+						},
+						types.InlineElements{
+							types.SingleLineComment{
+								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -911,48 +881,44 @@ another one using attribute substitution: {github-url}[]...
 							Value: "https://github.com",
 						},
 						types.BlankLine{},
-						types.Paragraph{
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "macros,quotes",
+						types.Attributes{
+							types.AttrSubstitutions: "macros,quotes",
+						},
+						types.InlineElements{
+							types.StringElement{
+								Content: "a link to ",
 							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a link to ",
-									},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "github.com",
-												},
-											},
+							types.InlineLink{
+								Location: types.Location{
+									Scheme: "https://",
+									Path: []interface{}{
+										types.StringElement{
+											Content: "github.com",
 										},
 									},
+								},
+							},
+							types.StringElement{
+								Content: " <using the ",
+							},
+							types.QuotedText{
+								Kind: types.SingleQuoteBold,
+								Elements: []interface{}{
 									types.StringElement{
-										Content: " <using the ",
-									},
-									types.QuotedText{
-										Kind: types.SingleQuoteBold,
-										Elements: []interface{}{
-											types.StringElement{
-												Content: "inline link macro",
-											},
-										},
-									},
-									types.StringElement{
-										Content: ">",
+										Content: "inline link macro",
 									},
 								},
-								{
-									types.StringElement{Content: "another one using attribute substitution: {github-url}[]..."},
-								},
-								{
-									types.SingleLineComment{
-										Content: " a single-line comment.",
-									},
-								},
+							},
+							types.StringElement{
+								Content: ">",
+							},
+						},
+						types.InlineElements{
+							types.StringElement{Content: "another one using attribute substitution: {github-url}[]..."},
+						},
+						types.InlineElements{
+							types.SingleLineComment{
+								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -967,22 +933,18 @@ another one using attribute substitution: {github-url}[]...
 							Value: "https://github.com",
 						},
 						types.BlankLine{},
-						types.Paragraph{
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "none",
-							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to https://github.com[] <using the *inline link macro*>"},
-								},
-								{
-									types.StringElement{Content: "another one using attribute substitution: {github-url}[]..."},
-								},
-								{
-									types.SingleLineComment{
-										Content: " a single-line comment.",
-									},
-								},
+						types.Attributes{
+							types.AttrSubstitutions: "none",
+						},
+						types.InlineElements{
+							types.StringElement{Content: "a link to https://github.com[] <using the *inline link macro*>"},
+						},
+						types.InlineElements{
+							types.StringElement{Content: "another one using attribute substitution: {github-url}[]..."},
+						},
+						types.InlineElements{
+							types.SingleLineComment{
+								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -996,15 +958,11 @@ another one using attribute substitution: {github-url}[]...
 			It("note admonition paragraph", func() {
 				source := `NOTE: this is a note.`
 				expected := types.DocumentFragments{
-					types.Paragraph{
-						Attributes: types.Attributes{
-							types.AttrStyle: types.Note,
-						},
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "this is a note."},
-							},
-						},
+					types.Attributes{
+						types.AttrStyle: types.Note,
+					},
+					types.InlineElements{
+						types.StringElement{Content: "this is a note."},
 					},
 				}
 				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))

@@ -419,7 +419,7 @@ type AttributeDeclaration struct {
 }
 
 // NewAttributeDeclaration initializes a new AttributeDeclaration with the given name and optional value
-func NewAttributeDeclaration(name string, value interface{}) (AttributeDeclaration, error) {
+func NewAttributeDeclaration(name string, value interface{}) AttributeDeclaration {
 	// if log.IsLevelEnabled(log.DebugLevel) {
 	// 	// log.Debugf("new AttributeDeclaration: '%s'", name)
 	// 	spew.Fdump(log.StandardLogger().Out, value)
@@ -427,7 +427,7 @@ func NewAttributeDeclaration(name string, value interface{}) (AttributeDeclarati
 	return AttributeDeclaration{
 		Name:  name,
 		Value: value,
-	}, nil
+	}
 }
 
 var _ Stringer = AttributeDeclaration{}
@@ -436,20 +436,7 @@ var _ Stringer = AttributeDeclaration{}
 func (a AttributeDeclaration) Stringify() string {
 	result := strings.Builder{}
 	result.WriteString(":" + a.Name + ":")
-	switch v := a.Value.(type) {
-	case string:
-		result.WriteString(" " + v)
-	case []interface{}:
-		result.WriteString(" ")
-		for _, e := range v {
-			switch e := e.(type) {
-			case StringElement:
-				result.WriteString(e.Content)
-			case AttributeSubstitution:
-				result.WriteString("{" + e.Name + "}")
-			}
-		}
-	}
+	result.WriteString(stringify(a.Value))
 	return result.String()
 }
 
@@ -1457,15 +1444,15 @@ func (p Paragraph) RestoreAttributes(placeholders map[string]interface{}) interf
 	return p
 }
 
-var _ WithPlaceholdersInElements = Paragraph{}
+// var _ WithPlaceholdersInElements = Paragraph{}
 
-// RestoreElements restores the elements which had been substituted by placeholders
-func (p Paragraph) RestoreElements(placeholders map[string]interface{}) interface{} {
-	for i, line := range p.Lines {
-		p.Lines[i] = restoreElements(line, placeholders)
-	}
-	return p
-}
+// // RestoreElements restores the elements which had been substituted by placeholders
+// func (p Paragraph) RestoreElements(placeholders map[string]interface{}) interface{} {
+// 	for i, line := range p.Lines {
+// 		p.Lines[i] = restoreElements(line, placeholders)
+// 	}
+// 	return p
+// }
 
 var _ FootnotesContainer = Paragraph{}
 
@@ -1524,6 +1511,16 @@ func NewInlineElements(elements ...interface{}) (InlineElements, error) {
 	return Merge(elements...), nil
 }
 
+// HasAttributeSubstitutions returns `true` if at least one of the element is an `AttributeSubstitution`
+func (e InlineElements) HasAttributeSubstitutions() bool {
+	for _, elmt := range e {
+		if _, match := elmt.(AttributeSubstitution); match {
+			return true
+		}
+	}
+	return false
+}
+
 // ------------------------------------------
 // Cross References
 // ------------------------------------------
@@ -1573,18 +1570,18 @@ func (r ExternalCrossReference) RestoreElements(placeholders map[string]interfac
 	return r
 }
 
-var _ WithElementsToSubstitute = ExternalCrossReference{}
+// var _ WithElementsToSubstitute = ExternalCrossReference{}
 
-// ElementsToSubstitute returns this corss reference location path so that substitutions can be applied onto it
-func (r ExternalCrossReference) ElementsToSubstitute() []interface{} {
-	return r.Location.Path
-}
+// // ElementsToSubstitute returns this corss reference location path so that substitutions can be applied onto it
+// func (r ExternalCrossReference) ElementsToSubstitute() []interface{} {
+// 	return r.Location.Path
+// }
 
-// ReplaceElements replaces the elements in this example block
-func (r ExternalCrossReference) ReplaceElements(path []interface{}) interface{} {
-	r.Location.Path = path
-	return r
-}
+// // ReplaceElements replaces the elements in this example block
+// func (r ExternalCrossReference) ReplaceElements(path []interface{}) interface{} {
+// 	r.Location.Path = path
+// 	return r
+// }
 
 // ------------------------------------------
 // Images
@@ -1620,13 +1617,13 @@ func (i ImageBlock) RestoreAttributes(placeholders map[string]interface{}) inter
 	return i
 }
 
-var _ WithPlaceholdersInLocation = ImageBlock{}
+// var _ WithPlaceholdersInLocation = ImageBlock{}
 
-// RestoreLocation restores the location elements which had been substituted by placeholders
-func (i ImageBlock) RestoreLocation(placeholders map[string]interface{}) interface{} {
-	i.Location.Path = restoreElements(i.Location.Path, placeholders)
-	return i
-}
+// // RestoreLocation restores the location elements which had been substituted by placeholders
+// func (i ImageBlock) RestoreLocation(placeholders map[string]interface{}) interface{} {
+// 	i.Location.Path = restoreElements(i.Location.Path, placeholders)
+// 	return i
+// }
 
 var _ WithAttributesToSubstitute = ImageBlock{}
 
@@ -1641,18 +1638,18 @@ func (i ImageBlock) ReplaceAttributes(attributes Attributes) interface{} {
 	return i
 }
 
-var _ WithElementsToSubstitute = ImageBlock{}
+// var _ WithElementsToSubstitute = ImageBlock{}
 
-// ElementsToSubstitute returns this image's location path so that substitutions can be applied onto it
-func (i ImageBlock) ElementsToSubstitute() []interface{} {
-	return i.Location.Path
-}
+// // ElementsToSubstitute returns this image's location path so that substitutions can be applied onto it
+// func (i ImageBlock) ElementsToSubstitute() []interface{} {
+// 	return i.Location.Path
+// }
 
-// ReplaceElements replaces the elements in this example block
-func (i ImageBlock) ReplaceElements(path []interface{}) interface{} {
-	i.Location.Path = path
-	return i
-}
+// // ReplaceElements replaces the elements in this example block
+// func (i ImageBlock) ReplaceElements(path []interface{}) interface{} {
+// 	i.Location.Path = path
+// 	return i
+// }
 
 // InlineImage the structure for the inline image macros
 type InlineImage struct {
@@ -1682,13 +1679,13 @@ func (i InlineImage) RestoreAttributes(placeholders map[string]interface{}) inte
 	return i
 }
 
-var _ WithPlaceholdersInLocation = InlineImage{}
+// var _ WithPlaceholdersInLocation = InlineImage{}
 
-// RestoreLocation restores the location elements which had been substituted by placeholders
-func (i InlineImage) RestoreLocation(placeholders map[string]interface{}) interface{} {
-	i.Location.Path = restoreElements(i.Location.Path, placeholders)
-	return i
-}
+// // RestoreLocation restores the location elements which had been substituted by placeholders
+// func (i InlineImage) RestoreLocation(placeholders map[string]interface{}) interface{} {
+// 	i.Location.Path = restoreElements(i.Location.Path, placeholders)
+// 	return i
+// }
 
 var _ WithAttributesToSubstitute = InlineImage{}
 
@@ -1703,18 +1700,18 @@ func (i InlineImage) ReplaceAttributes(attributes Attributes) interface{} {
 	return i
 }
 
-var _ WithElementsToSubstitute = InlineImage{}
+// var _ WithElementsToSubstitute = InlineImage{}
 
-// ElementsToSubstitute returns this inline image location path so that substitutions can be applied onto its elements
-func (i InlineImage) ElementsToSubstitute() []interface{} {
-	return i.Location.Path // TODO: should return the location so substitution can also take place on the scheme
-}
+// // ElementsToSubstitute returns this inline image location path so that substitutions can be applied onto its elements
+// func (i InlineImage) ElementsToSubstitute() []interface{} {
+// 	return i.Location.Path // TODO: should return the location so substitution can also take place on the scheme
+// }
 
-// ReplaceElements replaces the elements in this inline image
-func (i InlineImage) ReplaceElements(path []interface{}) interface{} {
-	i.Location.Path = path
-	return i
-}
+// // ReplaceElements replaces the elements in this inline image
+// func (i InlineImage) ReplaceElements(path []interface{}) interface{} {
+// 	i.Location.Path = path
+// 	return i
+// }
 
 // ------------------------------------------
 // Icons
@@ -2718,7 +2715,7 @@ func toRawText(elements []interface{}) (string, error) {
 
 // WithAttributes returns a _new_ QuotedText with the given attributes (with some mapping)
 func (t QuotedText) WithAttributes(attributes interface{}) (QuotedText, error) {
-	log.Debugf("adding attributes on quoted text")
+	// log.Debugf("adding attributes on quoted text: %v", attributes)
 	t.Attributes = toAttributesWithMapping(attributes, map[string]string{
 		AttrPositional1: AttrRoles,
 	})
@@ -2917,26 +2914,26 @@ func (l InlineLink) RestoreAttributes(placeholders map[string]interface{}) inter
 	return l
 }
 
-var _ WithPlaceholdersInLocation = InlineLink{}
+// var _ WithPlaceholdersInLocation = InlineLink{}
 
-// RestoreLocation restores the location elements which had been substituted by placeholders
-func (l InlineLink) RestoreLocation(placeholders map[string]interface{}) interface{} {
-	l.Location.Path = restoreElements(l.Location.Path, placeholders)
-	return l
-}
+// // RestoreLocation restores the location elements which had been substituted by placeholders
+// func (l InlineLink) RestoreLocation(placeholders map[string]interface{}) interface{} {
+// 	l.Location.Path = restoreElements(l.Location.Path, placeholders)
+// 	return l
+// }
 
-var _ WithElementsToSubstitute = InlineLink{}
+// var _ WithElementsToSubstitute = InlineLink{}
 
-// ElementsToSubstitute returns this inline link's location path so that substitutions can be applied onto its elements
-func (l InlineLink) ElementsToSubstitute() []interface{} {
-	return l.Location.Path
-}
+// // ElementsToSubstitute returns this inline link's location path so that substitutions can be applied onto its elements
+// func (l InlineLink) ElementsToSubstitute() []interface{} {
+// 	return l.Location.Path
+// }
 
-// ReplaceElements replaces the elements in this example block
-func (l InlineLink) ReplaceElements(path []interface{}) interface{} {
-	l.Location.Path = path
-	return l
-}
+// // ReplaceElements replaces the elements in this example block
+// func (l InlineLink) ReplaceElements(path []interface{}) interface{} {
+// 	l.Location.Path = path
+// 	return l
+// }
 
 // NewInlineLinkAttributes returns a map of link attributes
 func NewInlineLinkAttributes(attributes []interface{}) (Attributes, error) {
@@ -3270,7 +3267,7 @@ func NewIncludedFileEndTag(tag string) (IncludedFileEndTag, error) {
 // Location a Location contains characters and optionaly, document attributes
 type Location struct {
 	Scheme string
-	Path   []interface{}
+	Path   interface{}
 }
 
 // NewLocation return a new location with the given elements
@@ -3297,11 +3294,11 @@ func (l Location) WithPathPrefix(p interface{}) Location {
 		if l.Scheme == "" && !strings.HasPrefix(l.Stringify(), "/") {
 			if u, err := url.Parse(l.Stringify()); err == nil {
 				if !u.IsAbs() {
-					l.Path = append([]interface{}{
+					l.Path = Merge(
 						StringElement{
 							Content: p,
 						},
-					}, l.Path...)
+						l.Path)
 				}
 			}
 		}
@@ -3313,15 +3310,7 @@ func (l Location) WithPathPrefix(p interface{}) Location {
 func (l Location) Stringify() string {
 	result := &strings.Builder{}
 	result.WriteString(l.Scheme)
-	for _, e := range l.Path {
-		if s, ok := e.(StringElement); ok {
-			result.WriteString(s.Content) // no need to use `fmt.Sprintf` for elements of type 'string'
-		} else if s, ok := e.(SpecialCharacter); ok {
-			result.WriteString(s.Name) // no need to use `fmt.Sprintf` for elements of type 'string'
-		} else {
-			result.WriteString(fmt.Sprintf("%s", e))
-		}
-	}
+	result.WriteString(stringify(l.Path))
 	return result.String()
 }
 
