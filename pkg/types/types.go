@@ -91,20 +91,6 @@ import (
 // }
 
 // ------------------------------------------
-// Lines
-// ------------------------------------------
-
-// NewRawLine returns a new slice containing a single StringElement with the given content
-func NewRawLine(content string) ([]interface{}, error) {
-	// log.Debugf("new line: '%v'", content)
-	return []interface{}{
-		StringElement{
-			Content: content,
-		},
-	}, nil
-}
-
-// ------------------------------------------
 // common interfaces
 // ------------------------------------------
 
@@ -648,8 +634,8 @@ func NewSection(level int, title []interface{}, ids []interface{}) (Section, err
 	return Section{
 		Level: level,
 		// Attributes: attrs,
-		Title:    title,
-		Elements: []interface{}{},
+		Title: title,
+		// Elements: []interface{}{},
 	}, nil
 }
 
@@ -3006,9 +2992,15 @@ func (f *FileInclusion) TagRanges() (TagRanges, bool) {
 }
 
 // -------------------------------------------------------------------------------------
-// Raw Content
+// Raw Line
 // -------------------------------------------------------------------------------------
-type RawContent []byte
+type RawLine string
+
+// NewRawLine returns a new slice containing a single StringElement with the given content
+func NewRawLine(content string) (RawLine, error) {
+	// log.Debugf("new line: '%v'", content)
+	return RawLine(content), nil
+}
 
 // -------------------------------------------------------------------------------------
 // LineRanges: one or more ranges of lines to limit the content of a file to include

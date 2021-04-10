@@ -790,7 +790,7 @@ level 2::: description 2`
 		})
 	})
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		It("with a term and description on 2 lines", func() {
 			source := `Item1::

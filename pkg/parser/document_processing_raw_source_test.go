@@ -222,7 +222,7 @@ include::{includedir}/include.foo[]`
 						Value: "../../test/includes",
 					},
 					types.BlankLine{},
-					types.RawContent([]byte(`*some strong content*
+					types.RawLine([]byte(`*some strong content*
 
 include::hello_world.go.txt[]
 `)),

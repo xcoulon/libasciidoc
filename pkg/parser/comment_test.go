@@ -216,7 +216,7 @@ a second paragraph`
 		})
 	})
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		Context("single line comments", func() {
 

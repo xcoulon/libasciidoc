@@ -12,7 +12,7 @@ import (
 
 var _ = Describe("footnotes - document", func() {
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		It("footnote with single-line content", func() {
 			footnoteContent := "some content"

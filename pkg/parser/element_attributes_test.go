@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("element attributes", func() {
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		Context("element links", func() {
 

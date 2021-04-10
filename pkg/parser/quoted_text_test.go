@@ -3221,7 +3221,7 @@ var _ = Describe("quoted texts", func() {
 		})
 	})
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		Context("with single punctuation", func() {
 

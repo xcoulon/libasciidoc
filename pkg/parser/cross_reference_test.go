@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("cross references", func() {
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		Context("internal references", func() {
 

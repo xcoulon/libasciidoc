@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("inline elements", func() {
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		It("bold text without parenthesis", func() {
 			source := "*some bold content*"

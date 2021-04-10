@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-//
+// TODO: rename this func
 func onInlineElements(ctx *parserContext, elements types.InlineElements) (types.InlineElements, error) {
 	if log.IsLevelEnabled(log.DebugLevel) {
 		log.Debug("inline elements:")

@@ -825,7 +825,7 @@ Doc Writer <thedoc@asciidoctor.org>`
 		})
 	})
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		Context("valid sections", func() {
 

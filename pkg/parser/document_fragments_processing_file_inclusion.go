@@ -89,7 +89,7 @@ func parseFileToInclude(ctx *parserContext, incl types.FileInclusion, options ..
 	// if the file to include is not an Asciidoc document, just return the content as "raw lines"
 	if !IsAsciidoc(absPath) {
 		return []interface{}{
-			types.RawContent(content.Bytes()),
+			types.RawLine(content.Bytes()),
 		}, nil
 	}
 	// parse the content, and returns the corresponding elements

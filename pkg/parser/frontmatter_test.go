@@ -12,7 +12,7 @@ var _ = Describe("front-matters", func() {
 
 	Context("in raw documents", func() {
 
-		Context("yaml front-matter", func() {
+		Context("alone", func() {
 
 			It("with simple attributes and no blanklines", func() {
 				source := `---
@@ -90,9 +90,44 @@ author: Xavier
 				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 		})
+
+		Context("with content afterwards", func() {
+
+			It("with document header", func() {
+				source := `---
+title: a title
+author: Xavier
+---
+= A Title
+`
+				expected := types.DocumentFragments{
+					types.BlockDelimiter{
+						Kind: types.FrontMatter,
+					},
+					types.StringElement{
+						Content: "title: a title",
+					},
+					types.StringElement{
+						Content: "author: Xavier",
+					},
+					types.BlockDelimiter{
+						Kind: types.FrontMatter,
+					},
+					types.Section{
+						Level: 0,
+						Title: []interface{}{
+							types.StringElement{
+								Content: "A Title",
+							},
+						},
+					},
+				}
+				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			})
+		})
 	})
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		Context("yaml front-matter", func() {
 

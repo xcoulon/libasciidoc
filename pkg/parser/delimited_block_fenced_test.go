@@ -262,7 +262,7 @@ var _ = Describe("fenced blocks", func() {
 		})
 	})
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		Context("delimited blocks", func() {
 

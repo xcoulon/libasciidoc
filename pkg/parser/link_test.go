@@ -114,7 +114,7 @@ var _ = Describe("links", func() {
 		})
 	})
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		Context("external links", func() {
 

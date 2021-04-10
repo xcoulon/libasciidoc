@@ -224,7 +224,7 @@ const Cookie = "cookie"
 		})
 	})
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		Context("delimited block", func() {
 

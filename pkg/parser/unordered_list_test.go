@@ -1461,7 +1461,7 @@ paragraph attached to parent list item`
 		})
 	})
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		Context("valid content", func() {
 

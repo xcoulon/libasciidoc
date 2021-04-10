@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("checked lists", func() {
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		It("with title and dashes", func() {
 			source := `.Checklist

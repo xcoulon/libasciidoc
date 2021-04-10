@@ -248,7 +248,7 @@ some *example* content`
 		})
 	})
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		Context("delimited blocks", func() {
 

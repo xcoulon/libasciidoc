@@ -86,7 +86,7 @@ second paragraph
 		})
 	})
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		It("blank line between 2 paragraphs", func() {
 			source := `first paragraph

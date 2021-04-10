@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("documents", func() {
 
-	Context("in raw documents", func() {
+	Context("raw documents", func() {
 
 		It("should parse empty document", func() {
 			source := ``
@@ -24,14 +24,6 @@ Garrett D'Amore
 1.0, July 4, 2020
 `
 			expected := types.DocumentFragments{
-				types.DocumentAuthor{
-					FullName: "Garrett D'Amore",
-					Email:    "",
-				},
-				types.DocumentRevision{
-					Revnumber: "1.0",
-					Revdate:   "July 4, 2020",
-				},
 				types.Section{
 					Level: 0,
 					Attributes: types.Attributes{
@@ -42,7 +34,14 @@ Garrett D'Amore
 							Content: "My title",
 						},
 					},
-					Elements: []interface{}{},
+				},
+				types.DocumentAuthor{
+					FullName: "Garrett D'Amore",
+					Email:    "",
+				},
+				types.DocumentRevision{
+					Revnumber: "1.0",
+					Revdate:   "July 4, 2020",
 				},
 			}
 			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
@@ -55,15 +54,6 @@ Garrett D'Amore
 Garrett D'Amore
 1.0, July 4, 2020`
 			expected := types.DocumentFragments{
-				types.DocumentAuthor{
-					FullName: "Garrett D'Amore",
-					Email:    "",
-				},
-				types.DocumentRevision{
-					Revnumber: "1.0",
-					Revdate:   "July 4, 2020",
-					Revremark: "",
-				},
 				types.Section{
 					Level: 0,
 					Attributes: types.Attributes{
@@ -74,7 +64,15 @@ Garrett D'Amore
 							Content: "My title",
 						},
 					},
-					Elements: []interface{}{},
+				},
+				types.DocumentAuthor{
+					FullName: "Garrett D'Amore",
+					Email:    "",
+				},
+				types.DocumentRevision{
+					Revnumber: "1.0",
+					Revdate:   "July 4, 2020",
+					Revremark: "",
 				},
 			}
 			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
@@ -82,7 +80,7 @@ Garrett D'Amore
 		})
 	})
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		It("should parse empty document", func() {
 			source := ``

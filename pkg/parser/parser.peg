@@ -354,26 +354,38 @@ CalloutListItemPrefix <- "<" ref:([0-9]+ { return strconv.Atoi(string(c.text)) }
 // -------------------------------------------------------------------------------------
 // Comments
 // -------------------------------------------------------------------------------------
-CommentBlockDelimiter <- "////" Space* EOL
 
 CommentBlockStartDelimiter <- "////" Space* EOL
 
 CommentBlockEndDelimiter <- ("////" Space* EOL) / EOF
 
-CommentBlock <- CommentBlockStartDelimiter content:(CommentBlockRawContent)  CommentBlockEndDelimiter {
-        return types.NewCommentBlock(content.([]interface{}), nil)
+// CommentBlock <- CommentBlockStartDelimiter content:(CommentBlockRawContent)  CommentBlockEndDelimiter {
+//         return types.NewCommentBlock(content.([]interface{}), nil)
+//     }
+
+// CommentBlockRawContent <- (!CommentBlockEndDelimiter line:(RawLine) { 
+//         return line, nil
+//     })*
+
+
+// RawLine <- !EOF content:([^\r\n]* { // line MAY have content
+//         return string(c.text), nil 
+//     }) EOL { 
+//         return types.NewRawLine(content.(string))
+//     }
+
+CommentBlockContent <- 
+    // check if enabled for the current context
+    &{
+        return c.isCommentBlockContentEnabled(types.Comment)
+    }
+    content:(RawLine) {
+        return content, nil
     }
 
-CommentBlockRawContent <- (!CommentBlockEndDelimiter line:(RawLine) { 
-        return line, nil
-    })*
-
-
-RawLine <- !EOF content:([^\r\n]* { // line MAY have content
-        return string(c.text), nil 
-    }) EOL { 
-        return types.NewRawLine(content.(string))
-    }
+RawLine <- content:(.)* EOF {
+    return types.NewRawLine(string(c.text))
+}
 
 SingleLineComment <- !CommentBlockDelimiter Space* "//" content:(SingleLineCommentContent) EOL {
         return types.NewSingleLineComment(content.(string))
@@ -459,11 +471,11 @@ PassthroughBlockDelimiter <- "++++" Space* EOL {
 }
 
 // ------------------------------------------
-// Document Fragment
+// Document Body Fragment
 // ------------------------------------------
 
 // default document fragments
-DocumentFragment <- !EOF
+DocumentBodyFragment <- !EOF
     line:(
         Section
         / BlankLine
@@ -521,15 +533,22 @@ SourceBlockFragments <- (!SourceBlockDelimiter VerbatimDocumentFragment)*
 //         return types.NewDocumentHeader(fragments.([]interface{}))
 //     }
 
-DocumentHeaderFragment <- 
-        ("=" Space+ title:(SectionTitleElements) id:(InlineElementID*) EOL {
+DocumentTitle <- 
+        "=" Space+ title:(SectionTitleElements) id:(InlineElementID*) EOL {
             return types.NewSection(0, title.(types.InlineElements), id.([]interface{})) 
-        })
+        }
+        
+DocumentAuthorsMetadata <- 
+        SingleLineComment
+        / CommentBlockDelimiter
+        / CommentBlockContent
         / DocumentAuthors
+
+DocumentRevisionMetadata <- 
+        SingleLineComment
+        / CommentBlockDelimiter
+        / CommentBlockContent
         / DocumentRevision
-        / SingleLineComment
-        / CommentBlock
-        / AttributeDeclaration
 
 DocumentAuthors <- DocumentAuthorsInlineForm / DocumentAuthorsAttributeForm
 
@@ -906,6 +925,12 @@ Macro <- InlineIcon
     / InlineElementID
     / ConcealedIndexTerm
     / IndexTerm
+
+
+// ----------------------------------------------------------------------------
+// PostReplacement
+// ----------------------------------------------------------------------------
+PostReplacement <- LineBreak
 
 // ----------------------------------------------------------------------------
 //

@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"fmt"
+
 	"github.com/bytesparadise/libasciidoc/pkg/configuration"
 	"github.com/bytesparadise/libasciidoc/pkg/types"
 
@@ -40,6 +42,25 @@ func (ctx *parserContext) clone() *parserContext {
 
 func (ctx *parserContext) isSectionRuleEnabled() bool {
 	return ctx.blockLevels.empty()
+}
+
+func (ctx *parserContext) isCommentBlockContentEnabled(kind types.DelimiterKind) bool {
+	return ctx.blockLevels.get() == kind
+}
+
+func (ctx *parserContext) onAttributeDeclaration(d types.AttributeDeclaration) error {
+	value := substituteAttributes(d.Value, ctx.attributes)
+	switch value := value.(type) {
+	case types.StringElement:
+		ctx.attributes[d.Name] = value.Content
+	case string:
+		ctx.attributes[d.Name] = value
+	case nil:
+		ctx.attributes[d.Name] = ""
+	default:
+		return fmt.Errorf("unexpected type of value after substituing attributes: '%T'", value)
+	}
+	return nil
 }
 
 func (ctx *parserContext) onBlockDelimiter(d types.BlockDelimiter) {

@@ -167,7 +167,7 @@ bar
 		})
 	})
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		Context("delimited blocks", func() {
 
@@ -281,7 +281,7 @@ bar
 			})
 		})
 	})
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		Context("sidebar blocks", func() {
 

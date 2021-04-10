@@ -1463,7 +1463,7 @@ image::foo.png[]`
 		})
 	})
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		Context("default paragraph", func() {
 

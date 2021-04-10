@@ -13,7 +13,7 @@ import (
 
 var _ = Describe("user macros", func() {
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		userTmpl := &texttemplate.Template{}
 

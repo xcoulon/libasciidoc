@@ -173,7 +173,7 @@ image::images/foo.png[the foo.png image, 600, 400]`
 		})
 	})
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		It("with empty alt", func() {
 			source := "image::images/foo.png[]"
@@ -692,7 +692,7 @@ var _ = Describe("inline images", func() {
 
 	})
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		It("with empty alt only", func() {
 			source := "image:images/foo.png[]"
