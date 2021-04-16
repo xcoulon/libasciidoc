@@ -28,7 +28,7 @@ var _ = Describe("fenced blocks", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with special characters line", func() {
@@ -50,7 +50,7 @@ var _ = Describe("fenced blocks", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with no line", func() {
@@ -62,7 +62,7 @@ var _ = Describe("fenced blocks", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with multiple lines alone", func() {
@@ -89,7 +89,7 @@ var _ = Describe("fenced blocks", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with multiple lines then a paragraph", func() {
@@ -125,7 +125,7 @@ var _ = Describe("fenced blocks", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("after a paragraph", func() {
@@ -152,7 +152,7 @@ var _ = Describe("fenced blocks", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with unclosed delimiter", func() {
@@ -168,7 +168,7 @@ var _ = Describe("fenced blocks", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with external link inside - without attributes", func() {
@@ -198,7 +198,7 @@ var _ = Describe("fenced blocks", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with external link inside - with attributes", func() {
@@ -228,7 +228,7 @@ var _ = Describe("fenced blocks", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with unrendered list", func() {
@@ -257,7 +257,7 @@ var _ = Describe("fenced blocks", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

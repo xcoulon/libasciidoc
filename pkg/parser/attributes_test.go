@@ -29,7 +29,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("block image with empty alt and extra whitespace", func() {
@@ -43,7 +43,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("block image with empty positional parameters", func() {
@@ -57,7 +57,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("block image with empty first parameter, non-empty width", func() {
@@ -74,7 +74,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("block image with double quoted alt", func() {
@@ -91,7 +91,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("block image with double quoted alt and embedded quotes", func() {
@@ -108,7 +108,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("block image alt and named pair", func() {
@@ -126,7 +126,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			result, err := ParseRawSource(source)
+			result, err := ParseDocumentFragments(source)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result).To(MatchDocumentFragments(expected))
 		})
@@ -147,7 +147,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("block image alt, width, height, and named pair (spacing)", func() {
@@ -168,7 +168,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("block image alt, width, height, and named pair embedded quote", func() {
@@ -189,7 +189,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 	})
 
@@ -220,7 +220,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("should not substitute an attribute in another attribute when not defined", func() {
@@ -243,7 +243,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		Context("invalid syntax", func() {
@@ -264,7 +264,7 @@ var _ = Describe("attributes", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

@@ -44,7 +44,7 @@ some *bold* content
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with title, paragraph and example block", func() {
@@ -105,7 +105,7 @@ bar
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with title, paragraph and source block", func() {
@@ -162,7 +162,7 @@ bar
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

@@ -210,21 +210,78 @@ func NewDocumentHeader(fragments []interface{}) (DocumentFragments, error) {
 
 type DocumentFragments []interface{}
 
-func NewDocumentFragments(frontmatter, header interface{}, fragments interface{}) (DocumentFragments, error) {
-	var result []interface{}
-	documentHeader, hasHeader := header.(DocumentFragments)
-	documentFragments, hasFragments := fragments.([]interface{})
-	result = make([]interface{}, 0, 1+len(documentHeader)+len(documentFragments)) // max capacity
-	if frontmatter != nil {
-		result = append(result, frontmatter)
+// func NewDocumentFragments(frontmatter, header interface{}, fragments interface{}) (DocumentFragments, error) {
+// 	var result []interface{}
+// 	documentHeader, hasHeader := header.(DocumentFragments)
+// 	documentFragments, hasFragments := fragments.([]interface{})
+// 	result = make([]interface{}, 0, 1+len(documentHeader)+len(documentFragments)) // max capacity
+// 	if frontmatter != nil {
+// 		result = append(result, frontmatter)
+// 	}
+// 	if hasHeader {
+// 		result = append(result, documentHeader...)
+// 	}
+// 	if hasFragments {
+// 		result = append(result, documentFragments...)
+// 	}
+// 	return result, nil
+// }
+
+// DocumentFragment a fragment of document, read by the scanner
+type DocumentFragment struct {
+	LineOffset int
+	Content    []interface{}
+	Error      error
+}
+
+func NewDocumentFragment(lineOffset int, elements ...interface{}) DocumentFragment {
+	return DocumentFragment{
+		LineOffset: lineOffset,
+		Content:    elements,
 	}
-	if hasHeader {
-		result = append(result, documentHeader...)
+}
+
+type RawBlock interface {
+	AddLine(l RawLine) RawBlock
+}
+type RawParagraph struct {
+	Attributes Attributes
+	Lines      []RawLine
+}
+
+func NewRawParagraph(attributes Attributes) RawParagraph {
+	return RawParagraph{
+		Attributes: attributes,
+		Lines:      []RawLine{},
 	}
-	if hasFragments {
-		result = append(result, documentFragments...)
+}
+
+var _ RawBlock = RawParagraph{}
+
+func (p RawParagraph) AddLine(l RawLine) RawBlock {
+	p.Lines = append(p.Lines, l)
+	return p
+}
+
+type RawDelimitedBlock struct {
+	Attributes Attributes
+	Kind       DelimiterKind
+	Lines      []RawLine
+}
+
+func NewRawDelimitedBlock(kind DelimiterKind, attributes Attributes) RawDelimitedBlock {
+	return RawDelimitedBlock{
+		Attributes: attributes,
+		Kind:       kind,
+		Lines:      []RawLine{},
 	}
-	return result, nil
+}
+
+var _ RawBlock = RawDelimitedBlock{}
+
+func (b RawDelimitedBlock) AddLine(l RawLine) RawBlock {
+	b.Lines = append(b.Lines, l)
+	return b
 }
 
 // ------------------------------------------
@@ -1324,7 +1381,8 @@ func (i LabeledListItem) ReplaceAttributes(attributes Attributes) interface{} {
 // Paragraph the structure for the paragraphs
 type Paragraph struct {
 	Attributes Attributes
-	Lines      [][]interface{}
+	Lines      [][]interface{} // DEPRECATED, use 'Elements' instead
+	Elements   []interface{}
 }
 
 // AttrHardBreaks the attribute to set on a paragraph to render with hard breaks on each line
@@ -1335,12 +1393,12 @@ const AttrHardBreaks = "hardbreaks"
 const DocumentAttrHardBreaks = "hardbreaks"
 
 // NewParagraph initializes a new `Paragraph`
-func NewParagraph(lines []interface{}, attributes interface{}) (Paragraph, error) {
+func NewParagraph(elements []interface{}, attributes interface{}) (Paragraph, error) {
 	// log.Debugf("new paragraph with attributes: '%v'", attributes)
-	l, err := toLines(lines)
-	if err != nil {
-		return Paragraph{}, errors.Wrapf(err, "failed to initialize a Paragraph")
-	}
+	// l, err := toLines(elements)
+	// if err != nil {
+	// 	return Paragraph{}, errors.Wrapf(err, "failed to initialize a Paragraph")
+	// }
 	attrs := toAttributesWithMapping(attributes, map[string]string{
 		AttrPositional1: AttrStyle,
 	})
@@ -1357,7 +1415,8 @@ func NewParagraph(lines []interface{}, attributes interface{}) (Paragraph, error
 	}
 	return Paragraph{
 		Attributes: attrs,
-		Lines:      l,
+		// Lines:      l,
+		Elements: elements,
 	}, nil
 }
 

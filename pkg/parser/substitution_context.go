@@ -1,45 +1,47 @@
 package parser
 
-// import (
-// 	"fmt"
+import (
+	"fmt"
+)
 
-// 	"github.com/bytesparadise/libasciidoc/pkg/configuration"
-// 	"github.com/bytesparadise/libasciidoc/pkg/types"
+type substitutionContext struct {
+	substitutions map[SubstitutionKind]bool
+}
 
-// 	log "github.com/sirupsen/logrus"
-// )
+func newSubstitutionContext() *substitutionContext {
+	return &substitutionContext{
+		substitutions: map[SubstitutionKind]bool{
+			// default substitutions
+			InlinePassthroughs: true,
+			SpecialCharacters:  true,
+			Attributes:         true,
+			Quotes:             true,
+			Replacements:       true,
+			Macros:             true,
+			PostReplacements:   true,
+		},
+	}
+}
 
-// type substitutionContext struct {
-// 	substitutions map[SubstitutionKind]bool
-// }
+func (c *current) isSubstitutionEnabled(k SubstitutionKind) (bool, error) {
+	ctx, ok := c.globalStore[substitutionContextKey].(*substitutionContext)
+	if !ok {
+		return false, fmt.Errorf("unable to look-up the substitution context in the parser's global store")
+	}
+	enabled, found := ctx.substitutions[k]
+	if !found {
+		return false, nil
+	}
+	return enabled, nil
+}
 
-// func newSubstitutionContext() *substitutionContext {
-// 	return &substitutionContext{
-// 		substitutions: map[SubstitutionKind]bool{
-// 			// default substitutions
-
-// 			AttributesSubstitution: true,
-// 		},
-// 	}
-// }
-
-// func (ctx *substitutionContext) clone() *substitutionContext {
-// 	return &substitutionContext{
-// 		config:        ctx.config,
-// 		attributes:    ctx.attributes, // TODO: should we clone this too? ie, can an attribute declared in a child doc be used in rest of the parent doc?
-// 		levelOffsets:  append([]levelOffset{}, ctx.levelOffsets...),
-// 		blockLevels:   ctx.blockLevels,
-// 		substitutions: ctx.substitutions,
-// 	}
-// }
-
-// func (ctx *substitutionContext) isSectionRuleEnabled() bool {
-// 	return ctx.blockLevels.empty()
-// }
-
-// func (ctx *substitutionContext) isCommentBlockContentEnabled(kind types.DelimiterKind) bool {
-// 	return ctx.blockLevels.get() == kind
-// }
+func (ctx *substitutionContext) isSubstitutionEnabled(k SubstitutionKind) bool {
+	enabled, found := ctx.substitutions[k]
+	if !found {
+		return false
+	}
+	return enabled
+}
 
 // func (ctx *substitutionContext) onAttributeDeclaration(d types.AttributeDeclaration) error {
 // 	value := substituteAttributes(d.Value, ctx.attributes)
@@ -110,35 +112,35 @@ package parser
 // 	}
 // }
 
-// type SubstitutionKind string
+type SubstitutionKind string
 
-// const (
-// 	// substitutions the key in which substitutions are stored
-// 	substitutionsKey string = "substitution"
+const (
+	// substitutions the key in which substitutions are stored
+	substitutionContextKey string = "substitutionContext"
 
-// 	// InlinePassthroughsSubstitution the "inline_passthrough" substitution
-// 	InlinePassthroughSubstitution SubstitutionKind = "inline_passthrough"
-// 	// AttributesSubstitution the "attributes" substitution
-// 	AttributesSubstitution SubstitutionKind = "attributes"
-// 	// SpecialCharactersSubstitution the "specialcharacters" substitution
-// 	SpecialCharactersSubstitution SubstitutionKind = "specialcharacters"
-// 	// CalloutsSubstitution the "callouts" substitution
-// 	CalloutsSubstitution SubstitutionKind = "callouts"
-// 	// QuotesSubstitution the "quotes" substitution
-// 	QuotesSubstitution SubstitutionKind = "quotes"
-// 	// ReplacementsSubstitution the "replacements" substitution
-// 	ReplacementsSubstitution SubstitutionKind = "replacements"
-// 	// MacrosSubstitution the "macros" substitution
-// 	MacrosSubstitution SubstitutionKind = "macros"
-// 	// PortReplacementsSubstitution the "post_replacements" substitution
-// 	PortReplacementsSubstitution SubstitutionKind = "post_replacements"
-// 	// NoneSubstitution the "none" substitution
-// 	NoneSubstitution SubstitutionKind = "none"
-// )
+	// InlinePassthroughs the "inline_passthrough" substitution
+	InlinePassthroughs SubstitutionKind = "inline_passthrough"
+	// Attributes the "attributes" substitution
+	Attributes SubstitutionKind = "attributes"
+	// SpecialCharacters the "specialcharacters" substitution
+	SpecialCharacters SubstitutionKind = "specialcharacters"
+	// Callouts the "callouts" substitution
+	Callouts SubstitutionKind = "callouts"
+	// Quotes the "quotes" substitution
+	Quotes SubstitutionKind = "quotes"
+	// Replacements the "replacements" substitution
+	Replacements SubstitutionKind = "replacements"
+	// Macros the "macros" substitution
+	Macros SubstitutionKind = "macros"
+	// PostReplacements the "post_replacements" substitution
+	PostReplacements SubstitutionKind = "post_replacements"
+	// None the "none" substitution
+	None SubstitutionKind = "none"
+)
 
-// func (ctx *substitutionContext) substitutionEnabled(kind SubstitutionKind) bool {
-// 	if value, exists := ctx.substitutions[kind]; exists {
-// 		return value
-// 	}
-// 	return false
-// }
+func (ctx *substitutionContext) substitutionEnabled(kind SubstitutionKind) bool {
+	if value, exists := ctx.substitutions[kind]; exists {
+		return value
+	}
+	return false
+}

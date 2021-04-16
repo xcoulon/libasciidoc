@@ -29,7 +29,7 @@ some *listing* code
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with no line", func() {
@@ -42,7 +42,7 @@ some *listing* code
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with multiple lines alone", func() {
@@ -74,7 +74,7 @@ in the middle
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with unrendered list", func() {
@@ -104,7 +104,7 @@ in the middle
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with multiple lines then a paragraph", func() {
@@ -146,7 +146,7 @@ then a normal paragraph.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("after a paragraph", func() {
@@ -176,7 +176,7 @@ some listing code
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with unclosed delimiter", func() {
@@ -193,7 +193,7 @@ End of file here.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with single callout", func() {
@@ -238,7 +238,7 @@ End of file here.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with multiple callouts on different lines", func() {
@@ -300,7 +300,7 @@ func foo() {} <2>
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with multiple callouts on same line", func() {
@@ -398,7 +398,7 @@ func foo() {} <4>
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with invalid callout", func() {
@@ -444,7 +444,7 @@ import <a>
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 		})
@@ -469,7 +469,7 @@ some *listing* content`
 					},
 				}
 
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

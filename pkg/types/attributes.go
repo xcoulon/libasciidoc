@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // ------------------------------------------
@@ -477,7 +475,6 @@ func (a Attributes) Set(key string, value interface{}) Attributes {
 
 // SetAll adds the given attributes to the current ones
 func (a Attributes) SetAll(attr interface{}) Attributes {
-	log.Debug("setting attributes")
 	switch attr := attr.(type) {
 	case Attribute:
 		if a == nil {

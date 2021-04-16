@@ -32,7 +32,7 @@ var _ = Describe("unordered lists", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("unordered list with ID, title, role and a single item", func() {
@@ -61,7 +61,7 @@ var _ = Describe("unordered lists", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("unordered list with style ID, title, role and a single item", func() {
@@ -91,7 +91,7 @@ var _ = Describe("unordered lists", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("unordered list with a title and a single item", func() {
@@ -116,7 +116,7 @@ var _ = Describe("unordered lists", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("unordered list with 2 items with stars", func() {
@@ -158,7 +158,7 @@ var _ = Describe("unordered lists", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("unordered list based on article.adoc (with heading spaces)", func() {
@@ -288,7 +288,7 @@ var _ = Describe("unordered lists", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("unordered list with 2 items with carets", func() {
@@ -330,7 +330,7 @@ var _ = Describe("unordered lists", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("unordered list with items with mixed styles", func() {
@@ -411,7 +411,7 @@ var _ = Describe("unordered lists", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("unordered list with 2 items with empty line in-between", func() {
@@ -456,7 +456,7 @@ var _ = Describe("unordered lists", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("unordered list with 2 items on multiple lines", func() {
@@ -500,7 +500,7 @@ on 2 lines, too.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("unordered lists with 2 empty lines in-between", func() {
@@ -540,7 +540,7 @@ on 2 lines, too.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected)) // parse the whole document to get 2 lists
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected)) // parse the whole document to get 2 lists
 			})
 
 			It("unordered list with items on 3 levels", func() {
@@ -666,7 +666,7 @@ on 2 lines, too.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("max level of unordered items - case 1", func() {
@@ -778,7 +778,7 @@ on 2 lines, too.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("max level of unordered items - case 2", func() {
@@ -889,7 +889,7 @@ on 2 lines, too.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("unordered list item with dash on multiple lines", func() {
@@ -918,7 +918,7 @@ on 2 lines, too.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("unordered list item with asterisk on multiple lines", func() {
@@ -947,7 +947,7 @@ on 2 lines, too.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 
@@ -1031,7 +1031,7 @@ on 2 lines, too.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("invalid list item", func() {
@@ -1045,7 +1045,7 @@ on 2 lines, too.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 
@@ -1117,7 +1117,7 @@ another delimited block
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("unordered list with item continuation - case 2", func() {
@@ -1261,7 +1261,7 @@ The {plus} symbol is on a new line.
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("unordered list without item continuation", func() {
@@ -1321,7 +1321,7 @@ another delimited block
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 
@@ -1391,7 +1391,7 @@ paragraph attached to grandparent list item`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("attach to parent item", func() {
@@ -1456,7 +1456,7 @@ paragraph attached to parent list item`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

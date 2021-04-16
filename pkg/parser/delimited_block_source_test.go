@@ -60,7 +60,7 @@ type Foo struct{
 						Lines: sourceCode,
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with source attribute and comma", func() {
@@ -81,7 +81,7 @@ type Foo struct{
 						Lines: sourceCode,
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with title, source and language attributes", func() {
@@ -105,7 +105,7 @@ type Foo struct{
 						Lines: sourceCode,
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with id, title, source and language and other attributes", func() {
@@ -132,7 +132,7 @@ type Foo struct{
 						Lines: sourceCode,
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with callout and admonition block afterwards", func() {
@@ -195,7 +195,7 @@ a note
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with nowrap option", func() {
@@ -219,7 +219,7 @@ const Cookie = "cookie"
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/bytesparadise/libasciidoc/pkg/types"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/davecgh/go-spew/spew"
 	gomegatypes "github.com/onsi/gomega/types"
@@ -30,6 +31,12 @@ func (m *documentMatcher) Match(actual interface{}) (success bool, err error) {
 		return false, errors.Errorf("MatchDocument matcher expects a Document (actual: %T)", actual)
 	}
 	if !reflect.DeepEqual(m.expected, actual) {
+		if log.IsLevelEnabled(log.DebugLevel) {
+			log.Debug("actual document:")
+			spew.Fdump(log.StandardLogger().Out, actual)
+			log.Debug("expected document:")
+			spew.Fdump(log.StandardLogger().Out, m.expected)
+		}
 		dmp := diffmatchpatch.New()
 		diffs := dmp.DiffMain(spew.Sdump(actual), spew.Sdump(m.expected), true)
 		m.diffs = dmp.DiffPrettyText(diffs)

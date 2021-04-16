@@ -56,7 +56,7 @@ var _ = Describe("special characters", func() {
 				},
 			},
 		}
-		Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+		Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 	})
 
 	It("should parse in delimited block", func() {
@@ -107,6 +107,6 @@ var _ = Describe("special characters", func() {
 				},
 			},
 		}
-		Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+		Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 	})
 })

@@ -155,7 +155,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'normal' substitution", func() {
@@ -278,7 +278,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'quotes' substitution", func() {
@@ -356,7 +356,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'macros' substitution", func() {
@@ -439,7 +439,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'attributes' substitution", func() {
@@ -509,7 +509,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'attributes,macros' substitution", func() {
@@ -602,7 +602,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'specialchars' substitution", func() {
@@ -693,7 +693,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'replacements' substitution", func() {
@@ -763,7 +763,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'post_replacements' substitution", func() {
@@ -834,7 +834,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'quotes,macros' substitution", func() {
@@ -925,7 +925,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'macros,quotes' substitution", func() {
@@ -1016,7 +1016,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'none' substitution", func() {
@@ -1086,7 +1086,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 		})
 
@@ -1176,7 +1176,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'normal' substitution", func() {
@@ -1284,7 +1284,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'quotes' substitution", func() {
@@ -1347,7 +1347,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'macros' substitution", func() {
@@ -1415,7 +1415,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'attributes' substitution", func() {
@@ -1470,7 +1470,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'attributes,macros' substitution", func() {
@@ -1548,7 +1548,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'specialchars' substitution", func() {
@@ -1624,7 +1624,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'replacements' substitution", func() {
@@ -1679,7 +1679,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'post_replacements' substitution", func() {
@@ -1735,7 +1735,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'quotes,macros' substitution", func() {
@@ -1811,7 +1811,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'macros,quotes' substitution", func() {
@@ -1887,7 +1887,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'none' substitution", func() {
@@ -1942,7 +1942,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'quotes' substitutions on a passthrough block", func() {
@@ -1984,7 +1984,7 @@ _foo_
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 
 			})
 
@@ -2063,7 +2063,7 @@ _foo_
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'macros,attributes+' substitution", func() {
@@ -2141,7 +2141,7 @@ _foo_
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'attributes,+macros' substitution", func() {
@@ -2219,7 +2219,7 @@ _foo_
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the '+quotes' substitution", func() {
@@ -2297,7 +2297,7 @@ _foo_
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the '-quotes' substitution", func() {
@@ -2367,12 +2367,12 @@ _foo_
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should fail when substitution is invalid", func() {
 				s := strings.ReplaceAll(source, "$SUBS", "invalid")
-				_, err := ParseRawSource(s)
+				_, err := ParseDocumentFragments(s)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -2450,7 +2450,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'quotes' substitution", func() {
@@ -2508,7 +2508,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the '+quotes' substitution", func() {
@@ -2581,7 +2581,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'macros,+quotes,-quotes' substitution", func() {
@@ -2644,7 +2644,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(s)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(s)).To(MatchDocumentFragments(expected))
 			})
 		})
 

@@ -21,7 +21,7 @@ var _ = Describe("comments", func() {
 						Content: " A single-line comment.",
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("single line comment at end of line", func() {
@@ -37,7 +37,7 @@ var _ = Describe("comments", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("single line comment within a paragraph", func() {
@@ -65,7 +65,7 @@ another line // not a comment`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			Context("invalid", func() {
@@ -87,7 +87,7 @@ another line // not a comment`
 							},
 						},
 					}
-					result, err := ParseRawSource(source)
+					result, err := ParseDocumentFragments(source)
 					Expect(err).NotTo(HaveOccurred())
 					Expect(result).To(MatchDocumentFragments(expected))
 				})
@@ -109,7 +109,7 @@ another line // not a comment`
 							},
 						},
 					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 				})
 
 				It("single line comment within a paragraph with tab", func() {
@@ -137,7 +137,7 @@ another line`
 							},
 						},
 					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 				})
 			})
 		})
@@ -165,7 +165,7 @@ with multiple lines
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("comment block with paragraphs around", func() {
@@ -211,7 +211,7 @@ a second paragraph`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

@@ -37,7 +37,7 @@ second paragraph`
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("blank line with spaces and tabs between 2 paragraphs and after second paragraph", func() {
@@ -70,7 +70,7 @@ second paragraph
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("blank line with attributes", func() {
@@ -80,7 +80,7 @@ second paragraph
 			expected := types.DocumentFragments{
 				types.BlankLine{},
 			}
-			result, err := ParseRawSource(source) // , parser.Debug(true))
+			result, err := ParseDocumentFragments(source) // , parser.Debug(true))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result).To(MatchDocumentFragments(expected))
 		})

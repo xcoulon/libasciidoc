@@ -156,7 +156,7 @@ var _ = Describe("mixed lists - document", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 	})
 

@@ -26,7 +26,7 @@ var _ = Describe("icons", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("inline icon with empty alt and trailing spaces", func() {
@@ -45,7 +45,7 @@ var _ = Describe("icons", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("inline icon with empty alt surrounded by text", func() {
@@ -67,7 +67,7 @@ var _ = Describe("icons", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("inline icon with size alone", func() {
@@ -84,7 +84,7 @@ var _ = Describe("icons", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("inline icon with other attribute (title)", func() {
@@ -101,7 +101,7 @@ var _ = Describe("icons", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("inline icon with anchor attribute", func() {
@@ -120,7 +120,7 @@ var _ = Describe("icons", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("inline icon with multiple other attributes", func() {
@@ -140,7 +140,7 @@ var _ = Describe("icons", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("inline icon with size and multiple other attributes", func() {
@@ -161,7 +161,7 @@ var _ = Describe("icons", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("inline icon with space after colon", func() {
@@ -180,7 +180,7 @@ var _ = Describe("icons", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("inline icon in title works", func() {
@@ -205,7 +205,7 @@ var _ = Describe("icons", func() {
 						Elements: []interface{}{},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("inline icon at title start", func() {
@@ -225,7 +225,7 @@ var _ = Describe("icons", func() {
 						Elements: []interface{}{},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			// Note that the parsing that occurs here does not include the re-parse of the list item term.
@@ -298,7 +298,7 @@ item 2:: two`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 			It("inline icon in marked text", func() {
 				source := `#marked icon:warning[] message#`
@@ -318,7 +318,7 @@ item 2:: two`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 			It("inline icon in bold text", func() {
 				source := `in *bold icon:warning[] message*`
@@ -339,7 +339,7 @@ item 2:: two`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 			It("inline icon in monospace text", func() {
 				source := "in `monospace icon:warning[] message`"
@@ -360,7 +360,7 @@ item 2:: two`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

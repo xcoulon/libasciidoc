@@ -15,6 +15,22 @@ import (
 }
 
 // ------------------------------------------
+// Document Raw Line (main rule)
+// Identify the delimiters for raw blocks
+// ------------------------------------------
+DocumentFragmentElement <- 
+    BlankLine
+    / Section
+    / AttributeDeclaration
+    / BlockAttributes
+    / FileInclusion 
+    / BlockDelimiter 
+    / SingleLineComment
+    / (.)* {
+        return types.NewRawLine(string(c.text))
+    }
+
+// ------------------------------------------
 // Attribute Declarations and Resets
 // ------------------------------------------
 AttributeDeclaration <- ":" name:(AttributeName) ":" 
@@ -35,7 +51,7 @@ AttributeDeclarationValue <- Space+ elements:(
     ([^\r\n{]+ {
         return types.NewStringElement(string(c.text))
     }) /
-    AttributeSubstitution /
+    InlineAttributeSubstitution /
     ("{" { // standalone '{'
         return types.NewStringElement(string(c.text))
     })
@@ -55,28 +71,19 @@ AttributeReset <- ":!" name:(AttributeName) ":" Space* EOL {
 BlockAttributes <- 
     attributes:(
         // shorthand syntax for anchors. Eg: `[[an_id]]`
-        (anchor:(ShortHandAnchor) Space* Newline {
+        (anchor:(ShortHandAnchor) Space* {
             return anchor, nil
         })
         // shorthand syntax for titles. Eg: `.a title`
-        / (title:(ShortHandTitle) Space* Newline {
+        / (title:(ShortHandTitle) Space* {
             return title, nil
         })
         // default syntax
-        / (attributes:(LongHandAttributes) Space* Newline {
+        / (attributes:(LongHandAttributes) Space* {
             return attributes, nil
         })
     )+ {
-        attrs, err := types.NewAttributes(attributes.([]interface{})...)
-        if err != nil {
-            return nil, err
-        }
-        ctx, err := c.parserContext()
-        if err != nil {
-            return nil, err
-        }
-        ctx.onBlockAttributes(attrs)
-        return attrs, nil
+        return types.NewAttributes(attributes.([]interface{})...)
     }  
 
 InlineAttributes <-
@@ -302,9 +309,9 @@ UnquotedAttributeValue <-
     }
 
 // ------------------------------------------
-// AttributeSubstitution
+// Attribute Substitution
 // ------------------------------------------
-AttributeSubstitution <- CounterSubstitution / AttrSub
+InlineAttributeSubstitution <- CounterSubstitution / AttrSub
 
 AttrSub <- "{" name:AttributeName "}" {
     return types.NewAttributeSubstitution(name.(string))
@@ -376,9 +383,9 @@ CommentBlockEndDelimiter <- ("////" Space* EOL) / EOF
 
 CommentBlockContent <- 
     // check if enabled for the current context
-    &{
-        return c.isCommentBlockContentEnabled(types.Comment)
-    }
+    // &{
+    //     return c.isCommentBlockContentEnabled(types.Comment)
+    // }
     content:(RawLine) {
         return content, nil
     }
@@ -482,7 +489,7 @@ DocumentBodyFragment <- !EOF
         / FileInclusion
         / BlockAttributes
         / AttributeDeclaration
-        / AttributeSubstitution
+        / InlineAttributeSubstitution
         / BlockDelimiter
         / CalloutListItem
         / InlineElements
@@ -515,7 +522,7 @@ SourceBlockFragments <- (!SourceBlockDelimiter VerbatimDocumentFragment)*
 // DocumentHeader <- 
 //     // check if enabled with the current substitution context
 //     &{
-//         ctx, err := c.parserContext()
+//         ctx, err := c.substitutionContext()
 //         if err != nil {
 //             return false, err
 //         }
@@ -753,7 +760,7 @@ InlineElement <-
         / !EOL (
             SpecialCharacter
             / Quote
-            / AttributeSubstitution 
+            / InlineAttributeSubstitution 
             / Replacement
             / Macro
             / PostReplacement
@@ -779,7 +786,7 @@ InlineElement <-
 //             / SpecialCharacter
 //             / Symbol
 //             / InlineUserMacro 
-//             / AttributeSubstitution 
+//             / InlineAttributeSubstitution 
 //             / InlineElementID
 //             / ConcealedIndexTerm
 //             / IndexTerm
@@ -795,6 +802,27 @@ InlineElementID <- "[[" id:(Id) "]]" Space* { // no EOL here since there can be 
     return types.NewInlineIDAttribute(id.(string))
 }
 
+// ------------------------------------------
+// Inline Macros
+// ------------------------------------------
+InlineMacro <- 
+    // check if enabled with the current substitution context
+    &{
+        return c.isSubstitutionEnabled(Macros)
+    }
+    element:(
+        InlineIcon
+        / InlineImage 
+        / Link 
+        / InlinePassthrough 
+        / InlineFootnote 
+        / CrossReference 
+        / InlineUserMacro 
+        / InlineElementID
+        / ConcealedIndexTerm
+        / IndexTerm) {
+            return element, nil
+        }
 // ------------------------------------------
 // Index Terms
 // ------------------------------------------
@@ -859,9 +887,8 @@ FootnoteContent <- elements:(!"]" InlineElement)+  { // footnote content may spa
     }
 
 // ------------------------------------------
-// Inline Passthrough
+// Passthrough
 // ------------------------------------------
-InlinePassthrough <- TriplePlusPassthrough / SinglePlusPassthrough / PassthroughMacro
 
 SinglePlusPassthroughPrefix <- "+"
 
@@ -913,36 +940,7 @@ ExternalLink <- url:(LocationWithScheme) inlineAttributes:(InlineAttributes)? {
 
 
 // ----------------------------------------------------------------------------
-// Macro
-// ----------------------------------------------------------------------------
-Macro <- InlineIcon
-    / InlineImage 
-    / Link 
-    / InlinePassthrough 
-    / InlineFootnote 
-    / CrossReference 
-    / InlineUserMacro 
-    / InlineElementID
-    / ConcealedIndexTerm
-    / IndexTerm
-
-
-// ----------------------------------------------------------------------------
-// PostReplacement
-// ----------------------------------------------------------------------------
-PostReplacement <- LineBreak
-
-// ----------------------------------------------------------------------------
-//
-// Quote
-// 
-// ----------------------------------------------------------------------------
-Quote <- QuotedText / QuotedString
-
-// ----------------------------------------------------------------------------
-//
 // Quoted Texts (bold, italic, monospace, marked, superscript and subscript)
-// 
 // ----------------------------------------------------------------------------
 QuotedText <- 
     (
@@ -992,7 +990,7 @@ TwoOrMoreBackslashes <- `\\` `\`* {
     }
 
 // -----------------
-// Bold text
+// Quoted Bold Text
 // -----------------
 BoldText <- DoubleQuoteBoldText / SingleQuoteBoldText // double punctuation must be evaluated first
 
@@ -1005,6 +1003,7 @@ DoubleQuoteBoldTextElements <- DoubleQuoteBoldTextElement*
 DoubleQuoteBoldTextElement <- !("**") element:(Word
     / Space // may start and end with spaces
     / Newline !Newline
+    / InlineMacro
     / QuotedString
     / QuotedTextInDoubleQuoteBoldText
     / ElementPlaceHolder
@@ -1041,6 +1040,7 @@ SingleQuoteBoldTextElements <- !Space SingleQuoteBoldTextElement+
 SingleQuoteBoldTextElement <- 
     Word
     / Newline !Newline
+    / InlineMacro
     / QuotedString
     / Space+ ('*' !'*')?
     / QuotedTextInSingleQuoteBoldText
@@ -1073,9 +1073,9 @@ EscapedBoldText <-
         return types.NewEscapedQuotedText(backslashes.(string), "*", elements.([]interface{}))
     }
 
-// -----------------
-// Italic text
-// -----------------
+// -------------------
+// Quoted Italic Text
+// -------------------
 ItalicText <- DoubleQuoteItalicText / SingleQuoteItalicText
 
 DoubleQuoteItalicText <- "__" elements:(DoubleQuoteItalicTextElements) "__" { // double punctuation must be evaluated first
@@ -1088,6 +1088,7 @@ DoubleQuoteItalicTextElement <-
     !("__") element:(Word
     / Space // may start and end with spaces
     / Newline !Newline
+    / InlineMacro
     / QuotedString
     / QuotedTextInDoubleQuoteItalicText
     / ElementPlaceHolder
@@ -1124,6 +1125,7 @@ SingleQuoteItalicTextElements <- !Space SingleQuoteItalicTextElement+
 SingleQuoteItalicTextElement <- 
     Word
     / Newline !Newline
+    / InlineMacro
     / QuotedString
     / Space+ ('_' !'_')?
     / QuotedTextInSingleQuoteItalicText
@@ -1157,9 +1159,9 @@ EscapedItalicText <-
         return types.NewEscapedQuotedText(backslashes.(string), "_", elements.([]interface{}))
 } 
 
-// -----------------
-// Monospace text
-// -----------------
+// ----------------------
+// Quoted Monospace Text
+// ----------------------
 MonospaceText <- DoubleQuoteMonospaceText / SingleQuoteMonospaceText
 
 DoubleQuoteMonospaceText <- "``" elements:(DoubleQuoteMonospaceTextElements) "``" { // double punctuation must be evaluated first
@@ -1172,6 +1174,7 @@ DoubleQuoteMonospaceTextElement <-
     !("``") element:(Word
     / Space // may start and end with spaces
     / Newline !Newline
+    / InlineMacro
     / QuotedString
     / RawApostrophe // must be before SingleQuoteMonospaceText
     / QuotedTextInDoubleQuoteMonospaceText
@@ -1209,6 +1212,7 @@ SingleQuoteMonospaceTextElements <- !Space SingleQuoteMonospaceTextElement+
 SingleQuoteMonospaceTextElement <-  
     Word
     / Newline !Newline
+    / InlineMacro
     / QuotedString
     / Space+ ('`' !'`')?  // allow for content such as "`some `nested monospace`". Also, do not allow for double backticks after spaces.
     / QuotedTextInSingleQuoteMonospaceText
@@ -1243,9 +1247,9 @@ EscapedMonospaceText <-
         return types.NewEscapedQuotedText(backslashes.(string), "`", elements.([]interface{}))
     }
 
-// -----------------
-// Marked text
-// -----------------
+// -------------------
+// Quoted Marked Text
+// -------------------
 MarkedText <- DoubleQuoteMarkedText / SingleQuoteMarkedText
 
 DoubleQuoteMarkedText <- "##" elements:(DoubleQuoteMarkedTextElements) "##" { // double punctuation must be evaluated first
@@ -1256,6 +1260,7 @@ DoubleQuoteMarkedTextElements <- DoubleQuoteMarkedTextElement (!("##") (Space / 
 
 DoubleQuoteMarkedTextElement <- Word
     / Newline !Newline
+    / InlineMacro
     / QuotedString
     / NonDoubleQuoteMarkedText
     / ElementPlaceHolder
@@ -1288,6 +1293,7 @@ SingleQuoteMarkedTextElements <- !Space SingleQuoteMarkedTextElement+
 
 SingleQuoteMarkedTextElement <- Word
     / Newline !Newline
+    / InlineMacro
     / QuotedString
     / Space+ ('#' !'#')?
     / NonSingleQuoteMarkedText
@@ -1320,9 +1326,9 @@ EscapedMarkedText <-
         return types.NewEscapedQuotedText(backslashes.(string), "#", elements.([]interface{}))
     }
 
-// -----------------
-// Subscript text
-// -----------------
+// ---------------------
+// Quoted Subscript Text
+// ---------------------
 SubscriptText <- "~" element:(SubscriptTextElement) "~" { // wraps a single word
         return types.NewQuotedText(types.SingleQuoteSubscript, element)
     }
@@ -1337,9 +1343,9 @@ EscapedSubscriptText <- backslashes:(OneOrMoreBackslashes) "~" element:(Subscrip
         return types.NewEscapedQuotedText(backslashes.(string), "~", element)
     } 
 
-// -----------------
-// Superscript text
-// -----------------
+// -----------------------
+// Quoted Superscript Text
+// -----------------------
 SuperscriptText <- "^" element:(SuperscriptTextElement) "^" { // wraps a single word
         return types.NewQuotedText(types.SingleQuoteSuperscript, element)
     }
@@ -1437,24 +1443,12 @@ DoubleQuotedStringFallbackCharacter <-  ([^\r\n\t `] / "`" !"\"") {
         return types.NewStringElement(string(c.text))
     }
 
-// ------------------------------------------
-// Replacement
-// ------------------------------------------
-Replacement <- Symbol
 
 // ------------------------------------------
 // Sections
 // ------------------------------------------
 // we need to identify section titles to properly handle file inclusions with level offsets
 Section <- 
-    // check if enabled with the current substitution context
-    &{
-        ctx, err := c.parserContext()
-        if err != nil {
-            return false, err
-        }
-        return ctx.isSectionRuleEnabled(), nil
-    }
     level:(("=")+ {   
         // `=` is level 0, `==` is level 1, etc.
         return (len(c.text)-1), nil 
@@ -1463,66 +1457,122 @@ Section <-
         // use a predicate to make sure that only `=` (level 0) to `======` (level 5) are allowed
         return level.(int) <= 5, nil 
     } 
-    Space+ title:(SectionTitleElements) id:(InlineElementID*) EOL {
-    return types.NewSection(level.(int), title.(types.InlineElements), id.([]interface{})) 
-}
-
-SectionTitleElements <- elements:(!Newline !InlineElementID SectionTitleElement)+ { // absorbs heading and trailing spaces
-    return types.NewInlineElements(elements.([]interface{}))
-} 
-
-SectionTitleElement <-  
-        InlineWord // more permissive than the 'Word' rule
-        / LineBreak // must be before spaces
-        / Space+ 
-        / !EOL (
-            QuotedString
-            / QuotedText
-            / InlineIcon
-            / InlineImage 
-            / Link 
-            / InlinePassthrough // must be before the SpecialCharacter rule (because of `+`)
-            / InlineFootnote 
-            / CrossReference // must appear before SpecialCharacter
-            / SpecialCharacter
-            / Symbol
-            / InlineUserMacro 
-            / AttributeSubstitution 
-            / ConcealedIndexTerm
-            / IndexTerm
-            / ElementPlaceHolder
-            / AnyChar) 
-
-// ------------------------------------------------------------------------------------
-// Special Characters 
-// They need to be identified as they may have a special treatment during the rendering
-// ------------------------------------------------------------------------------------
-SpecialCharacter <- 
-    // if we have a InternalCrossReference we just return a StringElement. 
-    InternalCrossReference {
-        return types.NewStringElement(string(c.text))
-    } 
-    / ("<" / ">" / "&" ) {
-        return types.NewSpecialCharacter(string(c.text))
+    Space+ title:(SectionTitleElements) id:(InlineElementID*) {
+        return types.NewSection(level.(int), title.(types.InlineElements), id.([]interface{})) 
     }
 
-// -------------------------------------------------------------------------------------
-//
-// Substitutions
-//
-// -------------------------------------------------------------------------------------
+SectionTitleElements <- elements:(!Newline !InlineElementID SectionTitleElement)+ { // absorbs heading and trailing spaces
+        return types.NewInlineElements(elements.([]interface{}))
+    } 
+
+SectionTitleElement <-  
+    InlineWord // more permissive than the 'Word' rule
+    / LineBreak // must be before spaces
+    / Space+ 
+    / QuotedString
+    / QuotedText
+    / InlineIcon
+    / InlineImage 
+    / Link 
+    / InlinePassthrough // must be before the SpecialCharacter rule (because of `+`)
+    / InlineFootnote 
+    / CrossReference // must appear before SpecialCharacter
+    / SpecialCharacter
+    / Symbol
+    / InlineUserMacro 
+    / InlineAttributeSubstitution 
+    / ConcealedIndexTerm
+    / IndexTerm
+    / ElementPlaceHolder
+    / AnyChar
 
 // -------------------------------------------------------------------------------------
-// Inline Elements Substitutions
+// Substitutions
 // -------------------------------------------------------------------------------------
+NormalSubstitution <- 
+    elements:(InlinePassthrough
+        / SpecialCharacter
+        / Quote
+        / AttributeSubstitution
+        / Replacement
+        / InlineMacro
+        / PostReplacement
+        / Newline
+        / AnyChar)+ EOF { // TODO: use `InlineWord` to speed up?
+            return types.Merge(elements), nil
+        }
+
 // standalone rule for the "attributes" substitution
-AttributeSubs <- 
-    (InlineWord // more permissive than the 'Word' rule
-    / Space+ 
-    / AttributeSubstitution
-    // / ElementPlaceHolder
-    / AnyChar
-    / Newline)* EOF
+AttributeSubstitution <- 
+    // check if enabled with the current substitution context
+    &{
+        return c.isSubstitutionEnabled(Attributes)
+    }
+    element:(
+        InlineAttributeSubstitution
+    ) {
+        return element, nil
+    }
+
+InlinePassthrough <- 
+    // check if enabled with the current substitution context
+    &{
+        return c.isSubstitutionEnabled(InlinePassthroughs)
+    }
+    element:(
+        TriplePlusPassthrough / SinglePlusPassthrough / PassthroughMacro
+    ) {
+        return element, nil
+    }
+
+PostReplacement <- 
+    // check if enabled with the current substitution context
+    &{
+        return c.isSubstitutionEnabled(PostReplacements)
+    }
+    element:(
+        LineBreak
+    ) {
+        return element, nil
+    }
+
+Quote <- 
+    // check if enabled with the current substitution context
+    &{
+        return c.isSubstitutionEnabled(Quotes)
+    }
+    element:(
+        QuotedText 
+        / QuotedString) {
+            return element, nil
+        }
+
+Replacement <- 
+    // check if enabled with the current substitution context
+    &{
+        return c.isSubstitutionEnabled(Replacements)
+    }
+    element:(
+        Symbol
+    ) {
+        return element, nil
+    }
+
+SpecialCharacter <- 
+    // check if enabled with the current substitution context
+    &{
+        return c.isSubstitutionEnabled(SpecialCharacters)
+    }
+    element:(
+        // if we have a InternalCrossReference we just return a StringElement. 
+        InternalCrossReference {
+            return types.NewStringElement(string(c.text))
+        } 
+        / ("<" / ">" / "&" ) {
+            return types.NewSpecialCharacter(string(c.text))
+        }) {
+            return element, nil
+        }
 
 
 // ------------------------------------------
@@ -1602,18 +1652,6 @@ UserMacroValue <- [^:[ \r\n]* {
         return string(c.text), nil
     }
 
-// InlineMacros <- 
-//     InlineIcon
-//     / InlineImage 
-//     / Link 
-//     / InlinePassthrough 
-//     / InlineFootnote 
-//     / CrossReference 
-//     / InlineUserMacro 
-//     / InlineElementID
-//     / ConcealedIndexTerm
-//     / IndexTerm
-
 // ------------------------------------------
 // Base Types
 // ------------------------------------------
@@ -1661,7 +1699,7 @@ Filename <- elements:(
     ([^\r\n[\]\uFFFD{ ])+ { // not supported for now: EOL, space, "[", "]"
         return types.NewStringElement(string(c.text))
     }
-    / AttributeSubstitution 
+    / InlineAttributeSubstitution 
     / "{" {
         return types.NewStringElement(string(c.text))
     })+ {
@@ -1686,7 +1724,7 @@ Space <- " " / "\t" {
         return string(c.text), nil
     }
 
-Newline <- "\r\n" / "\r" / "\n"
+Newline <- "\r\n" / "\r" / "\n" // TODO: just use "\n"
 
 EOF <- !.
 

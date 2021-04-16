@@ -38,7 +38,7 @@ on 2 lines`
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with a single term and no description", func() {
@@ -54,7 +54,7 @@ on 2 lines`
 					Elements: []interface{}{},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with a quoted text in term and in description", func() {
@@ -92,7 +92,7 @@ on 2 lines`
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with a horizontal layout attribute", func() {
@@ -120,7 +120,7 @@ Item1:: foo`
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with a title attribute", func() {
@@ -148,7 +148,7 @@ Item1:: foo`
 					},
 				},
 			}
-			result, err := ParseRawSource(source)
+			result, err := ParseDocumentFragments(source)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result).To(MatchDocumentFragments(expected))
 		})
@@ -167,7 +167,7 @@ Item1:: foo`
 					Elements: []interface{}{},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with multiple sibling items", func() {
@@ -230,7 +230,7 @@ Item 3 description`
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with multiple nested items", func() {
@@ -293,7 +293,7 @@ Item 3 description`
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with nested unordered list - case 1", func() {
@@ -358,7 +358,7 @@ Item with description:: something simple`
 				},
 			}
 
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with a single item and paragraph", func() {
@@ -397,7 +397,7 @@ a normal paragraph.`
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with item continuation", func() {
@@ -467,7 +467,7 @@ another fenced block
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("without item continuation", func() {
@@ -525,7 +525,7 @@ another fenced block
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with nested unordered list - case 2", func() {
@@ -556,7 +556,7 @@ another fenced block
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with title", func() {
@@ -606,7 +606,7 @@ second term:: definition of the second term`
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("max level of labeled items - case 1", func() {
@@ -696,7 +696,7 @@ level 1:: description 1`
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("max level of labeled items - case 2", func() {
@@ -786,7 +786,7 @@ level 2::: description 2`
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 	})
 

@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strconv"
-	"strings"
 
 	"github.com/bytesparadise/libasciidoc/pkg/configuration"
 	"github.com/bytesparadise/libasciidoc/pkg/types"
@@ -47,77 +45,77 @@ func absoluteOffset(offset int) levelOffset {
 	}
 }
 
-func parseFileToInclude(ctx *parserContext, incl types.FileInclusion, options ...Option) ([]interface{}, error) {
-	incl.Location.Path = substituteAttributes(incl.Location.Path, ctx.attributes)
-	path := incl.Location.Stringify()
-	currentDir := filepath.Dir(ctx.config.Filename)
-	f, absPath, done, err := open(filepath.Join(currentDir, path))
-	defer done()
-	if err != nil {
-		return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
-	}
-	content := bytes.NewBuffer(nil)
-	scanner := bufio.NewScanner(bufio.NewReader(f))
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("parsing file to %s", incl.RawText)
-	}
-	if lr, ok, err := lineRanges(incl, ctx.config); err != nil {
-		log.WithError(err).Error("error occurred while checking if file inclusion has line ranges")
-		return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
-	} else if ok {
-		if err := readWithinLines(scanner, content, lr); err != nil {
-			log.WithError(err).Error("error occurred while reading file within line ranges")
-			return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
-		}
-	} else if tr, ok, err := tagRanges(incl, ctx.config); err != nil {
-		log.WithError(err).Error("error occurred while checking if file inclusion has tag ranges")
-		return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
-	} else if ok {
-		if err := readWithinTags(path, scanner, content, tr); err != nil {
-			log.WithError(err).Error("error occurred while reading file within tag ranges")
-			return nil, err // keep the underlying error here
-		}
-	} else {
-		if err := readAll(scanner, content); err != nil {
-			log.WithError(err).Error("error occurred while reading file")
-			return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
-		}
-	}
-	if err := scanner.Err(); err != nil {
-		return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
-	}
-	// if the file to include is not an Asciidoc document, just return the content as "raw lines"
-	if !IsAsciidoc(absPath) {
-		return []interface{}{
-			types.RawLine(content.Bytes()),
-		}, nil
-	}
-	// parse the content, and returns the corresponding elements
-	lvl, found, err := incl.Attributes.GetAsString(types.AttrLevelOffset)
-	if err != nil {
-		return nil, err
-	}
-	if found {
-		offset, err := strconv.Atoi(lvl)
-		if err != nil {
-			return nil, errors.Wrap(err, "unable to read file to include")
-		}
-		if strings.HasPrefix(lvl, "+") || strings.HasPrefix(lvl, "-") {
-			ctx.levelOffsets = append(ctx.levelOffsets, relativeOffset(offset))
-		} else {
-			ctx.levelOffsets = []levelOffset{absoluteOffset(offset)}
+// func parseFileToInclude(ctx *parserContext, incl types.FileInclusion, options ...Option) ([]interface{}, error) {
+// 	incl.Location.Path = substituteAttributes(incl.Location.Path, ctx.attributes)
+// 	path := incl.Location.Stringify()
+// 	currentDir := filepath.Dir(ctx.config.Filename)
+// 	f, absPath, done, err := open(filepath.Join(currentDir, path))
+// 	defer done()
+// 	if err != nil {
+// 		return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
+// 	}
+// 	content := bytes.NewBuffer(nil)
+// 	scanner := bufio.NewScanner(bufio.NewReader(f))
+// 	if log.IsLevelEnabled(log.DebugLevel) {
+// 		log.Debugf("parsing file to %s", incl.RawText)
+// 	}
+// 	if lr, ok, err := lineRanges(incl, ctx.config); err != nil {
+// 		log.WithError(err).Error("error occurred while checking if file inclusion has line ranges")
+// 		return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
+// 	} else if ok {
+// 		if err := readWithinLines(scanner, content, lr); err != nil {
+// 			log.WithError(err).Error("error occurred while reading file within line ranges")
+// 			return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
+// 		}
+// 	} else if tr, ok, err := tagRanges(incl, ctx.config); err != nil {
+// 		log.WithError(err).Error("error occurred while checking if file inclusion has tag ranges")
+// 		return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
+// 	} else if ok {
+// 		if err := readWithinTags(path, scanner, content, tr); err != nil {
+// 			log.WithError(err).Error("error occurred while reading file within tag ranges")
+// 			return nil, err // keep the underlying error here
+// 		}
+// 	} else {
+// 		if err := readAll(scanner, content); err != nil {
+// 			log.WithError(err).Error("error occurred while reading file")
+// 			return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
+// 		}
+// 	}
+// 	if err := scanner.Err(); err != nil {
+// 		return nil, errors.Errorf("Unresolved directive in %s - %s", ctx.config.Filename, incl.RawText)
+// 	}
+// 	// if the file to include is not an Asciidoc document, just return the content as "raw lines"
+// 	if !IsAsciidoc(absPath) {
+// 		return []interface{}{
+// 			types.RawLine(content.Bytes()),
+// 		}, nil
+// 	}
+// 	// parse the content, and returns the corresponding elements
+// 	lvl, found, err := incl.Attributes.GetAsString(types.AttrLevelOffset)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	if found {
+// 		offset, err := strconv.Atoi(lvl)
+// 		if err != nil {
+// 			return nil, errors.Wrap(err, "unable to read file to include")
+// 		}
+// 		if strings.HasPrefix(lvl, "+") || strings.HasPrefix(lvl, "-") {
+// 			ctx.levelOffsets = append(ctx.levelOffsets, relativeOffset(offset))
+// 		} else {
+// 			ctx.levelOffsets = []levelOffset{absoluteOffset(offset)}
 
-		}
-	}
-	actualFilename := ctx.config.Filename
-	defer func() {
-		// restore actual filename after exiting
-		ctx.config.Filename = actualFilename
-	}()
-	ctx.config.Filename = absPath
-	// now, let's parse this content and process nested file inclusions (recursively)
-	return parseDocumentFragments(ctx, content, options...)
-}
+// 		}
+// 	}
+// 	actualFilename := ctx.config.Filename
+// 	defer func() {
+// 		// restore actual filename after exiting
+// 		ctx.config.Filename = actualFilename
+// 	}()
+// 	ctx.config.Filename = absPath
+// 	// now, let's parse this content and process nested file inclusions (recursively)
+// 	return parseDocumentFragments(ctx, content, options...)
+// }
 
 // lineRanges parses the `lines` attribute if it exists in the given FileInclusion, and returns
 // a corresponding `LineRanges` (or `false` if parsing failed to invalid input)

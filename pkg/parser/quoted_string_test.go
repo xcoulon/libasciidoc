@@ -28,7 +28,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("interior spaces with single quoted string", func() {
 			source := "'` curly was single `'"
@@ -41,7 +41,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("interior ending space with single quoted string", func() {
@@ -55,7 +55,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("interior leading space with single quoted string", func() {
@@ -69,7 +69,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("bold in single quoted string", func() {
@@ -95,7 +95,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("italics in single quoted string", func() {
@@ -121,7 +121,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("span in single quoted string", func() {
 			source := "'`curly [.strikeout]#was#_is_ single`'"
@@ -164,7 +164,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("curly in monospace string", func() {
 			source := "'`curly `is` single`'"
@@ -189,7 +189,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("curly as monospace string", func() {
 			source := "'``curly``'"
@@ -212,7 +212,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("curly with nested double curly", func() {
@@ -237,7 +237,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("curly in monospace string", func() {
@@ -261,7 +261,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("curly in italics", func() {
 			source := "_'`curly`'_"
@@ -284,7 +284,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("curly in bold", func() {
 			source := "*'`curly`'*"
@@ -307,7 +307,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("curly in link", func() {
@@ -340,7 +340,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("curly in quoted link", func() {
 			source := "https://www.example.com/a[\"an '`example`'\"]"
@@ -375,7 +375,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("image in curly", func() {
@@ -403,7 +403,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("icon in curly", func() {
@@ -425,7 +425,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("simple double quoted string", func() {
@@ -444,7 +444,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("interior spaces with double quoted string", func() {
@@ -458,7 +458,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("interior ending space with double quoted string", func() {
 			source := "\"`curly was single `\""
@@ -471,7 +471,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("interior leading space with double quoted string", func() {
 			source := "\"` curly was single`\""
@@ -484,7 +484,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("bold in double quoted string", func() {
@@ -510,7 +510,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("italics in double quoted string", func() {
 			source := "\"`curly _was_ single`\""
@@ -535,7 +535,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("span in double quoted string", func() {
@@ -578,7 +578,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("double curly in monospace string", func() {
@@ -604,7 +604,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("double curly as monospace string", func() {
 			source := "\"``curly``\""
@@ -627,7 +627,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("double curly with nested single curly", func() {
 			source := "\"`double'`single`'`\""
@@ -651,7 +651,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("double curly in monospace string", func() {
 			source := "`\"`curly`\"`"
@@ -674,7 +674,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("double curly in italics", func() {
 			source := "_\"`curly`\"_"
@@ -697,7 +697,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("double curly in bold", func() {
 			source := "*\"`curly`\"*"
@@ -720,7 +720,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		// In a link, the quotes are ambiguous, and we default to assuming they are for enclosing
@@ -755,7 +755,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		// This is the unambiguous form.
@@ -789,7 +789,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("image in double curly", func() {
 			source := "\"`a image:foo.png[]`\""
@@ -816,7 +816,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("icon in double curly", func() {
 			source := "\"`a icon:note[]`\""
@@ -837,7 +837,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 	})
 
@@ -864,7 +864,7 @@ var _ = Describe("quoted strings", func() {
 					Elements: []interface{}{},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("curly in list element", func() {
@@ -892,7 +892,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("curly in labeled list", func() {
@@ -920,7 +920,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("double curly in title", func() {
@@ -944,7 +944,7 @@ var _ = Describe("quoted strings", func() {
 					Elements: []interface{}{},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("double curly in labeled list", func() {
@@ -972,7 +972,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("double in list element", func() {
@@ -1000,7 +1000,7 @@ var _ = Describe("quoted strings", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 	})
 

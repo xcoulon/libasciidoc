@@ -3,12 +3,12 @@ package testsupport
 import (
 	"strings"
 
-	"github.com/bytesparadise/libasciidoc/pkg/configuration"
 	"github.com/bytesparadise/libasciidoc/pkg/parser"
+	"github.com/bytesparadise/libasciidoc/pkg/types"
 )
 
-// ParseRawSource parses the actual source with the options
-func ParseRawSource(actual string, options ...interface{}) (interface{}, error) {
+// ParseDocumentFragments parses the actual source with the options
+func ParseDocumentFragments(actual string, options ...interface{}) (types.DocumentFragments, error) {
 	r := strings.NewReader(actual)
 	c := &rawDocumentParserConfig{
 		filename: "test.adoc",
@@ -22,8 +22,14 @@ func ParseRawSource(actual string, options ...interface{}) (interface{}, error) 
 			parserOptions = append(parserOptions, set)
 		}
 	}
-	config := configuration.NewConfiguration(configuration.WithFilename(c.filename))
-	return parser.ParseDocumentFragments(r, config, parserOptions...)
+	done := make(chan interface{})
+	defer close(done)
+	fragmentStream := parser.ParseDocumentFragments(r, done, parserOptions...)
+	result := types.DocumentFragments{}
+	for f := range fragmentStream {
+		result = append(result, f)
+	}
+	return result, nil
 }
 
 type rawDocumentParserConfig struct {

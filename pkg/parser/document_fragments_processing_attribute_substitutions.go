@@ -5,36 +5,35 @@ import (
 	"strings"
 
 	"github.com/bytesparadise/libasciidoc/pkg/types"
-	"github.com/davecgh/go-spew/spew"
 	log "github.com/sirupsen/logrus"
 )
 
 // TODO: rename this func
-func onInlineElements(ctx *parserContext, elements types.InlineElements) (types.InlineElements, error) {
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debug("inline elements:")
-		spew.Fdump(log.StandardLogger().Out, elements)
-	}
-	// if attribute substitution is enabled...
-	if !ctx.substitutionEnabled(AttributesSubstitution) {
-		log.Debug("attributes substitution is not enabled")
-		return elements, nil
-	}
-	// ... and if there are some attributes to substitute
-	if !elements.HasAttributeSubstitutions() {
-		log.Debug("no attributes to substitute")
-		return elements, nil
-	}
-	elmts := substituteAttributes(elements, ctx.attributes)
-	placeholders := newPlaceholders()
-	line := serialize(elmts, placeholders)
-	elmts, err := ParseReader("", strings.NewReader(line), Entrypoint("InlineElements"))
-	if err != nil {
-		return nil, err
-	}
-	result := restoreElements(elmts.(types.InlineElements), placeholders)
-	return result, nil
-}
+// func onInlineElements(ctx *substitutionContext, elements types.InlineElements) (types.InlineElements, error) {
+// 	if log.IsLevelEnabled(log.DebugLevel) {
+// 		log.Debug("inline elements:")
+// 		spew.Fdump(log.StandardLogger().Out, elements)
+// 	}
+// 	// if attribute substitution is enabled...
+// 	if !ctx.substitutionEnabled(AttributesSubstitution) {
+// 		log.Debug("attributes substitution is not enabled")
+// 		return elements, nil
+// 	}
+// 	// ... and if there are some attributes to substitute
+// 	if !elements.HasAttributeSubstitutions() {
+// 		log.Debug("no attributes to substitute")
+// 		return elements, nil
+// 	}
+// 	elmts := substituteAttributes(elements, ctx.attributes)
+// 	placeholders := newPlaceholders()
+// 	line := serialize(elmts, placeholders)
+// 	elmts, err := ParseReader("", strings.NewReader(line), Entrypoint("InlineElements"))
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	result := restoreElements(elmts.(types.InlineElements), placeholders)
+// 	return result, nil
+// }
 
 func substituteAttributes(content interface{}, attributes map[string]string) interface{} {
 	switch element := content.(type) {

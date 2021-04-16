@@ -23,7 +23,7 @@ var _ = Describe("block images", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with empty alt and trailing spaces", func() {
@@ -37,7 +37,7 @@ var _ = Describe("block images", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with alt", func() {
@@ -54,7 +54,7 @@ var _ = Describe("block images", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with attribute alt", func() {
@@ -78,7 +78,7 @@ image::images/foo.png[{alt}]`
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with quoted text in attribute alt", func() {
@@ -104,7 +104,7 @@ image::images/foo.png[{alt}]`
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with dimensions and id link title meta", func() {
@@ -130,7 +130,7 @@ image::images/foo.png[the foo.png image, 600, 400]`
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 		It("with roles", func() {
 			source := `[.role1.role2]
@@ -150,7 +150,7 @@ image::images/foo.png[the foo.png image, 600, 400]`
 					},
 				},
 			}
-			result, err := ParseRawSource(source)
+			result, err := ParseDocumentFragments(source)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result).To(MatchDocumentFragments(expected))
 		})
@@ -169,7 +169,7 @@ image::images/foo.png[the foo.png image, 600, 400]`
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 	})
 
@@ -351,7 +351,7 @@ image::images/bar.png[]`
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("paragraph with block image with alt and dimensions", func() {
@@ -365,7 +365,7 @@ image::images/bar.png[]`
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 	})
 })
@@ -391,7 +391,7 @@ var _ = Describe("inline images", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with empty alt and trailing spaces", func() {
@@ -414,7 +414,7 @@ var _ = Describe("inline images", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("surrounded with test", func() {
@@ -440,7 +440,7 @@ var _ = Describe("inline images", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with alt alone", func() {
@@ -463,7 +463,7 @@ var _ = Describe("inline images", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with alt and width", func() {
@@ -487,7 +487,7 @@ var _ = Describe("inline images", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with alt, width and height", func() {
@@ -512,7 +512,7 @@ var _ = Describe("inline images", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with alt, but empty width and height", func() {
@@ -535,7 +535,7 @@ var _ = Describe("inline images", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with single other attribute only", func() {
@@ -558,7 +558,7 @@ var _ = Describe("inline images", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with multiple other attributes only", func() {
@@ -583,7 +583,7 @@ var _ = Describe("inline images", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with alt, width, height and other attributes", func() {
@@ -612,7 +612,7 @@ var _ = Describe("inline images", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("in a paragraph with space after colon", func() {
@@ -635,7 +635,7 @@ var _ = Describe("inline images", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("in a paragraph without space separator", func() {
@@ -658,7 +658,7 @@ var _ = Describe("inline images", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("with special characters", func() {
@@ -687,7 +687,7 @@ var _ = Describe("inline images", func() {
 					},
 				},
 			}
-			Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 	})

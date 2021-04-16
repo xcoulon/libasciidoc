@@ -16,25 +16,32 @@ var _ = Describe("headers", func() {
 		Context("valid cases", func() {
 
 			It("header alone", func() {
-				source := `= Document Title
+				source := `= Title
 			
 This journey continues.`
 
 				expected := types.DocumentFragments{
-					types.Section{
-						Level: 0,
-						Title: []interface{}{
-							types.StringElement{
-								Content: "Document Title",
+					types.DocumentFragment{
+						LineOffset: 1,
+						Content: []interface{}{
+							types.Section{
+								Level: 0,
+								Title: []interface{}{
+									types.StringElement{
+										Content: "Title",
+									},
+								},
 							},
 						},
 					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{Content: "This journey continues."},
+					types.DocumentFragment{
+						LineOffset: 3,
+						Content: []interface{}{
+							types.RawLine("This journey continues."),
+						},
 					},
 				}
-				result, err := ParseRawSource(source)
+				result, err := ParseDocumentFragments(source)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(result).To(MatchDocumentFragments(expected))
 			})
@@ -44,250 +51,64 @@ This journey continues.`
 				Context("single author", func() {
 
 					It("all author data with extra spaces", func() {
-						source := `= title
+						source := `= Title
 John  Foo    Doe  <johndoe@example.com>`
 						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "title",
+							types.DocumentFragment{
+								LineOffset: 1,
+								Content: []interface{}{
+									types.Section{
+										Level: 0,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Title",
+											},
+										},
 									},
-								},
-							},
-							[]types.DocumentAuthor{
-								{
-									FullName: "John  Foo    Doe  ",
-									Email:    "johndoe@example.com",
+									types.RawLine("John  Foo    Doe  <johndoe@example.com>"),
 								},
 							},
 						}
-						result, err := ParseRawSource(source)
+						result, err := ParseDocumentFragments(source)
 						Expect(err).NotTo(HaveOccurred())
 						Expect(result).To(MatchDocumentFragments(expected))
-					})
-
-					It("lastname with underscores", func() {
-						source := `= title
-Jane the_Doe <jane@example.com>`
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "title",
-									},
-								},
-							},
-							[]types.DocumentAuthor{
-								{
-									FullName: "Jane the_Doe ",
-									Email:    "jane@example.com",
-								},
-							},
-						}
-						Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-					})
-
-					It("with middlename and composed lastname", func() {
-						source := `= title
-Jane Foo the Doe <jane@example.com>`
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "title",
-									},
-								},
-							},
-							[]types.DocumentAuthor{
-								{
-									FullName: "Jane Foo the Doe ",
-									Email:    "jane@example.com",
-								},
-							},
-						}
-						Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-					})
-
-					It("firstname and lastname only", func() {
-						source := `= title
-John Doe`
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "title",
-									},
-								},
-							},
-							[]types.DocumentAuthor{
-								{
-									FullName: "John Doe",
-								},
-							},
-						}
-						Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-					})
-
-					It("firstname only", func() {
-						source := `= title
-Doe`
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "title",
-									},
-								},
-							},
-							[]types.DocumentAuthor{
-								{
-									FullName: "Doe",
-								},
-							},
-						}
-						Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-					})
-
-					It("alternate author input", func() {
-						source := `= title
-:author: John Foo Doe` // `:"email":` is processed as a regular attribute
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "title",
-									},
-								},
-							},
-							types.AttributeDeclaration{
-								Name:  "author",
-								Value: "John Foo Doe",
-							},
-						}
-						Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-					})
-				})
-
-				Context("multiple authors", func() {
-
-					It("2 authors", func() {
-						source := `= title
-John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "title",
-									},
-								},
-							},
-							[]types.DocumentAuthor{
-								{
-									FullName: "John  Foo Doe  ",
-									Email:    "johndoe@example.com",
-								},
-								{
-									FullName: "Jane the_Doe ",
-									Email:    "jane@example.com",
-								},
-							},
-						}
-						Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 					})
 				})
 
 				Context("authors and comments", func() {
 
-					It("authors commented out", func() {
-						source := `= title
-					// John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "title",
-									},
-								},
-							},
-							types.SingleLineComment{
-								Content: ` John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`,
-							},
-						}
-						Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-					})
-
-					It("authors after a single comment line", func() {
-						source := `= title
-					// a comment
-					John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "title",
-									},
-								},
-							},
-							types.SingleLineComment{
-								Content: " a comment",
-							},
-							[]types.DocumentAuthor{
-								{
-									FullName: "John  Foo Doe  ",
-									Email:    "johndoe@example.com",
-								},
-								{
-									FullName: "Jane the_Doe ",
-									Email:    "jane@example.com",
-								},
-							},
-						}
-						Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-					})
-
 					It("authors after a comment block", func() {
-						source := `= title
+						source := `= Title
 //// 
-a comment
+a comment with an empty line
+
 ////
 John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "title",
+							types.DocumentFragment{
+								LineOffset: 1,
+								Content: []interface{}{
+									types.Section{
+										Level: 0,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Title",
+											},
+										},
 									},
-								},
-							},
-							types.BlockDelimiter{
-								Kind: types.Comment,
-							},
-							types.RawLine("a comment"),
-							types.BlockDelimiter{
-								Kind: types.Comment,
-							},
-							[]types.DocumentAuthor{
-								{
-									FullName: "John  Foo Doe  ",
-									Email:    "johndoe@example.com",
-								},
-								{
-									FullName: "Jane the_Doe ",
-									Email:    "jane@example.com",
+									types.BlockDelimiter{
+										Kind: types.Comment,
+									},
+									types.RawLine("a comment with an empty line"),
+									types.RawLine(""),
+									types.BlockDelimiter{
+										Kind: types.Comment,
+									},
+									types.RawLine("John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>"),
 								},
 							},
 						}
-						Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 					})
 				})
 			})
@@ -295,342 +116,83 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 			Context("document revisions", func() {
 
 				It("full document revision without any comment", func() {
-					source := `= title
+					source := `= Title
 				John Doe
 				v1.0, March 29, 2020: Updated revision`
 					expected := types.DocumentFragments{
-						types.Section{
-							Level: 0,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "title",
+						types.DocumentFragment{
+							LineOffset: 1,
+							Content: []interface{}{
+								types.Section{
+									Level: 0,
+									Title: []interface{}{
+										types.StringElement{
+											Content: "Title",
+										},
+									},
 								},
+								types.RawLine("				John Doe"),
+								types.RawLine("				v1.0, March 29, 2020: Updated revision"),
 							},
-						},
-						[]types.DocumentAuthor{
-							{
-								FullName: "John Doe",
-							},
-						},
-						types.DocumentRevision{
-							Revnumber: "1.0",
-							Revdate:   "March 29, 2020",
-							Revremark: "Updated revision",
 						},
 					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 				})
 
-				It("full document revision with a comment before author", func() {
-					source := `= title
-				// a comment
-				John Doe
-				v1.0, March 29, 2020: Updated revision`
-					expected := types.DocumentFragments{
-						types.Section{
-							Level: 0,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "title",
-								},
-							},
-						},
-						[]types.DocumentAuthor{
-							{
-								FullName: "John Doe",
-							},
-						},
-						types.DocumentRevision{
-							Revnumber: "1.0",
-							Revdate:   "March 29, 2020",
-							Revremark: "Updated revision",
-						},
-					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-				})
-
-				It("full document revision with a comment before revision", func() {
-					source := `= title
-				John Doe
-				// a comment
-				v1.0, March 29, 2020: Updated revision`
-					expected := types.DocumentFragments{
-						types.Section{
-							Level: 0,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "title",
-								},
-							},
-						},
-						[]types.DocumentAuthor{
-							{
-								FullName: "John Doe",
-							},
-						},
-						types.DocumentRevision{
-							Revnumber: "1.0",
-							Revdate:   "March 29, 2020",
-							Revremark: "Updated revision",
-						},
-					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-				})
-
-				It("revision with revnumber and revdate only", func() {
-					source := `= title
-				John Doe
-				v1.0, March 29, 2020`
-					expected := types.DocumentFragments{
-						types.Section{
-							Level: 0,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "title",
-								},
-							},
-						},
-						[]types.DocumentAuthor{
-							{
-								FullName: "John Doe",
-							},
-						},
-						types.DocumentRevision{
-							Revnumber: "1.0",
-							Revdate:   "March 29, 2020",
-						},
-					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-				})
-
-				It("revision with revnumber and revdate - with colon separator", func() {
-					source := `= title
-				John Doe
-				1.0, March 29, 2020:`
-					expected := types.DocumentFragments{
-						types.Section{
-							Level: 0,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "title",
-								},
-							},
-						},
-						[]types.DocumentAuthor{
-							{
-								FullName: "John Doe",
-							},
-						},
-						types.DocumentRevision{
-							Revnumber: "1.0",
-							Revdate:   "March 29, 2020",
-						},
-					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-				})
-				It("revision with revnumber only - comma suffix", func() {
-					source := `= title
-				John Doe
-				1.0,`
-					expected := types.DocumentFragments{
-						types.Section{
-							Level: 0,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "title",
-								},
-							},
-						},
-						[]types.DocumentAuthor{
-							{
-								FullName: "John Doe",
-							},
-						},
-						types.DocumentRevision{
-							Revnumber: "1.0",
-						},
-					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-				})
-
-				It("revision with revdate as number - spaces and no prefix no suffix", func() {
-					source := `= title
-				John Doe
-				1.0`
-					expected := types.DocumentFragments{
-						types.Section{
-							Level: 0,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "title",
-								},
-							},
-							Elements: []interface{}{},
-						},
-						[]types.DocumentAuthor{
-							{
-								FullName: "John Doe",
-							},
-						},
-						types.DocumentRevision{
-							Revdate: "1.0",
-						},
-					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-				})
-
-				It("revision with revdate as alphanum - spaces and no prefix no suffix", func() {
-					source := `= title
-				John Doe
-				1.0a`
-					expected := types.DocumentFragments{
-						types.Section{
-							Level: 0,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "title",
-								},
-							},
-							Elements: []interface{}{},
-						},
-						[]types.DocumentAuthor{
-							{
-								FullName: "John Doe",
-							},
-						},
-						types.DocumentRevision{
-							Revdate: "1.0a",
-						},
-					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-				})
-
-				It("revision with revnumber only", func() {
-					source := `= title
-				John Doe
-				v1.0:`
-					expected := types.DocumentFragments{
-						types.Section{
-							Level: 0,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "title",
-								},
-							},
-						},
-						[]types.DocumentAuthor{
-							{
-								FullName: "John Doe",
-							},
-						},
-						types.DocumentRevision{
-							Revnumber: "1.0",
-						},
-					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-				})
-
-				It("revision with spaces and capital revnumber ", func() {
-					source := `= title
-				John Doe
-				V1.0:`
-					expected := types.DocumentFragments{
-						types.Section{
-							Level: 0,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "title",
-								},
-							},
-							Elements: []interface{}{},
-						},
-						[]types.DocumentAuthor{
-							{
-								FullName: "John Doe",
-							},
-						},
-						types.DocumentRevision{
-							Revnumber: "1.0",
-						},
-					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-				})
-
-				It("revision only - with comma separator", func() {
-					source := `= title
-				John Doe
-				v1.0,`
-					expected := types.DocumentFragments{
-						types.Section{
-							Level: 0,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "title",
-								},
-							},
-						},
-						[]types.DocumentAuthor{
-							{
-								FullName: "John Doe",
-							},
-						},
-						types.DocumentRevision{
-							Revnumber: "1.0",
-						},
-					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-				})
-
-				It("revision with revnumber plus comma and colon separators", func() {
-					source := `= title
-				John Doe
-				v1.0,:`
-					expected := types.DocumentFragments{
-						types.Section{
-							Level: 0,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "title",
-								},
-							},
-						},
-						[]types.DocumentAuthor{
-							{
-								FullName: "John Doe",
-							},
-						},
-						types.DocumentRevision{
-							Revnumber: "1.0",
-						},
-					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-				})
-
-				It("revision with revnumber and empty revremark", func() {
-					source := `= title
+				It("full document revision with comments", func() {
+					source := `= Title
+// a single-line comment
 John Doe
-v1.0:`
+////
+a comment block
+
+with an empty line
+////
+v1.0, March 29, 2020: Updated revision
+////
+another comment block
+
+with another empty line
+////
+`
 					expected := types.DocumentFragments{
-						types.Section{
-							Level: 0,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "title",
+						types.DocumentFragment{
+							LineOffset: 1,
+							Content: []interface{}{
+								types.Section{
+									Level: 0,
+									Title: []interface{}{
+										types.StringElement{
+											Content: "Title",
+										},
+									},
+								},
+								types.RawLine("// a single-line comment"),
+								types.RawLine("John Doe"),
+								types.BlockDelimiter{
+									Kind: types.Comment,
+								},
+								types.RawLine("a comment block"),
+								types.RawLine(""),
+								types.RawLine("with an empty line"),
+								types.BlockDelimiter{
+									Kind: types.Comment,
+								},
+								types.RawLine("v1.0, March 29, 2020: Updated revision"),
+								types.BlockDelimiter{
+									Kind: types.Comment,
+								},
+								types.RawLine("another comment block"),
+								types.RawLine(""),
+								types.RawLine("with another empty line"),
+								types.BlockDelimiter{
+									Kind: types.Comment,
 								},
 							},
 						},
-						[]types.DocumentAuthor{
-							{
-								FullName: "John Doe",
-							},
-						},
-						types.DocumentRevision{
-							Revnumber: "1.0",
-						},
 					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 				})
-
 			})
 
 			Context("document header attributes", func() {
@@ -640,54 +202,24 @@ v1.0:`
 :author: Xavier
 :_auth0r: Xavier`
 					expected := types.DocumentFragments{
-						types.AttributeDeclaration{
-							Name:  "a",
-							Value: nil,
-						},
-						types.AttributeDeclaration{
-							Name:  "author",
-							Value: "Xavier",
-						},
-						types.AttributeDeclaration{
-							Name:  "_auth0r",
-							Value: "Xavier",
-						},
-					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-				})
-
-				It("attributes and paragraph without blank line in-between", func() {
-					source := `:toc:
-:date:  2017-01-01
-:author: Xavier
-:hardbreaks:
-a paragraph`
-					expected := types.DocumentFragments{
-						types.AttributeDeclaration{
-							Name:  "toc",
-							Value: nil,
-						},
-						types.AttributeDeclaration{
-							Name:  "date",
-							Value: "2017-01-01",
-						},
-						types.AttributeDeclaration{
-							Name:  "author",
-							Value: "Xavier",
-						},
-						types.AttributeDeclaration{
-							Name:  "hardbreaks",
-							Value: nil,
-						},
-						types.InlineElements{
-							types.StringElement{
-								Content: "a paragraph",
+						types.DocumentFragment{
+							LineOffset: 1,
+							Content: []interface{}{
+								types.AttributeDeclaration{
+									Name: "a",
+								},
+								types.AttributeDeclaration{
+									Name:  "author",
+									Value: "Xavier",
+								},
+								types.AttributeDeclaration{
+									Name:  "_auth0r",
+									Value: "Xavier",
+								},
 							},
 						},
 					}
-					result, err := ParseRawSource(source)
-					Expect(err).NotTo(HaveOccurred())
-					Expect(result).To(MatchDocumentFragments(expected))
+					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 				})
 
 				It("contiguous attributes and paragraph with blank line in-between", func() {
@@ -698,30 +230,33 @@ a paragraph`
 
 a paragraph`
 					expected := types.DocumentFragments{
-						types.AttributeDeclaration{
-							Name:  "toc",
-							Value: nil,
+						types.DocumentFragment{
+							LineOffset: 1,
+							Content: []interface{}{
+								types.AttributeDeclaration{
+									Name: "toc",
+								},
+								types.AttributeDeclaration{
+									Name:  "date",
+									Value: "2017-01-01",
+								},
+								types.AttributeDeclaration{
+									Name:  "author",
+									Value: "Xavier",
+								},
+								types.AttributeDeclaration{
+									Name: "hardbreaks",
+								},
+							},
 						},
-						types.AttributeDeclaration{
-							Name:  "date",
-							Value: "2017-01-01",
-						},
-						types.AttributeDeclaration{
-							Name:  "author",
-							Value: "Xavier",
-						},
-						types.AttributeDeclaration{
-							Name:  "hardbreaks",
-							Value: nil,
-						},
-						types.BlankLine{},
-						types.InlineElements{
-							types.StringElement{
-								Content: "a paragraph",
+						types.DocumentFragment{
+							LineOffset: 6,
+							Content: []interface{}{
+								types.RawLine("a paragraph"),
 							},
 						},
 					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 				})
 
 				It("splitted attributes and paragraph with blank line in-between", func() {
@@ -734,106 +269,44 @@ a paragraph`
 
 a paragraph`
 					expected := types.DocumentFragments{
-						types.AttributeDeclaration{
-							Name:  "toc",
-							Value: nil,
+						types.DocumentFragment{
+							LineOffset: 1,
+							Content: []interface{}{
+								types.AttributeDeclaration{
+									Name: "toc",
+								},
+								types.AttributeDeclaration{
+									Name:  "date",
+									Value: "2017-01-01",
+								},
+							},
 						},
-						types.AttributeDeclaration{
-							Name:  "date",
-							Value: "2017-01-01",
+						types.DocumentFragment{
+							LineOffset: 4,
+							Content: []interface{}{
+								types.AttributeDeclaration{
+									Name:  "author",
+									Value: "Xavier",
+								},
+							},
 						},
-						types.BlankLine{},
-						types.AttributeDeclaration{
-							Name:  "author",
-							Value: "Xavier",
+						types.DocumentFragment{
+							LineOffset: 6,
+							Content: []interface{}{
+								types.AttributeDeclaration{
+									Name: "hardbreaks",
+								},
+							},
 						},
-						types.BlankLine{},
-						types.AttributeDeclaration{
-							Name:  "hardbreaks",
-							Value: nil,
-						},
-						types.BlankLine{},
-						types.InlineElements{
-							types.StringElement{
-								Content: "a paragraph",
+						types.DocumentFragment{
+							LineOffset: 8,
+							Content: []interface{}{
+								types.RawLine("a paragraph"),
 							},
 						},
 					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 				})
-
-				It("no header and attributes in body", func() {
-					source := `a paragraph
-	
-:toc:
-:date: 2017-01-01
-:author: Xavier
-:hardbreaks:`
-					expected := types.DocumentFragments{
-						types.InlineElements{
-							types.StringElement{
-								Content: "a paragraph",
-							},
-						},
-						types.BlankLine{},
-						types.AttributeDeclaration{
-							Name:  "toc",
-							Value: nil,
-						},
-						types.AttributeDeclaration{
-							Name:  "date",
-							Value: "2017-01-01",
-						},
-						types.AttributeDeclaration{
-							Name:  "author",
-							Value: "Xavier",
-						},
-						types.AttributeDeclaration{
-							Name:  "hardbreaks",
-							Value: nil,
-						},
-					}
-					Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-				})
-			})
-		})
-
-		Context("invalid cases", func() {
-
-			It("paragraph without blank line before attribute declarations", func() {
-				source := `a paragraph
-:toc:
-:date: 2017-01-01
-:author: Xavier`
-				expected := types.DocumentFragments{
-					types.InlineElements{
-						types.StringElement{Content: "a paragraph"},
-					},
-					types.InlineElements{
-						types.StringElement{Content: ":toc:"},
-					},
-					types.InlineElements{
-						types.StringElement{Content: ":date: 2017-01-01"},
-					},
-					types.InlineElements{
-						types.StringElement{Content: ":author: Xavier"},
-					},
-				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
-			})
-
-			It("invalid attribute names", func() {
-				source := `:@date: 2017-01-01
-:{author}: Xavier`
-				expected := types.DocumentFragments{
-					types.InlineElements{
-						types.StringElement{Content: ":@date: 2017-01-01"},
-					},
-					types.InlineElements{
-						types.StringElement{Content: ":{author}: Xavier"},
-					},
-				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})
@@ -843,24 +316,24 @@ a paragraph`
 		Context("valid cases", func() {
 
 			It("header alone", func() {
-				source := `= Document Title
+				source := `= Title
 			
 This journey continues.`
 
-				title := []interface{}{
-					types.StringElement{Content: "Document Title"},
+				Title := []interface{}{
+					types.StringElement{Content: "Title"},
 				}
 				expected := types.Document{
 					ElementReferences: types.ElementReferences{
-						"_document_title": title,
+						"_document_Title": Title,
 					},
 					Elements: []interface{}{
 						types.Section{
 							Level: 0,
 							Attributes: types.Attributes{
-								types.AttrID: "_document_title",
+								types.AttrID: "_document_Title",
 							},
-							Title: title,
+							Title: Title,
 							Elements: []interface{}{
 								types.Paragraph{
 									Lines: [][]interface{}{
@@ -881,11 +354,11 @@ This journey continues.`
 				Context("single author", func() {
 
 					It("all author data with extra spaces", func() {
-						source := `= title
+						source := `= Title
 John  Foo    Doe  <johndoe@example.com>`
-						title := []interface{}{
+						Title := []interface{}{
 							types.StringElement{
-								Content: "title",
+								Content: "Title",
 							},
 						}
 						expected := types.Document{
@@ -904,15 +377,15 @@ John  Foo    Doe  <johndoe@example.com>`
 								"email":          "johndoe@example.com",
 							},
 							ElementReferences: types.ElementReferences{
-								"_title": title,
+								"_Title": Title,
 							},
 							Elements: []interface{}{
 								types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_title",
+										types.AttrID: "_Title",
 									},
-									Title:    title,
+									Title:    Title,
 									Elements: []interface{}{},
 								},
 							},
@@ -921,11 +394,11 @@ John  Foo    Doe  <johndoe@example.com>`
 					})
 
 					It("lastname with underscores", func() {
-						source := `= title
+						source := `= Title
 Jane the_Doe <jane@example.com>`
-						title := []interface{}{
+						Title := []interface{}{
 							types.StringElement{
-								Content: "title",
+								Content: "Title",
 							},
 						}
 						expected := types.Document{
@@ -943,15 +416,15 @@ Jane the_Doe <jane@example.com>`
 								"email":          "jane@example.com",
 							},
 							ElementReferences: types.ElementReferences{
-								"_title": title,
+								"_Title": Title,
 							},
 							Elements: []interface{}{
 								types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_title",
+										types.AttrID: "_Title",
 									},
-									Title:    title,
+									Title:    Title,
 									Elements: []interface{}{},
 								},
 							},
@@ -960,11 +433,11 @@ Jane the_Doe <jane@example.com>`
 					})
 
 					It("with middlename and composed lastname", func() {
-						source := `= title
+						source := `= Title
 Jane Foo the Doe <jane@example.com>`
-						title := []interface{}{
+						Title := []interface{}{
 							types.StringElement{
-								Content: "title",
+								Content: "Title",
 							},
 						}
 						expected := types.Document{
@@ -983,15 +456,15 @@ Jane Foo the Doe <jane@example.com>`
 								"email":          "jane@example.com",
 							},
 							ElementReferences: types.ElementReferences{
-								"_title": title,
+								"_Title": Title,
 							},
 							Elements: []interface{}{
 								types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_title",
+										types.AttrID: "_Title",
 									},
-									Title:    title,
+									Title:    Title,
 									Elements: []interface{}{},
 								},
 							},
@@ -1000,11 +473,11 @@ Jane Foo the Doe <jane@example.com>`
 					})
 
 					It("firstname and lastname only", func() {
-						source := `= title
+						source := `= Title
 John Doe`
-						title := []interface{}{
+						Title := []interface{}{
 							types.StringElement{
-								Content: "title",
+								Content: "Title",
 							},
 						}
 						expected := types.Document{
@@ -1020,15 +493,15 @@ John Doe`
 								"authorinitials": "JD",
 							},
 							ElementReferences: types.ElementReferences{
-								"_title": title,
+								"_Title": Title,
 							},
 							Elements: []interface{}{
 								types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_title",
+										types.AttrID: "_Title",
 									},
-									Title:    title,
+									Title:    Title,
 									Elements: []interface{}{},
 								},
 							},
@@ -1037,11 +510,11 @@ John Doe`
 					})
 
 					It("firstname only", func() {
-						source := `= title
+						source := `= Title
 Doe`
-						title := []interface{}{
+						Title := []interface{}{
 							types.StringElement{
-								Content: "title",
+								Content: "Title",
 							},
 						}
 						expected := types.Document{
@@ -1056,15 +529,15 @@ Doe`
 								"authorinitials": "D",
 							},
 							ElementReferences: types.ElementReferences{
-								"_title": title,
+								"_Title": Title,
 							},
 							Elements: []interface{}{
 								types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_title",
+										types.AttrID: "_Title",
 									},
-									Title:    title,
+									Title:    Title,
 									Elements: []interface{}{},
 								},
 							},
@@ -1073,11 +546,11 @@ Doe`
 					})
 
 					It("alternate author input", func() {
-						source := `= title
+						source := `= Title
 :author: John Foo Doe` // `:"email":` is processed as a regular attribute
-						title := []interface{}{
+						Title := []interface{}{
 							types.StringElement{
-								Content: "title",
+								Content: "Title",
 							},
 						}
 						expected := types.Document{
@@ -1094,15 +567,15 @@ Doe`
 								"authorinitials": "JFD",
 							},
 							ElementReferences: types.ElementReferences{
-								"_title": title,
+								"_Title": Title,
 							},
 							Elements: []interface{}{
 								types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_title",
+										types.AttrID: "_Title",
 									},
-									Title:    title,
+									Title:    Title,
 									Elements: []interface{}{},
 								},
 							},
@@ -1114,11 +587,11 @@ Doe`
 				Context("multiple authors", func() {
 
 					It("2 authors", func() {
-						source := `= title
+						source := `= Title
 John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
-						title := []interface{}{
+						Title := []interface{}{
 							types.StringElement{
-								Content: "title",
+								Content: "Title",
 							},
 						}
 						expected := types.Document{
@@ -1146,15 +619,15 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 								"email_2":          "jane@example.com",
 							},
 							ElementReferences: types.ElementReferences{
-								"_title": title,
+								"_Title": Title,
 							},
 							Elements: []interface{}{
 								types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_title",
+										types.AttrID: "_Title",
 									},
-									Title:    title,
+									Title:    Title,
 									Elements: []interface{}{},
 								},
 							},
@@ -1166,24 +639,24 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 				Context("authors and comments", func() {
 
 					It("authors commented out", func() {
-						source := `= title
+						source := `= Title
 					// John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
-						title := []interface{}{
+						Title := []interface{}{
 							types.StringElement{
-								Content: "title",
+								Content: "Title",
 							},
 						}
 						expected := types.Document{
 							ElementReferences: types.ElementReferences{
-								"_title": title,
+								"_Title": Title,
 							},
 							Elements: []interface{}{
 								types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_title",
+										types.AttrID: "_Title",
 									},
-									Title:    title,
+									Title:    Title,
 									Elements: []interface{}{},
 								},
 							},
@@ -1192,12 +665,12 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 					})
 
 					It("authors after a single comment line", func() {
-						source := `= title
+						source := `= Title
 					// a comment
 					John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
-						title := []interface{}{
+						Title := []interface{}{
 							types.StringElement{
-								Content: "title",
+								Content: "Title",
 							},
 						}
 						expected := types.Document{
@@ -1225,15 +698,15 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 								"email_2":          "jane@example.com",
 							},
 							ElementReferences: types.ElementReferences{
-								"_title": title,
+								"_Title": Title,
 							},
 							Elements: []interface{}{
 								types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_title",
+										types.AttrID: "_Title",
 									},
-									Title:    title,
+									Title:    Title,
 									Elements: []interface{}{},
 								},
 							},
@@ -1242,14 +715,14 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 					})
 
 					It("authors after a comment block", func() {
-						source := `= title
+						source := `= Title
 //// 
 a comment
 ////
 John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
-						title := []interface{}{
+						Title := []interface{}{
 							types.StringElement{
-								Content: "title",
+								Content: "Title",
 							},
 						}
 						expected := types.Document{
@@ -1277,15 +750,15 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 								"email_2":          "jane@example.com",
 							},
 							ElementReferences: types.ElementReferences{
-								"_title": title,
+								"_Title": Title,
 							},
 							Elements: []interface{}{
 								types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_title",
+										types.AttrID: "_Title",
 									},
-									Title:    title,
+									Title:    Title,
 									Elements: []interface{}{},
 								},
 							},
@@ -1297,13 +770,13 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 
 			Context("document revisions", func() {
 
-				It("full document revision", func() {
-					source := `= title
+				It("full document revision without any comment", func() {
+					source := `= Title
 				John Doe
 				v1.0, March 29, 2020: Updated revision`
-					title := []interface{}{
+					Title := []interface{}{
 						types.StringElement{
-							Content: "title",
+							Content: "Title",
 						},
 					}
 					expected := types.Document{
@@ -1327,15 +800,73 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 							"revremark": "Updated revision",
 						},
 						ElementReferences: types.ElementReferences{
-							"_title": title,
+							"_Title": Title,
 						},
 						Elements: []interface{}{
 							types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_title",
+									types.AttrID: "_Title",
 								},
-								Title:    title,
+								Title:    Title,
+								Elements: []interface{}{},
+							},
+						},
+					}
+					Expect(ParseDocument(source)).To(MatchDocument(expected))
+				})
+
+				It("full document revision with comments", func() {
+					source := `= Title
+// a single-line comment
+John Doe
+////
+a comment block
+
+with an empty line
+////
+v1.0, March 29, 2020: Updated revision
+////
+another comment block
+
+with another empty line
+////
+`
+					Title := []interface{}{
+						types.StringElement{
+							Content: "Title",
+						},
+					}
+					expected := types.Document{
+						Attributes: types.Attributes{
+							types.AttrAuthors: []types.DocumentAuthor{
+								{
+									FullName: "John Doe",
+								},
+							},
+							"firstname":      "John",
+							"lastname":       "Doe",
+							"author":         "John Doe",
+							"authorinitials": "JD",
+							types.AttrRevision: types.DocumentRevision{
+								Revnumber: "1.0",
+								Revdate:   "March 29, 2020",
+								Revremark: "Updated revision",
+							},
+							"revnumber": "1.0",
+							"revdate":   "March 29, 2020",
+							"revremark": "Updated revision",
+						},
+						ElementReferences: types.ElementReferences{
+							"_Title": Title,
+						},
+						Elements: []interface{}{
+							types.Section{
+								Level: 0,
+								Attributes: types.Attributes{
+									types.AttrID: "_Title",
+								},
+								Title:    Title,
 								Elements: []interface{}{},
 							},
 						},
@@ -1344,13 +875,13 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 				})
 
 				It("full document revision with a comment before author", func() {
-					source := `= title
+					source := `= Title
 				// a comment
 				John Doe
 				v1.0, March 29, 2020: Updated revision`
-					title := []interface{}{
+					Title := []interface{}{
 						types.StringElement{
-							Content: "title",
+							Content: "Title",
 						},
 					}
 					expected := types.Document{
@@ -1374,15 +905,15 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 							"revremark": "Updated revision",
 						},
 						ElementReferences: types.ElementReferences{
-							"_title": title,
+							"_Title": Title,
 						},
 						Elements: []interface{}{
 							types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_title",
+									types.AttrID: "_Title",
 								},
-								Title:    title,
+								Title:    Title,
 								Elements: []interface{}{},
 							},
 						},
@@ -1391,13 +922,13 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 				})
 
 				It("full document revision with a comment before revision", func() {
-					source := `= title
+					source := `= Title
 				John Doe
 				// a comment
 				v1.0, March 29, 2020: Updated revision`
-					title := []interface{}{
+					Title := []interface{}{
 						types.StringElement{
-							Content: "title",
+							Content: "Title",
 						},
 					}
 					expected := types.Document{
@@ -1421,15 +952,15 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 							"revremark": "Updated revision",
 						},
 						ElementReferences: types.ElementReferences{
-							"_title": title,
+							"_Title": Title,
 						},
 						Elements: []interface{}{
 							types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_title",
+									types.AttrID: "_Title",
 								},
-								Title:    title,
+								Title:    Title,
 								Elements: []interface{}{},
 							},
 						},
@@ -1438,12 +969,12 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 				})
 
 				It("revision with revnumber and revdate only", func() {
-					source := `= title
+					source := `= Title
 				John Doe
 				v1.0, March 29, 2020`
-					title := []interface{}{
+					Title := []interface{}{
 						types.StringElement{
-							Content: "title",
+							Content: "Title",
 						},
 					}
 					expected := types.Document{
@@ -1465,15 +996,15 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 							"revdate":   "March 29, 2020",
 						},
 						ElementReferences: types.ElementReferences{
-							"_title": title,
+							"_Title": Title,
 						},
 						Elements: []interface{}{
 							types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_title",
+									types.AttrID: "_Title",
 								},
-								Title:    title,
+								Title:    Title,
 								Elements: []interface{}{},
 							},
 						},
@@ -1482,12 +1013,12 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 				})
 
 				It("revision with revnumber and revdate - with colon separator", func() {
-					source := `= title
+					source := `= Title
 				John Doe
 				1.0, March 29, 2020:`
-					title := []interface{}{
+					Title := []interface{}{
 						types.StringElement{
-							Content: "title",
+							Content: "Title",
 						},
 					}
 					expected := types.Document{
@@ -1509,15 +1040,15 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 							"revdate":   "March 29, 2020",
 						},
 						ElementReferences: types.ElementReferences{
-							"_title": title,
+							"_Title": Title,
 						},
 						Elements: []interface{}{
 							types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_title",
+									types.AttrID: "_Title",
 								},
-								Title:    title,
+								Title:    Title,
 								Elements: []interface{}{},
 							},
 						},
@@ -1526,12 +1057,12 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 				})
 
 				It("revision with revnumber only - comma suffix", func() {
-					source := `= title
+					source := `= Title
 				John Doe
 				1.0,`
-					title := []interface{}{
+					Title := []interface{}{
 						types.StringElement{
-							Content: "title",
+							Content: "Title",
 						},
 					}
 					expected := types.Document{
@@ -1551,15 +1082,15 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 							"revnumber": "1.0",
 						},
 						ElementReferences: types.ElementReferences{
-							"_title": title,
+							"_Title": Title,
 						},
 						Elements: []interface{}{
 							types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_title",
+									types.AttrID: "_Title",
 								},
-								Title:    title,
+								Title:    Title,
 								Elements: []interface{}{},
 							},
 						},
@@ -1568,12 +1099,12 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 				})
 
 				It("revision with revdate as number - spaces and no prefix no suffix", func() {
-					source := `= title
+					source := `= Title
 				John Doe
 				1.0`
-					title := []interface{}{
+					Title := []interface{}{
 						types.StringElement{
-							Content: "title",
+							Content: "Title",
 						},
 					}
 					expected := types.Document{
@@ -1593,15 +1124,15 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 							"revdate": "1.0",
 						},
 						ElementReferences: types.ElementReferences{
-							"_title": title,
+							"_Title": Title,
 						},
 						Elements: []interface{}{
 							types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_title",
+									types.AttrID: "_Title",
 								},
-								Title:    title,
+								Title:    Title,
 								Elements: []interface{}{},
 							},
 						},
@@ -1610,12 +1141,12 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 				})
 
 				It("revision with revdate as alphanum - spaces and no prefix no suffix", func() {
-					source := `= title
+					source := `= Title
 				John Doe
 				1.0a`
-					title := []interface{}{
+					Title := []interface{}{
 						types.StringElement{
-							Content: "title",
+							Content: "Title",
 						},
 					}
 					expected := types.Document{
@@ -1635,15 +1166,15 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 							"revdate": "1.0a",
 						},
 						ElementReferences: types.ElementReferences{
-							"_title": title,
+							"_Title": Title,
 						},
 						Elements: []interface{}{
 							types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_title",
+									types.AttrID: "_Title",
 								},
-								Title:    title,
+								Title:    Title,
 								Elements: []interface{}{},
 							},
 						},
@@ -1652,12 +1183,12 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 				})
 
 				It("revision with revnumber only", func() {
-					source := `= title
+					source := `= Title
 				John Doe
 				v1.0:`
-					title := []interface{}{
+					Title := []interface{}{
 						types.StringElement{
-							Content: "title",
+							Content: "Title",
 						},
 					}
 					expected := types.Document{
@@ -1677,15 +1208,15 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 							"revnumber": "1.0",
 						},
 						ElementReferences: types.ElementReferences{
-							"_title": title,
+							"_Title": Title,
 						},
 						Elements: []interface{}{
 							types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_title",
+									types.AttrID: "_Title",
 								},
-								Title:    title,
+								Title:    Title,
 								Elements: []interface{}{},
 							},
 						},
@@ -1694,12 +1225,12 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 				})
 
 				It("revision with spaces and capital revnumber ", func() {
-					source := `= title
+					source := `= Title
 				John Doe
 				V1.0:`
-					title := []interface{}{
+					Title := []interface{}{
 						types.StringElement{
-							Content: "title",
+							Content: "Title",
 						},
 					}
 					expected := types.Document{
@@ -1719,15 +1250,15 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 							"revnumber": "1.0",
 						},
 						ElementReferences: types.ElementReferences{
-							"_title": title,
+							"_Title": Title,
 						},
 						Elements: []interface{}{
 							types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_title",
+									types.AttrID: "_Title",
 								},
-								Title:    title,
+								Title:    Title,
 								Elements: []interface{}{},
 							},
 						},
@@ -1736,12 +1267,12 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 				})
 
 				It("revision only - with comma separator", func() {
-					source := `= title
+					source := `= Title
 				John Doe
 				v1.0,`
-					title := []interface{}{
+					Title := []interface{}{
 						types.StringElement{
-							Content: "title",
+							Content: "Title",
 						},
 					}
 					expected := types.Document{
@@ -1761,15 +1292,15 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 							"revnumber": "1.0",
 						},
 						ElementReferences: types.ElementReferences{
-							"_title": title,
+							"_Title": Title,
 						},
 						Elements: []interface{}{
 							types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_title",
+									types.AttrID: "_Title",
 								},
-								Title:    title,
+								Title:    Title,
 								Elements: []interface{}{},
 							},
 						},
@@ -1778,12 +1309,12 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 				})
 
 				It("revision with revnumber plus comma and colon separators", func() {
-					source := `= title
+					source := `= Title
 				John Doe
 				v1.0,:`
-					title := []interface{}{
+					Title := []interface{}{
 						types.StringElement{
-							Content: "title",
+							Content: "Title",
 						},
 					}
 					expected := types.Document{
@@ -1803,15 +1334,15 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 							"revnumber": "1.0",
 						},
 						ElementReferences: types.ElementReferences{
-							"_title": title,
+							"_Title": Title,
 						},
 						Elements: []interface{}{
 							types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_title",
+									types.AttrID: "_Title",
 								},
-								Title:    title,
+								Title:    Title,
 								Elements: []interface{}{},
 							},
 						},
@@ -1820,12 +1351,12 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 				})
 
 				It("revision with revnumber and empty revremark", func() {
-					source := `= title
+					source := `= Title
 John Doe
 v1.0:`
-					title := []interface{}{
+					Title := []interface{}{
 						types.StringElement{
-							Content: "title",
+							Content: "Title",
 						},
 					}
 					expected := types.Document{
@@ -1846,15 +1377,15 @@ v1.0:`
 							// "revremark": "", // found but is empty
 						},
 						ElementReferences: types.ElementReferences{
-							"_title": title,
+							"_Title": Title,
 						},
 						Elements: []interface{}{
 							types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_title",
+									types.AttrID: "_Title",
 								},
-								Title:    title,
+								Title:    Title,
 								Elements: []interface{}{},
 							},
 						},

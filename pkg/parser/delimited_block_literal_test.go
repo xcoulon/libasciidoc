@@ -31,7 +31,7 @@ var _ = Describe("literal blocks", func() {
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("literal block from paragraph with single space on first line", func() {
@@ -63,7 +63,7 @@ lines.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("mixing literal block with attributes followed by a paragraph ", func() {
@@ -98,7 +98,7 @@ a normal paragraph.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 
@@ -125,7 +125,7 @@ some content
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("literal block with delimited and attributes followed by 1-line paragraph", func() {
@@ -160,7 +160,7 @@ a normal paragraph.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 
@@ -194,7 +194,7 @@ a normal paragraph.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("literal block from 2-lines paragraph with attribute", func() {
@@ -236,7 +236,7 @@ a normal paragraph.`
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 
@@ -323,7 +323,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 			It("should apply the 'normal' substitution on block with delimiter", func() {
 				source := `:github-url: https://github.com
@@ -444,7 +444,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'quotes,macros' substitution on block with delimiter", func() {
@@ -534,7 +534,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'quotes,macros' substitution on block with spaces", func() {
@@ -617,7 +617,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("should apply the 'quotes,macros' substitution on block with attribute", func() {
@@ -698,7 +698,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseRawSource(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 		})
 	})

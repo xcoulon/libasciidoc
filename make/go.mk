@@ -37,6 +37,7 @@ generate: install-pigeon
 	@if [ "pkg/parser/parser.go" -ot "pkg/parser/parser.peg" ]; then \
 		echo "generating the parser..."; \
 		pigeon ./pkg/parser/parser.peg > ./pkg/parser/parser.go; \
+		echo "done"; \
 	else \
 		echo "no need to regenerate the parser."; \
 	fi;
@@ -47,6 +48,7 @@ generate-optimized: install-pigeon
 	@if [ "pkg/parser/parser.go" -ot "pkg/parser/parser.peg" ]; then \
 		echo "generating the parser (optimized)..."; \
 		go generate ./...; \
+		echo "done"; \
 	else \
 		echo "no need to regenerate the parser."; \
 	fi;

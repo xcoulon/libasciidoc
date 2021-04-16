@@ -1,10 +1,7 @@
 package parser
 
 import (
-	"fmt"
-
 	"github.com/bytesparadise/libasciidoc/pkg/configuration"
-	"github.com/bytesparadise/libasciidoc/pkg/types"
 )
 
 // extra methods on the generated parser's `storeDict` type
@@ -46,20 +43,20 @@ func (c storeDict) hasUserMacro(name string) bool {
 	return false
 }
 
-func (c *current) parserContext() (*parserContext, error) {
-	if ctx, ok := c.globalStore[parserContextKey].(*parserContext); ok {
-		return ctx, nil
-	}
-	return nil, fmt.Errorf("unable to look-up the parse context in the parser's global store")
-}
+// func (c *current) parserContext() (*substitutionContext, error) {
+// 	if ctx, ok := c.globalStore[parserContextKey].(*substitutionContext); ok {
+// 		return ctx, nil
+// 	}
+// 	return nil, fmt.Errorf("unable to look-up the parse context in the parser's global store")
+// }
 
-func (c *current) isCommentBlockContentEnabled(kind types.DelimiterKind) (bool, error) {
-	if ctx, ok := c.globalStore[parserContextKey].(*parserContext); ok {
-		return ctx.isCommentBlockContentEnabled(kind), nil
-	}
-	return false, fmt.Errorf("unable to look-up the parse context in the parser's global store")
+// func (c *current) isCommentBlockContentEnabled(kind types.DelimiterKind) (bool, error) {
+// 	if ctx, ok := c.globalStore[parserContextKey].(*substitutionContext); ok {
+// 		return ctx.isCommentBlockContentEnabled(kind), nil
+// 	}
+// 	return false, fmt.Errorf("unable to look-up the parse context in the parser's global store")
 
-}
+// }
 
 // func (c storeDict) pushSubsitutionContext(ctx substitutionContext) {
 // 	if s, ok := c[substitutionContextKey].(*stack); ok {

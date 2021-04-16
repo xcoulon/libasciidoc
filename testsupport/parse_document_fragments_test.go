@@ -24,7 +24,7 @@ var _ = Describe("raw document assertions", func() {
 		// given
 		actual := "hello, world!"
 		// when
-		result, err := testsupport.ParseRawSource(actual)
+		result, err := testsupport.ParseDocumentFragments(actual)
 		// then
 		Expect(err).ToNot(HaveOccurred())
 		Expect(result).To(Equal(expected))
@@ -34,7 +34,7 @@ var _ = Describe("raw document assertions", func() {
 		// given
 		actual := "foo"
 		// when
-		result, err := testsupport.ParseRawSource(actual)
+		result, err := testsupport.ParseDocumentFragments(actual)
 		// then
 		Expect(err).ToNot(HaveOccurred())
 		Expect(result).NotTo(Equal(expected))
