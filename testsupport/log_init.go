@@ -12,6 +12,9 @@ func init() {
 	if debugMode() {
 		log.SetLevel(log.DebugLevel)
 		log.Info("Running test with logs in DEBUG level")
+		log.SetFormatter(&log.TextFormatter{
+			DisableQuote: true, // see https://github.com/sirupsen/logrus/issues/608#issuecomment-745137306
+		})
 	}
 }
 

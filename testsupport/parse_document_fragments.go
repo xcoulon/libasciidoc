@@ -8,7 +8,7 @@ import (
 )
 
 // ParseDocumentFragments parses the actual source with the options
-func ParseDocumentFragments(actual string, options ...interface{}) (types.DocumentFragments, error) {
+func ParseDocumentFragments(actual string, options ...interface{}) ([]types.DocumentFragmentGroup, error) {
 	r := strings.NewReader(actual)
 	c := &rawDocumentParserConfig{
 		filename: "test.adoc",
@@ -25,7 +25,7 @@ func ParseDocumentFragments(actual string, options ...interface{}) (types.Docume
 	done := make(chan interface{})
 	defer close(done)
 	fragmentStream := parser.ParseDocumentFragments(r, done, parserOptions...)
-	result := types.DocumentFragments{}
+	result := []types.DocumentFragmentGroup{}
 	for f := range fragmentStream {
 		result = append(result, f)
 	}

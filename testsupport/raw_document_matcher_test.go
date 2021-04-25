@@ -15,18 +15,23 @@ import (
 var _ = Describe("raw document matcher", func() {
 
 	// given
-	expected := types.DocumentFragments{
-		types.InlineElements{
-			types.StringElement{
-				Content: "a paragraph.",
+	expected := []types.DocumentFragmentGroup{
+		{
+			LineOffset: 1,
+			Content: []interface{}{
+				types.InlineElements{
+					types.StringElement{
+						Content: "a paragraph.",
+					},
+				},
 			},
 		},
 	}
-	matcher := testsupport.MatchDocumentFragments(expected)
+	matcher := testsupport.MatchDocumentFragmentGroups(expected)
 
 	It("should match", func() {
 		// given
-		actual := types.DocumentFragments{
+		actual := []interface{}{
 			types.InlineElements{
 				types.StringElement{
 					Content: "a paragraph.",
@@ -42,7 +47,7 @@ var _ = Describe("raw document matcher", func() {
 
 	It("should not match", func() {
 		// given
-		actual := types.DocumentFragments{
+		actual := []interface{}{
 			types.InlineElements{
 				types.StringElement{
 					Content: "another paragraph.", // different content

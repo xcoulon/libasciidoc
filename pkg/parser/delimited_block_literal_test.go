@@ -10,60 +10,64 @@ import (
 
 var _ = Describe("literal blocks", func() {
 
-	Context("in raw documents", func() {
+	Context("in final documents", func() {
 
 		Context("literal blocks with spaces indentation", func() {
 
 			It("literal block from 1-line paragraph with single space", func() {
 				source := ` some literal content`
-				expected := types.DocumentFragments{
-					types.LiteralBlock{
-						Attributes: types.Attributes{
-							types.AttrStyle:            types.Literal,
-							types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
-						},
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: " some literal content",
+				expected := types.Document{
+					Elements: []interface{}{
+						types.LiteralBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:            types.Literal,
+								types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
+							},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: " some literal content",
+									},
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
 			It("literal block from paragraph with single space on first line", func() {
 				source := ` some literal content
 on 3
 lines.`
-				expected := types.DocumentFragments{
-					types.LiteralBlock{
-						Attributes: types.Attributes{
-							types.AttrStyle:            types.Literal,
-							types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
-						},
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: " some literal content",
-								},
+				expected := types.Document{
+					Elements: []interface{}{
+						types.LiteralBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:            types.Literal,
+								types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
 							},
-							{
-								types.StringElement{
-									Content: "on 3",
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: " some literal content",
+									},
 								},
-							},
-							{
-								types.StringElement{
-									Content: "lines.",
+								{
+									types.StringElement{
+										Content: "on 3",
+									},
+								},
+								{
+									types.StringElement{
+										Content: "lines.",
+									},
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
 			It("mixing literal block with attributes followed by a paragraph ", func() {
@@ -72,33 +76,35 @@ lines.`
   some literal content
 
 a normal paragraph.`
-				expected := types.DocumentFragments{
-					types.LiteralBlock{
-						Attributes: types.Attributes{
-							types.AttrStyle:            types.Literal,
-							types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
-							types.AttrID:               "ID",
-							// types.AttrCustomID:         true,
-							types.AttrTitle: "title",
+				expected := types.Document{
+					Elements: []interface{}{
+						types.LiteralBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:            types.Literal,
+								types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
+								types.AttrID:               "ID",
+								// types.AttrCustomID:         true,
+								types.AttrTitle: "title",
+							},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "  some literal content",
+									},
+								},
+							},
 						},
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "  some literal content",
+						types.BlankLine{},
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "a normal paragraph."},
 								},
 							},
 						},
 					},
-					types.BlankLine{},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "a normal paragraph."},
-							},
-						},
-					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 		})
 
@@ -109,23 +115,25 @@ a normal paragraph.`
 
 some content
 ....`
-				expected := types.DocumentFragments{
-					types.LiteralBlock{
-						Attributes: types.Attributes{
-							types.AttrStyle:            types.Literal,
-							types.AttrLiteralBlockType: types.LiteralBlockWithDelimiter,
-						},
-						Lines: [][]interface{}{
-							{},
-							{
-								types.StringElement{
-									Content: "some content",
+				expected := types.Document{
+					Elements: []interface{}{
+						types.LiteralBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:            types.Literal,
+								types.AttrLiteralBlockType: types.LiteralBlockWithDelimiter,
+							},
+							Lines: [][]interface{}{
+								{},
+								{
+									types.StringElement{
+										Content: "some content",
+									},
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
 			It("literal block with delimited and attributes followed by 1-line paragraph", func() {
@@ -135,32 +143,34 @@ some content
 some literal content
 ....
 a normal paragraph.`
-				expected := types.DocumentFragments{
-					types.LiteralBlock{
-						Attributes: types.Attributes{
-							types.AttrStyle:            types.Literal,
-							types.AttrLiteralBlockType: types.LiteralBlockWithDelimiter,
-							types.AttrID:               "ID",
-							// types.AttrCustomID:         true,
-							types.AttrTitle: "title",
+				expected := types.Document{
+					Elements: []interface{}{
+						types.LiteralBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:            types.Literal,
+								types.AttrLiteralBlockType: types.LiteralBlockWithDelimiter,
+								types.AttrID:               "ID",
+								// types.AttrCustomID:         true,
+								types.AttrTitle: "title",
+							},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "some literal content",
+									},
+								},
+							},
 						},
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "some literal content",
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "a normal paragraph."},
 								},
 							},
 						},
 					},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "a normal paragraph."},
-							},
-						},
-					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 		})
 
@@ -171,30 +181,32 @@ a normal paragraph.`
 some literal content
 
 a normal paragraph.`
-				expected := types.DocumentFragments{
-					types.LiteralBlock{
-						Attributes: types.Attributes{
-							types.AttrStyle:            types.Literal,
-							types.AttrLiteralBlockType: types.LiteralBlockWithAttribute,
+				expected := types.Document{
+					Elements: []interface{}{
+						types.LiteralBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:            types.Literal,
+								types.AttrLiteralBlockType: types.LiteralBlockWithAttribute,
+							},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "some literal content",
+									},
+								},
+							},
 						},
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "some literal content",
+						types.BlankLine{},
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "a normal paragraph."},
 								},
 							},
 						},
 					},
-					types.BlankLine{},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "a normal paragraph."},
-							},
-						},
-					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
 			It("literal block from 2-lines paragraph with attribute", func() {
@@ -205,38 +217,40 @@ some literal content
 on two lines.
 
 a normal paragraph.`
-				expected := types.DocumentFragments{
-					types.LiteralBlock{
-						Attributes: types.Attributes{
-							types.AttrStyle: types.Literal,
-							types.AttrID:    "ID",
-							// types.AttrCustomID:         true,
-							types.AttrTitle:            "title",
-							types.AttrLiteralBlockType: types.LiteralBlockWithAttribute,
-						},
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "some literal content",
+				expected := types.Document{
+					Elements: []interface{}{
+						types.LiteralBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle: types.Literal,
+								types.AttrID:    "ID",
+								// types.AttrCustomID:         true,
+								types.AttrTitle:            "title",
+								types.AttrLiteralBlockType: types.LiteralBlockWithAttribute,
+							},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "some literal content",
+									},
+								},
+								{
+									types.StringElement{
+										Content: "on two lines.",
+									},
 								},
 							},
-							{
-								types.StringElement{
-									Content: "on two lines.",
-								},
-							},
 						},
-					},
-					types.BlankLine{},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "a normal paragraph."},
+						types.BlankLine{},
+						types.Paragraph{
+							Lines: [][]interface{}{
+								{
+									types.StringElement{Content: "a normal paragraph."},
+								},
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 		})
 
@@ -257,65 +271,67 @@ and <more text> on the +
 
 <1> a callout
 `
-				expected := types.DocumentFragments{
-					types.AttributeDeclaration{
-						Name:  "github-url",
-						Value: "https://github.com",
-					},
-					types.BlankLine{},
-					types.LiteralBlock{
-						Attributes: types.Attributes{
-							types.AttrStyle:            types.Literal,
-							types.AttrLiteralBlockType: types.LiteralBlockWithDelimiter,
+				expected := types.Document{
+					Elements: []interface{}{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "a link to https://example.com[] ",
-								},
-								types.Callout{
-									Ref: 1,
-								},
+						types.BlankLine{},
+						types.LiteralBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:            types.Literal,
+								types.AttrLiteralBlockType: types.LiteralBlockWithDelimiter,
 							},
-							{
-								types.StringElement{
-									Content: "and ",
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "a link to https://example.com[] ",
+									},
+									types.Callout{
+										Ref: 1,
+									},
 								},
-								types.SpecialCharacter{
-									Name: "<",
+								{
+									types.StringElement{
+										Content: "and ",
+									},
+									types.SpecialCharacter{
+										Name: "<",
+									},
+									types.StringElement{
+										Content: "more text",
+									},
+									types.SpecialCharacter{
+										Name: ">",
+									},
+									types.StringElement{
+										Content: " on the +",
+									},
 								},
-								types.StringElement{
-									Content: "more text",
+								{
+									types.StringElement{
+										Content: "*next* lines with a link to {github-url}[]",
+									},
 								},
-								types.SpecialCharacter{
-									Name: ">",
-								},
-								types.StringElement{
-									Content: " on the +",
-								},
-							},
-							{
-								types.StringElement{
-									Content: "*next* lines with a link to {github-url}[]",
-								},
-							},
-							{},
-							{
-								types.StringElement{
-									Content: "* not a list item",
+								{},
+								{
+									types.StringElement{
+										Content: "* not a list item",
+									},
 								},
 							},
 						},
-					},
-					types.BlankLine{},
-					types.CalloutListItem{
-						Ref: 1,
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a callout",
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
+											},
 										},
 									},
 								},
@@ -323,7 +339,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 			It("should apply the 'normal' substitution on block with delimiter", func() {
 				source := `:github-url: https://github.com
@@ -339,104 +355,106 @@ and <more text> on the +
 
 <1> a callout
 `
-				expected := types.DocumentFragments{
-					types.AttributeDeclaration{
-						Name:  "github-url",
-						Value: "https://github.com",
-					},
-					types.BlankLine{},
-					types.LiteralBlock{
-						Attributes: types.Attributes{
-							types.AttrStyle:            types.Literal,
-							types.AttrLiteralBlockType: types.LiteralBlockWithDelimiter,
-							types.AttrSubstitutions:    "normal",
+				expected := types.Document{
+					Elements: []interface{}{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "a link to ",
+						types.BlankLine{},
+						types.LiteralBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:            types.Literal,
+								types.AttrLiteralBlockType: types.LiteralBlockWithDelimiter,
+								types.AttrSubstitutions:    "normal",
+							},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "a link to ",
+									},
+									types.InlineLink{
+										Location: types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "example.com",
+												},
+											},
+										},
+									},
+									types.StringElement{
+										Content: " ",
+									},
+									types.SpecialCharacter{ // callout is not detected with the `normal` susbtitution
+										Name: "<",
+									},
+									types.StringElement{
+										Content: "1",
+									},
+									types.SpecialCharacter{
+										Name: ">",
+									},
 								},
-								types.InlineLink{
-									Location: types.Location{
-										Scheme: "https://",
-										Path: []interface{}{
+								{
+									types.StringElement{
+										Content: "and ",
+									},
+									types.SpecialCharacter{
+										Name: "<",
+									},
+									types.StringElement{
+										Content: "more text",
+									},
+									types.SpecialCharacter{
+										Name: ">",
+									},
+									types.StringElement{
+										Content: " on the",
+									},
+									types.LineBreak{},
+								},
+								{
+									types.QuotedText{
+										Kind: types.SingleQuoteBold,
+										Elements: []interface{}{
 											types.StringElement{
-												Content: "example.com",
+												Content: "next",
+											},
+										},
+									},
+									types.StringElement{
+										Content: " lines with a link to ",
+									},
+									types.InlineLink{
+										Location: types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "github.com",
+												},
 											},
 										},
 									},
 								},
-								types.StringElement{
-									Content: " ",
-								},
-								types.SpecialCharacter{ // callout is not detected with the `normal` susbtitution
-									Name: "<",
-								},
-								types.StringElement{
-									Content: "1",
-								},
-								types.SpecialCharacter{
-									Name: ">",
-								},
-							},
-							{
-								types.StringElement{
-									Content: "and ",
-								},
-								types.SpecialCharacter{
-									Name: "<",
-								},
-								types.StringElement{
-									Content: "more text",
-								},
-								types.SpecialCharacter{
-									Name: ">",
-								},
-								types.StringElement{
-									Content: " on the",
-								},
-								types.LineBreak{},
-							},
-							{
-								types.QuotedText{
-									Kind: types.SingleQuoteBold,
-									Elements: []interface{}{
-										types.StringElement{
-											Content: "next",
-										},
+								{},
+								{
+									types.StringElement{
+										Content: "* not a list item",
 									},
-								},
-								types.StringElement{
-									Content: " lines with a link to ",
-								},
-								types.InlineLink{
-									Location: types.Location{
-										Scheme: "https://",
-										Path: []interface{}{
-											types.StringElement{
-												Content: "github.com",
-											},
-										},
-									},
-								},
-							},
-							{},
-							{
-								types.StringElement{
-									Content: "* not a list item",
 								},
 							},
 						},
-					},
-					types.BlankLine{},
-					types.CalloutListItem{
-						Ref: 1,
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a callout",
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
+											},
 										},
 									},
 								},
@@ -444,7 +462,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
 			It("should apply the 'quotes,macros' substitution on block with delimiter", func() {
@@ -461,72 +479,74 @@ and <more text> on the +
 
 <1> a callout
 `
-				expected := types.DocumentFragments{
-					types.AttributeDeclaration{
-						Name:  "github-url",
-						Value: "https://github.com",
-					},
-					types.BlankLine{},
-					types.LiteralBlock{
-						Attributes: types.Attributes{
-							types.AttrStyle:            types.Literal,
-							types.AttrLiteralBlockType: types.LiteralBlockWithDelimiter,
-							types.AttrSubstitutions:    "quotes,macros",
+				expected := types.Document{
+					Elements: []interface{}{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "a link to ",
-								},
-								types.InlineLink{
-									Location: types.Location{
-										Scheme: "https://",
-										Path: []interface{}{
-											types.StringElement{
-												Content: "example.com",
+						types.BlankLine{},
+						types.LiteralBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:            types.Literal,
+								types.AttrLiteralBlockType: types.LiteralBlockWithDelimiter,
+								types.AttrSubstitutions:    "quotes,macros",
+							},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "a link to ",
+									},
+									types.InlineLink{
+										Location: types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "example.com",
+												},
 											},
 										},
 									},
-								},
-								types.StringElement{
-									Content: " <1>",
-								},
-							},
-							{
-								types.StringElement{
-									Content: "and <more text> on the +",
-								},
-							},
-							{
-								types.QuotedText{
-									Kind: types.SingleQuoteBold,
-									Elements: []interface{}{
-										types.StringElement{
-											Content: "next",
-										},
+									types.StringElement{
+										Content: " <1>",
 									},
 								},
-								types.StringElement{
-									Content: " lines with a link to {github-url}[]",
+								{
+									types.StringElement{
+										Content: "and <more text> on the +",
+									},
 								},
-							},
-							{},
-							{
-								types.StringElement{
-									Content: "* not a list item",
+								{
+									types.QuotedText{
+										Kind: types.SingleQuoteBold,
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "next",
+											},
+										},
+									},
+									types.StringElement{
+										Content: " lines with a link to {github-url}[]",
+									},
+								},
+								{},
+								{
+									types.StringElement{
+										Content: "* not a list item",
+									},
 								},
 							},
 						},
-					},
-					types.BlankLine{},
-					types.CalloutListItem{
-						Ref: 1,
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a callout",
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
+											},
 										},
 									},
 								},
@@ -534,7 +554,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
 			It("should apply the 'quotes,macros' substitution on block with spaces", func() {
@@ -547,69 +567,71 @@ and <more text> on the +
 
 <1> a callout
 `
-				expected := types.DocumentFragments{
-					types.AttributeDeclaration{
-						Name:  "github-url",
-						Value: "https://github.com",
-					},
-					types.BlankLine{},
-					types.LiteralBlock{
-						Attributes: types.Attributes{
-							types.AttrStyle:            types.Literal,
-							types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
-							types.AttrSubstitutions:    "quotes,macros",
+				expected := types.Document{
+					Elements: []interface{}{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "  a link to ",
-								},
-								types.InlineLink{
-									Location: types.Location{
-										Scheme: "https://",
-										Path: []interface{}{
-											types.StringElement{
-												Content: "example.com",
+						types.BlankLine{},
+						types.LiteralBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:            types.Literal,
+								types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
+								types.AttrSubstitutions:    "quotes,macros",
+							},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "  a link to ",
+									},
+									types.InlineLink{
+										Location: types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "example.com",
+												},
 											},
 										},
 									},
-								},
-								types.StringElement{
-									Content: " <1> ",
-								},
-							},
-							{
-								types.StringElement{
-									Content: "  and <more text> on the +",
-								},
-							},
-							{
-								types.StringElement{
-									Content: "  ",
-								},
-								types.QuotedText{
-									Kind: types.SingleQuoteBold,
-									Elements: []interface{}{
-										types.StringElement{
-											Content: "next",
-										},
+									types.StringElement{
+										Content: " <1> ",
 									},
 								},
-								types.StringElement{
-									Content: " lines with a link to {github-url}[]",
+								{
+									types.StringElement{
+										Content: "  and <more text> on the +",
+									},
+								},
+								{
+									types.StringElement{
+										Content: "  ",
+									},
+									types.QuotedText{
+										Kind: types.SingleQuoteBold,
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "next",
+											},
+										},
+									},
+									types.StringElement{
+										Content: " lines with a link to {github-url}[]",
+									},
 								},
 							},
 						},
-					},
-					types.BlankLine{},
-					types.CalloutListItem{
-						Ref: 1,
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a callout",
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
+											},
 										},
 									},
 								},
@@ -617,7 +639,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
 			It("should apply the 'quotes,macros' substitution on block with attribute", func() {
@@ -631,66 +653,68 @@ and <more text> on the +
 
 <1> a callout
 `
-				expected := types.DocumentFragments{
-					types.AttributeDeclaration{
-						Name:  "github-url",
-						Value: "https://github.com",
-					},
-					types.BlankLine{},
-					types.LiteralBlock{
-						Attributes: types.Attributes{
-							types.AttrStyle:            types.Literal,
-							types.AttrLiteralBlockType: types.LiteralBlockWithAttribute,
-							types.AttrSubstitutions:    "quotes,macros",
+				expected := types.Document{
+					Elements: []interface{}{
+						types.AttributeDeclaration{
+							Name:  "github-url",
+							Value: "https://github.com",
 						},
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "a link to ",
-								},
-								types.InlineLink{
-									Location: types.Location{
-										Scheme: "https://",
-										Path: []interface{}{
-											types.StringElement{
-												Content: "example.com",
+						types.BlankLine{},
+						types.LiteralBlock{
+							Attributes: types.Attributes{
+								types.AttrStyle:            types.Literal,
+								types.AttrLiteralBlockType: types.LiteralBlockWithAttribute,
+								types.AttrSubstitutions:    "quotes,macros",
+							},
+							Lines: [][]interface{}{
+								{
+									types.StringElement{
+										Content: "a link to ",
+									},
+									types.InlineLink{
+										Location: types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "example.com",
+												},
 											},
 										},
 									},
-								},
-								types.StringElement{
-									Content: " <1>",
-								},
-							},
-							{
-								types.StringElement{
-									Content: "and <more text> on the +",
-								},
-							},
-							{
-								types.QuotedText{
-									Kind: types.SingleQuoteBold,
-									Elements: []interface{}{
-										types.StringElement{
-											Content: "next",
-										},
+									types.StringElement{
+										Content: " <1>",
 									},
 								},
-								types.StringElement{
-									Content: " lines with a link to {github-url}[]",
+								{
+									types.StringElement{
+										Content: "and <more text> on the +",
+									},
+								},
+								{
+									types.QuotedText{
+										Kind: types.SingleQuoteBold,
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "next",
+											},
+										},
+									},
+									types.StringElement{
+										Content: " lines with a link to {github-url}[]",
+									},
 								},
 							},
 						},
-					},
-					types.BlankLine{},
-					types.CalloutListItem{
-						Ref: 1,
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a callout",
+						types.BlankLine{},
+						types.CalloutListItem{
+							Ref: 1,
+							Elements: []interface{}{
+								types.Paragraph{
+									Lines: [][]interface{}{
+										{
+											types.StringElement{
+												Content: "a callout",
+											},
 										},
 									},
 								},
@@ -698,7 +722,7 @@ and <more text> on the +
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 		})
 	})

@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"bytes"
 	"io"
 
 	"github.com/bytesparadise/libasciidoc/pkg/configuration"
@@ -16,19 +15,33 @@ func ParseDocument(r io.Reader, config configuration.Configuration, options ...O
 	done := make(chan interface{})
 	defer close(done)
 
+	attributes := types.Attributes{}
 	blocks := []interface{}{}
+	inHeader := true
 	ctx := newProcessContext()
 	pipeline := processFragments(ctx, done, assembleFragments(done, ParseDocumentFragments(r, done, options...)))
 	for f := range pipeline {
 		if log.IsLevelEnabled(log.DebugLevel) {
-			log.Debugf("received document fragment: %s", spew.Sdump(f))
+			log.WithField("_state", "document_parsing").Debugf("received document fragment: %s", spew.Sdump(f))
 		}
-
 		if err := f.Error; err != nil {
-			done <- struct{}{} // halt routines
+			log.WithField("_state", "document_parsing").WithError(err).Error("error occurred")
 			return types.Document{}, err
 		}
-		blocks = append(blocks, f.Content...)
+		switch b := f.Content.(type) {
+		case types.Section:
+			if b.Level != 0 && inHeader { // do not even allow 2ndary section with level 0 as headers
+				inHeader = false
+			}
+		case types.AttributeDeclaration:
+			if inHeader {
+				attributes.Set(b.Name, b.Value)
+			}
+		default:
+			// anything else and we're not in the header anynore
+			inHeader = false
+		}
+		blocks = append(blocks, f.Content)
 	}
 	// fragments := make(chan types.DocumentFragment)
 	// err := ParseDocumentFragments(r, fragments, options...)
@@ -75,17 +88,20 @@ func ParseDocument(r io.Reader, config configuration.Configuration, options ...O
 	// }
 	// return doc, nil
 	return types.Document{
-		Elements: blocks,
+		Attributes: attributes.NilIfEmpty(),
+		Elements:   blocks,
 	}, nil
 }
 
 type processContext struct {
 	attributes types.Attributes
+	counters   map[string]interface{}
 }
 
 func newProcessContext() *processContext {
 	return &processContext{
 		attributes: types.Attributes{},
+		counters:   map[string]interface{}{},
 	}
 }
 func (ctx *processContext) addAttribute(name string, value interface{}) {
@@ -120,29 +136,41 @@ const LevelOffset ContextKey = "leveloffset"
 // 	}
 // }
 
-func assembleFragments(done <-chan interface{}, fragmentStream <-chan types.DocumentFragment) <-chan types.DocumentFragment {
+func assembleFragments(done <-chan interface{}, fragmentStream <-chan types.DocumentFragmentGroup) <-chan types.DocumentFragment {
 	assembledFragmentStream := make(chan types.DocumentFragment)
 	go func() {
 		defer close(assembledFragmentStream)
-		for f := range fragmentStream {
-			// process the fragment (ie, set attributes and perform paragraph and block substitutions, etc.)
-			assembleFragmentElements(done, assembledFragmentStream, f) // TODO: pass `assembledFragmentStream` as arg
+		for fragments := range fragmentStream {
+			for _, fragment := range assembleFragmentElements(fragments) {
+				select {
+				case <-done:
+					log.WithField("stage", "fragment_assembling").Debug("received 'done' signal")
+					return
+				case assembledFragmentStream <- fragment:
+				}
+			}
 		}
+		log.Debug("end of fragment assembly")
 	}()
 	return assembledFragmentStream
 }
 
-func assembleFragmentElements(done <-chan interface{}, assembledFragmentStream chan<- types.DocumentFragment, f types.DocumentFragment) {
+func assembleFragmentElements(f types.DocumentFragmentGroup) []types.DocumentFragment {
 	// if the fragment contains an error, then send it as-is downstream
 	if err := f.Error; err != nil {
-		assembledFragmentStream <- f
-		return
+		return []types.DocumentFragment{
+			{
+				LineOffset: f.LineOffset,
+				Error:      f.Error,
+			},
+		}
 	}
+	result := make([]types.DocumentFragment, 0, len(f.Content))
 	var attributes types.Attributes
 	var block types.RawBlock // a block with raw lines
 	for i, e := range f.Content {
 		if log.IsLevelEnabled(log.DebugLevel) {
-			log.Debugf("fragment content of type '%T'", e)
+			log.WithField("state", "fragment_assembling").Debugf("assembling fragment content of type '%T'", e)
 		}
 		switch e := e.(type) {
 		case types.Attributes:
@@ -151,223 +179,90 @@ func assembleFragmentElements(done <-chan interface{}, assembledFragmentStream c
 			}
 			attributes.SetAll(e)
 		case types.AttributeDeclaration:
-			send(done, assembledFragmentStream, types.NewDocumentFragment(f.LineOffset, e))
+			result = append(result, types.NewDocumentFragment(f.LineOffset, e))
 		case types.Section:
 			e.Attributes = attributes
 			attributes = types.Attributes{} // reset
 			// send the section block downstream
-			send(done, assembledFragmentStream, types.NewDocumentFragment(f.LineOffset, e))
+			result = append(result, types.NewDocumentFragment(f.LineOffset, e))
 		case types.BlockDelimiter:
 			if block == nil {
 				block = types.NewRawDelimitedBlock(e.Kind, attributes)
 				attributes = nil // reset
-				continue
+				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
+			} else {
+				block = nil // reset, in case there is more content afterwards
 			}
-			send(done, assembledFragmentStream, types.NewDocumentFragment(f.LineOffset, block))
-			block = nil // reset, in case there is more content afterwards
 		case types.RawLine:
 			if block == nil {
 				block = types.NewRawParagraph(attributes)
 				attributes = nil // reset
+				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
 			}
-			block = block.AddLine(e)
+			block.AddLine(e)
+		case types.SingleLineComment:
+			result = append(result, types.NewDocumentFragment(f.LineOffset+i, e))
 		default:
 			// unknow type fragment element: set an error on the fragment and send it downstream
-			f.Error = errors.Errorf("unexpected type of element on line %d: '%T'", f.LineOffset+i, e)
-			assembledFragmentStream <- f
+			fr := types.NewDocumentFragment(f.LineOffset, block)
+			fr.Error = errors.Errorf("unexpected type of element on line %d: '%T'", f.LineOffset+i, e)
+			result = append(result, fr)
 		}
 	}
-	// end of iteration on
-	if block != nil {
-		send(done, assembledFragmentStream, types.NewDocumentFragment(f.LineOffset, block))
-	}
+	return result
 }
 
-func send(done <-chan interface{}, fragmentStream chan<- types.DocumentFragment, f types.DocumentFragment) {
-	// if log.IsLevelEnabled(log.DebugLevel) {
-	// 	log.Debug("sending fragment with following content:")
-	// 	spew.Fdump(log.StandardLogger().Out, f.Content...)
-	// }
-	select {
-	case <-done:
-		log.Debug("received 'done' signal")
-		return
-	case fragmentStream <- f:
-	}
-}
+// func send(done <-chan interface{}, fragmentStream chan<- types.DocumentFragment, f types.DocumentFragment) {
+// 	// if log.IsLevelEnabled(log.DebugLevel) {
+// 	// 	log.Debug("sending fragment with following content:")
+// 	// 	spew.Fdump(log.StandardLogger().Out, f.Content...)
+// 	// }
+// 	select {
+// 	case <-done:
+// 		log.Debug("received 'done' signal")
+// 		return
+// 	case fragmentStream <- f:
+// 	}
+// }
 
 func processFragments(ctx *processContext, done <-chan interface{}, fragmentStream <-chan types.DocumentFragment) chan types.DocumentFragment {
 	processedFragmentStream := make(chan types.DocumentFragment)
 	go func() {
 		defer close(processedFragmentStream)
 		for f := range fragmentStream {
-			processFragment(ctx, done, processedFragmentStream, f)
+			select {
+			case <-done:
+				log.WithField("stage", "fragment_processing").Debug("received 'done' signal")
+				return
+			case processedFragmentStream <- processFragment(ctx, f):
+			}
 		}
-
+		log.Debug("end of fragment processing")
 	}()
 	return processedFragmentStream
 }
 
-func processFragment(ctx *processContext, done <-chan interface{}, processedFragmentStream chan<- types.DocumentFragment, f types.DocumentFragment) {
+func processFragment(ctx *processContext, f types.DocumentFragment) types.DocumentFragment {
 	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("processing fragment")
-		spew.Fdump(log.StandardLogger().Out, f)
+		log.WithField("stage", "fragment_processing").Debugf("incoming fragment:\n%s", spew.Sdump(f))
 	}
 	// if the fragment contains an error, then send it as-is downstream
 	if err := f.Error; err != nil {
-		processedFragmentStream <- f
-		return
+		return f
 	}
-	for _, e := range f.Content {
-		switch e := e.(type) {
-		case types.RawParagraph:
-			// apply the attribute substitutions in the attributes
-			var err error
-			if e.Attributes, err = applyAttributeSubstitutionsOnAttributes(ctx, e.Attributes); err != nil {
-				f.Error = err
-				processedFragmentStream <- f
-			}
-			// parse the lines, using the default substitutions
-			lines, err := Parse("", serializeLines(e.Lines), Entrypoint("NormalSubstitution"), GlobalStore(substitutionContextKey, newSubstitutionContext()))
-			if err != nil {
-				f.Error = err
-				processedFragmentStream <- f
-			}
-			if lines, ok := lines.([]interface{}); ok {
-				// if log.IsLevelEnabled(log.DebugLevel) {
-				// 	log.Debug("paragraph lines")
-				// 	spew.Fdump(log.StandardLogger().Out, lines)
-				// }
-				p, err := types.NewParagraph(lines, e.Attributes)
-				if err != nil {
-					processedFragmentStream <- types.DocumentFragment{ // TODO: constructor for "Error Fragment"?
-						LineOffset: f.LineOffset,
-						Error:      err,
-					}
-				}
-				if log.IsLevelEnabled(log.DebugLevel) {
-					log.Printf("new paragraph: %s", spew.Sdump(p))
-				}
-				processedFragmentStream <- types.NewDocumentFragment(f.LineOffset, p)
-			}
-		case types.AttributeDeclaration:
-			ctx.addAttribute(e.Name, e.Value)
-			processedFragmentStream <- types.NewDocumentFragment(f.LineOffset, e)
-		default:
-			log.Debugf("forwarding fragment content of type '%T' as-is", e)
-			processedFragmentStream <- types.NewDocumentFragment(f.LineOffset, e)
+	switch e := f.Content.(type) {
+	case *types.RawParagraph:
+		p, err := applySubstitutionsOnParagraph(ctx, e)
+		return types.DocumentFragment{
+			LineOffset: f.LineOffset,
+			Content:    p,
+			Error:      err,
 		}
-	}
-}
-
-// ----------------------------------------------------------------------------
-// Attribute substitutions
-// ----------------------------------------------------------------------------
-
-func applyAttributeSubstitutionsOnElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
-	result := make([]interface{}, len(elements)) // maximum capacity should exceed initial input
-	for i, element := range elements {
-		e, err := applyAttributeSubstitutionsOnElement(ctx, element)
-		if err != nil {
-			return nil, err
-		}
-		result[i] = e
-	}
-	return result, nil
-}
-
-func applyAttributeSubstitutionsOnAttributes(ctx *processContext, attributes types.Attributes) (types.Attributes, error) {
-	for key, value := range attributes {
-		switch key {
-		case types.AttrRoles, types.AttrOptions: // multi-value attributes
-			result := []interface{}{}
-			if values, ok := value.([]interface{}); ok {
-				for _, value := range values {
-					switch value := value.(type) {
-					case []interface{}:
-						value, err := applyAttributeSubstitutionsOnElements(ctx, value)
-						if err != nil {
-							return nil, err
-						}
-						result = append(result, types.Reduce(value))
-					default:
-						result = append(result, value)
-					}
-
-				}
-				attributes[key] = result
-			}
-		default: // single-value attributes
-			if value, ok := value.([]interface{}); ok {
-				value, err := applyAttributeSubstitutionsOnElements(ctx, value)
-				if err != nil {
-					return nil, err
-				}
-				attributes[key] = types.Reduce(value)
-			}
-		}
-	}
-	return attributes, nil
-}
-
-func applyAttributeSubstitutionsOnElement(ctx *processContext, element interface{}) (interface{}, error) {
-	switch e := element.(type) {
 	case types.AttributeDeclaration:
-		ctx.attributes.Set(e.Name, e.Value)
-		return e, nil
-	case types.AttributeReset:
-		delete(ctx.attributes, e.Name)
-		return e, nil
-	case types.AttributeSubstitution:
-		return types.StringElement{
-			Content: ctx.attributes.GetAsStringWithDefault(e.Name, "{"+e.Name+"}"),
-		}, nil
+		ctx.addAttribute(e.Name, e.Value)
+		return types.NewDocumentFragment(f.LineOffset, e)
 	default:
-		return e, nil
+		log.WithField("stage", "fragment_processing").Debugf("forwarding fragment content of type '%T' as-is", e)
+		return types.NewDocumentFragment(f.LineOffset, e)
 	}
-	// case types.CounterSubstitution:
-	// 	if element, err = applyCounterSubstitution(ctx, e); err != nil {
-	// 		return nil, err
-	// 	}
-	// case types.WithElementsToSubstitute:
-	// 	elmts, err := applyAttributeSubstitutionsOnElements(ctx, e.ElementsToSubstitute())
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// 	element = e.ReplaceElements(types.Merge(elmts))
-	// case types.WithLineSubstitution:
-	// 	lines, err := applyAttributeSubstitutionsOnLines(ctx, e.LinesToSubstitute())
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// 	element = e.SubstituteLines(lines)
-	// case types.ContinuedListItemElement:
-	// 	if e.Element, err = applyAttributeSubstitutionsOnElement(ctx, e.Element); err != nil {
-	// 		return nil, err
-	// 	}
-	// }
-	// also, retain the attribute declaration value (if applicable)
 }
-
-func serializeLines(lines []types.RawLine) []byte {
-	// if log.IsLevelEnabled(log.DebugLevel) {
-	// 	log.Debug("serializing lines")
-	// 	spew.Fdump(log.StandardLogger().Out, lines)
-	// }
-	buf := bytes.Buffer{}
-	for i, l := range lines {
-		buf.WriteString(string(l))
-		if i < len(lines)-1 {
-			buf.WriteString("\n")
-		}
-	}
-	// if log.IsLevelEnabled(log.DebugLevel) {
-	// 	log.Debug("serialized lines")
-	// 	spew.Fdump(log.StandardLogger().Out, buf.String())
-	// }
-	return buf.Bytes()
-}
-
-// func assemble(fragments chan types.DocumentFragment) ([]interface{}, error) {
-// 	return nil, nil
-// }

@@ -20,21 +20,25 @@ title: a title
 author: Xavier
 ---
 `
-				expected := types.DocumentFragments{
-					types.BlockDelimiter{
-						Kind: types.FrontMatter,
-					},
-					types.StringElement{
-						Content: "title: a title",
-					},
-					types.StringElement{
-						Content: "author: Xavier",
-					},
-					types.BlockDelimiter{
-						Kind: types.FrontMatter,
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+							types.BlockDelimiter{
+								Kind: types.FrontMatter,
+							},
+							types.StringElement{
+								Content: "title: a title",
+							},
+							types.StringElement{
+								Content: "author: Xavier",
+							},
+							types.BlockDelimiter{
+								Kind: types.FrontMatter,
+							},
+						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("with simple attributes and blanklines", func() {
@@ -46,48 +50,60 @@ author: Xavier
 
 ---
 `
-				expected := types.DocumentFragments{
-					types.BlockDelimiter{
-						Kind: types.FrontMatter,
-					},
-					types.BlankLine{},
-					types.StringElement{
-						Content: "title: a title",
-					},
-					types.BlankLine{},
-					types.StringElement{
-						Content: "author: Xavier",
-					},
-					types.BlankLine{},
-					types.BlockDelimiter{
-						Kind: types.FrontMatter,
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+							types.BlockDelimiter{
+								Kind: types.FrontMatter,
+							},
+							types.BlankLine{},
+							types.StringElement{
+								Content: "title: a title",
+							},
+							types.BlankLine{},
+							types.StringElement{
+								Content: "author: Xavier",
+							},
+							types.BlankLine{},
+							types.BlockDelimiter{
+								Kind: types.FrontMatter,
+							},
+						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("empty front-matter", func() {
 				source := `---
 ---`
-				expected := types.DocumentFragments{
-					types.BlockDelimiter{
-						Kind: types.FrontMatter,
-					},
-					types.BlockDelimiter{
-						Kind: types.FrontMatter,
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+							types.BlockDelimiter{
+								Kind: types.FrontMatter,
+							},
+							types.BlockDelimiter{
+								Kind: types.FrontMatter,
+							},
+						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("no front-matter", func() {
 				source := `some content`
-				expected := types.DocumentFragments{
-					types.StringElement{
-						Content: "some content",
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+							types.StringElement{
+								Content: "some content",
+							},
+						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 
@@ -100,29 +116,33 @@ author: Xavier
 ---
 = A Title
 `
-				expected := types.DocumentFragments{
-					types.BlockDelimiter{
-						Kind: types.FrontMatter,
-					},
-					types.StringElement{
-						Content: "title: a title",
-					},
-					types.StringElement{
-						Content: "author: Xavier",
-					},
-					types.BlockDelimiter{
-						Kind: types.FrontMatter,
-					},
-					types.Section{
-						Level: 0,
-						Title: []interface{}{
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+							types.BlockDelimiter{
+								Kind: types.FrontMatter,
+							},
 							types.StringElement{
-								Content: "A Title",
+								Content: "title: a title",
+							},
+							types.StringElement{
+								Content: "author: Xavier",
+							},
+							types.BlockDelimiter{
+								Kind: types.FrontMatter,
+							},
+							types.Section{
+								Level: 0,
+								Title: []interface{}{
+									types.StringElement{
+										Content: "A Title",
+									},
+								},
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 	})

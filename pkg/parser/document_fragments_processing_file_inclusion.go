@@ -130,8 +130,7 @@ func lineRanges(incl types.FileInclusion, config configuration.Configuration) (t
 			return types.LineRanges{}, false, err
 		}
 		if log.IsLevelEnabled(log.DebugLevel) {
-			log.Debug("line ranges to include:")
-			spew.Fdump(log.StandardLogger().Out, lr)
+			log.Debugf("line ranges to include: %s", spew.Sdump(lr))
 		}
 		return types.NewLineRanges(lr), true, nil
 	}

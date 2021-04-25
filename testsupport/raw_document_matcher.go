@@ -12,29 +12,27 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// MatchDocumentFragments a custom matcher to verify that a document matches the given expectation
+// MatchDocumentFragmentGroups a custom matcher to verify that a document matches the given expectation
 // Similar to the standard `Equal` matcher, but display a diff when the values don't match
-func MatchDocumentFragments(expected types.DocumentFragments) gomegatypes.GomegaMatcher {
+func MatchDocumentFragmentGroups(expected []types.DocumentFragmentGroup) gomegatypes.GomegaMatcher {
 	return &documentFragmentsMatcher{
 		expected: expected,
 	}
 }
 
 type documentFragmentsMatcher struct {
-	expected types.DocumentFragments
+	expected []types.DocumentFragmentGroup
 	diffs    string
 }
 
 func (m *documentFragmentsMatcher) Match(actual interface{}) (success bool, err error) {
-	if _, ok := actual.(types.DocumentFragments); !ok {
-		return false, errors.Errorf("MatchDocumentFragments matcher expects a DocumentFragments (actual: %T)", actual)
+	if _, ok := actual.([]types.DocumentFragmentGroup); !ok {
+		return false, errors.Errorf("MatchDocumentFragments matcher expects an array of types.DocumentFragmentGroup (actual: %T)", actual)
 	}
 	if !reflect.DeepEqual(m.expected, actual) {
 		if log.IsLevelEnabled(log.DebugLevel) {
-			log.Debug("actual raw document:")
-			spew.Fdump(log.StandardLogger().Out, actual)
-			log.Debug("expected raw document:")
-			spew.Fdump(log.StandardLogger().Out, m.expected)
+			log.Debugf("actual raw document:\n%s", spew.Sdump(actual))
+			log.Debugf("expected raw document:\n%s", spew.Sdump(m.expected))
 		}
 		dmp := diffmatchpatch.New()
 		diffs := dmp.DiffMain(spew.Sdump(actual), spew.Sdump(m.expected), true)

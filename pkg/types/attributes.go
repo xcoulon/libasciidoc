@@ -186,6 +186,14 @@ func NewAttributes(attributes ...interface{}) (Attributes, error) {
 	return result, nil
 }
 
+// NilIfEmpty returns `nil` if this `attributes` is empty
+func (a Attributes) NilIfEmpty() Attributes {
+	if len(a) == 0 {
+		return nil
+	}
+	return a
+}
+
 func toAttributes(attrs interface{}) Attributes {
 	if attrs, ok := attrs.(Attributes); ok {
 		return attrs

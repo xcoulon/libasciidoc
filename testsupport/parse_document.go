@@ -11,6 +11,5 @@ import (
 // ParseDocument parses the actual value into a Document
 func ParseDocument(actual string, settings ...configuration.Setting) (types.Document, error) {
 	r := strings.NewReader(actual)
-	doc, err := parser.ParseDocument(r, configuration.NewConfiguration(settings...))
-	return doc, err
+	return parser.ParseDocument(r, configuration.NewConfiguration(settings...))
 }

@@ -83,590 +83,10 @@ var _ = Describe("file inclusions", func() {
 				logs, reset := ConfigureLogger(log.WarnLevel)
 				defer reset()
 				source := "include::../../test/includes/chapter-a.adoc[]"
-				expected := types.DocumentFragments{
-					types.Section{
-						Level: 0,
-						Title: []interface{}{
-							types.StringElement{
-								Content: "Chapter A",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "content",
-						},
-					},
-				}
-				result, err := ParseDocumentFragments(source, WithFilename("foo.adoc"))
-				Expect(err).NotTo(HaveOccurred())
-				Expect(result).To(MatchDocumentFragments(expected))
-				// verify no error/warning in logs
-				Expect(logs).ToNot(ContainAnyMessageWithLevels(log.ErrorLevel, log.WarnLevel))
-			})
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
 
-			It("should include adoc file without leveloffset from relative file", func() {
-				logs, reset := ConfigureLogger(log.WarnLevel)
-				defer reset()
-				source := "include::../../../test/includes/chapter-a.adoc[]"
-				expected := types.DocumentFragments{
-					types.Section{
-						Level: 0,
-						Title: []interface{}{
-							types.StringElement{
-								Content: "Chapter A",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "content",
-						},
-					},
-				}
-				Expect(ParseDocumentFragments(source, WithFilename("tmp/foo.adoc"))).To(MatchDocumentFragments(expected))
-				// verify no error/warning in logs
-				Expect(logs).ToNot(ContainAnyMessageWithLevels(log.ErrorLevel, log.WarnLevel))
-			})
-
-			It("should include adoc file with leveloffset", func() {
-				logs, reset := ConfigureLogger(log.WarnLevel)
-				defer reset()
-				source := "include::../../test/includes/chapter-a.adoc[leveloffset=+1]"
-				expected := types.DocumentFragments{
-					types.Section{
-						Level: 1,
-						Title: []interface{}{
-							types.StringElement{
-								Content: "Chapter A",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "content",
-						},
-					},
-				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
-				// verify no error/warning in logs
-				Expect(logs).ToNot(ContainAnyMessageWithLevels(log.ErrorLevel, log.WarnLevel))
-			})
-
-			It("should include section 0 by default", func() {
-				source := "include::../../test/includes/chapter-a.adoc[]"
-				// at this level (parsing), it is expected that the Section 0 is part of the Prefligh document
-				expected := types.DocumentFragments{
-					types.Section{
-						Level: 0,
-						Title: []interface{}{
-							types.StringElement{
-								Content: "Chapter A",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "content",
-						},
-					},
-				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
-			})
-
-			It("should not include section 0 when attribute found", func() {
-				source := `:includedir: ../../test/includes
-
-include::{includedir}/chapter-a.adoc[]`
-				// at this level (parsing), it is expected that the Section 0 is part of the Prefligh document
-				expected := types.DocumentFragments{
-					types.AttributeDeclaration{
-						Name:  "includedir",
-						Value: "../../test/includes",
-					},
-					types.BlankLine{},
-					types.Section{
-						Level: 0,
-						Title: []interface{}{
-							types.StringElement{
-								Content: "Chapter A",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "content",
-						},
-					},
-				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
-			})
-
-			It("should not further process with non-asciidoc files", func() {
-				source := `:includedir: ../../test/includes
-
-include::{includedir}/include.foo[]`
-				expected := types.DocumentFragments{
-					types.AttributeDeclaration{
-						Name:  "includedir",
-						Value: "../../test/includes",
-					},
-					types.BlankLine{},
-					types.RawLine([]byte(`*some strong content*
-
-include::hello_world.go.txt[]
-`)),
-				}
-				Expect(ParseDocumentFragments(source, WithFilename("foo.bar"))).To(MatchDocumentFragments(expected)) // parent doc may not need to be a '.adoc'
-			})
-
-			It("should include grandchild content without offset", func() {
-				source := `include::../../test/includes/grandchild-include.adoc[]`
-				expected := types.DocumentFragments{
-					types.Section{
-						Level: 1,
-						Title: []interface{}{
-							types.StringElement{
-								Content: "grandchild title",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "first line of grandchild",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "last line of grandchild",
-						},
-					},
-				}
-				Expect(ParseDocumentFragments(source, WithFilename("test.adoc"))).To(MatchDocumentFragments(expected))
-			})
-
-			It("should include grandchild content with relative offset", func() {
-				source := `include::../../test/includes/grandchild-include.adoc[leveloffset=+1]`
-				expected := types.DocumentFragments{
-					types.Section{
-						Level: 2,
-						Title: []interface{}{
-							types.StringElement{
-								Content: "grandchild title",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "first line of grandchild",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "last line of grandchild",
-						},
-					},
-				}
-				Expect(ParseDocumentFragments(source, WithFilename("test.adoc"))).To(MatchDocumentFragments(expected))
-			})
-
-			It("should include grandchild content with absolute offset", func() {
-				source := `include::../../test/includes/grandchild-include.adoc[leveloffset=0]`
-				expected := types.DocumentFragments{
-					types.Section{
-						Level: 0,
-						Title: []interface{}{
-							types.StringElement{
-								Content: "grandchild title",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "first line of grandchild",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "last line of grandchild",
-						},
-					},
-				}
-				Expect(ParseDocumentFragments(source, WithFilename("test.adoc"))).To(MatchDocumentFragments(expected))
-			})
-
-			It("should include child and grandchild content with relative level offset", func() {
-				source := `include::../../test/includes/parent-include-relative-offset.adoc[leveloffset=+1]`
-				expected := types.DocumentFragments{
-					types.Section{
-						Level: 1, // here the level is changed from `0` to `1` since `root` doc has a `leveloffset=+1` during its inclusion
-						Title: []interface{}{
-							types.StringElement{
-								Content: "parent title",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "first line of parent",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "child preamble",
-						},
-					},
-					types.BlankLine{},
-					types.Section{
-						Level: 3, // here the level is changed from `1` to `3` since both `root` and `parent` docs have a `leveloffset=+1` during their inclusion
-						Title: []interface{}{
-							types.StringElement{
-								Content: "child section 1",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "first line of child",
-						},
-					},
-					types.BlankLine{},
-					types.Section{
-						Level: 4, // here the level is changed from `1` to `4` since both `root`, `parent` and `child` docs have a `leveloffset=+1` during their inclusion
-						Title: []interface{}{
-							types.StringElement{
-								Content: "grandchild title",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "first line of grandchild",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "last line of grandchild",
-						},
-					},
-					types.BlankLine{},
-					types.Section{
-						Level: 4, // here the level is changed from `2` to `4` since both `root` and `parent` docs have a `leveloffset=+1` during their inclusion
-						Title: []interface{}{
-							types.StringElement{
-								Content: "child section 2",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "last line of child",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "last line of parent",
-						},
-					},
-				}
-				Expect(ParseDocumentFragments(source, WithFilename("test.adoc"))).To(MatchDocumentFragments(expected))
-			})
-
-			It("should include child and grandchild content with relative then absolute level offset", func() {
-				source := `include::../../test/includes/parent-include-absolute-offset.adoc[leveloffset=+1]`
-				expected := types.DocumentFragments{
-					types.Section{
-						Level: 1, // here the level is offset by `+1` as per root doc attribute in the `include` macro
-						Title: []interface{}{
-							types.StringElement{
-								Content: "parent title",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "first line of parent",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "child preamble",
-						},
-					},
-					types.BlankLine{},
-					types.Section{
-						Level: 3, // here level is forced to "absolute 3"
-						Title: []interface{}{
-							types.StringElement{
-								Content: "child section 1",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "first line of child",
-						},
-					},
-					types.BlankLine{},
-					types.Section{
-						Level: 4, // here the level is set to `4` because it was its parent was offset by 3...
-						Title: []interface{}{
-							types.StringElement{
-								Content: "grandchild title",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "first line of grandchild",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "last line of grandchild",
-						},
-					},
-					types.BlankLine{},
-					types.Section{
-						Level: 4, // here the level is set to `4` because it the first section was moved from `1` to `3` so we use the same offset here
-						Title: []interface{}{
-							types.StringElement{
-								Content: "child section 2",
-							},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "last line of child",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "last line of parent",
-						},
-					},
-				}
-				Expect(ParseDocumentFragments(source, WithFilename("test.adoc"))).To(MatchDocumentFragments(expected))
-			})
-
-			It("should include adoc file within fenced block", func() {
-				source := "```\n" +
-					"include::../../test/includes/parent-include.adoc[]\n" +
-					"```\n" +
-					"<1> a callout"
-				// include the doc without parsing the elements (besides the file inclusions)
-				expected := types.DocumentFragments{
-					types.BlockDelimiter{
-						Kind: types.Fenced,
-					},
-					types.InlineElements{
-						types.StringElement{
-							Content: "= parent title",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "first line of parent",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "= child title",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "first line of child",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "== grandchild title",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "first line of grandchild",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "last line of grandchild",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "last line of child",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "last line of parent ",
-						},
-						types.Callout{
-							Ref: 1,
-						},
-					},
-					types.BlockDelimiter{
-						Kind: types.Fenced,
-					},
-					types.CalloutListItem{
-						Ref: 1,
-						Elements: []interface{}{
-							types.StringElement{
-								Content: "a callout",
-							},
-						},
-					},
-				}
-				result, err := ParseDocumentFragments(source)
-				Expect(err).NotTo(HaveOccurred())
-				Expect(result).To(MatchDocumentFragments(expected))
-			})
-
-			It("should include adoc file within quote block", func() {
-				source := "____\n" +
-					"include::../../test/includes/parent-include.adoc[]\n" +
-					"____"
-				expected := types.DocumentFragments{
-					types.BlockDelimiter{
-						Kind: types.Quote,
-					},
-					types.InlineElements{
-						types.StringElement{
-							Content: "= parent title",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "first line of parent",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "= child title",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "first line of child",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "== grandchild title",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "first line of grandchild",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "last line of grandchild",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "last line of child",
-						},
-					},
-					types.BlankLine{},
-					types.InlineElements{
-						types.StringElement{
-							Content: "last line of parent ",
-						},
-						types.Callout{
-							Ref: 1,
-						},
-					},
-					types.BlockDelimiter{
-						Kind: types.Quote,
-					},
-				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
-			})
-
-			Context("with line ranges", func() {
-
-				Context("with unquoted line ranges", func() {
-
-					It("file inclusion with single unquoted line", func() {
-						source := `include::../../test/includes/chapter-a.adoc[lines=1]`
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "Chapter A",
-									},
-								},
-								Elements: []interface{}{},
-							},
-						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
-					})
-
-					It("file inclusion with multiple unquoted lines", func() {
-						source := `include::../../test/includes/chapter-a.adoc[lines=1..2]`
-						expected := types.DocumentFragments{
 							types.Section{
 								Level: 0,
 								Title: []interface{}{
@@ -677,13 +97,29 @@ include::hello_world.go.txt[]
 								Elements: []interface{}{},
 							},
 							types.BlankLine{},
-						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
-					})
+							types.InlineElements{
+								types.StringElement{
+									Content: "content",
+								},
+							},
+						},
+					},
+				}
+				result, err := ParseDocumentFragments(source, WithFilename("foo.adoc"))
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).To(MatchDocumentFragmentGroups(expected))
+				// verify no error/warning in logs
+				Expect(logs).ToNot(ContainAnyMessageWithLevels(log.ErrorLevel, log.WarnLevel))
+			})
 
-					It("file inclusion with multiple unquoted ranges", func() {
-						source := `include::../../test/includes/chapter-a.adoc[lines=1;3..4;6..-1]` // paragraph becomes the author since the in-between blank line is stripped out
-						expected := types.DocumentFragments{
+			It("should include adoc file without leveloffset from relative file", func() {
+				logs, reset := ConfigureLogger(log.WarnLevel)
+				defer reset()
+				source := "include::../../../test/includes/chapter-a.adoc[]"
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
 							types.Section{
 								Level: 0,
 								Title: []interface{}{
@@ -693,16 +129,660 @@ include::hello_world.go.txt[]
 								},
 								Elements: []interface{}{},
 							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "content",
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocumentFragments(source, WithFilename("tmp/foo.adoc"))).To(MatchDocumentFragmentGroups(expected))
+				// verify no error/warning in logs
+				Expect(logs).ToNot(ContainAnyMessageWithLevels(log.ErrorLevel, log.WarnLevel))
+			})
 
-							[]types.DocumentAuthor{ // content became the document author
-								{
-									FullName: "content",
+			It("should include adoc file with leveloffset", func() {
+				logs, reset := ConfigureLogger(log.WarnLevel)
+				defer reset()
+				source := "include::../../test/includes/chapter-a.adoc[leveloffset=+1]"
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Level: 1,
+								Title: []interface{}{
+									types.StringElement{
+										Content: "Chapter A",
+									},
+								},
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "content",
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				// verify no error/warning in logs
+				Expect(logs).ToNot(ContainAnyMessageWithLevels(log.ErrorLevel, log.WarnLevel))
+			})
+
+			It("should include section 0 by default", func() {
+				source := "include::../../test/includes/chapter-a.adoc[]"
+				// at this level (parsing), it is expected that the Section 0 is part of the Prefligh document
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Level: 0,
+								Title: []interface{}{
+									types.StringElement{
+										Content: "Chapter A",
+									},
+								},
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "content",
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			})
+
+			It("should not include section 0 when attribute found", func() {
+				source := `:includedir: ../../test/includes
+
+include::{includedir}/chapter-a.adoc[]`
+				// at this level (parsing), it is expected that the Section 0 is part of the Prefligh document
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.AttributeDeclaration{
+								Name:  "includedir",
+								Value: "../../test/includes",
+							},
+							types.BlankLine{},
+							types.Section{
+								Level: 0,
+								Title: []interface{}{
+									types.StringElement{
+										Content: "Chapter A",
+									},
+								},
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "content",
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			})
+
+			It("should not further process with non-asciidoc files", func() {
+				source := `:includedir: ../../test/includes
+
+include::{includedir}/include.foo[]`
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.AttributeDeclaration{
+								Name:  "includedir",
+								Value: "../../test/includes",
+							},
+							types.BlankLine{},
+							types.RawLine([]byte(`*some strong content*
+
+include::hello_world.go.txt[]
+`)),
+						},
+					},
+				}
+				Expect(ParseDocumentFragments(source, WithFilename("foo.bar"))).To(MatchDocumentFragmentGroups(expected)) // parent doc may not need to be a '.adoc'
+			})
+
+			It("should include grandchild content without offset", func() {
+				source := `include::../../test/includes/grandchild-include.adoc[]`
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Level: 1,
+								Title: []interface{}{
+									types.StringElement{
+										Content: "grandchild title",
+									},
+								},
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "first line of grandchild",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "last line of grandchild",
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocumentFragments(source, WithFilename("test.adoc"))).To(MatchDocumentFragmentGroups(expected))
+			})
+
+			It("should include grandchild content with relative offset", func() {
+				source := `include::../../test/includes/grandchild-include.adoc[leveloffset=+1]`
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Level: 2,
+								Title: []interface{}{
+									types.StringElement{
+										Content: "grandchild title",
+									},
+								},
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "first line of grandchild",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "last line of grandchild",
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocumentFragments(source, WithFilename("test.adoc"))).To(MatchDocumentFragmentGroups(expected))
+			})
+
+			It("should include grandchild content with absolute offset", func() {
+				source := `include::../../test/includes/grandchild-include.adoc[leveloffset=0]`
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Level: 0,
+								Title: []interface{}{
+									types.StringElement{
+										Content: "grandchild title",
+									},
+								},
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "first line of grandchild",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "last line of grandchild",
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocumentFragments(source, WithFilename("test.adoc"))).To(MatchDocumentFragmentGroups(expected))
+			})
+
+			It("should include child and grandchild content with relative level offset", func() {
+				source := `include::../../test/includes/parent-include-relative-offset.adoc[leveloffset=+1]`
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Level: 1, // here the level is changed from `0` to `1` since `root` doc has a `leveloffset=+1` during its inclusion
+								Title: []interface{}{
+									types.StringElement{
+										Content: "parent title",
+									},
+								},
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "first line of parent",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "child preamble",
+								},
+							},
+							types.BlankLine{},
+							types.Section{
+								Level: 3, // here the level is changed from `1` to `3` since both `root` and `parent` docs have a `leveloffset=+1` during their inclusion
+								Title: []interface{}{
+									types.StringElement{
+										Content: "child section 1",
+									},
+								},
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "first line of child",
+								},
+							},
+							types.BlankLine{},
+							types.Section{
+								Level: 4, // here the level is changed from `1` to `4` since both `root`, `parent` and `child` docs have a `leveloffset=+1` during their inclusion
+								Title: []interface{}{
+									types.StringElement{
+										Content: "grandchild title",
+									},
+								},
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "first line of grandchild",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "last line of grandchild",
+								},
+							},
+							types.BlankLine{},
+							types.Section{
+								Level: 4, // here the level is changed from `2` to `4` since both `root` and `parent` docs have a `leveloffset=+1` during their inclusion
+								Title: []interface{}{
+									types.StringElement{
+										Content: "child section 2",
+									},
+								},
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "last line of child",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "last line of parent",
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocumentFragments(source, WithFilename("test.adoc"))).To(MatchDocumentFragmentGroups(expected))
+			})
+
+			It("should include child and grandchild content with relative then absolute level offset", func() {
+				source := `include::../../test/includes/parent-include-absolute-offset.adoc[leveloffset=+1]`
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Level: 1, // here the level is offset by `+1` as per root doc attribute in the `include` macro
+								Title: []interface{}{
+									types.StringElement{
+										Content: "parent title",
+									},
+								},
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "first line of parent",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "child preamble",
+								},
+							},
+							types.BlankLine{},
+							types.Section{
+								Level: 3, // here level is forced to "absolute 3"
+								Title: []interface{}{
+									types.StringElement{
+										Content: "child section 1",
+									},
+								},
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "first line of child",
+								},
+							},
+							types.BlankLine{},
+							types.Section{
+								Level: 4, // here the level is set to `4` because it was its parent was offset by 3...
+								Title: []interface{}{
+									types.StringElement{
+										Content: "grandchild title",
+									},
+								},
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "first line of grandchild",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "last line of grandchild",
+								},
+							},
+							types.BlankLine{},
+							types.Section{
+								Level: 4, // here the level is set to `4` because it the first section was moved from `1` to `3` so we use the same offset here
+								Title: []interface{}{
+									types.StringElement{
+										Content: "child section 2",
+									},
+								},
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "last line of child",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "last line of parent",
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocumentFragments(source, WithFilename("test.adoc"))).To(MatchDocumentFragmentGroups(expected))
+			})
+
+			It("should include adoc file within fenced block", func() {
+				source := "```\n" +
+					"include::../../test/includes/parent-include.adoc[]\n" +
+					"```\n" +
+					"<1> a callout"
+				// include the doc without parsing the elements (besides the file inclusions)
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.BlockDelimiter{
+								Kind: types.Fenced,
+							},
+							types.InlineElements{
+								types.StringElement{
+									Content: "= parent title",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "first line of parent",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "= child title",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "first line of child",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "== grandchild title",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "first line of grandchild",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "last line of grandchild",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "last line of child",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "last line of parent ",
+								},
+								types.Callout{
+									Ref: 1,
+								},
+							},
+							types.BlockDelimiter{
+								Kind: types.Fenced,
+							},
+							types.CalloutListItem{
+								Ref: 1,
+								Elements: []interface{}{
+									types.StringElement{
+										Content: "a callout",
+									},
+								},
+							},
+						},
+					},
+				}
+				result, err := ParseDocumentFragments(source)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).To(MatchDocumentFragmentGroups(expected))
+			})
+
+			It("should include adoc file within quote block", func() {
+				source := "____\n" +
+					"include::../../test/includes/parent-include.adoc[]\n" +
+					"____"
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.BlockDelimiter{
+								Kind: types.Quote,
+							},
+							types.InlineElements{
+								types.StringElement{
+									Content: "= parent title",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "first line of parent",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "= child title",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "first line of child",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "== grandchild title",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "first line of grandchild",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "last line of grandchild",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "last line of child",
+								},
+							},
+							types.BlankLine{},
+							types.InlineElements{
+								types.StringElement{
+									Content: "last line of parent ",
+								},
+								types.Callout{
+									Ref: 1,
+								},
+							},
+							types.BlockDelimiter{
+								Kind: types.Quote,
+							},
+						},
+					},
+				}
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			})
+
+			Context("with line ranges", func() {
+
+				Context("with unquoted line ranges", func() {
+
+					It("file inclusion with single unquoted line", func() {
+						source := `include::../../test/includes/chapter-a.adoc[lines=1]`
+						expected := []types.DocumentFragmentGroup{
+							{
+								Content: []interface{}{
+
+									types.Section{
+										Level: 0,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Chapter A",
+											},
+										},
+										Elements: []interface{}{},
+									},
+								},
+							},
+						}
+						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+					})
+
+					It("file inclusion with multiple unquoted lines", func() {
+						source := `include::../../test/includes/chapter-a.adoc[lines=1..2]`
+						expected := []types.DocumentFragmentGroup{
+							{
+								Content: []interface{}{
+
+									types.Section{
+										Level: 0,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Chapter A",
+											},
+										},
+										Elements: []interface{}{},
+									},
+									types.BlankLine{},
+								},
+							},
+						}
+						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+					})
+
+					It("file inclusion with multiple unquoted ranges", func() {
+						source := `include::../../test/includes/chapter-a.adoc[lines=1;3..4;6..-1]` // paragraph becomes the author since the in-between blank line is stripped out
+						expected := []types.DocumentFragmentGroup{
+							{
+								Content: []interface{}{
+
+									types.Section{
+										Level: 0,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Chapter A",
+											},
+										},
+										Elements: []interface{}{},
+									},
+
+									[]types.DocumentAuthor{ // content became the document author
+										{
+											FullName: "content",
+										},
+									},
 								},
 							},
 						}
 						result, err := ParseDocumentFragments(source)
 						Expect(err).NotTo(HaveOccurred())
-						Expect(result).To(MatchDocumentFragments(expected))
+						Expect(result).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("file inclusion with invalid unquoted range - case 1", func() {
@@ -715,18 +795,23 @@ include::hello_world.go.txt[]
 
 					It("file inclusion with invalid unquoted range - case 2", func() {
 						source := `include::../../test/includes/chapter-a.adoc[lines=1,3..4,6..-1]` // using commas instead of semi-colons
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "Chapter A",
+						expected := []types.DocumentFragmentGroup{
+							{
+								Content: []interface{}{
+
+									types.Section{
+										Level: 0,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Chapter A",
+											},
+										},
+										Elements: []interface{}{},
 									},
 								},
-								Elements: []interface{}{},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 				})
 
@@ -736,81 +821,101 @@ include::hello_world.go.txt[]
 						logs, reset := ConfigureLogger(log.WarnLevel)
 						defer reset()
 						source := `include::../../test/includes/chapter-a.adoc[lines="1"]`
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "Chapter A",
+						expected := []types.DocumentFragmentGroup{
+							{
+								Content: []interface{}{
+
+									types.Section{
+										Level: 0,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Chapter A",
+											},
+										},
+										Elements: []interface{}{},
 									},
 								},
-								Elements: []interface{}{},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 						// verify no error/warning in logs
 						Expect(logs).ToNot(ContainAnyMessageWithLevels(log.ErrorLevel, log.WarnLevel))
 					})
 
 					It("file inclusion with multiple quoted lines", func() {
 						source := `include::../../test/includes/chapter-a.adoc[lines="1..2"]`
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "Chapter A",
+						expected := []types.DocumentFragmentGroup{
+							{
+								Content: []interface{}{
+
+									types.Section{
+										Level: 0,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Chapter A",
+											},
+										},
+										Elements: []interface{}{},
 									},
+									types.BlankLine{},
 								},
-								Elements: []interface{}{},
 							},
-							types.BlankLine{},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("file inclusion with multiple quoted ranges with colons", func() {
 						// here, the `content` paragraph gets attached to the header and becomes the author
 						source := `include::../../test/includes/chapter-a.adoc[lines="1,3..4,6..-1"]`
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "Chapter A",
+						expected := []types.DocumentFragmentGroup{
+							{
+								Content: []interface{}{
+
+									types.Section{
+										Level: 0,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Chapter A",
+											},
+										},
+										Elements: []interface{}{},
 									},
-								},
-								Elements: []interface{}{},
-							},
-							[]types.DocumentAuthor{
-								{
-									FullName: "content",
+									[]types.DocumentAuthor{
+										{
+											FullName: "content",
+										},
+									},
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("file inclusion with multiple quoted ranges with semicolons", func() {
 						// here, the `content` paragraph gets attached to the header and becomes the author
 						source := `include::../../test/includes/chapter-a.adoc[lines="1;3..4;6..-1"]`
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 0,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "Chapter A",
+						expected := []types.DocumentFragmentGroup{
+							{
+								Content: []interface{}{
+
+									types.Section{
+										Level: 0,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Chapter A",
+											},
+										},
+										Elements: []interface{}{},
 									},
-								},
-								Elements: []interface{}{},
-							},
-							[]types.DocumentAuthor{
-								{
-									FullName: "content",
+									[]types.DocumentAuthor{
+										{
+											FullName: "content",
+										},
+									},
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("file inclusion with invalid quoted range - case 1", func() {
@@ -824,18 +929,23 @@ include::hello_world.go.txt[]
 					It("file inclusion with ignored tags", func() {
 						// include using a line range a file having tags
 						source := `include::../../test/includes/tag-include.adoc[lines=3]`
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 1,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "Section 1",
+						expected := []types.DocumentFragmentGroup{
+							{
+								Content: []interface{}{
+
+									types.Section{
+										Level: 1,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Section 1",
+											},
+										},
+										Elements: []interface{}{},
 									},
 								},
-								Elements: []interface{}{},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 				})
 			})
@@ -846,18 +956,23 @@ include::hello_world.go.txt[]
 					logs, reset := ConfigureLogger(log.WarnLevel)
 					defer reset()
 					source := `include::../../test/includes/tag-include.adoc[tag=section]`
-					expected := types.DocumentFragments{
-						types.Section{
-							Level: 1,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "Section 1",
+					expected := []types.DocumentFragmentGroup{
+						{
+							Content: []interface{}{
+
+								types.Section{
+									Level: 1,
+									Title: []interface{}{
+										types.StringElement{
+											Content: "Section 1",
+										},
+									},
+									Elements: []interface{}{},
 								},
 							},
-							Elements: []interface{}{},
 						},
 					}
-					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 					// verify no error/warning in logs
 					Expect(logs).ToNot(ContainAnyMessageWithLevels(log.ErrorLevel, log.WarnLevel))
 				})
@@ -866,25 +981,30 @@ include::hello_world.go.txt[]
 					logs, reset := ConfigureLogger(log.WarnLevel)
 					defer reset()
 					source := `include::../../test/includes/tag-include.adoc[tag=doc]`
-					expected := types.DocumentFragments{
-						types.Section{
-							Level: 1,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "Section 1",
+					expected := []types.DocumentFragmentGroup{
+						{
+							Content: []interface{}{
+
+								types.Section{
+									Level: 1,
+									Title: []interface{}{
+										types.StringElement{
+											Content: "Section 1",
+										},
+									},
+									Elements: []interface{}{},
 								},
+								types.BlankLine{},
+								types.InlineElements{
+									types.StringElement{
+										Content: "content",
+									},
+								},
+								types.BlankLine{},
 							},
-							Elements: []interface{}{},
 						},
-						types.BlankLine{},
-						types.InlineElements{
-							types.StringElement{
-								Content: "content",
-							},
-						},
-						types.BlankLine{},
 					}
-					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 					// verify no error/warning in logs
 					Expect(logs).ToNot(ContainAnyMessageWithLevels(log.ErrorLevel, log.WarnLevel))
 				})
@@ -894,22 +1014,27 @@ include::hello_world.go.txt[]
 					logs, reset := ConfigureLogger(log.WarnLevel)
 					defer reset()
 					source := `include::../../test/includes/tag-include-unclosed.adoc[tag=unclosed]`
-					expected := types.DocumentFragments{
-						types.BlankLine{},
-						types.InlineElements{
-							types.StringElement{
-								Content: "content",
-							},
-						},
-						types.BlankLine{},
-						types.BlankLine{},
-						types.InlineElements{
-							types.StringElement{
-								Content: "end",
+					expected := []types.DocumentFragmentGroup{
+						{
+							Content: []interface{}{
+
+								types.BlankLine{},
+								types.InlineElements{
+									types.StringElement{
+										Content: "content",
+									},
+								},
+								types.BlankLine{},
+								types.BlankLine{},
+								types.InlineElements{
+									types.StringElement{
+										Content: "end",
+									},
+								},
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 					// verify error in logs
 					Expect(logs).To(ContainMessageWithLevel(log.WarnLevel,
 						"detected unclosed tag 'unclosed' starting at line 6 of include file: ../../test/includes/tag-include-unclosed.adoc",
@@ -927,184 +1052,224 @@ include::hello_world.go.txt[]
 
 				It("file inclusion with no tag", func() {
 					source := `include::../../test/includes/tag-include.adoc[]`
-					expected := types.DocumentFragments{
-						types.Section{
-							Level: 1,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "Section 1",
+					expected := []types.DocumentFragmentGroup{
+						{
+							Content: []interface{}{
+
+								types.Section{
+									Level: 1,
+									Title: []interface{}{
+										types.StringElement{
+											Content: "Section 1",
+										},
+									},
+									Elements: []interface{}{},
 								},
-							},
-							Elements: []interface{}{},
-						},
-						types.BlankLine{},
-						types.InlineElements{
-							types.StringElement{
-								Content: "content",
-							},
-						},
-						types.BlankLine{},
-						types.BlankLine{},
-						types.InlineElements{
-							types.StringElement{
-								Content: "end",
+								types.BlankLine{},
+								types.InlineElements{
+									types.StringElement{
+										Content: "content",
+									},
+								},
+								types.BlankLine{},
+								types.BlankLine{},
+								types.InlineElements{
+									types.StringElement{
+										Content: "end",
+									},
+								},
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				Context("permutations", func() {
 
 					It("all lines", func() {
 						source := `include::../../test/includes/tag-include.adoc[tag=**]` // includes all content except lines with tags
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 1,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "Section 1",
+						expected := []types.DocumentFragmentGroup{
+							{
+								Content: []interface{}{
+
+									types.Section{
+										Level: 1,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Section 1",
+											},
+										},
+										Elements: []interface{}{},
 									},
-								},
-								Elements: []interface{}{},
-							},
-							types.BlankLine{},
-							types.InlineElements{
-								types.StringElement{
-									Content: "content",
-								},
-							},
-							types.BlankLine{},
-							types.BlankLine{},
-							types.InlineElements{
-								types.StringElement{
-									Content: "end",
+									types.BlankLine{},
+									types.InlineElements{
+										types.StringElement{
+											Content: "content",
+										},
+									},
+									types.BlankLine{},
+									types.BlankLine{},
+									types.InlineElements{
+										types.StringElement{
+											Content: "end",
+										},
+									},
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("all tagged regions", func() {
 						source := `include::../../test/includes/tag-include.adoc[tag=*]` // includes all sections
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 1,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "Section 1",
+						expected := []types.DocumentFragmentGroup{
+							{
+								Content: []interface{}{
+
+									types.Section{
+										Level: 1,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Section 1",
+											},
+										},
+										Elements: []interface{}{},
 									},
+									types.BlankLine{},
+									types.InlineElements{
+										types.StringElement{
+											Content: "content",
+										},
+									},
+									types.BlankLine{},
 								},
-								Elements: []interface{}{},
 							},
-							types.BlankLine{},
-							types.InlineElements{
-								types.StringElement{
-									Content: "content",
-								},
-							},
-							types.BlankLine{},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("all the lines outside and inside of tagged regions", func() {
 						source := `include::../../test/includes/tag-include.adoc[tag=**;*]` // includes all sections
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 1,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "Section 1",
+						expected := []types.DocumentFragmentGroup{
+							{
+								Content: []interface{}{
+
+									types.Section{
+										Level: 1,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Section 1",
+											},
+										},
+										Elements: []interface{}{},
 									},
-								},
-								Elements: []interface{}{},
-							},
-							types.BlankLine{},
-							types.InlineElements{
-								types.StringElement{
-									Content: "content",
-								},
-							},
-							types.BlankLine{},
-							types.BlankLine{},
-							types.InlineElements{
-								types.StringElement{
-									Content: "end",
+									types.BlankLine{},
+									types.InlineElements{
+										types.StringElement{
+											Content: "content",
+										},
+									},
+									types.BlankLine{},
+									types.BlankLine{},
+									types.InlineElements{
+										types.StringElement{
+											Content: "end",
+										},
+									},
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("regions tagged doc, but not nested regions tagged content", func() {
 						source := `include::../../test/includes/tag-include.adoc[tag=doc;!content]` // includes all sections
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 1,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "Section 1",
+						expected := []types.DocumentFragmentGroup{
+							{
+								Content: []interface{}{
+
+									types.Section{
+										Level: 1,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Section 1",
+											},
+										},
+										Elements: []interface{}{},
 									},
+									types.BlankLine{},
 								},
-								Elements: []interface{}{},
 							},
-							types.BlankLine{},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("all tagged regions, but excludes any regions tagged content", func() {
 						source := `include::../../test/includes/tag-include.adoc[tag=*;!content]` // includes all sections
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 1,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "Section 1",
+						expected := []types.DocumentFragmentGroup{
+							{
+								Content: []interface{}{
+
+									types.Section{
+										Level: 1,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Section 1",
+											},
+										},
+										Elements: []interface{}{},
 									},
+									types.BlankLine{},
 								},
-								Elements: []interface{}{},
 							},
-							types.BlankLine{},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("all tagged regions, but excludes any regions tagged content", func() {
 						source := `include::../../test/includes/tag-include.adoc[tag=**;!content]` // includes all sections
-						expected := types.DocumentFragments{
-							types.Section{
-								Level: 1,
-								Title: []interface{}{
-									types.StringElement{
-										Content: "Section 1",
+						expected := []types.DocumentFragmentGroup{
+							{
+								Content: []interface{}{
+
+									types.Section{
+										Level: 1,
+										Title: []interface{}{
+											types.StringElement{
+												Content: "Section 1",
+											},
+										},
+										Elements: []interface{}{},
 									},
-								},
-								Elements: []interface{}{},
-							},
-							types.BlankLine{},
-							types.BlankLine{},
-							types.InlineElements{
-								types.StringElement{
-									Content: "end",
+									types.BlankLine{},
+									types.BlankLine{},
+									types.InlineElements{
+										types.StringElement{
+											Content: "end",
+										},
+									},
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("**;!* — selects only the regions of the document outside of tags", func() {
 						source := `include::../../test/includes/tag-include.adoc[tag=**;!*]` // includes all sections
-						expected := types.DocumentFragments{
-							types.BlankLine{},
-							types.InlineElements{
-								types.StringElement{
-									Content: "end",
+						expected := []types.DocumentFragmentGroup{
+							{
+								Content: []interface{}{
+
+									types.BlankLine{},
+									types.InlineElements{
+										types.StringElement{
+											Content: "end",
+										},
+									},
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 				})
 			})
@@ -1153,70 +1318,80 @@ include::{includedir}/unknown.adoc[leveloffset=+1]
 					source := `:includedir: ../../test/includes
 			
 include::{includedir}/grandchild-include.adoc[]`
-					expected := types.DocumentFragments{
-						types.AttributeDeclaration{
-							Name:  "includedir",
-							Value: "../../test/includes",
-						},
-						types.BlankLine{},
-						types.Section{
-							Level: 1,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "grandchild title",
+					expected := []types.DocumentFragmentGroup{
+						{
+							Content: []interface{}{
+
+								types.AttributeDeclaration{
+									Name:  "includedir",
+									Value: "../../test/includes",
 								},
-							},
-							Elements: []interface{}{},
-						},
-						types.BlankLine{},
-						types.InlineElements{
-							types.StringElement{
-								Content: "first line of grandchild",
-							},
-						},
-						types.BlankLine{},
-						types.InlineElements{
-							types.StringElement{
-								Content: "last line of grandchild",
+								types.BlankLine{},
+								types.Section{
+									Level: 1,
+									Title: []interface{}{
+										types.StringElement{
+											Content: "grandchild title",
+										},
+									},
+									Elements: []interface{}{},
+								},
+								types.BlankLine{},
+								types.InlineElements{
+									types.StringElement{
+										Content: "first line of grandchild",
+									},
+								},
+								types.BlankLine{},
+								types.InlineElements{
+									types.StringElement{
+										Content: "last line of grandchild",
+									},
+								},
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(source, WithFilename("foo.adoc"))).To(MatchDocumentFragments(expected))
+					Expect(ParseDocumentFragments(source, WithFilename("foo.adoc"))).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should resolve path with attribute in standalone block from relative file", func() {
 					source := `:includedir: ../../../test/includes
 			
 include::{includedir}/grandchild-include.adoc[]`
-					expected := types.DocumentFragments{
-						types.AttributeDeclaration{
-							Name:  "includedir",
-							Value: "../../../test/includes",
-						},
-						types.BlankLine{},
-						types.Section{
-							Level: 1,
-							Title: []interface{}{
-								types.StringElement{
-									Content: "grandchild title",
+					expected := []types.DocumentFragmentGroup{
+						{
+							Content: []interface{}{
+
+								types.AttributeDeclaration{
+									Name:  "includedir",
+									Value: "../../../test/includes",
 								},
-							},
-							Elements: []interface{}{},
-						},
-						types.BlankLine{},
-						types.InlineElements{
-							types.StringElement{
-								Content: "first line of grandchild",
-							},
-						},
-						types.BlankLine{},
-						types.InlineElements{
-							types.StringElement{
-								Content: "last line of grandchild",
+								types.BlankLine{},
+								types.Section{
+									Level: 1,
+									Title: []interface{}{
+										types.StringElement{
+											Content: "grandchild title",
+										},
+									},
+									Elements: []interface{}{},
+								},
+								types.BlankLine{},
+								types.InlineElements{
+									types.StringElement{
+										Content: "first line of grandchild",
+									},
+								},
+								types.BlankLine{},
+								types.InlineElements{
+									types.StringElement{
+										Content: "last line of grandchild",
+									},
+								},
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(source, WithFilename("tmp/foo.adoc"))).To(MatchDocumentFragments(expected))
+					Expect(ParseDocumentFragments(source, WithFilename("tmp/foo.adoc"))).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should resolve path with attribute in delimited block", func() {
@@ -1225,37 +1400,42 @@ include::{includedir}/grandchild-include.adoc[]`
 ----
 include::{includedir}/grandchild-include.adoc[]
 ----`
-					expected := types.DocumentFragments{
-						types.AttributeDeclaration{
-							Name:  "includedir",
-							Value: "../../test/includes",
-						},
-						types.BlankLine{},
-						types.BlockDelimiter{
-							Kind: types.Listing,
-						},
-						types.InlineElements{
-							types.StringElement{
-								Content: "== grandchild title",
+					expected := []types.DocumentFragmentGroup{
+						{
+							Content: []interface{}{
+
+								types.AttributeDeclaration{
+									Name:  "includedir",
+									Value: "../../test/includes",
+								},
+								types.BlankLine{},
+								types.BlockDelimiter{
+									Kind: types.Listing,
+								},
+								types.InlineElements{
+									types.StringElement{
+										Content: "== grandchild title",
+									},
+								},
+								types.BlankLine{},
+								types.InlineElements{
+									types.StringElement{
+										Content: "first line of grandchild",
+									},
+								},
+								types.BlankLine{},
+								types.InlineElements{
+									types.StringElement{
+										Content: "last line of grandchild",
+									},
+								},
+								types.BlockDelimiter{
+									Kind: types.Listing,
+								},
 							},
-						},
-						types.BlankLine{},
-						types.InlineElements{
-							types.StringElement{
-								Content: "first line of grandchild",
-							},
-						},
-						types.BlankLine{},
-						types.InlineElements{
-							types.StringElement{
-								Content: "last line of grandchild",
-							},
-						},
-						types.BlockDelimiter{
-							Kind: types.Listing,
 						},
 					}
-					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 				})
 			})
 
@@ -1266,44 +1446,49 @@ include::{includedir}/grandchild-include.adoc[]
 					source := `----
 include::../../test/includes/hello_world.go.txt[] 
 ----`
-					expected := types.DocumentFragments{
-						types.BlockDelimiter{
-							Kind: types.Listing,
-						},
-						types.InlineElements{
-							types.StringElement{
-								Content: `package includes`,
+					expected := []types.DocumentFragmentGroup{
+						{
+							Content: []interface{}{
+
+								types.BlockDelimiter{
+									Kind: types.Listing,
+								},
+								types.InlineElements{
+									types.StringElement{
+										Content: `package includes`,
+									},
+								},
+								types.BlankLine{},
+								types.InlineElements{
+									types.StringElement{
+										Content: `import "fmt"`,
+									},
+								},
+								types.BlankLine{},
+								types.InlineElements{
+									types.StringElement{
+										Content: `func helloworld() {`,
+									},
+								},
+								types.InlineElements{
+									types.StringElement{
+										Content: `	fmt.Println("hello, world!")`,
+									},
+								},
+								types.InlineElements{
+									types.StringElement{
+										Content: `}`,
+									},
+								},
+								types.BlockDelimiter{
+									Kind: types.Listing,
+								},
 							},
-						},
-						types.BlankLine{},
-						types.InlineElements{
-							types.StringElement{
-								Content: `import "fmt"`,
-							},
-						},
-						types.BlankLine{},
-						types.InlineElements{
-							types.StringElement{
-								Content: `func helloworld() {`,
-							},
-						},
-						types.InlineElements{
-							types.StringElement{
-								Content: `	fmt.Println("hello, world!")`,
-							},
-						},
-						types.InlineElements{
-							types.StringElement{
-								Content: `}`,
-							},
-						},
-						types.BlockDelimiter{
-							Kind: types.Listing,
 						},
 					}
 					result, err := ParseDocumentFragments(source)
 					Expect(err).NotTo(HaveOccurred())
-					Expect(result).To(MatchDocumentFragments(expected))
+					Expect(result).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("include go file with a simple range", func() {
@@ -1311,22 +1496,27 @@ include::../../test/includes/hello_world.go.txt[]
 					source := `----
 include::../../test/includes/hello_world.go.txt[lines=1] 
 ----`
-					expected := types.DocumentFragments{
-						types.BlockDelimiter{
-							Kind: types.Listing,
-						},
-						types.InlineElements{
-							types.StringElement{
-								Content: `package includes`,
+					expected := []types.DocumentFragmentGroup{
+						{
+							Content: []interface{}{
+
+								types.BlockDelimiter{
+									Kind: types.Listing,
+								},
+								types.InlineElements{
+									types.StringElement{
+										Content: `package includes`,
+									},
+								},
+								types.BlockDelimiter{
+									Kind: types.Listing,
+								},
 							},
-						},
-						types.BlockDelimiter{
-							Kind: types.Listing,
 						},
 					}
 					result, err := ParseDocumentFragments(source)
 					Expect(err).NotTo(HaveOccurred())
-					Expect(result).To(MatchDocumentFragments(expected))
+					Expect(result).To(MatchDocumentFragmentGroups(expected))
 				})
 			})
 		})

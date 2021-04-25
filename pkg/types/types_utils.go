@@ -7,6 +7,9 @@ import (
 
 // Merge merge string elements together
 func Merge(elements ...interface{}) []interface{} {
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debugf("merging %s", spew.Sdump(elements))
+	// }
 	result := make([]interface{}, 0, len(elements))
 	buf := &strings.Builder{}
 	for _, element := range elements {
@@ -37,6 +40,23 @@ func Merge(elements ...interface{}) []interface{} {
 	return result
 }
 
+// AllNilEntries returns true if all the entries in the given `elements` are `nil`
+func AllNilEntries(elements []interface{}) bool {
+	for _, e := range elements {
+		switch e := e.(type) {
+		case []interface{}: // empty slice if not `nil` since it has a type
+			if !AllNilEntries(e) {
+				return false
+			}
+		default:
+			if e != nil {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 // appendBuffer appends the content of the given buffer to the given array of elements,
 // and returns a new buffer, or returns the given arguments if the buffer was empty
 func appendBuffer(elements []interface{}, buf *strings.Builder) ([]interface{}, *strings.Builder) {
@@ -54,27 +74,35 @@ type ReduceOption func(string) string
 // (ie, return its `Content`), otherwise return the given elements or empty string if the elements
 // is `nil` or an empty `[]interface{}`
 func Reduce(elements interface{}, opts ...ReduceOption) interface{} {
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debugf("reducing %s", spew.Sdump(elements))
+	// }
 	switch e := elements.(type) {
 	case []interface{}:
 		e = Merge(e...)
 		switch len(e) {
 		case 0: // if empty, return nil
-			elements = nil
+			return nil
 		case 1:
 			if e, ok := e[0].(StringElement); ok {
 				c := e.Content
 				for _, apply := range opts {
 					c = apply(c)
 				}
-				elements = c
+				return c
 			}
+			return e
+		default:
+			return e
 		}
 	case string:
 		for _, apply := range opts {
 			e = apply(e)
 		}
+		return e
+	default:
+		return elements
 	}
-	return elements
 }
 
 // applyFunc a function to apply on the result of the `apply` function below, before returning

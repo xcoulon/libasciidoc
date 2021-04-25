@@ -10,103 +10,110 @@ import (
 
 var _ = Describe("special characters", func() {
 
-	It("should parse in paragraph", func() {
-		source := "<b>*</b> &apos; &amp;"
-		expected := types.DocumentFragments{
-			types.Paragraph{
-				Lines: [][]interface{}{
-					{
-						types.SpecialCharacter{
-							Name: "<",
-						},
-						types.StringElement{
-							Content: "b",
-						},
-						types.SpecialCharacter{
-							Name: ">",
-						},
-						types.StringElement{
-							Content: "*",
-						},
-						types.SpecialCharacter{
-							Name: "<",
-						},
-						types.StringElement{
-							Content: "/b",
-						},
-						types.SpecialCharacter{
-							Name: ">",
-						},
-						types.StringElement{
-							Content: " ",
-						},
-						types.SpecialCharacter{
-							Name: "&",
-						},
-						types.StringElement{
-							Content: "apos; ",
-						},
-						types.SpecialCharacter{
-							Name: "&",
-						},
-						types.StringElement{
-							Content: "amp;",
-						},
-					},
-				},
-			},
-		}
-		Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
-	})
+	Context("in final documents", func() {
 
-	It("should parse in delimited block", func() {
-		source := "```" + "\n" +
-			"<b>*</b> &apos; &amp;" + "\n" +
-			"```"
-		expected := types.DocumentFragments{
-			types.FencedBlock{
-				Lines: [][]interface{}{
-					{
-						types.SpecialCharacter{
-							Name: "<",
-						},
-						types.StringElement{
-							Content: "b",
-						},
-						types.SpecialCharacter{
-							Name: ">",
-						},
-						types.StringElement{
-							Content: "*",
-						},
-						types.SpecialCharacter{
-							Name: "<",
-						},
-						types.StringElement{
-							Content: "/b",
-						},
-						types.SpecialCharacter{
-							Name: ">",
-						},
-						types.StringElement{
-							Content: " ",
-						},
-						types.SpecialCharacter{
-							Name: "&",
-						},
-						types.StringElement{
-							Content: "apos; ",
-						},
-						types.SpecialCharacter{
-							Name: "&",
-						},
-						types.StringElement{
-							Content: "amp;",
+		It("should parse in paragraph", func() {
+			source := "<b>*</b> &apos; &amp;"
+			expected := types.Document{
+				Elements: []interface{}{
+					types.Paragraph{
+						Lines: [][]interface{}{
+							{
+								types.SpecialCharacter{
+									Name: "<",
+								},
+								types.StringElement{
+									Content: "b",
+								},
+								types.SpecialCharacter{
+									Name: ">",
+								},
+								types.StringElement{
+									Content: "*",
+								},
+								types.SpecialCharacter{
+									Name: "<",
+								},
+								types.StringElement{
+									Content: "/b",
+								},
+								types.SpecialCharacter{
+									Name: ">",
+								},
+								types.StringElement{
+									Content: " ",
+								},
+								types.SpecialCharacter{
+									Name: "&",
+								},
+								types.StringElement{
+									Content: "apos; ",
+								},
+								types.SpecialCharacter{
+									Name: "&",
+								},
+								types.StringElement{
+									Content: "amp;",
+								},
+							},
 						},
 					},
 				},
-			},
-		}
-		Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+			}
+			Expect(ParseDocument(source)).To(MatchDocument(expected))
+		})
+
+		It("should parse in delimited block", func() {
+			source := "```" + "\n" +
+				"<b>*</b> &apos; &amp;" + "\n" +
+				"```"
+			expected := types.Document{
+				Elements: []interface{}{
+					types.FencedBlock{
+						Lines: [][]interface{}{
+							{
+								types.SpecialCharacter{
+									Name: "<",
+								},
+								types.StringElement{
+									Content: "b",
+								},
+								types.SpecialCharacter{
+									Name: ">",
+								},
+								types.StringElement{
+									Content: "*",
+								},
+								types.SpecialCharacter{
+									Name: "<",
+								},
+								types.StringElement{
+									Content: "/b",
+								},
+								types.SpecialCharacter{
+									Name: ">",
+								},
+								types.StringElement{
+									Content: " ",
+								},
+								types.SpecialCharacter{
+									Name: "&",
+								},
+								types.StringElement{
+									Content: "apos; ",
+								},
+								types.SpecialCharacter{
+									Name: "&",
+								},
+								types.StringElement{
+									Content: "amp;",
+								},
+							},
+						},
+					},
+				},
+			}
+			Expect(ParseDocument(source)).To(MatchDocument(expected))
+		})
 	})
 })

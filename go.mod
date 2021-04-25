@@ -8,7 +8,7 @@ require (
 	github.com/google/go-cmp v0.5.2 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.12 // indirect
-	github.com/mna/pigeon v1.0.1-0.20200224192238-18953b277063
+	github.com/mna/pigeon v1.1.0
 	github.com/modocache/gover v0.0.0-20171022184752-b58185e213c5 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/onsi/ginkgo v1.13.0

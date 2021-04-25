@@ -19,17 +19,22 @@ var _ = Describe("sections", func() {
 				doctitle := []interface{}{
 					types.StringElement{Content: "a header"},
 				}
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_a_header",
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_a_header",
+								},
+								Level:    0,
+								Title:    doctitle,
+								Elements: []interface{}{},
+							},
 						},
-						Level:    0,
-						Title:    doctitle,
-						Elements: []interface{}{},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("header with many spaces around content", func() {
@@ -37,17 +42,22 @@ var _ = Describe("sections", func() {
 				doctitle := []interface{}{
 					types.StringElement{Content: "a header   "},
 				}
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_a_header",
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_a_header",
+								},
+								Level:    0,
+								Title:    doctitle,
+								Elements: []interface{}{},
+							},
 						},
-						Level:    0,
-						Title:    doctitle,
-						Elements: []interface{}{},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("header and paragraph", func() {
@@ -58,27 +68,32 @@ and a paragraph`
 				doctitle := []interface{}{
 					types.StringElement{Content: "a header"},
 				}
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_a_header",
-						},
-						Level:    0,
-						Title:    doctitle,
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "and a paragraph",
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_a_header",
+								},
+								Level:    0,
+								Title:    doctitle,
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "and a paragraph",
+										},
+									},
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("two sections with level 0", func() {
@@ -92,26 +107,31 @@ and a paragraph`
 					types.StringElement{Content: "a second header"},
 				}
 
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_a_first_header",
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_a_first_header",
+								},
+								Level:    0,
+								Title:    doctitle,
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_a_second_header",
+								},
+								Level:    0,
+								Title:    otherDoctitle,
+								Elements: []interface{}{},
+							},
 						},
-						Level:    0,
-						Title:    doctitle,
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_a_second_header",
-						},
-						Level:    0,
-						Title:    otherDoctitle,
-						Elements: []interface{}{},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section level 1 alone", func() {
@@ -119,17 +139,22 @@ and a paragraph`
 				section1Title := []interface{}{
 					types.StringElement{Content: "section 1"},
 				}
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_section_1",
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_section_1",
+								},
+								Level:    1,
+								Title:    section1Title,
+								Elements: []interface{}{},
+							},
 						},
-						Level:    1,
-						Title:    section1Title,
-						Elements: []interface{}{},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section level 1 with custom idseparator", func() {
@@ -139,22 +164,27 @@ and a paragraph`
 				section1Title := []interface{}{
 					types.StringElement{Content: "section 1"},
 				}
-				expected := types.DocumentFragments{
-					types.AttributeDeclaration{
-						Name:  types.AttrIDSeparator,
-						Value: "-",
-					},
-					types.BlankLine{},
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_section-1",
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.AttributeDeclaration{
+								Name:  types.AttrIDSeparator,
+								Value: "-",
+							},
+							types.BlankLine{},
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_section-1",
+								},
+								Level:    1,
+								Title:    section1Title,
+								Elements: []interface{}{},
+							},
 						},
-						Level:    1,
-						Title:    section1Title,
-						Elements: []interface{}{},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section level 1 with quoted text", func() {
@@ -167,17 +197,22 @@ and a paragraph`
 						},
 					},
 				}
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_2_spaces_and_bold_content",
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_2_spaces_and_bold_content",
+								},
+								Level:    1,
+								Title:    sectionTitle,
+								Elements: []interface{}{},
+							},
 						},
-						Level:    1,
-						Title:    sectionTitle,
-						Elements: []interface{}{},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section level 0 with nested section level 1", func() {
@@ -190,26 +225,31 @@ and a paragraph`
 				section1Title := []interface{}{
 					types.StringElement{Content: "section 1"},
 				}
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_a_header",
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_a_header",
+								},
+								Level:    0,
+								Title:    doctitle,
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_section_1",
+								},
+								Level:    1,
+								Title:    section1Title,
+								Elements: []interface{}{},
+							},
 						},
-						Level:    0,
-						Title:    doctitle,
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_section_1",
-						},
-						Level:    1,
-						Title:    section1Title,
-						Elements: []interface{}{},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section level 0 with nested section level 2", func() {
@@ -222,26 +262,31 @@ and a paragraph`
 				section2Title := []interface{}{
 					types.StringElement{Content: "section 2"},
 				}
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_a_header",
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_a_header",
+								},
+								Level:    0,
+								Title:    doctitle,
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_section_2",
+								},
+								Level:    2,
+								Title:    section2Title,
+								Elements: []interface{}{},
+							},
 						},
-						Level:    0,
-						Title:    doctitle,
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_section_2",
-						},
-						Level:    2,
-						Title:    section2Title,
-						Elements: []interface{}{},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section level 1 with immediate paragraph", func() {
@@ -250,24 +295,29 @@ and a paragraph`
 				section1Title := []interface{}{
 					types.StringElement{Content: "a title"},
 				}
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_a_title",
-						},
-						Level:    1,
-						Title:    section1Title,
-						Elements: []interface{}{},
-					},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "and a paragraph"},
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_a_title",
+								},
+								Level:    1,
+								Title:    section1Title,
+								Elements: []interface{}{},
+							},
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{Content: "and a paragraph"},
+									},
+								},
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section level 1 with a paragraph separated by empty line", func() {
@@ -277,25 +327,30 @@ and a paragraph`
 				section1Title := []interface{}{
 					types.StringElement{Content: "a title"},
 				}
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_a_title",
-						},
-						Level:    1,
-						Title:    section1Title,
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "and a paragraph"},
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_a_title",
+								},
+								Level:    1,
+								Title:    section1Title,
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{Content: "and a paragraph"},
+									},
+								},
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section level 1 with a paragraph separated by non-empty line", func() {
@@ -303,25 +358,30 @@ and a paragraph`
 				section1Title := []interface{}{
 					types.StringElement{Content: "a title"},
 				}
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_a_title",
-						},
-						Level:    1,
-						Title:    section1Title,
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "and a paragraph"},
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_a_title",
+								},
+								Level:    1,
+								Title:    section1Title,
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{Content: "and a paragraph"},
+									},
+								},
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section levels 1, 2, 3, 2", func() {
@@ -335,73 +395,78 @@ a paragraph
 
 == Section B
 a paragraph`
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_a_header",
-						},
-						Level: 0,
-						Title: []interface{}{
-							types.StringElement{Content: "a header"},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_section_a",
-						},
-						Level: 1,
-						Title: []interface{}{
-							types.StringElement{Content: "Section A"},
-						},
-						Elements: []interface{}{},
-					},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "a paragraph"},
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_a_header",
+								},
+								Level: 0,
+								Title: []interface{}{
+									types.StringElement{Content: "a header"},
+								},
+								Elements: []interface{}{},
 							},
-						},
-					},
-					types.BlankLine{},
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_section_a_a",
-						},
-						Level: 2,
-						Title: []interface{}{
-							types.StringElement{Content: "Section A.a"},
-						},
-						Elements: []interface{}{},
-					},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "a paragraph"},
+							types.BlankLine{},
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_section_a",
+								},
+								Level: 1,
+								Title: []interface{}{
+									types.StringElement{Content: "Section A"},
+								},
+								Elements: []interface{}{},
 							},
-						},
-					},
-					types.BlankLine{},
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_section_b",
-						},
-						Level: 1,
-						Title: []interface{}{
-							types.StringElement{Content: "Section B"},
-						},
-						Elements: []interface{}{},
-					},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "a paragraph"},
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{Content: "a paragraph"},
+									},
+								},
+							},
+							types.BlankLine{},
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_section_a_a",
+								},
+								Level: 2,
+								Title: []interface{}{
+									types.StringElement{Content: "Section A.a"},
+								},
+								Elements: []interface{}{},
+							},
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{Content: "a paragraph"},
+									},
+								},
+							},
+							types.BlankLine{},
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_section_b",
+								},
+								Level: 1,
+								Title: []interface{}{
+									types.StringElement{Content: "Section B"},
+								},
+								Elements: []interface{}{},
+							},
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{Content: "a paragraph"},
+									},
+								},
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("single section with custom IDs", func() {
@@ -410,18 +475,23 @@ a paragraph`
 				sectionTitle := []interface{}{
 					types.StringElement{Content: "a header"},
 				}
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID:       "custom_header",
-							types.AttrCustomID: true,
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID:       "custom_header",
+									types.AttrCustomID: true,
+								},
+								Level:    1,
+								Title:    sectionTitle,
+								Elements: []interface{}{},
+							},
 						},
-						Level:    1,
-						Title:    sectionTitle,
-						Elements: []interface{}{},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("multiple sections with custom IDs", func() {
@@ -442,45 +512,50 @@ a paragraph`
 				barTitle := []interface{}{
 					types.StringElement{Content: "Section B"},
 				}
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID:       "custom_header",
-							types.AttrCustomID: true,
-						},
-						Level:    0,
-						Title:    doctitle,
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID:       "foo",
-							types.AttrCustomID: true,
-						},
-						Level:    1,
-						Title:    fooTitle,
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID:       "bar",
-							types.AttrCustomID: true,
-						},
-						Level:    1,
-						Title:    barTitle,
-						Elements: []interface{}{},
-					},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "a paragraph"},
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID:       "custom_header",
+									types.AttrCustomID: true,
+								},
+								Level:    0,
+								Title:    doctitle,
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID:       "foo",
+									types.AttrCustomID: true,
+								},
+								Level:    1,
+								Title:    fooTitle,
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID:       "bar",
+									types.AttrCustomID: true,
+								},
+								Level:    1,
+								Title:    barTitle,
+								Elements: []interface{}{},
+							},
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{Content: "a paragraph"},
+									},
+								},
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("sections with same title", func() {
@@ -493,26 +568,31 @@ a paragraph`
 				section1bTitle := []interface{}{
 					types.StringElement{Content: "section 1"},
 				}
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_section_1",
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_section_1",
+								},
+								Level:    1,
+								Title:    section1aTitle,
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_section_1",
+								},
+								Level:    1,
+								Title:    section1bTitle,
+								Elements: []interface{}{},
+							},
 						},
-						Level:    1,
-						Title:    section1aTitle,
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_section_1",
-						},
-						Level:    1,
-						Title:    section1bTitle,
-						Elements: []interface{}{},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section with link in title", func() {
@@ -529,17 +609,22 @@ a paragraph`
 						},
 					},
 				}
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_link_to_httpsfoo_bar",
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_link_to_httpsfoo_bar",
+								},
+								Level:    1,
+								Title:    section1aTitle,
+								Elements: []interface{}{},
+							},
 						},
-						Level:    1,
-						Title:    section1aTitle,
-						Elements: []interface{}{},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section 0, 1 and paragraph with bold quote", func() {
@@ -604,38 +689,43 @@ a paragraph with *bold content*`
 a short preamble
 
 == section 1`
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_a_title",
-						},
-						Level: 0,
-						Title: []interface{}{
-							types.StringElement{Content: "a title"},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "a short preamble"},
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_a_title",
+								},
+								Level: 0,
+								Title: []interface{}{
+									types.StringElement{Content: "a title"},
+								},
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{Content: "a short preamble"},
+									},
+								},
+							},
+							types.BlankLine{},
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_section_1",
+								},
+								Level: 1,
+								Title: []interface{}{
+									types.StringElement{Content: "section 1"},
+								},
+								Elements: []interface{}{},
 							},
 						},
 					},
-					types.BlankLine{},
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_section_1",
-						},
-						Level: 1,
-						Title: []interface{}{
-							types.StringElement{Content: "section 1"},
-						},
-						Elements: []interface{}{},
-					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("header with doc attributes and preamble then section level 1", func() {
@@ -645,74 +735,84 @@ a short preamble
 a short preamble
 
 == section 1`
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_a_title",
-						},
-						Level: 0,
-						Title: []interface{}{
-							types.StringElement{Content: "a title"},
-						},
-						Elements: []interface{}{},
-					},
-					types.AttributeDeclaration{
-						Name: "toc",
-					},
-					types.BlankLine{},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "a short preamble"},
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_a_title",
+								},
+								Level: 0,
+								Title: []interface{}{
+									types.StringElement{Content: "a title"},
+								},
+								Elements: []interface{}{},
+							},
+							types.AttributeDeclaration{
+								Name: "toc",
+							},
+							types.BlankLine{},
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{Content: "a short preamble"},
+									},
+								},
+							},
+							types.BlankLine{},
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_section_1",
+								},
+								Level: 1,
+								Title: []interface{}{
+									types.StringElement{Content: "section 1"},
+								},
+								Elements: []interface{}{},
 							},
 						},
 					},
-					types.BlankLine{},
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_section_1",
-						},
-						Level: 1,
-						Title: []interface{}{
-							types.StringElement{Content: "section 1"},
-						},
-						Elements: []interface{}{},
-					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("header with 2 paragraphs and CRLFs", func() {
 				source := "= a title\r\n\r\na first paragraph\r\n\r\na second paragraph"
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_a_title",
-						},
-						Level: 0,
-						Title: []interface{}{
-							types.StringElement{Content: "a title"},
-						},
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "a first paragraph"},
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_a_title",
+								},
+								Level: 0,
+								Title: []interface{}{
+									types.StringElement{Content: "a title"},
+								},
+								Elements: []interface{}{},
 							},
-						},
-					},
-					types.BlankLine{},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "a second paragraph"},
+							types.BlankLine{},
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{Content: "a first paragraph"},
+									},
+								},
+							},
+							types.BlankLine{},
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{Content: "a second paragraph"},
+									},
+								},
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 		})
@@ -720,36 +820,46 @@ a short preamble
 		Context("invalid sections", func() {
 			It("header invalid - missing space", func() {
 				source := "=a header"
-				expected := types.DocumentFragments{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "=a header"},
-							},
-						},
-					},
-				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
-			})
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
 
-			It("header invalid - header space", func() {
-				source := " = a header with a prefix space"
-				expected := types.DocumentFragments{
-					types.LiteralBlock{
-						Attributes: types.Attributes{
-							types.AttrStyle:            types.Literal,
-							types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
-						},
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: " = a header with a prefix space",
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{Content: "=a header"},
+									},
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			})
+
+			It("header invalid - header space", func() {
+				source := " = a header with a prefix space"
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.LiteralBlock{
+								Attributes: types.Attributes{
+									types.AttrStyle:            types.Literal,
+									types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
+								},
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: " = a header with a prefix space",
+										},
+									},
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("header with invalid section1", func() {
@@ -759,31 +869,36 @@ a short preamble
 				title := []interface{}{
 					types.StringElement{Content: "a header"},
 				}
-				expected := types.DocumentFragments{
-					types.Section{
-						Attributes: types.Attributes{
-							types.AttrID: "_a_header",
-						},
-						Level:    0,
-						Title:    title,
-						Elements: []interface{}{},
-					},
-					types.BlankLine{},
-					types.LiteralBlock{
-						Attributes: types.Attributes{
-							types.AttrStyle:            types.Literal,
-							types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
-						},
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "   == section with prefix space",
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Section{
+								Attributes: types.Attributes{
+									types.AttrID: "_a_header",
+								},
+								Level:    0,
+								Title:    title,
+								Elements: []interface{}{},
+							},
+							types.BlankLine{},
+							types.LiteralBlock{
+								Attributes: types.Attributes{
+									types.AttrStyle:            types.Literal,
+									types.AttrLiteralBlockType: types.LiteralBlockWithSpacesOnFirstLine,
+								},
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "   == section with prefix space",
+										},
+									},
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 		})
@@ -794,33 +909,38 @@ a short preamble
 				source := `Document Title
 ==============
 Doc Writer <thedoc@asciidoctor.org>`
-				expected := types.DocumentFragments{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "Document Title"},
-							},
-							{
-								types.StringElement{Content: "=============="},
-							},
-							{
-								types.StringElement{
-									Content: "Doc Writer ",
-								},
-								types.SpecialCharacter{
-									Name: "<",
-								},
-								types.StringElement{
-									Content: "thedoc@asciidoctor.org",
-								},
-								types.SpecialCharacter{
-									Name: ">",
+				expected := []types.DocumentFragmentGroup{
+					{
+						Content: []interface{}{
+
+							types.Paragraph{
+								Lines: [][]interface{}{
+									{
+										types.StringElement{Content: "Document Title"},
+									},
+									{
+										types.StringElement{Content: "=============="},
+									},
+									{
+										types.StringElement{
+											Content: "Doc Writer ",
+										},
+										types.SpecialCharacter{
+											Name: "<",
+										},
+										types.StringElement{
+											Content: "thedoc@asciidoctor.org",
+										},
+										types.SpecialCharacter{
+											Name: ">",
+										},
+									},
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 	})

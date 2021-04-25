@@ -19,17 +19,23 @@ var _ = Describe("admonition blocks", func() {
 ====
 foo
 ====`
-				expected := types.DocumentFragments{
-					types.ExampleBlock{
-						Attributes: types.Attributes{
-							types.AttrStyle: types.Note,
-						},
-						Elements: []interface{}{
-							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "foo",
+				expected := []types.DocumentFragmentGroup{
+					{
+						LineOffset: 1,
+						Content: []interface{}{
+
+							types.ExampleBlock{
+								Attributes: types.Attributes{
+									types.AttrStyle: types.Note,
+								},
+								Elements: []interface{}{
+									types.Paragraph{
+										Lines: [][]interface{}{
+											{
+												types.StringElement{
+													Content: "foo",
+												},
+											},
 										},
 									},
 								},
@@ -37,7 +43,7 @@ foo
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("as admonition", func() {
@@ -48,27 +54,33 @@ multiple
 paragraphs
 ----
 `
-				expected := types.DocumentFragments{
-					types.ListingBlock{
-						Attributes: types.Attributes{
-							types.AttrStyle: types.Note,
-						},
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "multiple",
+				expected := []types.DocumentFragmentGroup{
+					{
+						LineOffset: 1,
+						Content: []interface{}{
+
+							types.ListingBlock{
+								Attributes: types.Attributes{
+									types.AttrStyle: types.Note,
 								},
-							},
-							{},
-							{
-								types.StringElement{
-									Content: "paragraphs",
+								Lines: [][]interface{}{
+									{
+										types.StringElement{
+											Content: "multiple",
+										},
+									},
+									{},
+									{
+										types.StringElement{
+											Content: "paragraphs",
+										},
+									},
 								},
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 	})

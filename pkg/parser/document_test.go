@@ -14,8 +14,8 @@ var _ = Describe("documents", func() {
 
 		It("should parse empty document", func() {
 			source := ``
-			expected := types.DocumentFragments{}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+			expected := []types.DocumentFragmentGroup{}
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("should parse header without empty first line", func() {
@@ -23,28 +23,33 @@ var _ = Describe("documents", func() {
 Garrett D'Amore
 1.0, July 4, 2020
 `
-			expected := types.DocumentFragments{
-				types.Section{
-					Level: 0,
-					Attributes: types.Attributes{
-						"id": "_my_title",
-					},
-					Title: []interface{}{
-						types.StringElement{
-							Content: "My title",
+			expected := []types.DocumentFragmentGroup{
+				{
+					LineOffset: 1,
+					Content: []interface{}{
+						types.Section{
+							Level: 0,
+							Attributes: types.Attributes{
+								"id": "_my_title",
+							},
+							Title: []interface{}{
+								types.StringElement{
+									Content: "My title",
+								},
+							},
+						},
+						types.DocumentAuthor{
+							FullName: "Garrett D'Amore",
+							Email:    "",
+						},
+						types.DocumentRevision{
+							Revnumber: "1.0",
+							Revdate:   "July 4, 2020",
 						},
 					},
 				},
-				types.DocumentAuthor{
-					FullName: "Garrett D'Amore",
-					Email:    "",
-				},
-				types.DocumentRevision{
-					Revnumber: "1.0",
-					Revdate:   "July 4, 2020",
-				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 
 		})
 
@@ -53,29 +58,34 @@ Garrett D'Amore
 = My title
 Garrett D'Amore
 1.0, July 4, 2020`
-			expected := types.DocumentFragments{
-				types.Section{
-					Level: 0,
-					Attributes: types.Attributes{
-						"id": "_my_title",
-					},
-					Title: []interface{}{
-						types.StringElement{
-							Content: "My title",
+			expected := []types.DocumentFragmentGroup{
+				{
+					LineOffset: 1,
+					Content: []interface{}{
+						types.Section{
+							Level: 0,
+							Attributes: types.Attributes{
+								"id": "_my_title",
+							},
+							Title: []interface{}{
+								types.StringElement{
+									Content: "My title",
+								},
+							},
+						},
+						types.DocumentAuthor{
+							FullName: "Garrett D'Amore",
+							Email:    "",
+						},
+						types.DocumentRevision{
+							Revnumber: "1.0",
+							Revdate:   "July 4, 2020",
+							Revremark: "",
 						},
 					},
 				},
-				types.DocumentAuthor{
-					FullName: "Garrett D'Amore",
-					Email:    "",
-				},
-				types.DocumentRevision{
-					Revnumber: "1.0",
-					Revdate:   "July 4, 2020",
-					Revremark: "",
-				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 
 		})
 	})

@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
@@ -66,22 +65,22 @@ import (
 // 	return result
 // }
 
-// // RawSection a document section (when processing file inclusions)
-// // We only care about the level here
-// type RawSection struct {
-// 	Level   int
-// 	Title   string
-// 	RawText string
-// }
+// RawSection a document section (when processing file inclusions)
+// We only care about the level here
+type RawSection struct {
+	Level   int
+	Title   string
+	RawText string
+}
 
-// // NewRawSection returns a new RawSection
-// func NewRawSection(level int, title string) (RawSection, error) {
-// 	// log.Debugf("new rawsection: '%s' (%d)", title, level)
-// 	return RawSection{
-// 		Level: level,
-// 		Title: title,
-// 	}, nil
-// }
+// NewRawSection returns a new RawSection
+func NewRawSection(level int, title string) (RawSection, error) {
+	// log.Debugf("new rawsection: '%s' (%d)", title, level)
+	return RawSection{
+		Level: level,
+		Title: title,
+	}, nil
+}
 
 // var _ Stringer = RawSection{}
 
@@ -190,25 +189,23 @@ var defaultPassthroughBlockSubstitutions = []string{}
 // ----------------------------------------------------------------
 
 // NewDocumentHeader initializes a new Section with level 0 which can have authors and a revision, among other attributes
-func NewDocumentHeader(fragments []interface{}) (DocumentFragments, error) {
-	result := make([]interface{}, 0, len(fragments)) // heuristic capacity
-	for _, fragment := range fragments {
-		switch f := fragment.(type) {
-		case []interface{}:
-			result = append(result, f...)
-		case interface{}:
-			result = append(result, f)
-			// default: nil (and excluded)
-		}
-	}
-	return result, nil
-}
+// func NewDocumentHeader(fragments []interface{}) (DocumentFragments, error) {
+// 	result := make([]interface{}, 0, len(fragments)) // heuristic capacity
+// 	for _, fragment := range fragments {
+// 		switch f := fragment.(type) {
+// 		case []interface{}:
+// 			result = append(result, f...)
+// 		case interface{}:
+// 			result = append(result, f)
+// 			// default: nil (and excluded)
+// 		}
+// 	}
+// 	return result, nil
+// }
 
 // ----------------------------------------------------
 // Document fragments: content parsed line by line
 // ----------------------------------------------------
-
-type DocumentFragments []interface{}
 
 // func NewDocumentFragments(frontmatter, header interface{}, fragments interface{}) (DocumentFragments, error) {
 // 	var result []interface{}
@@ -227,40 +224,53 @@ type DocumentFragments []interface{}
 // 	return result, nil
 // }
 
-// DocumentFragment a fragment of document, read by the scanner
-type DocumentFragment struct {
+// DocumentFragment a set of (very raw) fragments of document, read by the scanner
+type DocumentFragmentGroup struct {
 	LineOffset int
 	Content    []interface{}
 	Error      error
 }
 
-func NewDocumentFragment(lineOffset int, elements ...interface{}) DocumentFragment {
-	return DocumentFragment{
+func NewDocumentFragmentGroup(lineOffset int, elements ...interface{}) DocumentFragmentGroup {
+	return DocumentFragmentGroup{
 		LineOffset: lineOffset,
 		Content:    elements,
 	}
 }
 
-type RawBlock interface {
-	AddLine(l RawLine) RawBlock
-}
-type RawParagraph struct {
-	Attributes Attributes
-	Lines      []RawLine
+// DocumentFragment a single fragment of document
+type DocumentFragment struct {
+	LineOffset int
+	Content    interface{}
+	Error      error
 }
 
-func NewRawParagraph(attributes Attributes) RawParagraph {
-	return RawParagraph{
-		Attributes: attributes,
-		Lines:      []RawLine{},
+func NewDocumentFragment(lineOffset int, element interface{}) DocumentFragment {
+	return DocumentFragment{
+		LineOffset: lineOffset,
+		Content:    element,
 	}
 }
 
-var _ RawBlock = RawParagraph{}
+type RawBlock interface {
+	AddLine(l RawLine)
+}
+type RawParagraph struct {
+	Attributes Attributes
+	Lines      []interface{}
+}
 
-func (p RawParagraph) AddLine(l RawLine) RawBlock {
+func NewRawParagraph(attributes Attributes) *RawParagraph {
+	return &RawParagraph{
+		Attributes: attributes,
+		Lines:      []interface{}{},
+	}
+}
+
+var _ RawBlock = &RawParagraph{}
+
+func (p *RawParagraph) AddLine(l RawLine) {
 	p.Lines = append(p.Lines, l)
-	return p
 }
 
 type RawDelimitedBlock struct {
@@ -269,19 +279,18 @@ type RawDelimitedBlock struct {
 	Lines      []RawLine
 }
 
-func NewRawDelimitedBlock(kind DelimiterKind, attributes Attributes) RawDelimitedBlock {
-	return RawDelimitedBlock{
+func NewRawDelimitedBlock(kind DelimiterKind, attributes Attributes) *RawDelimitedBlock {
+	return &RawDelimitedBlock{
 		Attributes: attributes,
 		Kind:       kind,
 		Lines:      []RawLine{},
 	}
 }
 
-var _ RawBlock = RawDelimitedBlock{}
+var _ RawBlock = &RawDelimitedBlock{}
 
-func (b RawDelimitedBlock) AddLine(l RawLine) RawBlock {
+func (b *RawDelimitedBlock) AddLine(l RawLine) {
 	b.Lines = append(b.Lines, l)
-	return b
 }
 
 // ------------------------------------------
@@ -1394,7 +1403,7 @@ const DocumentAttrHardBreaks = "hardbreaks"
 
 // NewParagraph initializes a new `Paragraph`
 func NewParagraph(elements []interface{}, attributes interface{}) (Paragraph, error) {
-	// log.Debugf("new paragraph with attributes: '%v'", attributes)
+	log.Debugf("new paragraph with attributes: '%v'", attributes)
 	// l, err := toLines(elements)
 	// if err != nil {
 	// 	return Paragraph{}, errors.Wrapf(err, "failed to initialize a Paragraph")
@@ -2938,8 +2947,8 @@ func (p InlinePassthrough) RawText() (string, error) {
 
 // InlineLink the structure for the external links
 type InlineLink struct {
-	Location   Location
 	Attributes Attributes
+	Location   Location
 }
 
 // NewInlineLink initializes a new inline `InlineLink`
@@ -3515,9 +3524,8 @@ func restoreAttributes(attrs Attributes, placeholders map[string]interface{}) At
 			attrs[key] = restoreElements(value, placeholders)
 		}
 	}
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debug("restored placeholders in")
-		spew.Fdump(log.StandardLogger().Out, attrs)
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debugf("restored placeholders in\n%s", spew.Sdump(attrs))
+	// }
 	return attrs
 }

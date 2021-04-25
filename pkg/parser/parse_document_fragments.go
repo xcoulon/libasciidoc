@@ -10,14 +10,14 @@ import (
 
 // ParseDocumentFragments parses a document's content and applies the preprocessing directives (file inclusions)
 // Returns the document fragments (to be assembled) or an error
-func ParseDocumentFragments(r io.Reader, done <-chan interface{}, options ...Option) <-chan types.DocumentFragment {
+func ParseDocumentFragments(r io.Reader, done <-chan interface{}, options ...Option) <-chan types.DocumentFragmentGroup {
 	return parseDocumentFragments(r, done, options...)
 }
 
 // parseDocumentFragments reads the given reader's content line by line, then parses each line using the appropriate
 // grammar rule (depending on the context)
-func parseDocumentFragments(source io.Reader, done <-chan interface{}, options ...Option) <-chan types.DocumentFragment {
-	fragmentStream := make(chan types.DocumentFragment)
+func parseDocumentFragments(source io.Reader, done <-chan interface{}, options ...Option) <-chan types.DocumentFragmentGroup {
+	fragmentStream := make(chan types.DocumentFragmentGroup)
 	// errStream := make(chan error)
 	go func() {
 		defer close(fragmentStream)
@@ -28,20 +28,18 @@ func parseDocumentFragments(source io.Reader, done <-chan interface{}, options .
 			case <-done:
 				log.Info("exiting the document parsing routine")
 				return // stops/exits the go routine
-			case fragmentStream <- scanner.Fragment():
+			case fragmentStream <- scanner.Fragments():
 			}
 		}
-		// if err := scanner.Err(); err != nil {
-		// 	errStream <- err
-		// }
+		// log.WithField("stage", "fragment_parsing").Debug("end of fragment parsing")
 	}()
 	// return fragmentStream, errStream
 	return fragmentStream
 	// // front-matter
 	// frontmatterFragments, done := parseDocumentFrontMatter(ctx, scanner, options...)
 	// fragments = append(fragments, frontmatterFragments...)
-	// if log.IsLevelEnabled(log.DebugLevel) {
-	// 	log.Debug("front-matter:")
+	// if log.IsLevelEnabled(log.WithField("stage", "fragment_parsing").DebugLevel) {
+	// 	log.WithField("stage", "fragment_parsing").Debug("front-matter:")
 	// 	spew.Fdump(log.StandardLogger().Out, fragments)
 	// }
 	// if done {
@@ -50,8 +48,8 @@ func parseDocumentFragments(source io.Reader, done <-chan interface{}, options .
 	// // document header
 	// headerFragments, done := parseDocumentHeader(ctx, scanner, options...)
 	// fragments = append(fragments, headerFragments...)
-	// if log.IsLevelEnabled(log.DebugLevel) {
-	// 	log.Debug("document header:")
+	// if log.IsLevelEnabled(log.WithField("stage", "fragment_parsing").DebugLevel) {
+	// 	log.WithField("stage", "fragment_parsing").Debug("document header:")
 	// 	spew.Fdump(log.StandardLogger().Out, fragments)
 	// }
 	// if done {
@@ -73,7 +71,7 @@ type DocumentFragmentScanner struct {
 	scanner    *bufio.Scanner
 	lineNumber int
 	err        error // sticky error
-	fragment   types.DocumentFragment
+	fragments  types.DocumentFragmentGroup
 }
 
 func NewDocumentFragmentScanner(source io.Reader, options ...Option) *DocumentFragmentScanner {
@@ -93,7 +91,7 @@ func (s *DocumentFragmentScanner) Scan() bool {
 		return false
 	}
 	elements := []interface{}{}
-	s.fragment = types.DocumentFragment{
+	s.fragments = types.DocumentFragmentGroup{
 		LineOffset: s.lineNumber + 1, // next fragment will begin at the next line read by the underlying scanner
 	}
 	blockDelimiters := newStack()
@@ -102,10 +100,14 @@ scan:
 		s.lineNumber++
 		element, err := Parse("", s.scanner.Bytes(), s.options...)
 		if err != nil {
-			log.WithError(err).Error("failed to parse the content")
-			s.err = err // will cause next call to `Scan()` to return false
-			s.fragment.Error = err
-			return true
+			// log.WithError(err).Error("failed to parse the content")
+			// s.err = err // will cause next call to `Scan()` to return false
+			// s.fragments.Error = err
+			// return true
+
+			// assume that the content is just a RawLine
+			element = types.RawLine(s.scanner.Text())
+
 		}
 		switch element := element.(type) {
 		case types.BlankLine:
@@ -129,11 +131,11 @@ scan:
 	if err := s.scanner.Err(); err != nil {
 		log.WithError(err).Error("failed to read the content")
 		s.err = err // will cause next call to `Scan()` to return false
-		s.fragment.Error = err
+		s.fragments.Error = err
 		return true // this fragment needs to be processed upstream
 	}
 	if len(elements) > 0 {
-		s.fragment.Content = elements
+		s.fragments.Content = elements
 		return true // also return the underlying scanner's error (if something wrong happened)
 	}
 	// reached the end of source
@@ -149,17 +151,17 @@ scan:
 // 	return s.scanner.Err()
 // }
 
-// Fragment returns document fragment that was read by the last call to `Next`.
+// Fragments returns document fragments that were read by the last call to `Next`.
 // Multiple calls will return the same value, until `Next` is called again
-func (s *DocumentFragmentScanner) Fragment() types.DocumentFragment {
-	return s.fragment
+func (s *DocumentFragmentScanner) Fragments() types.DocumentFragmentGroup {
+	return s.fragments
 }
 
 // // parseDocumentFrontMatter attempts to read the front-matter if it exists.
 // // scans line by line, exit after the front-matter delimiter (if applicable)
 // // return the document fragments along with a bool flag to indicate if the scanner reached the end of the document
 // func parseDocumentFrontMatter(ctx *parserContext, scanner *bufio.Scanner, options ...Option) (types.DocumentFragments, bool) {
-// 	log.Debug("parsing front-matter...")
+// 	log.WithField("stage", "fragment_parsing").Debug("parsing front-matter...")
 // 	fragments := make([]interface{}, 0)
 // 	options = append(options, Entrypoint("FrontMatterFragment"))
 // 	withinBlock := false
@@ -191,7 +193,7 @@ func (s *DocumentFragmentScanner) Fragment() types.DocumentFragment {
 // // scans line by line, exit after a blankline is found (if applicable)
 // // return the document fragments along with a bool flag to indicate if the scanner reached the end of the document
 // func parseDocumentHeader(ctx *parserContext, scanner *bufio.Scanner, options ...Option) (types.DocumentFragments, bool) {
-// 	log.Debug("parsing document header...")
+// 	log.WithField("stage", "fragment_parsing").Debug("parsing document header...")
 // 	fragments := make([]interface{}, 0)
 // 	// check if there is a title
 // 	options = append(options, Entrypoint("DocumentTitle"))
@@ -232,7 +234,7 @@ func (s *DocumentFragmentScanner) Fragment() types.DocumentFragment {
 
 // // parseDocumentBody attempts to read the document body if it exists.
 // func parseDocumentBody(ctx *parserContext, scanner *bufio.Scanner, options ...Option) (types.DocumentFragments, error) {
-// 	log.Debug("parsing document body...")
+// 	log.WithField("stage", "fragment_parsing").Debug("parsing document body...")
 // 	fragments := make([]interface{}, 0)
 // 	options = append(options, Entrypoint("DocumentBodyFragment"))
 // 	fragment, err := doParseDocumentBody(ctx, scanner.Bytes(), options...)
@@ -284,9 +286,9 @@ func (s *DocumentFragmentScanner) Fragment() types.DocumentFragment {
 // 				ctx.levelOffsets = []levelOffset{relativeOffset(fragment.Level - oldLevel)}
 // 			}
 // 		}
-// 		if log.IsLevelEnabled(log.DebugLevel) {
-// 			log.Debugf("applied level offset on section: level %d -> %d", oldLevel, fragment.Level)
-// 			// log.Debug("level offsets:")
+// 		if log.IsLevelEnabled(log.WithField("stage", "fragment_parsing").DebugLevel) {
+// 			log.WithField("stage", "fragment_parsing").Debugf("applied level offset on section: level %d -> %d", oldLevel, fragment.Level)
+// 			// log.WithField("stage", "fragment_parsing").Debug("level offsets:")
 // 			// spew.Fdump(log.StandardLogger().Out, ctx.levelOffsets)
 // 		}
 // 		return fragment, nil
@@ -348,9 +350,9 @@ func (s *DocumentFragmentScanner) Fragment() types.DocumentFragment {
 // 					ctx.levelOffsets = []levelOffset{relativeOffset(fragment.Level - oldLevel)}
 // 				}
 // 			}
-// 			if log.IsLevelEnabled(log.DebugLevel) {
-// 				log.Debugf("applied level offset on section: level %d -> %d", oldLevel, fragment.Level)
-// 				// log.Debug("level offsets:")
+// 			if log.IsLevelEnabled(log.WithField("stage", "fragment_parsing").DebugLevel) {
+// 				log.WithField("stage", "fragment_parsing").Debugf("applied level offset on section: level %d -> %d", oldLevel, fragment.Level)
+// 				// log.WithField("stage", "fragment_parsing").Debug("level offsets:")
 // 				// spew.Fdump(log.StandardLogger().Out, ctx.levelOffsets)
 // 			}
 // 			result = append(result, fragment)
@@ -367,8 +369,8 @@ func (s *DocumentFragmentScanner) Fragment() types.DocumentFragment {
 // 			result = append(result, fragment)
 // 		}
 // 	}
-// 	// if log.IsLevelEnabled(log.DebugLevel) {
-// 	// 	log.Debug("parsed file to include")
+// 	// if log.IsLevelEnabled(log.WithField("stage", "fragment_parsing").DebugLevel) {
+// 	// 	log.WithField("stage", "fragment_parsing").Debug("parsed file to include")
 // 	// 	spew.Fdump(log.StandardLogger().Out, result)
 // 	// }
 // 	return result, nil
