@@ -46,7 +46,7 @@ func (r *sgmlRenderer) renderQuoteBlock(ctx *renderer.Context, b types.QuoteBloc
 	return result.String(), err
 }
 
-func (r *sgmlRenderer) renderQuoteParagraph(ctx *renderer.Context, p types.Paragraph) (string, error) {
+func (r *sgmlRenderer) renderQuoteParagraph(ctx *renderer.Context, p *types.Paragraph) (string, error) {
 	log.Debug("rendering quote paragraph...")
 	result := &strings.Builder{}
 

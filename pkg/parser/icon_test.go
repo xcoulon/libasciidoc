@@ -309,7 +309,7 @@ item 2:: two`
 									types.StringElement{
 										Content: "an ",
 									},
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteItalic,
 										Elements: []interface{}{
 											types.StringElement{Content: "italicized "},
@@ -331,7 +331,7 @@ item 2:: two`
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteMarked,
 										Elements: []interface{}{
 											types.StringElement{Content: "marked "},
@@ -354,7 +354,7 @@ item 2:: two`
 							Lines: [][]interface{}{
 								{
 									types.StringElement{Content: "in "},
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.StringElement{Content: "bold "},
@@ -377,7 +377,7 @@ item 2:: two`
 							Lines: [][]interface{}{
 								{
 									types.StringElement{Content: "in "},
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteMonospace,
 										Elements: []interface{}{
 											types.StringElement{Content: "monospace "},

@@ -26,7 +26,7 @@ var _ = Describe("comments", func() {
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("single line comment at end of line", func() {
@@ -48,7 +48,7 @@ var _ = Describe("comments", func() {
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("single line comment within a paragraph", func() {
@@ -82,7 +82,7 @@ another line // not a comment`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			Context("invalid", func() {
@@ -110,7 +110,7 @@ another line // not a comment`
 							},
 						},
 					}
-					result, err := ParseDocumentFragments(source)
+					result, err := ParseDocumentFragmentGroups(source)
 					Expect(err).NotTo(HaveOccurred())
 					Expect(result).To(MatchDocumentFragmentGroups(expected))
 				})
@@ -138,7 +138,7 @@ another line // not a comment`
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("single line comment within a paragraph with tab", func() {
@@ -172,7 +172,7 @@ another line`
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 				})
 			})
 		})
@@ -206,7 +206,7 @@ with multiple lines
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("comment block with paragraphs around", func() {
@@ -258,7 +258,7 @@ a second paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 	})

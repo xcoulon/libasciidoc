@@ -38,7 +38,7 @@ author: Xavier
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("with simple attributes and blanklines", func() {
@@ -71,7 +71,7 @@ author: Xavier
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("empty front-matter", func() {
@@ -89,7 +89,7 @@ author: Xavier
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("no front-matter", func() {
@@ -103,7 +103,7 @@ author: Xavier
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 
@@ -142,7 +142,7 @@ author: Xavier
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 	})

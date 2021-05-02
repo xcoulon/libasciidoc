@@ -374,7 +374,7 @@ and <more text> on the +
 										Content: "a link to ",
 									},
 									types.InlineLink{
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -415,7 +415,7 @@ and <more text> on the +
 									types.LineBreak{},
 								},
 								{
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.StringElement{
@@ -427,7 +427,7 @@ and <more text> on the +
 										Content: " lines with a link to ",
 									},
 									types.InlineLink{
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -498,7 +498,7 @@ and <more text> on the +
 										Content: "a link to ",
 									},
 									types.InlineLink{
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -517,7 +517,7 @@ and <more text> on the +
 									},
 								},
 								{
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.StringElement{
@@ -586,7 +586,7 @@ and <more text> on the +
 										Content: "  a link to ",
 									},
 									types.InlineLink{
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -608,7 +608,7 @@ and <more text> on the +
 									types.StringElement{
 										Content: "  ",
 									},
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.StringElement{
@@ -672,7 +672,7 @@ and <more text> on the +
 										Content: "a link to ",
 									},
 									types.InlineLink{
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -691,7 +691,7 @@ and <more text> on the +
 									},
 								},
 								{
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.StringElement{

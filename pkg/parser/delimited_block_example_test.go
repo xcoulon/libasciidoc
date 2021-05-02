@@ -31,7 +31,7 @@ some *example* content
 												types.StringElement{
 													Content: "some ",
 												},
-												types.QuotedText{
+												&types.QuotedText{
 													Kind: types.SingleQuoteBold,
 													Elements: []interface{}{
 														types.StringElement{
@@ -51,7 +51,7 @@ some *example* content
 					},
 				}
 
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("with single line starting with a dot", func() {
@@ -73,7 +73,7 @@ some *example* content
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("with rich lines", func() {
@@ -100,7 +100,7 @@ with _italic content_
 												types.StringElement{
 													Content: "some listing ",
 												},
-												types.QuotedText{
+												&types.QuotedText{
 													Kind: types.SingleQuoteBold,
 													Elements: []interface{}{
 														types.StringElement{
@@ -113,7 +113,7 @@ with _italic content_
 												types.StringElement{
 													Content: "with ",
 												},
-												types.QuotedText{
+												&types.QuotedText{
 													Kind: types.SingleQuoteItalic,
 													Elements: []interface{}{
 														types.StringElement{
@@ -146,7 +146,7 @@ with _italic content_
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("with unclosed delimiter", func() {
@@ -173,7 +173,7 @@ End of doc here`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("with title", func() {
@@ -205,7 +205,7 @@ foo
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("with caption", func() {
@@ -237,7 +237,7 @@ foo
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("example block starting delimiter only", func() {
@@ -251,7 +251,7 @@ foo
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 
@@ -274,7 +274,7 @@ some *example* content`
 										types.StringElement{
 											Content: "some ",
 										},
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
 												types.StringElement{
@@ -291,7 +291,7 @@ some *example* content`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 	})
@@ -314,7 +314,7 @@ some *example* content
 											types.StringElement{
 												Content: "some ",
 											},
-											types.QuotedText{
+											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
 													types.StringElement{
@@ -375,7 +375,7 @@ with *bold content*
 											types.StringElement{
 												Content: "with ",
 											},
-											types.QuotedText{
+											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
 													types.StringElement{
@@ -494,7 +494,7 @@ some *example* content`
 									types.StringElement{
 										Content: "some ",
 									},
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.StringElement{

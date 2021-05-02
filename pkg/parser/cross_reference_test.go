@@ -125,7 +125,7 @@ with some content linked to <<thetitle,a label to the title>>!`
 										Content: "some content linked to ",
 									},
 									types.ExternalCrossReference{
-										Location: types.Location{
+										Location: &types.Location{
 											Path: []interface{}{
 												types.StringElement{
 													Content: "another-doc.adoc",
@@ -133,7 +133,7 @@ with some content linked to <<thetitle,a label to the title>>!`
 											},
 										},
 										Label: []interface{}{
-											types.QuotedText{
+											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
 													types.StringElement{
@@ -165,7 +165,7 @@ with some content linked to <<thetitle,a label to the title>>!`
 										Content: "some content linked to ",
 									},
 									types.ExternalCrossReference{
-										Location: types.Location{
+										Location: &types.Location{
 											Path: []interface{}{
 												types.StringElement{
 													Content: "{foo}.adoc", // attribute substitution failed for `{foo}`
@@ -201,7 +201,7 @@ some content linked to xref:{foo}[another_doc()]!`
 									Content: "some content linked to ",
 								},
 									types.ExternalCrossReference{
-										Location: types.Location{
+										Location: &types.Location{
 											Path: []interface{}{
 												types.StringElement{
 													Content: "another-doc.adoc",

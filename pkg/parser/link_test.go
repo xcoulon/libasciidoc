@@ -19,16 +19,14 @@ var _ = Describe("links", func() {
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "example.com",
-												},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "https://",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "example.com",
 											},
 										},
 									},
@@ -45,16 +43,14 @@ var _ = Describe("links", func() {
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "example.com",
-												},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "https://",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "example.com",
 											},
 										},
 									},
@@ -71,25 +67,23 @@ var _ = Describe("links", func() {
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "mailto:",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "foo@bar",
-												},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "mailto:",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "foo@bar",
 											},
 										},
-										Attributes: types.Attributes{
-											types.AttrInlineLinkText: "the foo@bar email",
-										},
 									},
-									types.StringElement{
-										Content: ".",
+									Attributes: types.Attributes{
+										types.AttrInlineLinkText: "the foo@bar email",
 									},
+								},
+								types.StringElement{
+									Content: ".",
 								},
 							},
 						},
@@ -103,22 +97,20 @@ var _ = Describe("links", func() {
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "mailto:",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "foo@bar",
-												},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "mailto:",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "foo@bar",
 											},
 										},
-										Attributes: types.Attributes{
-											types.AttrInlineLinkText: "the foo@bar email",
-											"foo":                    "bar",
-										},
+									},
+									Attributes: types.Attributes{
+										types.AttrInlineLinkText: "the foo@bar email",
+										"foo":                    "bar",
 									},
 								},
 							},
@@ -136,31 +128,22 @@ next lines`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a ",
-									},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "http://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "website.com",
-												},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "a ",
+								},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "http://",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "website.com",
 											},
 										},
 									},
 								},
-								{
-									types.StringElement{
-										Content: "and more text on the",
-									},
-								},
-								{
-									types.StringElement{
-										Content: "next lines",
-									},
+								types.StringElement{
+									Content: "\nand more text on the\nnext lines",
 								},
 							},
 						},
@@ -177,31 +160,22 @@ next lines`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a ",
-									},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "http://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "website.com",
-												},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "a ",
+								},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "http://",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "website.com",
 											},
 										},
 									},
 								},
-								{
-									types.StringElement{
-										Content: "and more text on the",
-									},
-								},
-								{
-									types.StringElement{
-										Content: "next lines",
-									},
+								types.StringElement{
+									Content: "\nand more text on the\nnext lines",
 								},
 							},
 						},
@@ -215,21 +189,19 @@ next lines`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "example.com",
-												},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "https://",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "example.com",
 											},
 										},
 									},
-									types.StringElement{Content: " and more text"},
 								},
+								types.StringElement{Content: " and more text"},
 							},
 						},
 					},
@@ -244,23 +216,21 @@ next lines`
 					expected := types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "a link to "},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "http://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "website.com",
-													},
+								Elements: []interface{}{
+									types.StringElement{Content: "a link to "},
+									&types.InlineLink{
+										Location: &types.Location{
+											Scheme: "http://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "website.com",
 												},
 											},
-											Attributes: types.Attributes{
-												types.AttrInlineLinkText: "A",
-												types.AttrPositional2:    "B",
-												types.AttrPositional3:    "and C",
-											},
+										},
+										Attributes: types.Attributes{
+											types.AttrInlineLinkText: "A",
+											types.AttrPositional2:    "B",
+											types.AttrPositional3:    "and C",
 										},
 									},
 								},
@@ -275,21 +245,19 @@ next lines`
 					expected := types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "a link to "},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "http://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "website.com",
-													},
+								Elements: []interface{}{
+									types.StringElement{Content: "a link to "},
+									&types.InlineLink{
+										Location: &types.Location{
+											Scheme: "http://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "website.com",
 												},
 											},
-											Attributes: types.Attributes{
-												types.AttrInlineLinkText: "A, B, and C",
-											},
+										},
+										Attributes: types.Attributes{
+											types.AttrInlineLinkText: "A, B, and C",
 										},
 									},
 								},
@@ -304,22 +272,20 @@ next lines`
 					expected := types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "a link to "},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "http://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "website.com",
-													},
+								Elements: []interface{}{
+									types.StringElement{Content: "a link to "},
+									&types.InlineLink{
+										Location: &types.Location{
+											Scheme: "http://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "website.com",
 												},
 											},
-											Attributes: types.Attributes{
-												types.AttrInlineLinkText: "A, B, and C",
-												types.AttrRoles:          []interface{}{"foo"},
-											},
+										},
+										Attributes: types.Attributes{
+											types.AttrInlineLinkText: "A, B, and C",
+											types.AttrRoles:          []interface{}{"foo"},
 										},
 									},
 								},
@@ -334,24 +300,22 @@ next lines`
 					expected := types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "a link to "},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "http://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "website.com",
-													},
+								Elements: []interface{}{
+									types.StringElement{Content: "a link to "},
+									&types.InlineLink{
+										Location: &types.Location{
+											Scheme: "http://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "website.com",
 												},
 											},
-											Attributes: types.Attributes{
-												types.AttrInlineLinkText: "A",
-												types.AttrPositional2:    "B",
-												types.AttrPositional3:    "and C",
-												types.AttrRoles:          []interface{}{"foo"},
-											},
+										},
+										Attributes: types.Attributes{
+											types.AttrInlineLinkText: "A",
+											types.AttrPositional2:    "B",
+											types.AttrPositional3:    "and C",
+											types.AttrRoles:          []interface{}{"foo"},
 										},
 									},
 								},
@@ -367,16 +331,14 @@ next lines`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "foo*_.com",
-												},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "https://",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "foo*_.com",
 											},
 										},
 									},
@@ -388,55 +350,55 @@ next lines`
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("with quoted text", func() {
+			It("with quoted text without attributes", func() {
 				source := "a link to https://example.com[_a_ *b* `c`]"
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Attributes: types.Attributes{
-											types.AttrInlineLinkText: []interface{}{
-												types.QuotedText{
-													Kind: types.SingleQuoteItalic,
-													Elements: []interface{}{
-														types.StringElement{
-															Content: "a",
-														},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "a link to ",
+								},
+								&types.InlineLink{
+									Attributes: types.Attributes{
+										types.AttrInlineLinkText: []interface{}{
+											&types.QuotedText{
+												Kind: types.SingleQuoteItalic,
+												Elements: []interface{}{
+													types.StringElement{
+														Content: "a",
 													},
 												},
-												types.StringElement{
-													Content: " ",
-												},
-												types.QuotedText{
-													Kind: types.SingleQuoteBold,
-													Elements: []interface{}{
-														types.StringElement{
-															Content: "b",
-														},
+											},
+											types.StringElement{
+												Content: " ",
+											},
+											&types.QuotedText{
+												Kind: types.SingleQuoteBold,
+												Elements: []interface{}{
+													types.StringElement{
+														Content: "b",
 													},
 												},
-												types.StringElement{
-													Content: " ",
-												},
-												types.QuotedText{
-													Kind: types.SingleQuoteMonospace,
-													Elements: []interface{}{
-														types.StringElement{
-															Content: "c",
-														},
+											},
+											types.StringElement{
+												Content: " ",
+											},
+											&types.QuotedText{
+												Kind: types.SingleQuoteMonospace,
+												Elements: []interface{}{
+													types.StringElement{
+														Content: "c",
 													},
 												},
 											},
 										},
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "example.com",
-												},
+									},
+									Location: &types.Location{
+										Scheme: "https://",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "example.com",
 											},
 										},
 									},
@@ -453,31 +415,29 @@ next lines`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Attributes: types.Attributes{
-											types.AttrInlineLinkText: []interface{}{
-												types.QuotedText{
-													Kind: types.SingleQuoteItalic,
-													Attributes: types.Attributes{
-														types.AttrRoles: []interface{}{"myrole1"},
-													},
-													Elements: []interface{}{
-														types.StringElement{
-															Content: "a",
-														},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.InlineLink{
+									Attributes: types.Attributes{
+										types.AttrInlineLinkText: []interface{}{
+											&types.QuotedText{
+												Kind: types.SingleQuoteItalic,
+												Attributes: types.Attributes{
+													types.AttrRoles: []interface{}{"myrole1"},
+												},
+												Elements: []interface{}{
+													types.StringElement{
+														Content: "a",
 													},
 												},
 											},
 										},
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "example.com",
-												},
+									},
+									Location: &types.Location{
+										Scheme: "https://",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "example.com",
 											},
 										},
 									},
@@ -494,59 +454,57 @@ next lines`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Attributes: types.Attributes{
-											types.AttrInlineLinkText: []interface{}{
-												types.QuotedText{
-													Kind: types.SingleQuoteItalic,
-													Attributes: types.Attributes{
-														types.AttrRoles: []interface{}{"myrole1"},
-													},
-													Elements: []interface{}{
-														types.StringElement{
-															Content: "a",
-														},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.InlineLink{
+									Attributes: types.Attributes{
+										types.AttrInlineLinkText: []interface{}{
+											&types.QuotedText{
+												Kind: types.SingleQuoteItalic,
+												Attributes: types.Attributes{
+													types.AttrRoles: []interface{}{"myrole1"},
+												},
+												Elements: []interface{}{
+													types.StringElement{
+														Content: "a",
 													},
 												},
-												types.StringElement{
-													Content: " ",
+											},
+											types.StringElement{
+												Content: " ",
+											},
+											&types.QuotedText{
+												Kind: types.SingleQuoteBold,
+												Attributes: types.Attributes{
+													types.AttrRoles: []interface{}{"myrole2"},
 												},
-												types.QuotedText{
-													Kind: types.SingleQuoteBold,
-													Attributes: types.Attributes{
-														types.AttrRoles: []interface{}{"myrole2"},
-													},
-													Elements: []interface{}{
-														types.StringElement{
-															Content: "b",
-														},
+												Elements: []interface{}{
+													types.StringElement{
+														Content: "b",
 													},
 												},
-												types.StringElement{
-													Content: " ",
+											},
+											types.StringElement{
+												Content: " ",
+											},
+											&types.QuotedText{
+												Kind: types.SingleQuoteMonospace,
+												Attributes: types.Attributes{
+													types.AttrRoles: []interface{}{"myrole3"},
 												},
-												types.QuotedText{
-													Kind: types.SingleQuoteMonospace,
-													Attributes: types.Attributes{
-														types.AttrRoles: []interface{}{"myrole3"},
-													},
-													Elements: []interface{}{
-														types.StringElement{
-															Content: "c",
-														},
+												Elements: []interface{}{
+													types.StringElement{
+														Content: "c",
 													},
 												},
 											},
 										},
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "example.com",
-												},
+									},
+									Location: &types.Location{
+										Scheme: "https://",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "example.com",
 											},
 										},
 									},
@@ -564,19 +522,17 @@ next lines`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.QuotedText{
-										Kind: types.SingleQuoteBold,
-										Elements: []interface{}{
-											types.InlineLink{
-												Location: types.Location{
-													Scheme: "https://",
-													Path: []interface{}{
-														types.StringElement{
-															Content: "example.com",
-														},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.QuotedText{
+									Kind: types.SingleQuoteBold,
+									Elements: []interface{}{
+										&types.InlineLink{
+											Location: &types.Location{
+												Scheme: "https://",
+												Path: []interface{}{
+													types.StringElement{
+														Content: "example.com",
 													},
 												},
 											},
@@ -595,16 +551,14 @@ next lines`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "foo*_.com",
-												},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "https://",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "foo*_.com",
 											},
 										},
 									},
@@ -622,19 +576,17 @@ next lines`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.QuotedText{
-										Kind: types.SingleQuoteBold,
-										Elements: []interface{}{
-											types.InlineLink{
-												Location: types.Location{
-													Scheme: "https://",
-													Path: []interface{}{
-														types.StringElement{
-															Content: "example.com",
-														},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.QuotedText{
+									Kind: types.SingleQuoteBold,
+									Elements: []interface{}{
+										&types.InlineLink{
+											Location: &types.Location{
+												Scheme: "https://",
+												Path: []interface{}{
+													types.StringElement{
+														Content: "example.com",
 													},
 												},
 											},
@@ -654,19 +606,17 @@ next lines`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.QuotedText{
-										Kind: types.SingleQuoteItalic,
-										Elements: []interface{}{
-											types.InlineLink{
-												Location: types.Location{
-													Scheme: "https://",
-													Path: []interface{}{
-														types.StringElement{
-															Content: "example.com",
-														},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.QuotedText{
+									Kind: types.SingleQuoteItalic,
+									Elements: []interface{}{
+										&types.InlineLink{
+											Location: &types.Location{
+												Scheme: "https://",
+												Path: []interface{}{
+													types.StringElement{
+														Content: "example.com",
 													},
 												},
 											},
@@ -683,8 +633,7 @@ next lines`
 			Context("with document attribute substitutions", func() {
 
 				It("with a document attribute substitution for the whole URL", func() {
-					source := `
-:url: https://example.com
+					source := `:url: https://example.com
 :url: https://foo2.bar
 	
 a link to {url}`
@@ -694,19 +643,25 @@ a link to {url}`
 							"url": "https://foo2.bar", // overridden by second declaration
 						},
 						Elements: []interface{}{
+							types.AttributeDeclaration{
+								Name:  "url",
+								Value: "https://example.com",
+							},
+							types.AttributeDeclaration{
+								Name:  "url",
+								Value: "https://foo2.bar",
+							},
 							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "a link to ",
-										},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "foo2.bar",
-													},
+								Elements: []interface{}{
+									types.StringElement{
+										Content: "a link to ",
+									},
+									&types.InlineLink{
+										Location: &types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "foo2.bar",
 												},
 											},
 										},
@@ -719,8 +674,7 @@ a link to {url}`
 				})
 
 				It("with two document attribute substitutions only", func() {
-					source := `
-:scheme: https
+					source := `:scheme: https
 :path: example.com
 	
 a link to {scheme}://{path} and https://foo.com`
@@ -731,28 +685,34 @@ a link to {scheme}://{path} and https://foo.com`
 							"path":   "example.com",
 						},
 						Elements: []interface{}{
+							types.AttributeDeclaration{
+								Name:  "scheme",
+								Value: "https",
+							},
+							types.AttributeDeclaration{
+								Name:  "path",
+								Value: "example.com",
+							},
 							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "a link to "},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "example.com",
-													},
+								Elements: []interface{}{
+									types.StringElement{Content: "a link to "},
+									&types.InlineLink{
+										Location: &types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "example.com",
 												},
 											},
 										},
-										types.StringElement{Content: " and "},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "foo.com",
-													},
+									},
+									types.StringElement{Content: " and "},
+									&types.InlineLink{
+										Location: &types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "foo.com",
 												},
 											},
 										},
@@ -765,8 +725,7 @@ a link to {scheme}://{path} and https://foo.com`
 				})
 
 				It("with two document attribute substitutions in bold text", func() {
-					source := `
-:scheme: https
+					source := `:scheme: https
 :path: example.com
 	
 a link to *{scheme}://{path}[] and https://foo.com[]*`
@@ -777,33 +736,41 @@ a link to *{scheme}://{path}[] and https://foo.com[]*`
 							"path":   "example.com",
 						},
 						Elements: []interface{}{
+							types.AttributeDeclaration{
+								Name:  "scheme",
+								Value: "https",
+							},
+							types.AttributeDeclaration{
+								Name:  "path",
+								Value: "example.com",
+							},
 							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "a link to "},
-										types.QuotedText{
-											Kind: types.SingleQuoteBold,
-											Elements: []interface{}{
-												types.InlineLink{
-													Location: types.Location{
-														Scheme: "https://",
-														Path: []interface{}{
-															types.StringElement{
-																Content: "example.com",
-															},
+								Elements: []interface{}{
+									types.StringElement{
+										Content: "a link to ",
+									},
+									&types.QuotedText{
+										Kind: types.SingleQuoteBold,
+										Elements: []interface{}{
+											&types.InlineLink{
+												Location: &types.Location{
+													Scheme: "https://",
+													Path: []interface{}{
+														types.StringElement{
+															Content: "example.com",
 														},
 													},
 												},
-												types.StringElement{
-													Content: " and ",
-												},
-												types.InlineLink{
-													Location: types.Location{
-														Scheme: "https://",
-														Path: []interface{}{
-															types.StringElement{
-																Content: "foo.com",
-															},
+											},
+											types.StringElement{
+												Content: " and ",
+											},
+											&types.InlineLink{
+												Location: &types.Location{
+													Scheme: "https://",
+													Path: []interface{}{
+														types.StringElement{
+															Content: "foo.com",
 														},
 													},
 												},
@@ -818,8 +785,7 @@ a link to *{scheme}://{path}[] and https://foo.com[]*`
 				})
 
 				It("with two document attribute substitutions and a reset", func() {
-					source := `
-:scheme: https
+					source := `:scheme: https
 :path: example.com
 	
 :!path:
@@ -833,27 +799,25 @@ a link to {scheme}://{path} and https://foo.com`
 						},
 						Elements: []interface{}{
 							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "a link to "},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "{path}",
-													},
+								Elements: []interface{}{
+									types.StringElement{Content: "a link to "},
+									&types.InlineLink{
+										Location: &types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "{path}",
 												},
 											},
 										},
-										types.StringElement{Content: " and "},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "foo.com",
-													},
+									},
+									types.StringElement{Content: " and "},
+									&types.InlineLink{
+										Location: &types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "foo.com",
 												},
 											},
 										},
@@ -872,8 +836,8 @@ a link to {scheme}://{path} and https://foo.com`
 
 					title := []interface{}{
 						types.StringElement{Content: "a title to "},
-						types.InlineLink{
-							Location: types.Location{
+						&types.InlineLink{
+							Location: &types.Location{
 								Scheme: "https://",
 								Path: []interface{}{
 									types.StringElement{
@@ -883,8 +847,8 @@ a link to {scheme}://{path} and https://foo.com`
 							},
 						},
 						types.StringElement{Content: " and "},
-						types.InlineLink{
-							Location: types.Location{
+						&types.InlineLink{
+							Location: &types.Location{
 								Scheme: "https://",
 								Path: []interface{}{
 									types.StringElement{
@@ -924,8 +888,8 @@ a link to {scheme}://{path} and https://foo.com`
 
 					title := []interface{}{
 						types.StringElement{Content: "a title to "},
-						types.InlineLink{
-							Location: types.Location{
+						&types.InlineLink{
+							Location: &types.Location{
 								Scheme: "https://",
 								Path: []interface{}{
 									types.StringElement{
@@ -935,8 +899,8 @@ a link to {scheme}://{path} and https://foo.com`
 							},
 						},
 						types.StringElement{Content: " and "},
-						types.InlineLink{
-							Location: types.Location{
+						&types.InlineLink{
+							Location: &types.Location{
 								Scheme: "https://",
 								Path: []interface{}{
 									types.StringElement{
@@ -955,7 +919,7 @@ a link to {scheme}://{path} and https://foo.com`
 							"_a_title_to_httpsexample_com_and_httpsfoo_com": title,
 						},
 						Elements: []interface{}{
-							types.Section{
+							&types.Section{
 								Level: 1,
 								Attributes: types.Attributes{
 									types.AttrID: "_a_title_to_httpsexample_com_and_httpsfoo_com",
@@ -977,16 +941,14 @@ a link to {scheme}://{path} and https://foo.com`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "foo.adoc",
-												},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "foo.adoc",
 											},
 										},
 									},
@@ -1003,21 +965,19 @@ a link to {scheme}://{path} and https://foo.com`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "foo.adoc",
-												},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "foo.adoc",
 											},
 										},
-										Attributes: types.Attributes{
-											types.AttrInlineLinkText: "foo doc",
-										},
+									},
+									Attributes: types.Attributes{
+										types.AttrInlineLinkText: "foo doc",
 									},
 								},
 							},
@@ -1032,21 +992,19 @@ a link to {scheme}://{path} and https://foo.com`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "example.com",
-												},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "https://",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "example.com",
 											},
 										},
-										Attributes: types.Attributes{
-											types.AttrInlineLinkText: "foo doc",
-										},
+									},
+									Attributes: types.Attributes{
+										types.AttrInlineLinkText: "foo doc",
 									},
 								},
 							},
@@ -1061,22 +1019,20 @@ a link to {scheme}://{path} and https://foo.com`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "example.com",
-												},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "https://",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "example.com",
 											},
 										},
-										Attributes: types.Attributes{
-											types.AttrInlineLinkText: "foo doc",
-											"foo":                    "bar",
-										},
+									},
+									Attributes: types.Attributes{
+										types.AttrInlineLinkText: "foo doc",
+										"foo":                    "bar",
 									},
 								},
 							},
@@ -1091,21 +1047,19 @@ a link to {scheme}://{path} and https://foo.com`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "example.com",
-												},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "https://",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "example.com",
 											},
 										},
-										Attributes: types.Attributes{
-											"foo": "bar",
-										},
+									},
+									Attributes: types.Attributes{
+										"foo": "bar",
 									},
 								},
 							},
@@ -1120,11 +1074,9 @@ a link to {scheme}://{path} and https://foo.com`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a link to link:foo.adoc",
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "a link to link:foo.adoc",
 								},
 							},
 						},
@@ -1138,50 +1090,48 @@ a link to {scheme}://{path} and https://foo.com`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "/",
-												},
+							Elements: []interface{}{
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "/",
 											},
 										},
-										Attributes: types.Attributes{
-											types.AttrInlineLinkText: []interface{}{
-												types.StringElement{
-													Content: "a ",
-												},
-												types.QuotedText{
-													Kind: types.SingleQuoteItalic,
-													Elements: []interface{}{
-														types.StringElement{
-															Content: "a",
-														},
+									},
+									Attributes: types.Attributes{
+										types.AttrInlineLinkText: []interface{}{
+											types.StringElement{
+												Content: "a ",
+											},
+											&types.QuotedText{
+												Kind: types.SingleQuoteItalic,
+												Elements: []interface{}{
+													types.StringElement{
+														Content: "a",
 													},
 												},
-												types.StringElement{
-													Content: " b ",
-												},
-												types.QuotedText{
-													Kind: types.SingleQuoteBold,
-													Elements: []interface{}{
-														types.StringElement{
-															Content: "b",
-														},
+											},
+											types.StringElement{
+												Content: " b ",
+											},
+											&types.QuotedText{
+												Kind: types.SingleQuoteBold,
+												Elements: []interface{}{
+													types.StringElement{
+														Content: "b",
 													},
 												},
-												types.StringElement{
-													Content: " c ",
-												},
-												types.QuotedText{
-													Kind: types.SingleQuoteMonospace,
-													Elements: []interface{}{
-														types.StringElement{
-															Content: "c",
-														},
+											},
+											types.StringElement{
+												Content: " c ",
+											},
+											&types.QuotedText{
+												Kind: types.SingleQuoteMonospace,
+												Elements: []interface{}{
+													types.StringElement{
+														Content: "c",
 													},
 												},
 											},
@@ -1200,27 +1150,25 @@ a link to {scheme}://{path} and https://foo.com`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "a link to "},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~:/?#@!$",
-												},
-												types.SpecialCharacter{
-													Name: "&",
-												},
-												types.StringElement{
-													Content: ";=()*+,-_.%",
-												},
+							Elements: []interface{}{
+								types.StringElement{Content: "a link to "},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~:/?#@!$",
+											},
+											types.SpecialCharacter{
+												Name: "&",
+											},
+											types.StringElement{
+												Content: ";=()*+,-_.%",
 											},
 										},
-										Attributes: types.Attributes{
-											types.AttrInlineLinkText: "as expected",
-										},
+									},
+									Attributes: types.Attributes{
+										types.AttrInlineLinkText: "as expected",
 									},
 								},
 							},
@@ -1236,26 +1184,21 @@ Test 2: link:/test/a%20b[with encoded space]`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "Test 1: link:/test/a b[with space]",
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "Test 1: link:/test/a b[with space]\nTest 2:",
 								},
-								{
-									types.StringElement{Content: "Test 2: "},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "/test/a%20b",
-												},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "/test/a%20b",
 											},
 										},
-										Attributes: types.Attributes{
-											types.AttrInlineLinkText: "with encoded space",
-										},
+									},
+									Attributes: types.Attributes{
+										types.AttrInlineLinkText: "with encoded space",
 									},
 								},
 							},
@@ -1281,30 +1224,28 @@ a link to {scheme}:{path}[] and https://foo.com`
 					},
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a link to ",
-									},
-									types.InlineLink{
-										Location: types.Location{
-											Path: []interface{}{
-												types.StringElement{
-													Content: "{path}",
-												},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "a link to ",
+								},
+								&types.InlineLink{
+									Location: &types.Location{
+										Path: []interface{}{
+											types.StringElement{
+												Content: "{path}",
 											},
 										},
 									},
-									types.StringElement{
-										Content: " and ",
-									},
-									types.InlineLink{
-										Location: types.Location{
-											Scheme: "https://",
-											Path: []interface{}{
-												types.StringElement{
-													Content: "foo.com",
-												},
+								},
+								types.StringElement{
+									Content: " and ",
+								},
+								&types.InlineLink{
+									Location: &types.Location{
+										Scheme: "https://",
+										Path: []interface{}{
+											types.StringElement{
+												Content: "foo.com",
 											},
 										},
 									},
@@ -1321,17 +1262,15 @@ a link to {scheme}:{path}[] and https://foo.com`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.QuotedText{
-										Kind: types.SingleQuoteBold,
-										Elements: []interface{}{
-											types.InlineLink{
-												Location: types.Location{
-													Path: []interface{}{
-														types.StringElement{
-															Content: "foo",
-														},
+							Elements: []interface{}{
+								&types.QuotedText{
+									Kind: types.SingleQuoteBold,
+									Elements: []interface{}{
+										&types.InlineLink{
+											Location: &types.Location{
+												Path: []interface{}{
+													types.StringElement{
+														Content: "foo",
 													},
 												},
 											},
@@ -1352,23 +1291,21 @@ a link to {scheme}:{path}[] and https://foo.com`
 					expected := types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "a link to "},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "example.com",
-													},
+								Elements: []interface{}{
+									types.StringElement{Content: "a link to "},
+									&types.InlineLink{
+										Location: &types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "example.com",
 												},
 											},
-											Attributes: types.Attributes{
-												types.AttrInlineLinkText: "A",
-												types.AttrPositional2:    "B",
-												types.AttrPositional3:    "and C",
-											},
+										},
+										Attributes: types.Attributes{
+											types.AttrInlineLinkText: "A",
+											types.AttrPositional2:    "B",
+											types.AttrPositional3:    "and C",
 										},
 									},
 								},
@@ -1383,21 +1320,19 @@ a link to {scheme}:{path}[] and https://foo.com`
 					expected := types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "a link to "},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "example.com",
-													},
+								Elements: []interface{}{
+									types.StringElement{Content: "a link to "},
+									&types.InlineLink{
+										Location: &types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "example.com",
 												},
 											},
-											Attributes: types.Attributes{
-												types.AttrInlineLinkText: "A, B, and C",
-											},
+										},
+										Attributes: types.Attributes{
+											types.AttrInlineLinkText: "A, B, and C",
 										},
 									},
 								},
@@ -1412,22 +1347,20 @@ a link to {scheme}:{path}[] and https://foo.com`
 					expected := types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "a link to "},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "example.com",
-													},
+								Elements: []interface{}{
+									types.StringElement{Content: "a link to "},
+									&types.InlineLink{
+										Location: &types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "example.com",
 												},
 											},
-											Attributes: types.Attributes{
-												types.AttrInlineLinkText: "A, B, and C",
-												types.AttrRoles:          []interface{}{"foo"},
-											},
+										},
+										Attributes: types.Attributes{
+											types.AttrInlineLinkText: "A, B, and C",
+											types.AttrRoles:          []interface{}{"foo"},
 										},
 									},
 								},
@@ -1442,24 +1375,22 @@ a link to {scheme}:{path}[] and https://foo.com`
 					expected := types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
-								Lines: [][]interface{}{
-									{
-										types.StringElement{Content: "a link to "},
-										types.InlineLink{
-											Location: types.Location{
-												Scheme: "https://",
-												Path: []interface{}{
-													types.StringElement{
-														Content: "example.com",
-													},
+								Elements: []interface{}{
+									types.StringElement{Content: "a link to "},
+									&types.InlineLink{
+										Location: &types.Location{
+											Scheme: "https://",
+											Path: []interface{}{
+												types.StringElement{
+													Content: "example.com",
 												},
 											},
-											Attributes: types.Attributes{
-												types.AttrInlineLinkText: "A",
-												types.AttrPositional2:    "B",
-												types.AttrPositional3:    "and C",
-												types.AttrRoles:          []interface{}{"foo"},
-											},
+										},
+										Attributes: types.Attributes{
+											types.AttrInlineLinkText: "A",
+											types.AttrPositional2:    "B",
+											types.AttrPositional3:    "and C",
+											types.AttrRoles:          []interface{}{"foo"},
 										},
 									},
 								},
@@ -1468,10 +1399,7 @@ a link to {scheme}:{path}[] and https://foo.com`
 					}
 					Expect(ParseDocument(source)).To(MatchDocument(expected))
 				})
-
 			})
-
 		})
-
 	})
 })

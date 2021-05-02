@@ -5,24 +5,25 @@ import (
 	"io"
 
 	"github.com/bytesparadise/libasciidoc/pkg/types"
+	"github.com/davecgh/go-spew/spew"
 	log "github.com/sirupsen/logrus"
 )
 
-// ParseDocumentFragments parses a document's content and applies the preprocessing directives (file inclusions)
+// ParseDocumentFragmentGroups parses a document's content and applies the preprocessing directives (file inclusions)
 // Returns the document fragments (to be assembled) or an error
-func ParseDocumentFragments(r io.Reader, done <-chan interface{}, options ...Option) <-chan types.DocumentFragmentGroup {
-	return parseDocumentFragments(r, done, options...)
+func ParseDocumentFragmentGroups(r io.Reader, done <-chan interface{}, opts ...Option) <-chan types.DocumentFragmentGroup {
+	return parseDocumentFragments(r, done, opts...)
 }
 
 // parseDocumentFragments reads the given reader's content line by line, then parses each line using the appropriate
 // grammar rule (depending on the context)
-func parseDocumentFragments(source io.Reader, done <-chan interface{}, options ...Option) <-chan types.DocumentFragmentGroup {
+func parseDocumentFragments(source io.Reader, done <-chan interface{}, opts ...Option) <-chan types.DocumentFragmentGroup {
 	fragmentStream := make(chan types.DocumentFragmentGroup)
 	// errStream := make(chan error)
 	go func() {
 		defer close(fragmentStream)
 		// defer close(errStream)
-		scanner := NewDocumentFragmentScanner(source, options...)
+		scanner := NewDocumentFragmentScanner(source, opts...)
 		for scanner.Scan() {
 			select {
 			case <-done:
@@ -31,12 +32,12 @@ func parseDocumentFragments(source io.Reader, done <-chan interface{}, options .
 			case fragmentStream <- scanner.Fragments():
 			}
 		}
-		// log.WithField("stage", "fragment_parsing").Debug("end of fragment parsing")
+		log.WithField("stage", "fragment_parsing").Debug("end of fragment parsing")
 	}()
 	// return fragmentStream, errStream
 	return fragmentStream
 	// // front-matter
-	// frontmatterFragments, done := parseDocumentFrontMatter(ctx, scanner, options...)
+	// frontmatterFragments, done := parseDocumentFrontMatter(ctx, scanner, opts...)
 	// fragments = append(fragments, frontmatterFragments...)
 	// if log.IsLevelEnabled(log.WithField("stage", "fragment_parsing").DebugLevel) {
 	// 	log.WithField("stage", "fragment_parsing").Debug("front-matter:")
@@ -46,7 +47,7 @@ func parseDocumentFragments(source io.Reader, done <-chan interface{}, options .
 	// 	return fragments, nil
 	// }
 	// // document header
-	// headerFragments, done := parseDocumentHeader(ctx, scanner, options...)
+	// headerFragments, done := parseDocumentHeader(ctx, scanner, opts...)
 	// fragments = append(fragments, headerFragments...)
 	// if log.IsLevelEnabled(log.WithField("stage", "fragment_parsing").DebugLevel) {
 	// 	log.WithField("stage", "fragment_parsing").Debug("document header:")
@@ -56,7 +57,7 @@ func parseDocumentFragments(source io.Reader, done <-chan interface{}, options .
 	// 	return fragments, nil
 	// }
 	// // document body
-	// bodyFragments, err := parseDocumentBody(ctx, scanner, options...)
+	// bodyFragments, err := parseDocumentBody(ctx, scanner, opts...)
 	// if err != nil {
 	// 	return nil, err
 	// }
@@ -67,17 +68,17 @@ func parseDocumentFragments(source io.Reader, done <-chan interface{}, options .
 }
 
 type DocumentFragmentScanner struct {
-	options    []Option
+	opts       []Option
 	scanner    *bufio.Scanner
 	lineNumber int
 	err        error // sticky error
 	fragments  types.DocumentFragmentGroup
 }
 
-func NewDocumentFragmentScanner(source io.Reader, options ...Option) *DocumentFragmentScanner {
+func NewDocumentFragmentScanner(source io.Reader, opts ...Option) *DocumentFragmentScanner {
 	return &DocumentFragmentScanner{
 		scanner: bufio.NewScanner(source),
-		options: append(options, Entrypoint("DocumentFragmentElement")),
+		opts:    append(opts, Entrypoint("DocumentFragmentElement")),
 	}
 }
 
@@ -98,25 +99,22 @@ func (s *DocumentFragmentScanner) Scan() bool {
 scan:
 	for s.scanner.Scan() {
 		s.lineNumber++
-		element, err := Parse("", s.scanner.Bytes(), s.options...)
+		element, err := Parse("", s.scanner.Bytes(), s.opts...)
 		if err != nil {
-			// log.WithError(err).Error("failed to parse the content")
-			// s.err = err // will cause next call to `Scan()` to return false
-			// s.fragments.Error = err
-			// return true
-
 			// assume that the content is just a RawLine
 			element = types.RawLine(s.scanner.Text())
-
 		}
+		if log.IsLevelEnabled(log.DebugLevel) {
+			log.Debugf("parsed '%s' -> %s", s.scanner.Text(), spew.Sdump(element))
+		}
+
 		switch element := element.(type) {
 		case types.BlankLine:
+			elements = append(elements, types.BlankLine{})
 			// blanklines outside of a delimited block causes the scanner to stop (for this call)
 			if blockDelimiters.empty() {
 				break scan
 			}
-			// if inside a delimited blocl, retain the blankline
-			elements = append(elements, types.RawLine(""))
 		case types.BlockDelimiter:
 			if blockDelimiters.get() == element { // match starting/ending delimiters
 				blockDelimiters.pop() // remove element from the top of the stack
@@ -135,6 +133,10 @@ scan:
 		return true // this fragment needs to be processed upstream
 	}
 	if len(elements) > 0 {
+		if log.IsLevelEnabled(log.DebugLevel) {
+			log.Debugf("parsed fragment elements:\n%s", spew.Sdump(elements))
+		}
+
 		s.fragments.Content = elements
 		return true // also return the underlying scanner's error (if something wrong happened)
 	}
@@ -160,13 +162,13 @@ func (s *DocumentFragmentScanner) Fragments() types.DocumentFragmentGroup {
 // // parseDocumentFrontMatter attempts to read the front-matter if it exists.
 // // scans line by line, exit after the front-matter delimiter (if applicable)
 // // return the document fragments along with a bool flag to indicate if the scanner reached the end of the document
-// func parseDocumentFrontMatter(ctx *parserContext, scanner *bufio.Scanner, options ...Option) (types.DocumentFragments, bool) {
+// func parseDocumentFrontMatter(ctx *parserContext, scanner *bufio.Scanner, opts ...Option) (types.DocumentFragments, bool) {
 // 	log.WithField("stage", "fragment_parsing").Debug("parsing front-matter...")
 // 	fragments := make([]interface{}, 0)
-// 	options = append(options, Entrypoint("FrontMatterFragment"))
+// 	opts = append(opts, Entrypoint("FrontMatterFragment"))
 // 	withinBlock := false
 // 	for scanner.Scan() {
-// 		fragment, err := Parse("", scanner.Bytes(), options...)
+// 		fragment, err := Parse("", scanner.Bytes(), opts...)
 // 		if err != nil { // no match
 // 			return fragments, false
 // 		}
@@ -192,29 +194,29 @@ func (s *DocumentFragmentScanner) Fragments() types.DocumentFragmentGroup {
 // // parseDocumentHeader attempts to read the document header (title and metadata) if it exists.
 // // scans line by line, exit after a blankline is found (if applicable)
 // // return the document fragments along with a bool flag to indicate if the scanner reached the end of the document
-// func parseDocumentHeader(ctx *parserContext, scanner *bufio.Scanner, options ...Option) (types.DocumentFragments, bool) {
+// func parseDocumentHeader(ctx *parserContext, scanner *bufio.Scanner, opts ...Option) (types.DocumentFragments, bool) {
 // 	log.WithField("stage", "fragment_parsing").Debug("parsing document header...")
 // 	fragments := make([]interface{}, 0)
 // 	// check if there is a title
-// 	options = append(options, Entrypoint("DocumentTitle"))
-// 	title, found := doParse(ctx, scanner.Bytes(), options...)
+// 	opts = append(opts, Entrypoint("DocumentTitle"))
+// 	title, found := doParse(ctx, scanner.Bytes(), opts...)
 // 	if !found {
 // 		// if there is no title, then there is no header at all
 // 		return fragments, false
 // 	}
 // 	fragments = append(fragments, title)
 // 	// check if there are authors
-// 	options = append(options, Entrypoint("DocumentAuthorsMetadata"))
+// 	opts = append(opts, Entrypoint("DocumentAuthorsMetadata"))
 // 	for scanner.Scan() {
-// 		fragment, found := doParse(ctx, scanner.Bytes(), options...)
+// 		fragment, found := doParse(ctx, scanner.Bytes(), opts...)
 // 		if found { // no match
 // 			fragments = append(fragments, fragment)
 // 		}
 // 	}
 // 	// check if there is a revision
-// 	options = append(options, Entrypoint("DocumentRevisionMetadata"))
+// 	opts = append(opts, Entrypoint("DocumentRevisionMetadata"))
 // 	for scanner.Scan() {
-// 		fragment, found := doParse(ctx, scanner.Bytes(), options...)
+// 		fragment, found := doParse(ctx, scanner.Bytes(), opts...)
 // 		if !found { // no match
 // 			return fragments, false
 // 		}
@@ -223,8 +225,8 @@ func (s *DocumentFragmentScanner) Fragments() types.DocumentFragmentGroup {
 // 	return fragments, true
 // }
 
-// func doParse(ctx *parserContext, content []byte, options ...Option) (interface{}, bool) {
-// 	fragment, err := Parse("", content, options...)
+// func doParse(ctx *parserContext, content []byte, opts ...Option) (interface{}, bool) {
+// 	fragment, err := Parse("", content, opts...)
 // 	if err != nil {
 // 		// no match
 // 		return nil, false
@@ -233,17 +235,17 @@ func (s *DocumentFragmentScanner) Fragments() types.DocumentFragmentGroup {
 // }
 
 // // parseDocumentBody attempts to read the document body if it exists.
-// func parseDocumentBody(ctx *parserContext, scanner *bufio.Scanner, options ...Option) (types.DocumentFragments, error) {
+// func parseDocumentBody(ctx *parserContext, scanner *bufio.Scanner, opts ...Option) (types.DocumentFragments, error) {
 // 	log.WithField("stage", "fragment_parsing").Debug("parsing document body...")
 // 	fragments := make([]interface{}, 0)
-// 	options = append(options, Entrypoint("DocumentBodyFragment"))
-// 	fragment, err := doParseDocumentBody(ctx, scanner.Bytes(), options...)
+// 	opts = append(opts, Entrypoint("DocumentBodyFragment"))
+// 	fragment, err := doParseDocumentBody(ctx, scanner.Bytes(), opts...)
 // 	if err != nil {
 // 		return nil, err
 // 	}
 // 	fragments = append(fragments, fragment)
 // 	for scanner.Scan() {
-// 		fragment, err := doParseDocumentBody(ctx, scanner.Bytes(), options...)
+// 		fragment, err := doParseDocumentBody(ctx, scanner.Bytes(), opts...)
 // 		if err != nil {
 // 			return nil, err
 // 		}
@@ -258,14 +260,14 @@ func (s *DocumentFragmentScanner) Fragments() types.DocumentFragmentGroup {
 // 	return fragments, nil
 // }
 
-// func doParseDocumentBody(ctx *parserContext, content []byte, options ...Option) (interface{}, error) {
-// 	fragment, err := Parse("", content, options...)
+// func doParseDocumentBody(ctx *parserContext, content []byte, opts ...Option) (interface{}, error) {
+// 	fragment, err := Parse("", content, opts...)
 // 	if err != nil {
 // 		return nil, err
 // 	}
 // 	switch fragment := fragment.(type) {
 // 	case types.FileInclusion:
-// 		return parseFileToInclude(ctx.clone(), fragment, options...) // clone the context so that further level offset in this "child" doc are not applied to the rest of this "parent" doc
+// 		return parseFileToInclude(ctx.clone(), fragment, opts...) // clone the context so that further level offset in this "child" doc are not applied to the rest of this "parent" doc
 // 	case types.AttributeDeclaration:
 // 		// immediatly process the attribute substitutions in the value (if there is any)
 // 		if err := ctx.onAttributeDeclaration(fragment); err != nil {
@@ -302,8 +304,8 @@ func (s *DocumentFragmentScanner) Fragments() types.DocumentFragmentGroup {
 // 	}
 // }
 
-// func parseDocumentFragments(ctx *parserContext, r io.Reader, options ...Option) (types.DocumentFragments, error) {
-// 	content, err := ParseReader(ctx.config.Filename, r, append(options, Entrypoint("DocumentFragments"), GlobalStore(parseContextKey, ctx))...)
+// func parseDocumentFragments(ctx *parserContext, r io.Reader, opts ...Option) (types.DocumentFragments, error) {
+// 	content, err := ParseReader(ctx.config.Filename, r, append(opts, Entrypoint("DocumentFragments"), GlobalStore(parseContextKey, ctx))...)
 // 	if err != nil {
 // 		log.Errorf("failed to parse raw document: %s", err)
 // 		return nil, err
@@ -317,7 +319,7 @@ func (s *DocumentFragmentScanner) Fragments() types.DocumentFragmentGroup {
 // 	for _, fragment := range fragments {
 // 		switch fragment := fragment.(type) {
 // 		case types.FileInclusion:
-// 			fileContent, err := parseFileToInclude(ctx.clone(), fragment, options...) // clone the context so that further level offset in this "child" doc are not applied to the rest of this "parent" doc
+// 			fileContent, err := parseFileToInclude(ctx.clone(), fragment, opts...) // clone the context so that further level offset in this "child" doc are not applied to the rest of this "parent" doc
 // 			if err != nil {
 // 				return nil, err
 // 			}

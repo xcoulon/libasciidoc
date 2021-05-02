@@ -105,7 +105,7 @@ var _ = Describe("file inclusions", func() {
 						},
 					},
 				}
-				result, err := ParseDocumentFragments(source, WithFilename("foo.adoc"))
+				result, err := ParseDocumentFragmentGroups(source, WithFilename("foo.adoc"))
 				Expect(err).NotTo(HaveOccurred())
 				Expect(result).To(MatchDocumentFragmentGroups(expected))
 				// verify no error/warning in logs
@@ -138,7 +138,7 @@ var _ = Describe("file inclusions", func() {
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source, WithFilename("tmp/foo.adoc"))).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source, WithFilename("tmp/foo.adoc"))).To(MatchDocumentFragmentGroups(expected))
 				// verify no error/warning in logs
 				Expect(logs).ToNot(ContainAnyMessageWithLevels(log.ErrorLevel, log.WarnLevel))
 			})
@@ -169,7 +169,7 @@ var _ = Describe("file inclusions", func() {
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 				// verify no error/warning in logs
 				Expect(logs).ToNot(ContainAnyMessageWithLevels(log.ErrorLevel, log.WarnLevel))
 			})
@@ -199,7 +199,7 @@ var _ = Describe("file inclusions", func() {
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("should not include section 0 when attribute found", func() {
@@ -234,7 +234,7 @@ include::{includedir}/chapter-a.adoc[]`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("should not further process with non-asciidoc files", func() {
@@ -257,7 +257,7 @@ include::hello_world.go.txt[]
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source, WithFilename("foo.bar"))).To(MatchDocumentFragmentGroups(expected)) // parent doc may not need to be a '.adoc'
+				Expect(ParseDocumentFragmentGroups(source, WithFilename("foo.bar"))).To(MatchDocumentFragmentGroups(expected)) // parent doc may not need to be a '.adoc'
 			})
 
 			It("should include grandchild content without offset", func() {
@@ -290,7 +290,7 @@ include::hello_world.go.txt[]
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source, WithFilename("test.adoc"))).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source, WithFilename("test.adoc"))).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("should include grandchild content with relative offset", func() {
@@ -323,7 +323,7 @@ include::hello_world.go.txt[]
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source, WithFilename("test.adoc"))).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source, WithFilename("test.adoc"))).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("should include grandchild content with absolute offset", func() {
@@ -356,7 +356,7 @@ include::hello_world.go.txt[]
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source, WithFilename("test.adoc"))).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source, WithFilename("test.adoc"))).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("should include child and grandchild content with relative level offset", func() {
@@ -449,7 +449,7 @@ include::hello_world.go.txt[]
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source, WithFilename("test.adoc"))).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source, WithFilename("test.adoc"))).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("should include child and grandchild content with relative then absolute level offset", func() {
@@ -542,7 +542,7 @@ include::hello_world.go.txt[]
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source, WithFilename("test.adoc"))).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source, WithFilename("test.adoc"))).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("should include adoc file within fenced block", func() {
@@ -628,7 +628,7 @@ include::hello_world.go.txt[]
 						},
 					},
 				}
-				result, err := ParseDocumentFragments(source)
+				result, err := ParseDocumentFragmentGroups(source)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(result).To(MatchDocumentFragmentGroups(expected))
 			})
@@ -706,7 +706,7 @@ include::hello_world.go.txt[]
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			Context("with line ranges", func() {
@@ -731,7 +731,7 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+						Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("file inclusion with multiple unquoted lines", func() {
@@ -753,7 +753,7 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+						Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("file inclusion with multiple unquoted ranges", func() {
@@ -780,7 +780,7 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						result, err := ParseDocumentFragments(source)
+						result, err := ParseDocumentFragmentGroups(source)
 						Expect(err).NotTo(HaveOccurred())
 						Expect(result).To(MatchDocumentFragmentGroups(expected))
 					})
@@ -789,7 +789,7 @@ include::hello_world.go.txt[]
 						_, reset := ConfigureLogger(log.WarnLevel)
 						defer reset()
 						source := `include::../../test/includes/chapter-a.adoc[lines=1;3..4;6..foo]` // not a number
-						_, err := ParseDocumentFragments(source)
+						_, err := ParseDocumentFragmentGroups(source)
 						Expect(err).To(HaveOccurred())
 					})
 
@@ -811,7 +811,7 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+						Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 				})
 
@@ -837,7 +837,7 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+						Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 						// verify no error/warning in logs
 						Expect(logs).ToNot(ContainAnyMessageWithLevels(log.ErrorLevel, log.WarnLevel))
 					})
@@ -861,7 +861,7 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+						Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("file inclusion with multiple quoted ranges with colons", func() {
@@ -888,7 +888,7 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+						Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("file inclusion with multiple quoted ranges with semicolons", func() {
@@ -915,14 +915,14 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+						Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("file inclusion with invalid quoted range - case 1", func() {
 						_, reset := ConfigureLogger(log.WarnLevel)
 						defer reset()
 						source := `include::../../test/includes/chapter-a.adoc[lines="1,3..4,6..foo"]` // not a number
-						_, err := ParseDocumentFragments(source)
+						_, err := ParseDocumentFragmentGroups(source)
 						Expect(err).To(HaveOccurred())
 					})
 
@@ -945,7 +945,7 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+						Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 				})
 			})
@@ -972,7 +972,7 @@ include::hello_world.go.txt[]
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					// verify no error/warning in logs
 					Expect(logs).ToNot(ContainAnyMessageWithLevels(log.ErrorLevel, log.WarnLevel))
 				})
@@ -1004,7 +1004,7 @@ include::hello_world.go.txt[]
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					// verify no error/warning in logs
 					Expect(logs).ToNot(ContainAnyMessageWithLevels(log.ErrorLevel, log.WarnLevel))
 				})
@@ -1034,7 +1034,7 @@ include::hello_world.go.txt[]
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					// verify error in logs
 					Expect(logs).To(ContainMessageWithLevel(log.WarnLevel,
 						"detected unclosed tag 'unclosed' starting at line 6 of include file: ../../test/includes/tag-include-unclosed.adoc",
@@ -1045,7 +1045,7 @@ include::hello_world.go.txt[]
 					// given
 					source := `include::../../test/includes/tag-include.adoc[tag=unknown]`
 					// when/then
-					_, err := ParseDocumentFragments(source)
+					_, err := ParseDocumentFragmentGroups(source)
 					// verify error in logs
 					Expect(err).To(MatchError("tag 'unknown' not found in include file: ../../test/includes/tag-include.adoc"))
 				})
@@ -1081,7 +1081,7 @@ include::hello_world.go.txt[]
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				Context("permutations", func() {
@@ -1117,7 +1117,7 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+						Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("all tagged regions", func() {
@@ -1145,7 +1145,7 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+						Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("all the lines outside and inside of tagged regions", func() {
@@ -1179,7 +1179,7 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+						Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("regions tagged doc, but not nested regions tagged content", func() {
@@ -1201,7 +1201,7 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+						Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("all tagged regions, but excludes any regions tagged content", func() {
@@ -1223,7 +1223,7 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+						Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("all tagged regions, but excludes any regions tagged content", func() {
@@ -1251,7 +1251,7 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+						Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 
 					It("**;!* — selects only the regions of the document outside of tags", func() {
@@ -1269,7 +1269,7 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+						Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 					})
 				})
 			})
@@ -1278,19 +1278,19 @@ include::hello_world.go.txt[]
 
 				It("should fail if directory does not exist in standalone block", func() {
 					source := `include::{unknown}/unknown.adoc[leveloffset=+1]`
-					_, err := ParseDocumentFragments(source)
+					_, err := ParseDocumentFragmentGroups(source)
 					Expect(err).To(MatchError("Unresolved directive in test.adoc - include::{unknown}/unknown.adoc[leveloffset=+1]"))
 				})
 
 				It("should fail if file is missing in standalone block", func() {
 					source := `include::{unknown}/unknown.adoc[leveloffset=+1]`
-					_, err := ParseDocumentFragments(source)
+					_, err := ParseDocumentFragmentGroups(source)
 					Expect(err).To(MatchError("Unresolved directive in test.adoc - include::{unknown}/unknown.adoc[leveloffset=+1]"))
 				})
 
 				It("should fail if file with attribute in path is not resolved in standalone block", func() {
 					source := `include::{includedir}/unknown.adoc[leveloffset=+1]`
-					_, err := ParseDocumentFragments(source)
+					_, err := ParseDocumentFragmentGroups(source)
 					Expect(err).To(MatchError("Unresolved directive in test.adoc - include::{includedir}/unknown.adoc[leveloffset=+1]"))
 				})
 
@@ -1298,7 +1298,7 @@ include::hello_world.go.txt[]
 					source := `----
 include::../../test/includes/unknown.adoc[leveloffset=+1]
 ----`
-					_, err := ParseDocumentFragments(source)
+					_, err := ParseDocumentFragmentGroups(source)
 					Expect(err).To(MatchError("Unresolved directive in test.adoc - include::../../test/includes/unknown.adoc[leveloffset=+1]"))
 				})
 
@@ -1307,7 +1307,7 @@ include::../../test/includes/unknown.adoc[leveloffset=+1]
 					source := `----
 include::{includedir}/unknown.adoc[leveloffset=+1]
 ----`
-					_, err := ParseDocumentFragments(source)
+					_, err := ParseDocumentFragmentGroups(source)
 					Expect(err).To(MatchError("Unresolved directive in test.adoc - include::{includedir}/unknown.adoc[leveloffset=+1]"))
 				})
 			})
@@ -1351,7 +1351,7 @@ include::{includedir}/grandchild-include.adoc[]`
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(source, WithFilename("foo.adoc"))).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(source, WithFilename("foo.adoc"))).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should resolve path with attribute in standalone block from relative file", func() {
@@ -1391,7 +1391,7 @@ include::{includedir}/grandchild-include.adoc[]`
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(source, WithFilename("tmp/foo.adoc"))).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(source, WithFilename("tmp/foo.adoc"))).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should resolve path with attribute in delimited block", func() {
@@ -1435,7 +1435,7 @@ include::{includedir}/grandchild-include.adoc[]
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 				})
 			})
 
@@ -1486,7 +1486,7 @@ include::../../test/includes/hello_world.go.txt[]
 							},
 						},
 					}
-					result, err := ParseDocumentFragments(source)
+					result, err := ParseDocumentFragmentGroups(source)
 					Expect(err).NotTo(HaveOccurred())
 					Expect(result).To(MatchDocumentFragmentGroups(expected))
 				})
@@ -1514,7 +1514,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 							},
 						},
 					}
-					result, err := ParseDocumentFragments(source)
+					result, err := ParseDocumentFragmentGroups(source)
 					Expect(err).NotTo(HaveOccurred())
 					Expect(result).To(MatchDocumentFragmentGroups(expected))
 				})

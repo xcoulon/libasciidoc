@@ -54,7 +54,7 @@ func (r *sgmlRenderer) renderAdmonitionBlock(ctx *renderer.Context, b types.Exam
 	return result.String(), err
 }
 
-func (r *sgmlRenderer) renderAdmonitionParagraph(ctx *renderer.Context, p types.Paragraph) (string, error) {
+func (r *sgmlRenderer) renderAdmonitionParagraph(ctx *renderer.Context, p *types.Paragraph) (string, error) {
 	log.Debug("rendering admonition paragraph...")
 	result := &strings.Builder{}
 	kind, ok, err := p.Attributes.GetAsString(types.AttrStyle)

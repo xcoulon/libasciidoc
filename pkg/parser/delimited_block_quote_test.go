@@ -34,7 +34,7 @@ ____`
 											types.StringElement{
 												Content: "some ",
 											},
-											types.QuotedText{
+											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
 													types.StringElement{

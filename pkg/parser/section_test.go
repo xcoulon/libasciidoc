@@ -34,7 +34,7 @@ var _ = Describe("sections", func() {
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("header with many spaces around content", func() {
@@ -57,7 +57,7 @@ var _ = Describe("sections", func() {
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("header and paragraph", func() {
@@ -93,7 +93,7 @@ and a paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("two sections with level 0", func() {
@@ -131,7 +131,7 @@ and a paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section level 1 alone", func() {
@@ -154,7 +154,7 @@ and a paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section level 1 with custom idseparator", func() {
@@ -184,13 +184,13 @@ and a paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section level 1 with quoted text", func() {
 				source := `==  *2 spaces and bold content*`
 				sectionTitle := []interface{}{
-					types.QuotedText{
+					&types.QuotedText{
 						Kind: types.SingleQuoteBold,
 						Elements: []interface{}{
 							types.StringElement{Content: "2 spaces and bold content"},
@@ -212,7 +212,7 @@ and a paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section level 0 with nested section level 1", func() {
@@ -249,7 +249,7 @@ and a paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section level 0 with nested section level 2", func() {
@@ -286,7 +286,7 @@ and a paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section level 1 with immediate paragraph", func() {
@@ -317,7 +317,7 @@ and a paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section level 1 with a paragraph separated by empty line", func() {
@@ -350,7 +350,7 @@ and a paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section level 1 with a paragraph separated by non-empty line", func() {
@@ -381,7 +381,7 @@ and a paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section levels 1, 2, 3, 2", func() {
@@ -466,7 +466,7 @@ a paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("single section with custom IDs", func() {
@@ -491,7 +491,7 @@ a paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("multiple sections with custom IDs", func() {
@@ -555,7 +555,7 @@ a paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("sections with same title", func() {
@@ -592,7 +592,7 @@ a paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section with link in title", func() {
@@ -601,7 +601,7 @@ a paragraph`
 				section1aTitle := []interface{}{
 					types.StringElement{Content: "link to "},
 					types.InlineLink{
-						Location: types.Location{
+						Location: &types.Location{
 							Scheme: "https://",
 							Path: []interface{}{
 								types.StringElement{Content: "foo.bar"},
@@ -624,7 +624,7 @@ a paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("section 0, 1 and paragraph with bold quote", func() {
@@ -665,7 +665,7 @@ a paragraph with *bold content*`
 											Lines: [][]interface{}{
 												{
 													types.StringElement{Content: "a paragraph with "},
-													types.QuotedText{
+													&types.QuotedText{
 														Kind: types.SingleQuoteBold,
 														Elements: []interface{}{
 															types.StringElement{Content: "bold content"},
@@ -725,7 +725,7 @@ a short preamble
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("header with doc attributes and preamble then section level 1", func() {
@@ -774,7 +774,7 @@ a short preamble
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("header with 2 paragraphs and CRLFs", func() {
@@ -812,7 +812,7 @@ a short preamble
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 		})
@@ -834,7 +834,7 @@ a short preamble
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("header invalid - header space", func() {
@@ -859,7 +859,7 @@ a short preamble
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("header with invalid section1", func() {
@@ -898,7 +898,7 @@ a short preamble
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 		})
@@ -940,7 +940,7 @@ Doc Writer <thedoc@asciidoctor.org>`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 	})
@@ -1093,7 +1093,7 @@ and a paragraph`
 			It("section level 1 with quoted text", func() {
 				source := `==  *2 spaces and bold content*`
 				sectionTitle := []interface{}{
-					types.QuotedText{
+					&types.QuotedText{
 						Kind: types.SingleQuoteBold,
 						Elements: []interface{}{
 							types.StringElement{Content: "2 spaces and bold content"},

@@ -48,7 +48,7 @@ var _ = Describe("normalizing string", func() {
 		// == a section title, with *bold content*
 		source := []interface{}{
 			types.StringElement{Content: "a section title, with"},
-			types.QuotedText{
+			&types.QuotedText{
 				Kind: types.SingleQuoteBold,
 				Elements: []interface{}{
 					types.StringElement{Content: "bold content"},
@@ -64,7 +64,7 @@ var _ = Describe("normalizing string", func() {
 			types.StringElement{Content: "link to "},
 			types.InlineLink{
 				Attributes: types.Attributes{},
-				Location: types.Location{
+				Location: &types.Location{
 					Scheme: "https://",
 					Path: []interface{}{
 						types.StringElement{

@@ -51,7 +51,7 @@ func (r *sgmlRenderer) renderVerseBlock(ctx *renderer.Context, b types.VerseBloc
 	return result.String(), err
 }
 
-func (r *sgmlRenderer) renderVerseParagraph(ctx *renderer.Context, p types.Paragraph) (string, error) {
+func (r *sgmlRenderer) renderVerseParagraph(ctx *renderer.Context, p *types.Paragraph) (string, error) {
 	log.Debug("rendering verse paragraph...")
 	result := &strings.Builder{}
 

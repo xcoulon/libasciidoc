@@ -10,7 +10,7 @@ type Attribution struct { // TODO: unexport this type?
 
 // paragraphAttribution return a new attribution for the given Paragraph.
 // Can be empty if no attribution was specified.
-func paragraphAttribution(p types.Paragraph) (Attribution, error) {
+func paragraphAttribution(p *types.Paragraph) (Attribution, error) {
 	return newAttribution(p.Attributes)
 }
 

@@ -43,9 +43,9 @@ func (m *documentFragmentsMatcher) Match(actual interface{}) (success bool, err 
 }
 
 func (m *documentFragmentsMatcher) FailureMessage(_ interface{}) (message string) {
-	return fmt.Sprintf("expected document fragments to match:\n%s", m.diffs)
+	return fmt.Sprintf("expected document fragment groups to match:\n%s", m.diffs)
 }
 
 func (m *documentFragmentsMatcher) NegatedFailureMessage(_ interface{}) (message string) {
-	return fmt.Sprintf("expected document fragments not to match:\n%s", m.diffs)
+	return fmt.Sprintf("expected document fragment groups not to match:\n%s", m.diffs)
 }

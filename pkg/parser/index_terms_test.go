@@ -52,7 +52,7 @@ a paragraph with an index term.`
 										types.StringElement{
 											Content: "foo_bar_baz ",
 										},
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
 												types.StringElement{

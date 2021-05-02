@@ -53,7 +53,7 @@ var _ = Describe("footnotes - document", func() {
 					types.StringElement{
 						Content: "some ",
 					},
-					types.QuotedText{
+					&types.QuotedText{
 						Kind: types.SingleQuoteBold,
 						Elements: []interface{}{
 							types.StringElement{
@@ -68,7 +68,7 @@ var _ = Describe("footnotes - document", func() {
 						Attributes: types.Attributes{
 							types.AttrInlineLinkText: "content",
 						},
-						Location: types.Location{
+						Location: &types.Location{
 							Scheme: "https://",
 							Path: []interface{}{
 								types.StringElement{

@@ -426,7 +426,7 @@ var _ = Describe("rearrange lists", func() {
 					{
 						Level: 1,
 						Term: []interface{}{
-							types.QuotedText{
+							&types.QuotedText{
 								Kind: types.SingleQuoteMonospace,
 								Elements: []interface{}{
 									types.StringElement{
@@ -451,7 +451,7 @@ var _ = Describe("rearrange lists", func() {
 									{
 										Level: 2,
 										Term: []interface{}{
-											types.QuotedText{
+											&types.QuotedText{
 												Kind: types.SingleQuoteMonospace,
 												Elements: []interface{}{
 													types.StringElement{

@@ -126,16 +126,29 @@ type RawText interface {
 // Substitution support
 // ------------------------------------------
 
+type WithNestedElements interface {
+	WithAttributes
+	GetElements() []interface{}
+	AddElement(interface{})
+	SetElements([]interface{})
+}
+
+type WithLocation interface {
+	WithAttributes
+	GetLocation() *Location
+	SetLocation(*Location) // TODO: unused?
+}
+
 // WithCustomSubstitutions base interface for types on which custom substitutions apply
 type WithCustomSubstitutions interface {
 	SubstitutionsToApply() ([]string, error)
 	DefaultSubstitutions() []string
 }
 
-// WithAttributesToSubstitute base interface for types on which attributes can be substituted
-type WithAttributesToSubstitute interface {
-	AttributesToSubstitute() Attributes
-	ReplaceAttributes(Attributes) interface{}
+// WithAttributes base interface for types on which attributes can be substituted
+type WithAttributes interface {
+	GetAttributes() Attributes
+	SetAttributes(Attributes) interface{}
 }
 
 // WithElementsToSubstitute interface for types on which elements can be substituted
@@ -252,26 +265,27 @@ func NewDocumentFragment(lineOffset int, element interface{}) DocumentFragment {
 	}
 }
 
-type RawBlock interface {
-	AddLine(l RawLine)
-}
-type RawParagraph struct {
-	Attributes Attributes
-	Lines      []interface{}
-}
+// type RawBlock interface {
+// 	AddLine(l RawLine)
+// }
 
-func NewRawParagraph(attributes Attributes) *RawParagraph {
-	return &RawParagraph{
-		Attributes: attributes,
-		Lines:      []interface{}{},
-	}
-}
+// type RawParagraph struct {
+// 	Attributes Attributes
+// 	Lines      []interface{}
+// }
 
-var _ RawBlock = &RawParagraph{}
+// func NewRawParagraph(attributes Attributes) *RawParagraph {
+// 	return &RawParagraph{
+// 		Attributes: attributes,
+// 		Lines:      []interface{}{},
+// 	}
+// }
 
-func (p *RawParagraph) AddLine(l RawLine) {
-	p.Lines = append(p.Lines, l)
-}
+// var _ RawBlock = &RawParagraph{}
+
+// func (p *RawParagraph) AddLine(l RawLine) {
+// 	p.Lines = append(p.Lines, l)
+// }
 
 type RawDelimitedBlock struct {
 	Attributes Attributes
@@ -287,7 +301,7 @@ func NewRawDelimitedBlock(kind DelimiterKind, attributes Attributes) *RawDelimit
 	}
 }
 
-var _ RawBlock = &RawDelimitedBlock{}
+// var _ RawBlock = &RawDelimitedBlock{}
 
 func (b *RawDelimitedBlock) AddLine(l RawLine) {
 	b.Lines = append(b.Lines, l)
@@ -689,7 +703,7 @@ type Section struct {
 }
 
 // NewSection initializes a new `Section` from the given section title and elements
-func NewSection(level int, title []interface{}, ids []interface{}) (Section, error) {
+func NewSection(level int, title []interface{}, ids []interface{}) (*Section, error) {
 	// attrs := toAttributes(attributes)
 	// // multiple IDs can be defined (by mistake), but only the last one is used
 	// attrs = attrs.SetAll(ids)
@@ -697,12 +711,24 @@ func NewSection(level int, title []interface{}, ids []interface{}) (Section, err
 	// if _, exists := attrs[AttrID]; exists {
 	// 	attrs[AttrCustomID] = true
 	// }
-	return Section{
+	return &Section{
 		Level: level,
 		// Attributes: attrs,
 		Title: title,
 		// Elements: []interface{}{},
 	}, nil
+}
+
+var _ WithNestedElements = &Section{}
+
+// GetElements returns this section's title
+func (s *Section) GetElements() []interface{} {
+	return s.Title
+}
+
+// SetElements sets this section's title
+func (s *Section) SetElements(title []interface{}) {
+	s.Title = title
 }
 
 var _ WithElementsToSubstitute = Section{}
@@ -718,15 +744,15 @@ func (s Section) ReplaceElements(title []interface{}) interface{} {
 	return s
 }
 
-var _ WithAttributesToSubstitute = Section{}
+var _ WithAttributes = &Section{}
 
-// AttributesToSubstitute returns this section's attributes
-func (s Section) AttributesToSubstitute() Attributes {
+// GetAttributes returns this section's attributes
+func (s *Section) GetAttributes() Attributes {
 	return s.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this section
-func (s Section) ReplaceAttributes(attributes Attributes) interface{} {
+func (s *Section) SetAttributes(attributes Attributes) interface{} {
 	s.Attributes = attributes
 	return s
 }
@@ -995,11 +1021,6 @@ func NewOrderedListItem(prefix OrderedListItemPrefix, elements []interface{}, at
 	}, nil
 }
 
-// GetAttributes returns the elements of this OrderedListItem
-func (i OrderedListItem) GetAttributes() Attributes {
-	return i.Attributes
-}
-
 // AddElement add an element to this OrderedListItem
 func (i *OrderedListItem) AddElement(element interface{}) {
 	i.Elements = append(i.Elements, element)
@@ -1018,15 +1039,15 @@ func (i OrderedListItem) ReplaceElements(elements []interface{}) interface{} {
 	return i
 }
 
-var _ WithAttributesToSubstitute = OrderedListItem{}
+var _ WithAttributes = OrderedListItem{}
 
-// AttributesToSubstitute returns this list item's attributes
-func (i OrderedListItem) AttributesToSubstitute() Attributes {
+// GetAttributes returns this list item's attributes
+func (i OrderedListItem) GetAttributes() Attributes {
 	return i.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this list item
-func (i OrderedListItem) ReplaceAttributes(attributes Attributes) interface{} {
+func (i OrderedListItem) SetAttributes(attributes Attributes) interface{} {
 	i.Attributes = attributes
 	return i
 }
@@ -1134,11 +1155,6 @@ func (i UnorderedListItem) toInteractiveListItem() UnorderedListItem {
 	return i
 }
 
-// GetAttributes returns the elements of this UnorderedListItem
-func (i UnorderedListItem) GetAttributes() Attributes {
-	return i.Attributes
-}
-
 // AddElement add an element to this UnorderedListItem
 func (i *UnorderedListItem) AddElement(element interface{}) {
 	i.Elements = append(i.Elements, element)
@@ -1157,15 +1173,15 @@ func (i UnorderedListItem) ReplaceElements(elements []interface{}) interface{} {
 	return i
 }
 
-var _ WithAttributesToSubstitute = UnorderedListItem{}
+var _ WithAttributes = UnorderedListItem{}
 
-// AttributesToSubstitute returns this list item's attributes
-func (i UnorderedListItem) AttributesToSubstitute() Attributes {
+// GetAttributes returns this list item's attributes
+func (i UnorderedListItem) GetAttributes() Attributes {
 	return i.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this list item
-func (i UnorderedListItem) ReplaceAttributes(attributes Attributes) interface{} {
+func (i UnorderedListItem) SetAttributes(attributes Attributes) interface{} {
 	i.Attributes = attributes
 	return i
 }
@@ -1347,11 +1363,6 @@ func NewLabeledListItem(level int, term []interface{}, description interface{}, 
 	}, nil
 }
 
-// GetAttributes returns the elements of this LabeledListItem
-func (i LabeledListItem) GetAttributes() Attributes {
-	return i.Attributes
-}
-
 // AddElement add an element to this LabeledListItem
 func (i *LabeledListItem) AddElement(element interface{}) {
 	i.Elements = append(i.Elements, element)
@@ -1370,15 +1381,15 @@ func (i LabeledListItem) ReplaceElements(elements []interface{}) interface{} {
 	return i
 }
 
-var _ WithAttributesToSubstitute = LabeledListItem{}
+var _ WithAttributes = LabeledListItem{}
 
-// AttributesToSubstitute returns this list item's attributes
-func (i LabeledListItem) AttributesToSubstitute() Attributes {
+// GetAttributes returns this list item's attributes
+func (i LabeledListItem) GetAttributes() Attributes {
 	return i.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this list item
-func (i LabeledListItem) ReplaceAttributes(attributes Attributes) interface{} {
+func (i LabeledListItem) SetAttributes(attributes Attributes) interface{} {
 	i.Attributes = attributes
 	return i
 }
@@ -1402,7 +1413,7 @@ const AttrHardBreaks = "hardbreaks"
 const DocumentAttrHardBreaks = "hardbreaks"
 
 // NewParagraph initializes a new `Paragraph`
-func NewParagraph(elements []interface{}, attributes interface{}) (Paragraph, error) {
+func NewParagraph(elements []interface{}, attributes interface{}) (*Paragraph, error) {
 	log.Debugf("new paragraph with attributes: '%v'", attributes)
 	// l, err := toLines(elements)
 	// if err != nil {
@@ -1422,11 +1433,27 @@ func NewParagraph(elements []interface{}, attributes interface{}) (Paragraph, er
 			AttrPositional3: AttrQuoteTitle,
 		})
 	}
-	return Paragraph{
+	return &Paragraph{
 		Attributes: attrs,
 		// Lines:      l,
 		Elements: elements,
 	}, nil
+}
+
+var _ WithNestedElements = &Paragraph{}
+
+// GetElements returns this paragraph's elements (or lines)
+func (p *Paragraph) GetElements() []interface{} {
+	return p.Elements
+}
+
+// SetElements sets this paragraph's elements
+func (p *Paragraph) SetElements(elements []interface{}) {
+	p.Elements = elements
+}
+
+func (p *Paragraph) AddElement(e interface{}) {
+	p.Elements = append(p.Elements, e)
 }
 
 func toLines(lines []interface{}) ([][]interface{}, error) {
@@ -1444,15 +1471,13 @@ func toLines(lines []interface{}) ([][]interface{}, error) {
 	return result, nil
 }
 
-var _ WithAttributesToSubstitute = Paragraph{}
-
-// AttributesToSubstitute returns the attributes of this paragraph so that substitutions can be applied onto them
-func (p Paragraph) AttributesToSubstitute() Attributes {
+// GetAttributes returns the attributes of this paragraph so that substitutions can be applied onto them
+func (p *Paragraph) GetAttributes() Attributes {
 	return p.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this paragraph
-func (p Paragraph) ReplaceAttributes(attributes Attributes) interface{} {
+func (p *Paragraph) SetAttributes(attributes Attributes) interface{} {
 	p.Attributes = attributes
 	return p
 }
@@ -1544,11 +1569,11 @@ const (
 )
 
 // NewAdmonitionParagraph returns a new Paragraph with an extra admonition attribute
-func NewAdmonitionParagraph(lines []interface{}, admonitionKind string, attributes interface{}) (Paragraph, error) {
+func NewAdmonitionParagraph(lines []interface{}, admonitionKind string, attributes interface{}) (*Paragraph, error) {
 	// log.Debugf("new admonition paragraph")
 	p, err := NewParagraph(lines, attributes)
 	if err != nil {
-		return Paragraph{}, err
+		return nil, err
 	}
 	p.Attributes = p.Attributes.Set(AttrStyle, admonitionKind)
 	return p, nil
@@ -1596,12 +1621,12 @@ func NewInternalCrossReference(id, label interface{}) (InternalCrossReference, e
 
 // ExternalCrossReference the struct for Cross References
 type ExternalCrossReference struct {
-	Location Location
+	Location *Location
 	Label    interface{}
 }
 
 // NewExternalCrossReference initializes a new `InternalCrossReference` from the given ID
-func NewExternalCrossReference(location Location, attributes interface{}) (ExternalCrossReference, error) {
+func NewExternalCrossReference(location *Location, attributes interface{}) (ExternalCrossReference, error) {
 	var label interface{}
 	attrs := toAttributes(attributes)
 	if l, ok := attrs[AttrPositional1]; ok {
@@ -1643,12 +1668,12 @@ func (r ExternalCrossReference) RestoreElements(placeholders map[string]interfac
 
 // ImageBlock the structure for the block images
 type ImageBlock struct {
-	Location   Location
+	Location   *Location
 	Attributes Attributes
 }
 
 // NewImageBlock initializes a new `ImageBlock`
-func NewImageBlock(location Location, inlineAttributes Attributes, attributes interface{}) (ImageBlock, error) {
+func NewImageBlock(location *Location, inlineAttributes Attributes, attributes interface{}) (ImageBlock, error) {
 	// inline attributes trump block attributes
 	attrs := toAttributes(inlineAttributes)
 	attrs.SetAll(attributes)
@@ -1679,15 +1704,15 @@ func (i ImageBlock) RestoreAttributes(placeholders map[string]interface{}) inter
 // 	return i
 // }
 
-var _ WithAttributesToSubstitute = ImageBlock{}
+var _ WithAttributes = ImageBlock{}
 
-// AttributesToSubstitute returns this list item's attributes
-func (i ImageBlock) AttributesToSubstitute() Attributes {
+// GetAttributes returns this list item's attributes
+func (i ImageBlock) GetAttributes() Attributes {
 	return i.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this list item
-func (i ImageBlock) ReplaceAttributes(attributes Attributes) interface{} {
+func (i ImageBlock) SetAttributes(attributes Attributes) interface{} {
 	i.Attributes = attributes
 	return i
 }
@@ -1707,13 +1732,13 @@ func (i ImageBlock) ReplaceAttributes(attributes Attributes) interface{} {
 
 // InlineImage the structure for the inline image macros
 type InlineImage struct {
-	Location   Location
+	Location   *Location
 	Attributes Attributes
 }
 
 // NewInlineImage initializes a new `InlineImage` (similar to ImageBlock, but without attributes)
-func NewInlineImage(location Location, attributes interface{}, imagesdir interface{}) (InlineImage, error) {
-	location = location.WithPathPrefix(imagesdir)
+func NewInlineImage(location *Location, attributes interface{}, imagesdir interface{}) (InlineImage, error) {
+	location.WithPathPrefix(imagesdir)
 	attrs := toAttributesWithMapping(attributes, map[string]string{
 		AttrPositional1: AttrImageAlt,
 		AttrPositional2: AttrWidth,
@@ -1741,15 +1766,15 @@ func (i InlineImage) RestoreAttributes(placeholders map[string]interface{}) inte
 // 	return i
 // }
 
-var _ WithAttributesToSubstitute = InlineImage{}
+var _ WithAttributes = InlineImage{}
 
-// AttributesToSubstitute returns this inline image's attributes
-func (i InlineImage) AttributesToSubstitute() Attributes {
+// GetAttributes returns this inline image's attributes
+func (i InlineImage) GetAttributes() Attributes {
 	return i.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this inline image
-func (i InlineImage) ReplaceAttributes(attributes Attributes) interface{} {
+func (i InlineImage) SetAttributes(attributes Attributes) interface{} {
 	i.Attributes = attributes
 	return i
 }
@@ -1956,15 +1981,15 @@ func (b ExampleBlock) ReplaceElements(elements []interface{}) interface{} {
 	return b
 }
 
-var _ WithAttributesToSubstitute = ExampleBlock{}
+var _ WithAttributes = ExampleBlock{}
 
-// AttributesToSubstitute returns this example block's attributes
-func (b ExampleBlock) AttributesToSubstitute() Attributes {
+// GetAttributes returns this example block's attributes
+func (b ExampleBlock) GetAttributes() Attributes {
 	return b.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this example block
-func (b ExampleBlock) ReplaceAttributes(attributes Attributes) interface{} {
+func (b ExampleBlock) SetAttributes(attributes Attributes) interface{} {
 	b.Attributes = attributes
 	return b
 }
@@ -2017,15 +2042,15 @@ func (b QuoteBlock) ReplaceElements(elements []interface{}) interface{} {
 	return b
 }
 
-var _ WithAttributesToSubstitute = QuoteBlock{}
+var _ WithAttributes = QuoteBlock{}
 
-// AttributesToSubstitute returns this quote block's attributes
-func (b QuoteBlock) AttributesToSubstitute() Attributes {
+// GetAttributes returns this quote block's attributes
+func (b QuoteBlock) GetAttributes() Attributes {
 	return b.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this quote block
-func (b QuoteBlock) ReplaceAttributes(attributes Attributes) interface{} {
+func (b QuoteBlock) SetAttributes(attributes Attributes) interface{} {
 	b.Attributes = attributes
 	return b
 }
@@ -2076,15 +2101,15 @@ func (b SidebarBlock) ReplaceElements(elements []interface{}) interface{} {
 	return b
 }
 
-var _ WithAttributesToSubstitute = SidebarBlock{}
+var _ WithAttributes = SidebarBlock{}
 
-// AttributesToSubstitute returns this sidebar block's attributes
-func (b SidebarBlock) AttributesToSubstitute() Attributes {
+// GetAttributes returns this sidebar block's attributes
+func (b SidebarBlock) GetAttributes() Attributes {
 	return b.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this sidebar block
-func (b SidebarBlock) ReplaceAttributes(attributes Attributes) interface{} {
+func (b SidebarBlock) SetAttributes(attributes Attributes) interface{} {
 	b.Attributes = attributes
 	return b
 }
@@ -2139,15 +2164,15 @@ func (b FencedBlock) SubstituteLines(lines [][]interface{}) interface{} {
 	return b
 }
 
-var _ WithAttributesToSubstitute = FencedBlock{}
+var _ WithAttributes = FencedBlock{}
 
-// AttributesToSubstitute returns this fenced block's attributes
-func (b FencedBlock) AttributesToSubstitute() Attributes {
+// GetAttributes returns this fenced block's attributes
+func (b FencedBlock) GetAttributes() Attributes {
 	return b.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this fenced block
-func (b FencedBlock) ReplaceAttributes(attributes Attributes) interface{} {
+func (b FencedBlock) SetAttributes(attributes Attributes) interface{} {
 	b.Attributes = attributes
 	return b
 }
@@ -2254,15 +2279,15 @@ func (b ListingBlock) SubstituteLines(lines [][]interface{}) interface{} {
 	return b
 }
 
-var _ WithAttributesToSubstitute = ListingBlock{}
+var _ WithAttributes = ListingBlock{}
 
-// AttributesToSubstitute returns this listing block's attributes
-func (b ListingBlock) AttributesToSubstitute() Attributes {
+// GetAttributes returns this listing block's attributes
+func (b ListingBlock) GetAttributes() Attributes {
 	return b.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this listing block
-func (b ListingBlock) ReplaceAttributes(attributes Attributes) interface{} {
+func (b ListingBlock) SetAttributes(attributes Attributes) interface{} {
 	b.Attributes = attributes
 	return b
 }
@@ -2319,15 +2344,15 @@ func (b VerseBlock) SubstituteLines(lines [][]interface{}) interface{} {
 	return b
 }
 
-var _ WithAttributesToSubstitute = VerseBlock{}
+var _ WithAttributes = VerseBlock{}
 
-// AttributesToSubstitute returns this verse block's attributes
-func (b VerseBlock) AttributesToSubstitute() Attributes {
+// GetAttributes returns this verse block's attributes
+func (b VerseBlock) GetAttributes() Attributes {
 	return b.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this verse block
-func (b VerseBlock) ReplaceAttributes(attributes Attributes) interface{} {
+func (b VerseBlock) SetAttributes(attributes Attributes) interface{} {
 	b.Attributes = attributes
 	return b
 }
@@ -2404,15 +2429,15 @@ func (b PassthroughBlock) SubstituteLines(lines [][]interface{}) interface{} {
 	return b
 }
 
-var _ WithAttributesToSubstitute = PassthroughBlock{}
+var _ WithAttributes = PassthroughBlock{}
 
-// AttributesToSubstitute returns this passthrough block's attributes
-func (b PassthroughBlock) AttributesToSubstitute() Attributes {
+// GetAttributes returns this passthrough block's attributes
+func (b PassthroughBlock) GetAttributes() Attributes {
 	return b.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this passthrough block
-func (b PassthroughBlock) ReplaceAttributes(attributes Attributes) interface{} {
+func (b PassthroughBlock) SetAttributes(attributes Attributes) interface{} {
 	b.Attributes = attributes
 	return b
 }
@@ -2493,13 +2518,13 @@ func (b LiteralBlock) DefaultSubstitutions() []string {
 	return defaultLiteralBlockSubstitutions
 }
 
-// AttributesToSubstitute returns this literal block's attributes
-func (b LiteralBlock) AttributesToSubstitute() Attributes {
+// GetAttributes returns this literal block's attributes
+func (b LiteralBlock) GetAttributes() Attributes {
 	return b.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this literal block
-func (b LiteralBlock) ReplaceAttributes(attributes Attributes) interface{} {
+func (b LiteralBlock) SetAttributes(attributes Attributes) interface{} {
 	b.Attributes = attributes
 	return b
 }
@@ -2731,17 +2756,17 @@ const (
 )
 
 // NewQuotedText initializes a new `QuotedText` from the given kind and content
-func NewQuotedText(kind QuotedTextKind, elements ...interface{}) (QuotedText, error) {
-	return QuotedText{
+func NewQuotedText(kind QuotedTextKind, elements ...interface{}) (*QuotedText, error) {
+	return &QuotedText{
 		Kind:     kind,
 		Elements: Merge(elements),
 	}, nil
 }
 
-var _ RawText = QuotedText{}
+var _ RawText = &QuotedText{}
 
 // RawText returns the raw text representation of this element as it was (supposedly) written in the source document
-func (t QuotedText) RawText() (string, error) {
+func (t *QuotedText) RawText() (string, error) {
 	result := strings.Builder{}
 	result.WriteString(string(t.Kind)) // opening delimiter
 	s, err := toRawText(t.Elements)
@@ -2769,8 +2794,35 @@ func toRawText(elements []interface{}) (string, error) {
 	return result.String(), nil
 }
 
+var _ WithNestedElements = &QuotedText{}
+
+// GetElements returns this QuotedText's elements
+func (q *QuotedText) GetElements() []interface{} {
+	return q.Elements
+}
+
+// SetElements sets this QuotedText's elements
+func (q *QuotedText) SetElements(elements []interface{}) {
+	q.Elements = elements
+}
+
+func (q *QuotedText) AddElement(e interface{}) {
+	q.Elements = append(q.Elements, e)
+}
+
+// GetAttributes returns the attributes of this QuotedText
+func (q *QuotedText) GetAttributes() Attributes {
+	return q.Attributes
+}
+
+// ReplaceAttributes replaces the attributes in this QuotedText
+func (q *QuotedText) SetAttributes(attributes Attributes) interface{} {
+	q.Attributes = attributes
+	return q
+}
+
 // WithAttributes returns a _new_ QuotedText with the given attributes (with some mapping)
-func (t QuotedText) WithAttributes(attributes interface{}) (QuotedText, error) {
+func (t *QuotedText) WithAttributes(attributes interface{}) (*QuotedText, error) {
 	// log.Debugf("adding attributes on quoted text: %v", attributes)
 	t.Attributes = toAttributesWithMapping(attributes, map[string]string{
 		AttrPositional1: AttrRoles,
@@ -2778,18 +2830,18 @@ func (t QuotedText) WithAttributes(attributes interface{}) (QuotedText, error) {
 	return t, nil
 }
 
-var _ WithPlaceholdersInAttributes = QuotedText{}
+var _ WithPlaceholdersInAttributes = &QuotedText{}
 
 // RestoreAttributes restores the attributes which had been substituted by placeholders
-func (t QuotedText) RestoreAttributes(placeholders map[string]interface{}) interface{} {
+func (t *QuotedText) RestoreAttributes(placeholders map[string]interface{}) interface{} {
 	t.Attributes = restoreAttributes(t.Attributes, placeholders)
 	return t
 }
 
-var _ WithPlaceholdersInElements = QuotedText{}
+var _ WithPlaceholdersInElements = &QuotedText{}
 
 // RestoreElements restores the elements which had been substituted by placeholders
-func (t QuotedText) RestoreElements(placeholders map[string]interface{}) interface{} {
+func (t *QuotedText) RestoreElements(placeholders map[string]interface{}) interface{} {
 	t.Elements = restoreElements(t.Elements, placeholders)
 	return t
 }
@@ -2797,12 +2849,12 @@ func (t QuotedText) RestoreElements(placeholders map[string]interface{}) interfa
 var _ WithElementsToSubstitute = OrderedListItem{}
 
 // ElementsToSubstitute returns this quoted text elements so that substitutions can be applied onto then
-func (t QuotedText) ElementsToSubstitute() []interface{} {
+func (t *QuotedText) ElementsToSubstitute() []interface{} {
 	return t.Elements
 }
 
 // ReplaceElements replaces the elements in this example block
-func (t QuotedText) ReplaceElements(elements []interface{}) interface{} {
+func (t *QuotedText) ReplaceElements(elements []interface{}) interface{} {
 	t.Elements = elements
 	return t
 }
@@ -2948,24 +3000,44 @@ func (p InlinePassthrough) RawText() (string, error) {
 // InlineLink the structure for the external links
 type InlineLink struct {
 	Attributes Attributes
-	Location   Location
+	Location   *Location
 }
 
 // NewInlineLink initializes a new inline `InlineLink`
-func NewInlineLink(url Location, attributes interface{}) (InlineLink, error) {
+func NewInlineLink(url *Location, attributes interface{}) (*InlineLink, error) {
 	attrs := toAttributesWithMapping(attributes, map[string]string{
 		AttrPositional1: AttrInlineLinkText,
 	})
-	return InlineLink{
+	return &InlineLink{
 		Location:   url,
 		Attributes: attrs,
 	}, nil
 }
 
-var _ WithPlaceholdersInAttributes = InlineLink{}
+var _ WithLocation = &InlineLink{}
+
+// GetAttributes returns this link's attributes
+func (l *InlineLink) GetAttributes() Attributes {
+	return l.Attributes
+}
+
+func (l *InlineLink) SetAttributes(attributes Attributes) interface{} {
+	l.Attributes = attributes
+	return l
+}
+
+func (l *InlineLink) GetLocation() *Location {
+	return l.Location
+}
+
+func (l *InlineLink) SetLocation(value *Location) {
+	l.Location = value
+}
+
+var _ WithPlaceholdersInAttributes = &InlineLink{}
 
 // RestoreAttributes restores the attributes which had been substituted by placeholders
-func (l InlineLink) RestoreAttributes(placeholders map[string]interface{}) interface{} {
+func (l *InlineLink) RestoreAttributes(placeholders map[string]interface{}) interface{} {
 	l.Attributes = restoreAttributes(l.Attributes, placeholders)
 	return l
 }
@@ -3022,12 +3094,12 @@ func NewInlineLinkAttributes(attributes []interface{}) (Attributes, error) {
 // FileInclusion the structure for the file inclusions
 type FileInclusion struct {
 	Attributes Attributes
-	Location   Location
+	Location   *Location
 	RawText    string
 }
 
-// NewFileInclusion initializes a new inline `InlineLink`
-func NewFileInclusion(location Location, attributes interface{}, rawtext string) (FileInclusion, error) {
+// NewFileInclusion initializes a new inline `FileInclusion`
+func NewFileInclusion(location *Location, attributes interface{}, rawtext string) (FileInclusion, error) {
 	attrs := toAttributesWithMapping(attributes, map[string]string{
 		"tag": "tags", // convert `tag` to `tags`
 	})
@@ -3329,26 +3401,38 @@ func NewIncludedFileEndTag(tag string) (IncludedFileEndTag, error) {
 // Location a Location contains characters and optionaly, document attributes
 type Location struct {
 	Scheme string
-	Path   interface{}
+	Path   []interface{}
 }
 
 // NewLocation return a new location with the given elements
-func NewLocation(scheme interface{}, path []interface{}) (Location, error) {
+func NewLocation(scheme interface{}, path []interface{}) (*Location, error) {
 	path = Merge(path)
 	// log.Debugf("new location: scheme='%v' path='%+v", scheme, path)
 	s := ""
 	if scheme, ok := scheme.([]byte); ok {
 		s = string(scheme)
 	}
-	return Location{
+	return &Location{
 		Scheme: s,
 		Path:   path,
 	}, nil
 }
 
+// var _ WithElements = &Location{}
+
+// // GetElements returns this section's title
+// func (l *Location) GetElements() []interface{} {
+// 	return l.Path
+// }
+
+// // SetElements sets this section's title
+// func (l *Location) SetElements(path []interface{}) {
+// 	l.Path = path
+// }
+
 // WithPathPrefix adds the given prefix to the path if this latter is NOT an absolute
 // path and if there is no defined scheme
-func (l Location) WithPathPrefix(p interface{}) Location {
+func (l *Location) WithPathPrefix(p interface{}) {
 	if p, ok := p.(string); ok && p != "" {
 		if !strings.HasSuffix(p, "/") {
 			p = p + "/"
@@ -3365,7 +3449,6 @@ func (l Location) WithPathPrefix(p interface{}) Location {
 			}
 		}
 	}
-	return l
 }
 
 // Stringify returns a string representation of the location

@@ -5,12 +5,12 @@ import (
 	"reflect"
 
 	"github.com/bytesparadise/libasciidoc/pkg/types"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/davecgh/go-spew/spew"
 	gomegatypes "github.com/onsi/gomega/types"
 	"github.com/pkg/errors"
 	"github.com/sergi/go-diff/diffmatchpatch"
+	log "github.com/sirupsen/logrus"
 )
 
 // MatchDocument a custom matcher to verify that a document matches the given expectation

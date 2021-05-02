@@ -82,7 +82,7 @@ func (r *sgmlRenderer) renderElement(ctx *renderer.Context, element interface{})
 		return r.renderCalloutList(ctx, e)
 	case types.Callout:
 		return r.renderCalloutRef(e)
-	case types.Paragraph:
+	case *types.Paragraph:
 		return r.renderParagraph(ctx, e)
 	case types.InternalCrossReference:
 		return r.renderInternalCrossReference(ctx, e)

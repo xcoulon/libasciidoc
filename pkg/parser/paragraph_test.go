@@ -30,7 +30,7 @@ pasta`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("with hardbreaks attribute", func() {
@@ -51,7 +51,7 @@ pasta`
 						},
 					},
 				}
-				result, err := ParseDocumentFragments(source)
+				result, err := ParseDocumentFragmentGroups(source)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(result).To(MatchDocumentFragmentGroups(expected))
 			})
@@ -72,7 +72,7 @@ pasta`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("with custom title attribute - explicit and unquoted", func() {
@@ -109,7 +109,7 @@ pasta`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("with multiple attributes and blanklines in-between", func() {
@@ -153,7 +153,7 @@ pasta`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			Context("with custom substitutions", func() {
@@ -197,7 +197,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 							},
 						},
 					}
-					result, err := ParseDocumentFragments(s)
+					result, err := ParseDocumentFragmentGroups(s)
 					Expect(err).NotTo(HaveOccurred())
 					Expect(result).To(MatchDocumentFragmentGroups(expected))
 				})
@@ -210,13 +210,43 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 
 		Context("regular paragraphs", func() {
 
+			It("3 with basic content", func() {
+				source := `cookie
+
+chocolate
+
+pasta`
+				expected := types.Document{
+					Elements: []interface{}{
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.StringElement{Content: "cookie"},
+							},
+						},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.StringElement{Content: "chocolate"},
+							},
+						},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.StringElement{Content: "pasta"},
+							},
+						},
+					},
+				}
+				result, err := ParseDocument(source)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).To(MatchDocument(expected))
+			})
+
 			It("with title attribute", func() {
 				source := `[title=my title]
 cookie
 pasta`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrTitle: "my title",
 							},
@@ -246,16 +276,9 @@ pasta`
 							Name:  "title",
 							Value: "cookies",
 						},
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
-								types.AttrTitle: []interface{}{ // remains within an []interface
-									types.StringElement{
-										Content: "my ",
-									},
-									types.StringElement{
-										Content: "cookies",
-									},
-								},
+								types.AttrTitle: "my cookies",
 							},
 							Elements: []interface{}{
 								types.StringElement{Content: "cookie\npasta"},
@@ -281,16 +304,9 @@ pasta`
 							Name:  "title",
 							Value: "cookies",
 						},
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
-								types.AttrTitle: []interface{}{ // remains within an []interface
-									types.StringElement{
-										Content: "my ",
-									},
-									types.StringElement{
-										Content: "cookies",
-									},
-								},
+								types.AttrTitle: "my cookies",
 							},
 							Elements: []interface{}{
 								types.StringElement{Content: "cookie\npasta"},
@@ -316,16 +332,9 @@ pasta`
 							Name:  "title",
 							Value: "cookies",
 						},
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
-								types.AttrTitle: []interface{}{ // remains within an []interface
-									types.StringElement{
-										Content: "my ",
-									},
-									types.StringElement{
-										Content: "cookies",
-									},
-								},
+								types.AttrTitle: "my cookies",
 							},
 							Elements: []interface{}{
 								types.StringElement{Content: "cookie\npasta"},
@@ -351,16 +360,9 @@ pasta`
 							Name:  "title",
 							Value: "cookies",
 						},
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
-								types.AttrTitle: []interface{}{ // remains within an []interface
-									types.StringElement{
-										Content: "my ",
-									},
-									types.StringElement{
-										Content: "cookies",
-									},
-								},
+								types.AttrTitle: "my cookies",
 							},
 							Elements: []interface{}{
 								types.StringElement{Content: "cookie\npasta"},
@@ -378,13 +380,10 @@ cookie
 pasta`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
-								types.AttrID: "anchor",
-								types.AttrRoles: []interface{}{
-									"role1",
-									"role2",
-								},
+								types.AttrID:      "anchor",
+								types.AttrRoles:   []interface{}{"role1", "role2"},
 								types.AttrOptions: []interface{}{"hardbreaks"},
 							},
 							Elements: []interface{}{
@@ -405,7 +404,7 @@ cookie
 pasta`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Elements: []interface{}{
 								types.StringElement{Content: "cookie\npasta"},
 							},
@@ -421,13 +420,10 @@ cookie
 pasta`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrOptions: []interface{}{"hardbreaks"},
-								types.AttrRoles: []interface{}{
-									"role1",
-									"role2",
-								},
+								types.AttrRoles:   []interface{}{"role1", "role2"},
 							},
 							Elements: []interface{}{
 								types.StringElement{Content: "cookie\npasta"},
@@ -445,16 +441,15 @@ cookie
 pasta`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrOptions: []interface{}{"hardbreaks"},
-								types.AttrRoles: []interface{}{
-									"role1",
-									"role2",
-								},
+								types.AttrRoles:   []interface{}{"role1", "role2"},
 							},
 							Elements: []interface{}{
-								types.StringElement{Content: "cookie\npasta"},
+								types.StringElement{
+									Content: "cookie\npasta",
+								},
 							},
 						},
 					},
@@ -467,7 +462,7 @@ pasta`
 cookie`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Elements: []interface{}{
 								types.StringElement{Content: "C++\ncookie"},
 							},
@@ -483,7 +478,7 @@ cookie`
 					source := `cookie{counter:cookie} chocolate{counter2:cookie} pasta{counter:cookie} bob{counter:bob}`
 					expected := types.Document{
 						Elements: []interface{}{
-							types.Paragraph{
+							&types.Paragraph{
 								Elements: []interface{}{
 									types.StringElement{Content: "cookie1 chocolate pasta3 bob1"},
 								},
@@ -497,7 +492,7 @@ cookie`
 					source := `cookie{counter:cookie:2} chocolate{counter2:cookie} pasta{counter:cookie} bob{counter:bob:10}`
 					expected := types.Document{
 						Elements: []interface{}{
-							types.Paragraph{
+							&types.Paragraph{
 								Elements: []interface{}{
 									types.StringElement{Content: "cookie2 chocolate pasta4 bob10"},
 								},
@@ -511,7 +506,7 @@ cookie`
 					source := `cookie{counter:cookie:b} chocolate{counter2:cookie} pasta{counter:cookie} bob{counter:bob:z}`
 					expected := types.Document{
 						Elements: []interface{}{
-							types.Paragraph{
+							&types.Paragraph{
 								Elements: []interface{}{
 									types.StringElement{Content: "cookieb chocolate pastad bobz"},
 								},
@@ -536,7 +531,7 @@ a paragraph`
 							Name:  "idprefix",
 							Value: "bar_",
 						},
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrTitle: "a title", // there is no default ID. Only custom IDs
 							},
@@ -553,7 +548,7 @@ a paragraph`
 				source := `{blank}`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Elements: []interface{}{
 								types.PredefinedAttribute{
 									Name: "blank",
@@ -571,7 +566,7 @@ a paragraph`
 				source := "hello {plus} world"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Elements: []interface{}{
 								types.StringElement{Content: "hello "},
 								types.PredefinedAttribute{Name: "plus"},
@@ -611,20 +606,16 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 								Name:  "github-title",
 								Value: "GitHub",
 							},
-							types.Paragraph{
+							&types.Paragraph{
 								Elements: []interface{}{
 									types.StringElement{
 										Content: "links to GitHub: ",
 									},
-									types.InlineLink{
+									&types.InlineLink{
 										Attributes: types.Attributes{
-											types.AttrInlineLinkText: []interface{}{
-												types.StringElement{
-													Content: "GitHub",
-												},
-											},
+											types.AttrInlineLinkText: "GitHub",
 										},
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -636,16 +627,16 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: " and ",
 									},
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.SpecialCharacter{
 												Name: "<",
 											},
-											types.InlineLink{
+											&types.InlineLink{
 												Attributes: types.Attributes{
 													types.AttrInlineLinkText: []interface{}{
-														types.QuotedText{
+														&types.QuotedText{
 															Kind: types.SingleQuoteItalic,
 															Elements: []interface{}{
 																types.StringElement{
@@ -655,7 +646,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 														},
 													},
 												},
-												Location: types.Location{
+												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
 														types.StringElement{
@@ -672,11 +663,11 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: "\nand another one using attribute substitution: ",
 									},
-									types.InlineLink{
+									&types.InlineLink{
 										Attributes: types.Attributes{
 											types.AttrInlineLinkText: "GitHub",
 										},
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -715,7 +706,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 								Name:  "github-title",
 								Value: "GitHub",
 							},
-							types.Paragraph{
+							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "normal",
 								},
@@ -723,15 +714,11 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: "links to GitHub: ",
 									},
-									types.InlineLink{
+									&types.InlineLink{
 										Attributes: types.Attributes{
-											types.AttrInlineLinkText: []interface{}{
-												types.StringElement{
-													Content: "GitHub",
-												},
-											},
+											types.AttrInlineLinkText: "GitHub",
 										},
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -743,16 +730,16 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: " and ",
 									},
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.SpecialCharacter{
 												Name: "<",
 											},
-											types.InlineLink{
+											&types.InlineLink{
 												Attributes: types.Attributes{
 													types.AttrInlineLinkText: []interface{}{
-														types.QuotedText{
+														&types.QuotedText{
 															Kind: types.SingleQuoteItalic,
 															Elements: []interface{}{
 																types.StringElement{
@@ -762,7 +749,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 														},
 													},
 												},
-												Location: types.Location{
+												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
 														types.StringElement{
@@ -779,11 +766,11 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: "\nand another one using attribute substitution: ",
 									},
-									types.InlineLink{
+									&types.InlineLink{
 										Attributes: types.Attributes{
 											types.AttrInlineLinkText: "GitHub",
 										},
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -821,7 +808,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 								Name:  "github-title",
 								Value: "GitHub",
 							},
-							types.Paragraph{
+							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "none",
 								},
@@ -857,7 +844,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 								Name:  "github-title",
 								Value: "GitHub",
 							},
-							types.Paragraph{
+							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "quotes",
 								},
@@ -865,13 +852,13 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: "links to {github-title}: https://github.com[{github-title}] and ",
 									},
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.StringElement{
 												Content: "<https://github.com[",
 											},
-											types.QuotedText{
+											&types.QuotedText{
 												Kind: types.SingleQuoteItalic,
 												Elements: []interface{}{
 													types.StringElement{
@@ -914,7 +901,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 								Name:  "github-title",
 								Value: "GitHub",
 							},
-							types.Paragraph{
+							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "macros",
 								},
@@ -922,11 +909,11 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: "links to {github-title}: ",
 									},
-									types.InlineLink{
+									&types.InlineLink{
 										Attributes: types.Attributes{
 											types.AttrInlineLinkText: "{github-title}",
 										},
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -938,11 +925,11 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: " and *<",
 									},
-									types.InlineLink{
+									&types.InlineLink{
 										Attributes: types.Attributes{
 											types.AttrInlineLinkText: "_{github-title}_",
 										},
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -981,7 +968,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 								Name:  "github-title",
 								Value: "GitHub",
 							},
-							types.Paragraph{
+							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "attributes",
 								},
@@ -1017,7 +1004,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 								Name:  "github-title",
 								Value: "GitHub",
 							},
-							types.Paragraph{
+							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "specialchars",
 								},
@@ -1065,7 +1052,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 								Name:  "github-title",
 								Value: "GitHub",
 							},
-							types.Paragraph{
+							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "replacements",
 								},
@@ -1086,7 +1073,9 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 
 				It("should apply the 'quotes,macros' substitutions", func() {
 					// quoted texts and macros are both parsed at the root of the paragraph content
-					// but macros within quotes are NOT
+					// but and macros within quotes are, too
+					// Note: Asciidoctor 2.0.12 does not parse the macros withing the quotes, so the
+					// 2nd link of the first line is not detected
 					s := strings.ReplaceAll(source, "$SUBS", "quotes,macros")
 					expected := types.Document{
 						Attributes: types.Attributes{
@@ -1102,7 +1091,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 								Name:  "github-title",
 								Value: "GitHub",
 							},
-							types.Paragraph{
+							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "quotes,macros",
 								},
@@ -1110,11 +1099,11 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: "links to {github-title}: ",
 									},
-									types.InlineLink{
+									&types.InlineLink{
 										Attributes: types.Attributes{
 											types.AttrInlineLinkText: "{github-title}",
 										},
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -1126,22 +1115,36 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: " and ",
 									},
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.StringElement{
-												Content: "<https://github.com[",
+												Content: "<",
 											},
-											types.QuotedText{
-												Kind: types.SingleQuoteItalic,
-												Elements: []interface{}{
-													types.StringElement{
-														Content: "{github-title}",
+											&types.InlineLink{
+												Attributes: types.Attributes{
+													types.AttrInlineLinkText: []interface{}{
+														&types.QuotedText{
+															Kind: types.SingleQuoteItalic,
+															Elements: []interface{}{
+																types.StringElement{
+																	Content: "{github-title}",
+																},
+															},
+														},
+													},
+												},
+												Location: &types.Location{
+													Scheme: "https://",
+													Path: []interface{}{
+														types.StringElement{
+															Content: "github.com",
+														},
 													},
 												},
 											},
 											types.StringElement{
-												Content: "]>",
+												Content: ">",
 											},
 										},
 									},
@@ -1176,7 +1179,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 								Name:  "github-title",
 								Value: "GitHub",
 							},
-							types.Paragraph{
+							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "macros,quotes",
 								},
@@ -1184,11 +1187,11 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: "links to {github-title}: ",
 									},
-									types.InlineLink{
+									&types.InlineLink{
 										Attributes: types.Attributes{
 											types.AttrInlineLinkText: "{github-title}",
 										},
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -1200,16 +1203,16 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: " and ",
 									},
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.StringElement{
 												Content: "<",
 											},
-											types.InlineLink{
+											&types.InlineLink{
 												Attributes: types.Attributes{
 													types.AttrInlineLinkText: []interface{}{
-														types.QuotedText{
+														&types.QuotedText{
 															Kind: types.SingleQuoteItalic,
 															Elements: []interface{}{
 																types.StringElement{
@@ -1219,7 +1222,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 														},
 													},
 												},
-												Location: types.Location{
+												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
 														types.StringElement{
@@ -1263,7 +1266,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 								Name:  "github-title",
 								Value: "GitHub",
 							},
-							types.Paragraph{
+							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "attributes,macros",
 								},
@@ -1271,11 +1274,11 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: "links to GitHub: ",
 									},
-									types.InlineLink{
+									&types.InlineLink{
 										Attributes: types.Attributes{
 											types.AttrInlineLinkText: "GitHub",
 										},
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -1287,11 +1290,11 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: " and *<",
 									},
-									types.InlineLink{
+									&types.InlineLink{
 										Attributes: types.Attributes{
 											types.AttrInlineLinkText: "_GitHub_",
 										},
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -1303,11 +1306,11 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: ">*\nand another one using attribute substitution: ",
 									},
-									types.InlineLink{
+									&types.InlineLink{
 										Attributes: types.Attributes{
 											types.AttrInlineLinkText: "GitHub",
 										},
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -1347,7 +1350,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 								Name:  "github-title",
 								Value: "GitHub",
 							},
-							types.Paragraph{
+							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "macros,attributes",
 								},
@@ -1355,15 +1358,11 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: "links to GitHub: ",
 									},
-									types.InlineLink{
+									&types.InlineLink{
 										Attributes: types.Attributes{
-											types.AttrInlineLinkText: []interface{}{
-												types.StringElement{
-													Content: "GitHub",
-												},
-											},
+											types.AttrInlineLinkText: "GitHub",
 										},
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -1375,21 +1374,11 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: " and *<",
 									},
-									types.InlineLink{
+									&types.InlineLink{
 										Attributes: types.Attributes{
-											types.AttrInlineLinkText: []interface{}{
-												types.StringElement{
-													Content: "_",
-												},
-												types.StringElement{
-													Content: "GitHub",
-												},
-												types.StringElement{
-													Content: "_",
-												},
-											},
+											types.AttrInlineLinkText: "_GitHub_",
 										},
-										Location: types.Location{
+										Location: &types.Location{
 											Scheme: "https://",
 											Path: []interface{}{
 												types.StringElement{
@@ -1435,7 +1424,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 warning!`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Warning,
 							},
@@ -1459,7 +1448,7 @@ warning!`
 NOTE: this is a note.`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Note,
 								types.AttrID:    "cookie",
@@ -1481,7 +1470,7 @@ NOTE: this is a note.`
 this is a caution!`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Caution,
 							},
@@ -1504,7 +1493,7 @@ this is a
 *caution*!`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Caution,
 								types.AttrID:    "cookie",
@@ -1515,7 +1504,7 @@ this is a
 									types.StringElement{Content: "this is a "},
 								},
 								{
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.StringElement{
@@ -1542,7 +1531,7 @@ No space after the [NOTE]!
 And no space after [CAUTION] either.`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Note,
 							},
@@ -1553,7 +1542,7 @@ And no space after [CAUTION] either.`
 							},
 						},
 						types.BlankLine{},
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Caution,
 							},
@@ -1576,7 +1565,7 @@ And no space after [CAUTION] either.`
 a cookie image:cookie.png[]`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle:       types.Quote,
 								types.AttrQuoteAuthor: "john doe",
@@ -1588,7 +1577,7 @@ a cookie image:cookie.png[]`
 										Content: "a cookie ",
 									},
 									types.InlineImage{
-										Location: types.Location{
+										Location: &types.Location{
 											Path: []interface{}{
 												types.StringElement{
 													Content: "cookie.png",
@@ -1612,7 +1601,7 @@ a cookie image:cookie.png[]`
 I am a verse paragraph.`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle:       types.Verse,
 								types.AttrQuoteAuthor: "john doe",
@@ -1636,7 +1625,7 @@ I am a verse paragraph.`
 I am a verse paragraph.`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle:       types.Verse,
 								types.AttrQuoteAuthor: "john doe",
@@ -1661,7 +1650,7 @@ I am a verse paragraph.`
 I am a verse paragraph.`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle:       types.Verse,
 								types.AttrQuoteAuthor: "john doe",
@@ -1682,7 +1671,7 @@ I am a verse paragraph.`
 I am a verse paragraph.`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle:       types.Verse,
 								types.AttrQuoteAuthor: "john doe",
@@ -1703,7 +1692,7 @@ I am a verse paragraph.`
 I am a verse paragraph.`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Verse,
 							},
@@ -1723,7 +1712,7 @@ I am a verse paragraph.`
 I am a verse paragraph.`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Verse,
 							},
@@ -1744,7 +1733,7 @@ I am a verse paragraph.`
 image::cookie.png[]`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle:       types.Verse,
 								types.AttrQuoteAuthor: "john doe",

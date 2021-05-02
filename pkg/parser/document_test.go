@@ -15,7 +15,7 @@ var _ = Describe("documents", func() {
 		It("should parse empty document", func() {
 			source := ``
 			expected := []types.DocumentFragmentGroup{}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("should parse header without empty first line", func() {
@@ -49,7 +49,7 @@ Garrett D'Amore
 					},
 				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 
 		})
 
@@ -85,7 +85,7 @@ Garrett D'Amore
 					},
 				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 
 		})
 	})

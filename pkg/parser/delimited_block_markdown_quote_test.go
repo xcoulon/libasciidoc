@@ -31,7 +31,7 @@ on *multiple lines*`
 									types.StringElement{
 										Content: "on ",
 									},
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.StringElement{
@@ -63,7 +63,7 @@ on *multiple lines*`
 									types.StringElement{
 										Content: "on ",
 									},
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.StringElement{
@@ -99,7 +99,7 @@ on *multiple lines*`
 									types.StringElement{
 										Content: "on ",
 									},
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.StringElement{
@@ -137,7 +137,7 @@ on *multiple lines*`
 									types.StringElement{
 										Content: "on ",
 									},
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.StringElement{

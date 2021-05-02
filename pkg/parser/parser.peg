@@ -308,6 +308,7 @@ UnquotedAttributeValue <-
     !Space
     elements:(
         Quote
+        / Space
         / ([^,=\r\n\uFFFD{\]]+ {
             return types.NewStringElement(string(c.text))
         }) 
@@ -441,7 +442,7 @@ InternalCrossReference <- "<<" id:(Id) Space* "," label:(CrossReferenceLabel) ">
     } 
 
 ExternalCrossReference <- "xref:" url:(FileLocation) inlineAttributes:(InlineAttributes) {
-        return types.NewExternalCrossReference(url.(types.Location), inlineAttributes.(types.Attributes))
+        return types.NewExternalCrossReference(url.(*types.Location), inlineAttributes.(types.Attributes))
     }
 
 CrossReferenceLabel <- (
@@ -658,7 +659,7 @@ FileInclusion <-
         "include::" 
         path:(FileLocation) 
         inlineAttributes:(InlineAttributes) { 
-            return types.NewFileInclusion(path.(types.Location), inlineAttributes.(types.Attributes), string(c.text))
+            return types.NewFileInclusion(path.(*types.Location), inlineAttributes.(types.Attributes), string(c.text))
         }
     ) 
     Space* EOL {
@@ -864,11 +865,11 @@ ImageBlock <-
     }
     "image::" path:(Location) inlineAttributes:(InlineAttributes) Space* EOL {
         // 'imagesdir' attribute is added after applying the attribute substitutions on the image location
-        return types.NewImageBlock(path.(types.Location), inlineAttributes.(types.Attributes), c.globalStore.getAttributes())
+        return types.NewImageBlock(path.(*types.Location), inlineAttributes.(types.Attributes), c.globalStore.getAttributes())
     }
 
 InlineImage <- "image:" !":" path:(Location) inlineAttributes:(InlineAttributes) {
-        return types.NewInlineImage(path.(types.Location), inlineAttributes.(types.Attributes), c.globalStore["imagesdir"])
+        return types.NewInlineImage(path.(*types.Location), inlineAttributes.(types.Attributes), c.globalStore["imagesdir"])
     }
 
 // ------------------------------------------------------------------------------------
@@ -938,11 +939,11 @@ Link <- RelativeLink / ExternalLink
 
 // url preceeding with `link:` MUST be followed by square brackets
 RelativeLink <- "link:" url:(Location) inlineAttributes:(InlineAttributes) {
-        return types.NewInlineLink(url.(types.Location), inlineAttributes.(types.Attributes))
+        return types.NewInlineLink(url.(*types.Location), inlineAttributes.(types.Attributes))
     }
 
 ExternalLink <- url:(LocationWithScheme) inlineAttributes:(InlineAttributes)? {
-        return types.NewInlineLink(url.(types.Location), inlineAttributes)
+        return types.NewInlineLink(url.(*types.Location), inlineAttributes)
     }
 
 
@@ -953,7 +954,7 @@ QuotedText <-
     (
         attributes:(LongHandAttributes)? 
         text:(UnconstrainedQuotedText / ConstrainedQuotedText) {
-            return text.(types.QuotedText).WithAttributes(attributes)
+            return text.(*types.QuotedText).WithAttributes(attributes)
         }
     ) 
     / EscapedQuotedText
@@ -1034,7 +1035,7 @@ QuotedTextInDoubleQuoteBoldText <-
         / MonospaceText
         / SubscriptText
         / SuperscriptText) {
-            return text.(types.QuotedText).WithAttributes(attributes)
+            return text.(*types.QuotedText).WithAttributes(attributes)
         }
 
 DoubleQuoteBoldTextFallbackCharacter <-
@@ -1072,7 +1073,7 @@ QuotedTextInSingleQuoteBoldText <-
         / MonospaceText
         / SubscriptText
         / SuperscriptText) {
-            return text.(types.QuotedText).WithAttributes(attributes)
+            return text.(*types.QuotedText).WithAttributes(attributes)
         }
 SingleQuoteBoldTextFallbackCharacter <-
     [^\r\n*] // anything except EOL and bold delimiter (fallback in case nothing else matched)
@@ -1123,7 +1124,7 @@ QuotedTextInDoubleQuoteItalicText <-
         / MonospaceText
         / SubscriptText
         / SuperscriptText) {
-            return text.(types.QuotedText).WithAttributes(attributes)
+            return text.(*types.QuotedText).WithAttributes(attributes)
         }
 
 DoubleQuoteItalicTextFallbackCharacter <-
@@ -1168,7 +1169,7 @@ QuotedTextInSingleQuoteItalicText <-
         / MonospaceText
         / SubscriptText
         / SuperscriptText) {
-            return text.(types.QuotedText).WithAttributes(attributes)
+            return text.(*types.QuotedText).WithAttributes(attributes)
         }
 
 SingleQuoteItalicTextFallbackCharacter <-
@@ -1221,7 +1222,7 @@ QuotedTextInDoubleQuoteMonospaceText <-
         / MarkedText
         / SubscriptText
         / SuperscriptText) {
-             return text.(types.QuotedText).WithAttributes(attributes)
+             return text.(*types.QuotedText).WithAttributes(attributes)
         }
 
 DoubleQuoteMonospaceTextFallbackCharacter <-
@@ -1260,7 +1261,7 @@ QuotedTextInSingleQuoteMonospaceText <-
         / MarkedText
         / SubscriptText
         / SuperscriptText) {
-             return text.(types.QuotedText).WithAttributes(attributes)
+             return text.(*types.QuotedText).WithAttributes(attributes)
         }
 
 SingleQuoteMonospaceTextFallbackCharacter <-
@@ -1308,7 +1309,7 @@ NonDoubleQuoteMarkedText <-
         / SingleQuoteMarkedText
         / SubscriptText
         / SuperscriptText) {
-             return text.(types.QuotedText).WithAttributes(attributes)
+             return text.(*types.QuotedText).WithAttributes(attributes)
         }
 
 DoubleQuoteMarkedTextFallbackCharacter <-
@@ -1344,7 +1345,7 @@ NonSingleQuoteMarkedText <-
         / MonospaceText
         / SubscriptText
         / SuperscriptText) {
-             return text.(types.QuotedText).WithAttributes(attributes)
+             return text.(*types.QuotedText).WithAttributes(attributes)
         }
 SingleQuoteMarkedTextFallbackCharacter <-
     [^\r\n#] // anything except EOL and mark delimiter (fallback in case nothing else matched)
@@ -1435,7 +1436,7 @@ QuotedTextInSingleQuotedString <-
         / SubscriptText
         / SuperscriptText
         / MarkedText) {
-             return text.(types.QuotedText).WithAttributes(attributes)
+             return text.(*types.QuotedText).WithAttributes(attributes)
         }
 
 SingleQuotedStringFallbackCharacter <-  [^\r\n\t `] / "`" !"'" { // '
@@ -1468,7 +1469,7 @@ QuotedTextInDoubleQuotedString <-
         / SubscriptText
         / SuperscriptText
         / MarkedText) {
-             return text.(types.QuotedText).WithAttributes(attributes)
+             return text.(*types.QuotedText).WithAttributes(attributes)
         }
 
 DoubleQuoteStringStart <- "\"`" ![ \t\r\n]

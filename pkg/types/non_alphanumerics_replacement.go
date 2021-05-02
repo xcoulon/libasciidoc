@@ -12,7 +12,7 @@ func ReplaceNonAlphanumerics(elements []interface{}, replacement string) (string
 	buf := &strings.Builder{}
 	for _, element := range elements {
 		switch element := element.(type) {
-		case QuotedText:
+		case *QuotedText:
 			r, err := ReplaceNonAlphanumerics(element.Elements, replacement)
 			if err != nil {
 				return "", err

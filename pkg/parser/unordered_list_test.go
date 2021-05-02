@@ -136,7 +136,7 @@ var _ = Describe("unordered lists", func() {
 											Lines: [][]interface{}{
 												{
 													types.StringElement{Content: "a second item with "},
-													types.QuotedText{
+													&types.QuotedText{
 														Kind: types.SingleQuoteBold,
 														Elements: []interface{}{
 															types.StringElement{Content: "bold content"},
@@ -332,7 +332,7 @@ var _ = Describe("unordered lists", func() {
 											Lines: [][]interface{}{
 												{
 													types.StringElement{Content: "a second item with "},
-													types.QuotedText{
+													&types.QuotedText{
 														Kind: types.SingleQuoteBold,
 														Elements: []interface{}{
 															types.StringElement{Content: "bold content"},
@@ -481,7 +481,7 @@ var _ = Describe("unordered lists", func() {
 											Lines: [][]interface{}{
 												{
 													types.StringElement{Content: "a second item with "},
-													types.QuotedText{
+													&types.QuotedText{
 														Kind: types.SingleQuoteBold,
 														Elements: []interface{}{
 															types.StringElement{Content: "bold content"},

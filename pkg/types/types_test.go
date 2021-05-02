@@ -517,7 +517,7 @@ var _ = Describe("element id resolution", func() {
 							Content: "a link to ",
 						},
 						types.InlineLink{
-							Location: types.Location{
+							Location: &types.Location{
 								Scheme: "https://",
 								Path: []interface{}{
 									types.StringElement{
@@ -576,7 +576,7 @@ var _ = Describe("element id resolution", func() {
 							Content: "a link to ",
 						},
 						types.InlineLink{
-							Location: types.Location{
+							Location: &types.Location{
 								Scheme: "https://",
 								Path: []interface{}{
 									types.StringElement{
@@ -641,7 +641,7 @@ var _ = Describe("element id resolution", func() {
 							Content: "a link to ",
 						},
 						types.InlineLink{
-							Location: types.Location{
+							Location: &types.Location{
 								Scheme: "https://",
 								Path: []interface{}{
 									types.StringElement{
@@ -1023,7 +1023,7 @@ var _ = DescribeTable("rawtest",
 	},
 	// quoted text
 	Entry("single quote bold text",
-		types.QuotedText{
+		&types.QuotedText{
 			Kind: types.SingleQuoteBold,
 			Elements: []interface{}{
 				types.StringElement{
@@ -1033,7 +1033,7 @@ var _ = DescribeTable("rawtest",
 		},
 		"*content*"),
 	Entry("double quote bold text",
-		types.QuotedText{
+		&types.QuotedText{
 			Kind: types.DoubleQuoteBold,
 			Elements: []interface{}{
 				types.StringElement{
@@ -1043,7 +1043,7 @@ var _ = DescribeTable("rawtest",
 		},
 		"**content**"),
 	Entry("single quote italic text",
-		types.QuotedText{
+		&types.QuotedText{
 			Kind: types.SingleQuoteItalic,
 			Elements: []interface{}{
 				types.StringElement{
@@ -1053,7 +1053,7 @@ var _ = DescribeTable("rawtest",
 		},
 		"_content_"),
 	Entry("double quote italic text",
-		types.QuotedText{
+		&types.QuotedText{
 			Kind: types.DoubleQuoteItalic,
 			Elements: []interface{}{
 				types.StringElement{
@@ -1063,7 +1063,7 @@ var _ = DescribeTable("rawtest",
 		},
 		"__content__"),
 	Entry("single quote monospace text",
-		types.QuotedText{
+		&types.QuotedText{
 			Kind: types.SingleQuoteMonospace,
 			Elements: []interface{}{
 				types.StringElement{
@@ -1073,7 +1073,7 @@ var _ = DescribeTable("rawtest",
 		},
 		"`content`"),
 	Entry("double quote monospace text",
-		types.QuotedText{
+		&types.QuotedText{
 			Kind: types.DoubleQuoteMonospace,
 			Elements: []interface{}{
 				types.StringElement{
@@ -1083,7 +1083,7 @@ var _ = DescribeTable("rawtest",
 		},
 		"``content``"),
 	Entry("single quote marked text",
-		types.QuotedText{
+		&types.QuotedText{
 			Kind: types.SingleQuoteMarked,
 			Elements: []interface{}{
 				types.StringElement{
@@ -1093,7 +1093,7 @@ var _ = DescribeTable("rawtest",
 		},
 		"#content#"),
 	Entry("double quote marked text",
-		types.QuotedText{
+		&types.QuotedText{
 			Kind: types.DoubleQuoteMarked,
 			Elements: []interface{}{
 				types.StringElement{
@@ -1103,7 +1103,7 @@ var _ = DescribeTable("rawtest",
 		},
 		"##content##"),
 	Entry("single quote subscript text",
-		types.QuotedText{
+		&types.QuotedText{
 			Kind: types.SingleQuoteSubscript,
 			Elements: []interface{}{
 				types.StringElement{
@@ -1113,7 +1113,7 @@ var _ = DescribeTable("rawtest",
 		},
 		"~content~"),
 	Entry("single quote superscript text",
-		types.QuotedText{
+		&types.QuotedText{
 			Kind: types.SingleQuoteSuperscript,
 			Elements: []interface{}{
 				types.StringElement{
@@ -1188,7 +1188,7 @@ var _ = DescribeTable("rawtest",
 		"{cookie}"),
 	// mixins
 	Entry("mixins",
-		types.QuotedText{
+		&types.QuotedText{
 			Kind: types.SingleQuoteBold,
 			Elements: []interface{}{
 				types.StringElement{

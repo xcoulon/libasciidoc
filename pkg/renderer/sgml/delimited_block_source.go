@@ -61,7 +61,7 @@ func (r *sgmlRenderer) renderSourceBlock(ctx *renderer.Context, b types.ListingB
 	return result.String(), err
 }
 
-func (r *sgmlRenderer) renderSourceParagraph(ctx *renderer.Context, p types.Paragraph) (string, error) {
+func (r *sgmlRenderer) renderSourceParagraph(ctx *renderer.Context, p *types.Paragraph) (string, error) {
 	lines := make([][]interface{}, len(p.Lines))
 	copy(lines, p.Lines)
 	attributes := p.Attributes

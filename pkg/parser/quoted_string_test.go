@@ -91,7 +91,7 @@ var _ = Describe("quoted strings", func() {
 									Kind: types.SingleQuote,
 									Elements: []interface{}{
 										types.StringElement{Content: "curly "},
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
 												types.StringElement{Content: "was"},
@@ -119,7 +119,7 @@ var _ = Describe("quoted strings", func() {
 									Kind: types.SingleQuote,
 									Elements: []interface{}{
 										types.StringElement{Content: "curly "},
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
 												types.StringElement{Content: "was"},
@@ -148,7 +148,7 @@ var _ = Describe("quoted strings", func() {
 										types.StringElement{
 											Content: "curly ",
 										},
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteMarked,
 											Attributes: types.Attributes{
 												types.AttrRoles: []interface{}{"strikeout"},
@@ -159,7 +159,7 @@ var _ = Describe("quoted strings", func() {
 												},
 											},
 										},
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
 												types.StringElement{
@@ -191,7 +191,7 @@ var _ = Describe("quoted strings", func() {
 									Kind: types.SingleQuote,
 									Elements: []interface{}{
 										types.StringElement{Content: "curly "},
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteMonospace,
 											Elements: []interface{}{
 												types.StringElement{Content: "is"},
@@ -217,7 +217,7 @@ var _ = Describe("quoted strings", func() {
 								types.QuotedString{
 									Kind: types.SingleQuote,
 									Elements: []interface{}{
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteMonospace,
 											Elements: []interface{}{
 												types.StringElement{Content: "curly"},
@@ -267,7 +267,7 @@ var _ = Describe("quoted strings", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.QuotedText{
+								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
 										types.QuotedString{
@@ -292,7 +292,7 @@ var _ = Describe("quoted strings", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.QuotedText{
+								&types.QuotedText{
 									Kind: types.SingleQuoteItalic,
 									Elements: []interface{}{
 										types.QuotedString{
@@ -317,7 +317,7 @@ var _ = Describe("quoted strings", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.QuotedText{
+								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
 										types.QuotedString{
@@ -344,7 +344,7 @@ var _ = Describe("quoted strings", func() {
 						Lines: [][]interface{}{
 							{
 								types.InlineLink{
-									Location: types.Location{
+									Location: &types.Location{
 										Scheme: "https://",
 										Path: []interface{}{
 											types.StringElement{Content: "www.example.com/a"},
@@ -378,7 +378,7 @@ var _ = Describe("quoted strings", func() {
 						Lines: [][]interface{}{
 							{
 								types.InlineLink{
-									Location: types.Location{
+									Location: &types.Location{
 										Scheme: "https://",
 										Path: []interface{}{
 											types.StringElement{Content: "www.example.com/a"},
@@ -420,7 +420,7 @@ var _ = Describe("quoted strings", func() {
 									Elements: []interface{}{
 										types.StringElement{Content: "a "},
 										types.InlineImage{
-											Location: types.Location{
+											Location: &types.Location{
 												Path: []interface{}{
 													types.StringElement{
 														Content: "foo.png",
@@ -540,7 +540,7 @@ var _ = Describe("quoted strings", func() {
 									Kind: types.DoubleQuote,
 									Elements: []interface{}{
 										types.StringElement{Content: "curly "},
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
 												types.StringElement{Content: "was"},
@@ -567,7 +567,7 @@ var _ = Describe("quoted strings", func() {
 									Kind: types.DoubleQuote,
 									Elements: []interface{}{
 										types.StringElement{Content: "curly "},
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
 												types.StringElement{Content: "was"},
@@ -597,7 +597,7 @@ var _ = Describe("quoted strings", func() {
 										types.StringElement{
 											Content: "curly ",
 										},
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteMarked,
 											Attributes: types.Attributes{
 												types.AttrRoles: []interface{}{"strikeout"},
@@ -608,7 +608,7 @@ var _ = Describe("quoted strings", func() {
 												},
 											},
 										},
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
 												types.StringElement{
@@ -640,7 +640,7 @@ var _ = Describe("quoted strings", func() {
 									Kind: types.DoubleQuote,
 									Elements: []interface{}{
 										types.StringElement{Content: "curly "},
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteMonospace,
 											Elements: []interface{}{
 												types.StringElement{Content: "is"},
@@ -666,7 +666,7 @@ var _ = Describe("quoted strings", func() {
 								types.QuotedString{
 									Kind: types.DoubleQuote,
 									Elements: []interface{}{
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteMonospace,
 											Elements: []interface{}{
 												types.StringElement{Content: "curly"},
@@ -714,7 +714,7 @@ var _ = Describe("quoted strings", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.QuotedText{
+								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
 										types.QuotedString{
@@ -739,7 +739,7 @@ var _ = Describe("quoted strings", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.QuotedText{
+								&types.QuotedText{
 									Kind: types.SingleQuoteItalic,
 									Elements: []interface{}{
 										types.QuotedString{
@@ -764,7 +764,7 @@ var _ = Describe("quoted strings", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.QuotedText{
+								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
 										types.QuotedString{
@@ -793,7 +793,7 @@ var _ = Describe("quoted strings", func() {
 						Lines: [][]interface{}{
 							{
 								types.InlineLink{
-									Location: types.Location{
+									Location: &types.Location{
 										Scheme: "https://",
 										Path: []interface{}{
 											types.StringElement{Content: "www.example.com/a"},
@@ -829,7 +829,7 @@ var _ = Describe("quoted strings", func() {
 						Lines: [][]interface{}{
 							{
 								types.InlineLink{
-									Location: types.Location{
+									Location: &types.Location{
 										Scheme: "https://",
 										Path: []interface{}{
 											types.StringElement{Content: "www.example.com/a"},
@@ -867,7 +867,7 @@ var _ = Describe("quoted strings", func() {
 									Elements: []interface{}{
 										types.StringElement{Content: "a "},
 										types.InlineImage{
-											Location: types.Location{
+											Location: &types.Location{
 												Path: []interface{}{
 													types.StringElement{
 														Content: "foo.png",

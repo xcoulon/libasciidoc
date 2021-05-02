@@ -28,7 +28,7 @@ var _ = Describe("tables", func() {
 							{
 								Cells: [][]interface{}{
 									{
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
 												types.StringElement{
@@ -41,7 +41,7 @@ var _ = Describe("tables", func() {
 										},
 									},
 									{
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
 												types.StringElement{
@@ -78,7 +78,7 @@ var _ = Describe("tables", func() {
 							{
 								Cells: [][]interface{}{
 									{
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
 												types.StringElement{
@@ -91,7 +91,7 @@ var _ = Describe("tables", func() {
 										},
 									},
 									{
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
 												types.StringElement{

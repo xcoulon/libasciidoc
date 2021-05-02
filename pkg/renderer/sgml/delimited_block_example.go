@@ -67,7 +67,7 @@ func (r *sgmlRenderer) renderExampleBlock(ctx *renderer.Context, b types.Example
 	return result.String(), err
 }
 
-func (r *sgmlRenderer) renderExampleParagraph(ctx *renderer.Context, p types.Paragraph) (string, error) {
+func (r *sgmlRenderer) renderExampleParagraph(ctx *renderer.Context, p *types.Paragraph) (string, error) {
 	log.Debug("rendering example paragraph...")
 	result := &strings.Builder{}
 	content, err := r.renderLines(ctx, p.Lines)

@@ -25,7 +25,7 @@ var _ = Describe("attributes", func() {
 					LineOffset: 1,
 					Content: []interface{}{
 						types.ImageBlock{
-							Location: types.Location{
+							Location: &types.Location{
 								Path: []interface{}{
 									types.StringElement{Content: "foo.png"},
 								},
@@ -34,7 +34,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("block image with empty alt and extra whitespace", func() {
@@ -44,7 +44,7 @@ var _ = Describe("attributes", func() {
 					LineOffset: 1,
 					Content: []interface{}{
 						types.ImageBlock{
-							Location: types.Location{
+							Location: &types.Location{
 								Path: []interface{}{
 									types.StringElement{Content: "foo.png"},
 								},
@@ -53,7 +53,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("block image with empty positional parameters", func() {
@@ -63,7 +63,7 @@ var _ = Describe("attributes", func() {
 					LineOffset: 1,
 					Content: []interface{}{
 						types.ImageBlock{
-							Location: types.Location{
+							Location: &types.Location{
 								Path: []interface{}{
 									types.StringElement{Content: "foo.png"},
 								},
@@ -72,7 +72,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("block image with empty first parameter, non-empty width", func() {
@@ -85,7 +85,7 @@ var _ = Describe("attributes", func() {
 							Attributes: types.Attributes{
 								types.AttrWidth: "200",
 							},
-							Location: types.Location{
+							Location: &types.Location{
 								Path: []interface{}{
 									types.StringElement{Content: "foo.png"},
 								},
@@ -94,7 +94,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("block image with double quoted alt", func() {
@@ -107,7 +107,7 @@ var _ = Describe("attributes", func() {
 							Attributes: types.Attributes{
 								types.AttrImageAlt: `Quoted, Here`,
 							},
-							Location: types.Location{
+							Location: &types.Location{
 								Path: []interface{}{
 									types.StringElement{Content: "foo.png"},
 								},
@@ -116,7 +116,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("block image with double quoted alt and embedded quotes", func() {
@@ -129,7 +129,7 @@ var _ = Describe("attributes", func() {
 							Attributes: types.Attributes{
 								types.AttrImageAlt: `The Foo"Bar" here`,
 							},
-							Location: types.Location{
+							Location: &types.Location{
 								Path: []interface{}{
 									types.StringElement{Content: "foo.png"},
 								},
@@ -138,7 +138,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("block image alt and named pair", func() {
@@ -152,7 +152,7 @@ var _ = Describe("attributes", func() {
 								types.AttrImageAlt: `Quoted, Here`,
 								types.AttrHeight:   "100",
 							},
-							Location: types.Location{
+							Location: &types.Location{
 								Path: []interface{}{
 									types.StringElement{Content: "foo.png"},
 								},
@@ -161,7 +161,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			result, err := ParseDocumentFragments(source)
+			result, err := ParseDocumentFragmentGroups(source)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result).To(MatchDocumentFragmentGroups(expected))
 		})
@@ -178,7 +178,7 @@ var _ = Describe("attributes", func() {
 								types.AttrHeight:   "100", // last one wins
 								types.AttrWidth:    "1",
 							},
-							Location: types.Location{
+							Location: &types.Location{
 								Path: []interface{}{
 									types.StringElement{Content: "foo.png"},
 								},
@@ -187,7 +187,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("block image alt, width, height, and named pair (spacing)", func() {
@@ -204,7 +204,7 @@ var _ = Describe("attributes", func() {
 								"test1":            "123",
 								"test2":            "second test", // shows trailing pad removed
 							},
-							Location: types.Location{
+							Location: &types.Location{
 								Path: []interface{}{
 									types.StringElement{Content: "foo.png"},
 								},
@@ -213,7 +213,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("block image alt, width, height, and named pair embedded quote", func() {
@@ -230,7 +230,7 @@ var _ = Describe("attributes", func() {
 								"test1":            "123",
 								"test2":            `second "test"`, // shows trailing pad removed
 							},
-							Location: types.Location{
+							Location: &types.Location{
 								Path: []interface{}{
 									types.StringElement{Content: "foo.png"},
 								},
@@ -239,7 +239,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 	})
 
@@ -279,7 +279,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("should not substitute an attribute in another attribute when not defined", func() {
@@ -311,7 +311,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		Context("invalid syntax", func() {
@@ -337,7 +337,7 @@ var _ = Describe("attributes", func() {
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 	})
@@ -668,7 +668,7 @@ var _ = DescribeTable("valid inline attributes",
 	Entry(`[*cookie*,_chocolate_]`, `[*cookie*,_chocolate_]`,
 		types.Attributes{
 			types.AttrPositional1: []interface{}{
-				types.QuotedText{
+				&types.QuotedText{
 					Kind: types.SingleQuoteBold,
 					Elements: []interface{}{
 						types.StringElement{
@@ -678,7 +678,7 @@ var _ = DescribeTable("valid inline attributes",
 				},
 			},
 			types.AttrPositional2: []interface{}{
-				types.QuotedText{
+				&types.QuotedText{
 					Kind: types.SingleQuoteItalic,
 					Elements: []interface{}{
 						types.StringElement{
@@ -693,7 +693,7 @@ var _ = DescribeTable("valid inline attributes",
 	Entry(`[*cookie*,_chocolate_]`, `[*cookie*,_chocolate_]`,
 		types.Attributes{
 			types.AttrPositional1: []interface{}{
-				types.QuotedText{
+				&types.QuotedText{
 					Kind: types.SingleQuoteBold,
 					Elements: []interface{}{
 						types.StringElement{
@@ -703,7 +703,7 @@ var _ = DescribeTable("valid inline attributes",
 				},
 			},
 			types.AttrPositional2: []interface{}{
-				types.QuotedText{
+				&types.QuotedText{
 					Kind: types.SingleQuoteItalic,
 					Elements: []interface{}{
 						types.StringElement{
@@ -718,7 +718,7 @@ var _ = DescribeTable("valid inline attributes",
 	Entry(`["*cookie*","_chocolate_"]`, `["*cookie*","_chocolate_"]`,
 		types.Attributes{
 			types.AttrPositional1: []interface{}{
-				types.QuotedText{
+				&types.QuotedText{
 					Kind: types.SingleQuoteBold,
 					Elements: []interface{}{
 						types.StringElement{
@@ -728,7 +728,7 @@ var _ = DescribeTable("valid inline attributes",
 				},
 			},
 			types.AttrPositional2: []interface{}{
-				types.QuotedText{
+				&types.QuotedText{
 					Kind: types.SingleQuoteItalic,
 					Elements: []interface{}{
 						types.StringElement{

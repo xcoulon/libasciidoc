@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (r *sgmlRenderer) renderParagraph(ctx *renderer.Context, p types.Paragraph) (string, error) {
+func (r *sgmlRenderer) renderParagraph(ctx *renderer.Context, p *types.Paragraph) (string, error) {
 	result := &strings.Builder{}
 	hardbreaks := p.Attributes.HasOption(types.AttrHardBreaks) ||
 		ctx.Attributes.HasOption(types.DocumentAttrHardBreaks)
@@ -68,7 +68,7 @@ func (r *sgmlRenderer) renderParagraph(ctx *renderer.Context, p types.Paragraph)
 	return result.String(), nil
 }
 
-func (r *sgmlRenderer) renderManpageNameParagraph(ctx *renderer.Context, p types.Paragraph) (string, error) {
+func (r *sgmlRenderer) renderManpageNameParagraph(ctx *renderer.Context, p *types.Paragraph) (string, error) {
 	log.Debug("rendering name section paragraph in manpage...")
 	result := &strings.Builder{}
 
@@ -89,7 +89,7 @@ func (r *sgmlRenderer) renderManpageNameParagraph(ctx *renderer.Context, p types
 	return result.String(), err
 }
 
-func (r *sgmlRenderer) renderParagraphWithinDelimitedBlock(ctx *renderer.Context, p types.Paragraph) (string, error) {
+func (r *sgmlRenderer) renderParagraphWithinDelimitedBlock(ctx *renderer.Context, p *types.Paragraph) (string, error) {
 	// log.Debugf("rendering paragraph with %d line(s) within a delimited block or a list", len(p.Lines))
 	result := &strings.Builder{}
 

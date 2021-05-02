@@ -358,7 +358,7 @@ func (r *sgmlRenderer) renderManpageHeader(ctx *renderer.Context, header types.S
 	if err != nil {
 		return "", err
 	}
-	description := nameSection.Elements[0].(types.Paragraph) // TODO: type check
+	description := nameSection.Elements[0].(*types.Paragraph) // TODO: type check
 	if description.Attributes == nil {
 		description.Attributes = types.Attributes{}
 	}

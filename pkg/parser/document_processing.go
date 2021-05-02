@@ -1,7 +1,11 @@
 package parser
 
 import (
+	"bytes"
+	"fmt"
 	"io"
+	"strconv"
+	"strings"
 
 	"github.com/bytesparadise/libasciidoc/pkg/configuration"
 	"github.com/bytesparadise/libasciidoc/pkg/types"
@@ -11,7 +15,7 @@ import (
 )
 
 // ParseDocument parses the content of the reader identitied by the filename
-func ParseDocument(r io.Reader, config configuration.Configuration, options ...Option) (types.Document, error) {
+func ParseDocument(r io.Reader, config configuration.Configuration, opts ...Option) (types.Document, error) {
 	done := make(chan interface{})
 	defer close(done)
 
@@ -19,7 +23,7 @@ func ParseDocument(r io.Reader, config configuration.Configuration, options ...O
 	blocks := []interface{}{}
 	inHeader := true
 	ctx := newProcessContext()
-	pipeline := processFragments(ctx, done, assembleFragments(done, ParseDocumentFragments(r, done, options...)))
+	pipeline := processFragments(ctx, done, assembleFragments(done, ParseDocumentFragmentGroups(r, done, opts...)))
 	for f := range pipeline {
 		if log.IsLevelEnabled(log.DebugLevel) {
 			log.WithField("_state", "document_parsing").Debugf("received document fragment: %s", spew.Sdump(f))
@@ -44,7 +48,7 @@ func ParseDocument(r io.Reader, config configuration.Configuration, options ...O
 		blocks = append(blocks, f.Content)
 	}
 	// fragments := make(chan types.DocumentFragment)
-	// err := ParseDocumentFragments(r, fragments, options...)
+	// err := ParseDocumentFragmentGroups							(r, fragments, opts...)
 	// if err != nil {
 	// 	return types.Document{}, err
 	// }
@@ -114,28 +118,6 @@ type ContextKey string
 // LevelOffset the key for the level offset of the file to include
 const LevelOffset ContextKey = "leveloffset"
 
-// // ParseRawDocument parses a document's content and applies the preprocessing directives (file inclusions)
-// func ParseRawDocument(r io.Reader, config configuration.Configuration, options ...Option) (types.RawDocument, error) {
-// 	// first, let's find all file inclusions and replace with the actual content to include
-// 	source, err := ParseRawSource(r, config, options...)
-// 	if err != nil {
-// 		return types.RawDocument{}, err
-// 	}
-// 	if log.IsLevelEnabled(log.DebugLevel) {
-// 		log.Debug("source to parse:")
-// 		fmt.Fprintf(log.StandardLogger().Out, "'%s'\n", source)
-// 	}
-// 	// then let's parse the "source" to detect raw blocks
-// 	options = append(options, Entrypoint("RawDocument"), GlobalStore(usermacrosKey, config.Macros))
-// 	if result, err := Parse(config.Filename, source, options...); err != nil {
-// 		return types.RawDocument{}, err
-// 	} else if doc, ok := result.(types.RawDocument); ok {
-// 		return doc, nil
-// 	} else {
-// 		return types.RawDocument{}, fmt.Errorf("unexpected type of content: '%T'", result)
-// 	}
-// }
-
 func assembleFragments(done <-chan interface{}, fragmentStream <-chan types.DocumentFragmentGroup) <-chan types.DocumentFragment {
 	assembledFragmentStream := make(chan types.DocumentFragment)
 	go func() {
@@ -167,7 +149,7 @@ func assembleFragmentElements(f types.DocumentFragmentGroup) []types.DocumentFra
 	}
 	result := make([]types.DocumentFragment, 0, len(f.Content))
 	var attributes types.Attributes
-	var block types.RawBlock // a block with raw lines
+	var block types.WithNestedElements // a delimited block or a paragraph
 	for i, e := range f.Content {
 		if log.IsLevelEnabled(log.DebugLevel) {
 			log.WithField("state", "fragment_assembling").Debugf("assembling fragment content of type '%T'", e)
@@ -180,28 +162,31 @@ func assembleFragmentElements(f types.DocumentFragmentGroup) []types.DocumentFra
 			attributes.SetAll(e)
 		case types.AttributeDeclaration:
 			result = append(result, types.NewDocumentFragment(f.LineOffset, e))
-		case types.Section:
+		case *types.Section:
 			e.Attributes = attributes
 			attributes = types.Attributes{} // reset
 			// send the section block downstream
 			result = append(result, types.NewDocumentFragment(f.LineOffset, e))
-		case types.BlockDelimiter:
-			if block == nil {
-				block = types.NewRawDelimitedBlock(e.Kind, attributes)
-				attributes = nil // reset
-				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
-			} else {
-				block = nil // reset, in case there is more content afterwards
-			}
+		// case types.BlockDelimiter:
+		// 	// TODO: support nested blocks with the help of a Stack object?
+		// 	if block == nil {
+		// 		block = types.NewDelimitedBlock(e.Kind, attributes)
+		// 		attributes = nil // reset
+		// 		result = append(result, types.NewDocumentFragment(f.LineOffset, block))
+		// 	} else {
+		// 		block = nil // reset, in case there is more content afterwards
+		// 	}
 		case types.RawLine:
 			if block == nil {
-				block = types.NewRawParagraph(attributes)
+				block, _ = types.NewParagraph([]interface{}{}, attributes)
 				attributes = nil // reset
 				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
 			}
-			block.AddLine(e)
+			block.AddElement(e)
 		case types.SingleLineComment:
 			result = append(result, types.NewDocumentFragment(f.LineOffset+i, e))
+		case types.BlankLine:
+			// do nothing for now
 		default:
 			// unknow type fragment element: set an error on the fragment and send it downstream
 			fr := types.NewDocumentFragment(f.LineOffset, block)
@@ -211,19 +196,6 @@ func assembleFragmentElements(f types.DocumentFragmentGroup) []types.DocumentFra
 	}
 	return result
 }
-
-// func send(done <-chan interface{}, fragmentStream chan<- types.DocumentFragment, f types.DocumentFragment) {
-// 	// if log.IsLevelEnabled(log.DebugLevel) {
-// 	// 	log.Debug("sending fragment with following content:")
-// 	// 	spew.Fdump(log.StandardLogger().Out, f.Content...)
-// 	// }
-// 	select {
-// 	case <-done:
-// 		log.Debug("received 'done' signal")
-// 		return
-// 	case fragmentStream <- f:
-// 	}
-// }
 
 func processFragments(ctx *processContext, done <-chan interface{}, fragmentStream <-chan types.DocumentFragment) chan types.DocumentFragment {
 	processedFragmentStream := make(chan types.DocumentFragment)
@@ -251,18 +223,623 @@ func processFragment(ctx *processContext, f types.DocumentFragment) types.Docume
 		return f
 	}
 	switch e := f.Content.(type) {
-	case *types.RawParagraph:
-		p, err := applySubstitutionsOnParagraph(ctx, e)
-		return types.DocumentFragment{
-			LineOffset: f.LineOffset,
-			Content:    p,
-			Error:      err,
-		}
 	case types.AttributeDeclaration:
 		ctx.addAttribute(e.Name, e.Value)
 		return types.NewDocumentFragment(f.LineOffset, e)
+	case types.AttributeReset:
+		delete(ctx.attributes, e.Name)
+		return types.NewDocumentFragment(f.LineOffset, e)
+	case types.WithNestedElements:
+		log.Debugf("processing block with attributes and nested elements")
+		if err := applyAttributeSubstitutionsOnAttributes(ctx, e); err != nil {
+			return types.DocumentFragment{
+				LineOffset: f.LineOffset,
+				Error:      err,
+			}
+		}
+		if err := processNestedElements(ctx, e); err != nil {
+			return types.DocumentFragment{
+				LineOffset: f.LineOffset,
+				Error:      err,
+			}
+		}
+		return types.DocumentFragment{
+			LineOffset: f.LineOffset,
+			Content:    e,
+		}
 	default:
 		log.WithField("stage", "fragment_processing").Debugf("forwarding fragment content of type '%T' as-is", e)
 		return types.NewDocumentFragment(f.LineOffset, e)
 	}
+}
+
+func applyAttributeSubstitutionsOnAttributes(ctx *processContext, b types.WithAttributes) error {
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("applying attribute substitutions on attributes\n%s", spew.Sdump(b.GetAttributes()))
+	}
+	for key, value := range b.GetAttributes() {
+		switch value := value.(type) {
+		case []interface{}: // multi-value attributes
+			value, err := applyAttributeSubstitutionsOnElements(ctx, value)
+			if err != nil {
+				return err
+			}
+			// (a bit hack-ish): do not merge values when the attribute is `roles` or `options`
+			switch key {
+			case types.AttrRoles, types.AttrOptions:
+				b.GetAttributes()[key] = value
+			default:
+				b.GetAttributes()[key] = types.Reduce(value)
+			}
+		default: // single-value attributes
+			value, err := applyAttributeSubstitutionsOnElement(ctx, value)
+			if err != nil {
+				return err
+			}
+			b.GetAttributes()[key] = types.Reduce(value)
+		}
+	}
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("applied attribute substitutions:\n%s", spew.Sdump(b.GetAttributes()))
+	}
+	return nil
+}
+
+func processNestedElements(ctx *processContext, b types.WithNestedElements) error {
+	log.Debugf("applying substitutions on elements of block of type '%T'", b)
+	plan, err := newSubstitutionPlan(b.GetAttributes().GetAsStringWithDefault(types.AttrSubstitutions, ""))
+	if err != nil {
+		return err
+	}
+
+	elements := b.GetElements()
+	for _, step := range plan.steps {
+		log.Debugf("applying step '%s'", step.group)
+		if elements, err = parseElements(elements, step.group, GlobalStore(substitutionPhaseKey, step)); err != nil {
+			return err
+		}
+		if step.hasAttributeSubstitutions {
+			log.Debugf("attribute substitutions detected during parsing of group '%s'", step.group)
+			// apply substitutions on elements
+			elements, err = applyAttributeSubstitutionsOnElements(ctx, elements)
+			if err != nil {
+				return err
+			}
+			elements = types.Merge(elements)
+			// re-run the Parser, skipping attribute substitutions and earlier rules this time
+			if step.reduce() {
+				if elements, err = parseElements(elements, step.group, GlobalStore(substitutionPhaseKey, step)); err != nil {
+					return err
+				}
+			}
+		}
+	}
+	b.SetElements(elements)
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debug("applied substitutions on block elements")
+		spew.Fdump(log.StandardLogger().Out, b.GetElements()...)
+	}
+	return nil
+}
+
+type substitutionPlan struct {
+	steps []*substitutionStep
+}
+
+func newSubstitutionPlan(subs string) (*substitutionPlan, error) {
+	phases := strings.Split(subs, ",")
+	plan := &substitutionPlan{
+		steps: make([]*substitutionStep, len(phases)),
+	}
+	for i, name := range phases {
+		phase, err := newSubstitutionStep(name)
+		if err != nil {
+			return nil, err
+		}
+		plan.steps[i] = phase
+	}
+	if log.IsLevelEnabled(log.DebugLevel) {
+		phases := make([]substitutionGroup, len(plan.steps))
+		for i, p := range plan.steps {
+			phases[i] = p.group
+		}
+		log.Debugf("applying steps: '%s'", phases)
+	}
+	return plan, nil
+}
+
+type substitutionStep struct {
+	group                     substitutionGroup
+	enablements               map[SubstitutionKind]bool
+	hasAttributeSubstitutions bool
+}
+
+type substitutionGroup string
+
+const (
+	AttributesGroup        substitutionGroup = "AttributesGroup"
+	HeaderGroup            substitutionGroup = "HeaderGroup"
+	MacrosGroup            substitutionGroup = "MacrosGroup"
+	NoneGroup              substitutionGroup = "NoneGroup"
+	NormalGroup            substitutionGroup = "NormalGroup"
+	QuotesGroup            substitutionGroup = "QuotesGroup"
+	ReplacementsGroup      substitutionGroup = "ReplacementsGroup"
+	SpecialcharactersGroup substitutionGroup = "SpecialCharactersGroup"
+)
+
+//TODO: simplify by using a single grammar rule and turn-off choices?
+var substitutionGroups = map[string]substitutionGroup{
+	"":                  NormalGroup,
+	"attributes":        AttributesGroup,
+	"header":            HeaderGroup,
+	"macros":            MacrosGroup,
+	"normal":            NormalGroup,
+	"none":              NoneGroup,
+	"quotes":            QuotesGroup,
+	"replacements":      ReplacementsGroup,
+	"specialchars":      SpecialcharactersGroup,
+	"specialcharacters": SpecialcharactersGroup,
+}
+
+func newSubstitutionStep(kind string) (*substitutionStep, error) {
+	group, found := substitutionGroups[kind]
+	if !found {
+		return nil, fmt.Errorf("unsupported kind of substitution: '%v'", kind)
+	}
+	s := &substitutionStep{
+		group: group,
+	}
+	s.reset()
+	return s, nil
+}
+
+func (s *substitutionStep) reset() {
+	switch s.group {
+	case AttributesGroup:
+		s.enablements = map[SubstitutionKind]bool{
+			InlinePassthroughs: true,
+			Attributes:         true,
+		}
+	case HeaderGroup:
+		s.enablements = map[SubstitutionKind]bool{
+			InlinePassthroughs: true,
+			SpecialCharacters:  true,
+			Attributes:         true,
+		}
+	case MacrosGroup:
+		s.enablements = map[SubstitutionKind]bool{
+			Macros: true,
+		}
+	case NoneGroup:
+		s.enablements = map[SubstitutionKind]bool{}
+	case NormalGroup:
+		s.enablements = map[SubstitutionKind]bool{
+			InlinePassthroughs: true,
+			SpecialCharacters:  true,
+			Attributes:         true,
+			Quotes:             true,
+			Replacements:       true,
+			Macros:             true,
+			PostReplacements:   true,
+		}
+	case QuotesGroup:
+		s.enablements = map[SubstitutionKind]bool{
+			Quotes: true,
+		}
+	case ReplacementsGroup:
+		s.enablements = map[SubstitutionKind]bool{
+			Replacements: true,
+		}
+	case SpecialcharactersGroup:
+		s.enablements = map[SubstitutionKind]bool{
+			SpecialCharacters: true,
+		}
+	}
+}
+
+// disables the "inline_passthroughs", "special_characters" and "attributes" substitution
+// return `true` if there are more enablements to apply, `false` otherwise (ie, no substitution would be applied if the content was parsed again)
+func (s *substitutionStep) reduce() bool { // TODO: rename this func
+	s.reset()
+	for sub := range s.enablements {
+		switch sub {
+		case InlinePassthroughs, SpecialCharacters, Attributes:
+			delete(s.enablements, sub)
+		}
+	}
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("new enablements for '%s': %s", s.group, spew.Sdump(s.enablements))
+	}
+	return len(s.enablements) > 0
+}
+
+// sets the new substitution plan in the golbal store, overriding any exist–ing one
+// NOTE: will override any existing substitution context
+// TODO: is there any case where a stack would be needed, so we don't override an existing context?
+func (c *current) setSubstitutionPhase(kind string) error {
+	p, err := newSubstitutionStep(kind)
+	if err != nil {
+		return err
+	}
+	c.globalStore[substitutionPhaseKey] = p
+	return nil
+}
+
+func (c *current) unsetSubstitutionPhase() {
+	delete(c.globalStore, substitutionPhaseKey)
+}
+
+func (c *current) lookupSubstitutionPhase() (*substitutionStep, error) {
+	ctx, ok := c.globalStore[substitutionPhaseKey].(*substitutionStep)
+	if !ok {
+		return nil, fmt.Errorf("unable to look-up the substitution context in the parser's global store")
+	}
+	return ctx, nil
+}
+
+// called when an attribute substitution occurred
+// TODO: find a better name for this method
+func (c *current) hasAttributeSubstitutions() error {
+	phase, err := c.lookupSubstitutionPhase()
+	if err != nil {
+		return err
+	}
+	phase.hasAttributeSubstitutions = true
+	// // also, disable all subsitutions post `attributes` (`macros`, etc.)
+	// for s := range phase.enablements {
+	// 	switch s {
+	// 	case Quotes, Replacements, Macros, PostReplacements: // TODO: avoid hard-coded entries
+	// 		phase.enablements[s] = false // disabled
+	// 	}
+	// }
+	return nil
+}
+
+func (c *current) isSubstitutionEnabled(k SubstitutionKind) (bool, error) {
+	phase, err := c.lookupSubstitutionPhase()
+	if err != nil {
+		return false, err
+	}
+	enabled, found := phase.enablements[k]
+	if !found {
+		return false, nil
+	}
+	return enabled, nil
+}
+
+type SubstitutionKind string
+
+const (
+	// substitutionPhaseKey the key in which substitutions contexts are stored
+	substitutionPhaseKey string = "substitution_contexts"
+
+	// InlinePassthroughs the "inline_passthrough" substitution
+	InlinePassthroughs SubstitutionKind = "inline_passthrough"
+	// Attributes the "attributes" substitution
+	Attributes SubstitutionKind = "attributes"
+	// SpecialCharacters the "specialcharacters" substitution
+	SpecialCharacters SubstitutionKind = "specialcharacters"
+	// Callouts the "callouts" substitution
+	Callouts SubstitutionKind = "callouts"
+	// Quotes the "quotes" substitution
+	Quotes SubstitutionKind = "quotes"
+	// Replacements the "replacements" substitution
+	Replacements SubstitutionKind = "replacements"
+	// Macros the "macros" substitution
+	Macros SubstitutionKind = "macros"
+	// PostReplacements the "post_replacements" substitution
+	PostReplacements SubstitutionKind = "post_replacements"
+	// None the "none" substitution
+	None SubstitutionKind = "none"
+)
+
+func parseElements(elements []interface{}, group substitutionGroup, opts ...Option) ([]interface{}, error) {
+	log.Debug("parsing lines")
+	serialized, placeholders := serialize(elements)
+	// opts = append(opts)
+	result, err := parseContent(serialized, append(opts, Entrypoint(string(group)))...)
+	if err != nil {
+		return nil, err
+	}
+	// also, apply the same substitution group on the placeholders, case by case
+	for _, element := range placeholders.elements {
+		if e, ok := element.(types.WithAttributes); ok {
+			if err := parseElementAttributes(e, group, opts...); err != nil {
+				return nil, err
+			}
+		}
+		if e, ok := element.(types.WithNestedElements); ok {
+			if err := parseNestedElements(e, group, opts...); err != nil {
+				return nil, err
+			}
+		}
+		// if e, ok := element.(types.WithLocation); ok {
+		// 	if err := parseElementWithLocation(e, group, opts...); err != nil {
+		// 		return nil, err
+		// 	}
+		// }
+	}
+	result = placeholders.restoreElements(result)
+	return result, nil
+}
+
+func parseNestedElements(element types.WithNestedElements, group substitutionGroup, opts ...Option) error {
+	elements, err := parseElements(element.GetElements(), group, opts...)
+	if err != nil {
+		return err
+	}
+	element.SetElements(elements)
+	return nil
+}
+
+func parseElementAttributes(element types.WithAttributes, group substitutionGroup, opts ...Option) error {
+	if !(group == AttributesGroup || group == QuotesGroup) { // TODO: include special_characters?
+		log.Debugf("no need to parse attributes for group '%s'", group)
+		return nil
+	}
+	for name, value := range element.GetAttributes() {
+		switch value := value.(type) {
+		case []interface{}:
+			serialized, placeholders := serialize(value)
+			elements, err := parseContent(serialized, append(opts, Entrypoint(string(group)))...)
+			if err != nil {
+				return err
+			}
+			elements = placeholders.restoreElements(elements)
+			element.GetAttributes()[name] = elements
+		case string:
+			elements, err := parseContent([]byte(value), append(opts, Entrypoint(string(group)))...)
+			if err != nil {
+				return err
+			}
+			element.GetAttributes()[name] = types.Reduce(elements)
+		default:
+			return fmt.Errorf("unexpected type of attribute value: '%T'", value)
+		}
+	}
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("parsed attributes for group '%s': %s", group, spew.Sdump(element.GetAttributes()))
+	}
+	return nil
+}
+
+func parseContent(content []byte, opts ...Option) ([]interface{}, error) {
+	result, err := Parse("", content, opts...)
+	if err != nil {
+		return nil, err
+	}
+	r, ok := result.([]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected type of content after parsing elements: '%T'", result)
+	}
+	return r, nil
+}
+
+// func applyAttributeSubstitutionsOnElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
+// 	result := make([]interface{}, len(elements)) // maximum capacity should exceed initial input
+// 	for i, element := range elements {
+// 		element, err := applyAttributeSubstitutionsOnElement(ctx, element)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		result[i] = element
+// 	}
+// 	return result, nil
+// }
+
+func applyAttributeSubstitutionsOnElement(ctx *processContext, element interface{}) (interface{}, error) {
+	switch e := element.(type) {
+	case []interface{}:
+		return applyAttributeSubstitutionsOnElements(ctx, e)
+	case types.AttributeSubstitution:
+		return types.StringElement{
+			Content: ctx.attributes.GetAsStringWithDefault(e.Name, "{"+e.Name+"}"),
+		}, nil
+	case types.CounterSubstitution:
+		return applyCounterSubstitution(ctx, e)
+	case types.WithNestedElements:
+		// replace AttributeSubstitutions on attributes
+		if err := applyAttributeSubstitutionsOnAttributes(ctx, e); err != nil {
+			return nil, err
+		}
+		// replace AttributeSubstitutions on nested elements
+		if err := applyAttributeSubstitutionsOnNestedElements(ctx, e); err != nil {
+			return nil, err
+		}
+		return e, nil
+	case types.WithLocation:
+		// replace AttributeSubstitutions on attributes
+		if err := applyAttributeSubstitutionsOnAttributes(ctx, e); err != nil {
+			return nil, err
+		}
+		// replace AttributeSubstitutions on embedded location
+		if err := applyAttributeSubstitutionsOnLocation(ctx, e); err != nil {
+			return nil, err
+		}
+		return e, nil
+	case types.WithAttributes:
+		// replace AttributeSubstitutions on attributes
+		if err := applyAttributeSubstitutionsOnAttributes(ctx, e); err != nil {
+			return nil, err
+		}
+		return e, nil
+	default:
+		return e, nil
+	}
+}
+
+func applyAttributeSubstitutionsOnNestedElements(ctx *processContext, b types.WithNestedElements) error {
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("applying substitutions on nested elements of\n%s", spew.Sdump(b))
+	}
+	elements, err := applyAttributeSubstitutionsOnElements(ctx, b.GetElements())
+	if err != nil {
+		return err
+	}
+	elements = types.Merge(elements)
+	b.SetElements(elements)
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("applied substitutions on nested elements:\n%s", spew.Sdump(b))
+	}
+	return nil
+}
+
+func applyAttributeSubstitutionsOnLocation(ctx *processContext, b types.WithLocation) error {
+	path, err := applyAttributeSubstitutionsOnElements(ctx, b.GetLocation().Path)
+	if err != nil {
+		return err
+	}
+	b.GetLocation().Path = path
+	return nil
+}
+
+func applyAttributeSubstitutionsOnElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("applying attribute substitutions on elements:\n%s", spew.Sdump(elements))
+	}
+	result := make([]interface{}, len(elements)) // maximum capacity should exceed initial input
+	for i, element := range elements {
+		element, err := applyAttributeSubstitutionsOnElement(ctx, element)
+		if err != nil {
+			return nil, err
+		}
+		result[i] = element
+	}
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("applied attribute substitutions on elements:\n%s", spew.Sdump(result))
+	}
+	return result, nil
+}
+
+// applyCounterSubstitutions is called by applyAttributeSubstitutionsOnElement.  Unless there is an error with
+// the element (the counter is the wrong type, which should never occur), it will return a `StringElement, true`
+// (because we always either find the element, or allocate one), and `nil`.  On an error it will return `nil, false`,
+// and the error.  The extra boolean here is to fit the calling expectations of our caller.  This function was
+// factored out of a case from applyAttributeSubstitutionsOnElement in order to reduce the complexity of that
+// function, but otherwise it should have no callers.
+func applyCounterSubstitution(ctx *processContext, c types.CounterSubstitution) (interface{}, error) {
+	counter := ctx.counters[c.Name]
+	if counter == nil {
+		counter = 0
+	}
+	increment := true
+	if c.Value != nil {
+		ctx.counters[c.Name] = c.Value
+		counter = c.Value
+		increment = false
+	}
+	switch counter := counter.(type) {
+	case int:
+		if increment {
+			counter++
+		}
+		ctx.counters[c.Name] = counter
+		if c.Hidden {
+			// return empty string facilitates merging
+			return types.StringElement{Content: ""}, nil
+		}
+		return types.StringElement{
+			Content: strconv.Itoa(counter),
+		}, nil
+	case rune:
+		if increment {
+			counter++
+		}
+		ctx.counters[c.Name] = counter
+		if c.Hidden {
+			// return empty string facilitates merging
+			return types.StringElement{Content: ""}, nil
+		}
+		return types.StringElement{
+			Content: string(counter),
+		}, nil
+	default:
+		return types.StringElement{}, fmt.Errorf("unexpected type of counter value: '%T'", counter)
+	}
+}
+
+type placeholders struct {
+	seq      int
+	elements map[string]interface{}
+}
+
+func newPlaceholders() *placeholders {
+	return &placeholders{
+		seq:      0,
+		elements: map[string]interface{}{},
+	}
+}
+
+func (p *placeholders) add(element interface{}) types.ElementPlaceHolder {
+	p.seq++
+	p.elements[strconv.Itoa(p.seq)] = element
+	return types.ElementPlaceHolder{
+		Ref: strconv.Itoa(p.seq),
+	}
+
+}
+
+// replace the placeholders with their original element in the given elements
+func (p *placeholders) restoreElements(elements []interface{}) []interface{} {
+	// skip if there's nothing to restore
+	if len(p.elements) == 0 {
+		return elements
+	}
+	for i, e := range elements {
+		//
+		if e, ok := e.(types.ElementPlaceHolder); ok {
+			elements[i] = p.elements[e.Ref]
+		}
+		// also check nested elements (eg, in QuotedText, etc.)
+		// for each element, check *all* interfaces to see if there's a need to replace the placeholders
+		if e, ok := e.(types.WithPlaceholdersInElements); ok {
+			elements[i] = e.RestoreElements(p.elements)
+		}
+		if e, ok := e.(types.WithPlaceholdersInAttributes); ok {
+			elements[i] = e.RestoreAttributes(p.elements)
+		}
+		if e, ok := e.(types.WithPlaceholdersInLocation); ok {
+			elements[i] = e.RestoreLocation(p.elements)
+		}
+	}
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("restored elements:\n%v", spew.Sdump(elements))
+	}
+	return elements
+}
+
+func serialize(content interface{}) ([]byte, *placeholders) {
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debugf("serializing:\n%v", spew.Sdump(content))
+	// }
+	placeholders := newPlaceholders()
+	result := bytes.NewBuffer(nil)
+	switch content := content.(type) {
+	case string: // for attributes with simple (string) values
+		result.WriteString(content)
+	case []interface{}: // for paragraph lines, attributes with complex values, etc.
+		for i, element := range content {
+			switch element := element.(type) {
+			case types.RawLine:
+				result.WriteString(string(element))
+				if i < len(content)-1 {
+					result.WriteString("\n")
+				}
+			case types.StringElement:
+				result.WriteString(element.Content)
+			case types.SingleLineComment:
+				// replace with placeholder
+				p := placeholders.add(element)
+				result.WriteString(p.String())
+			default:
+				// replace with placeholder
+				p := placeholders.add(element)
+				result.WriteString(p.String())
+			}
+		}
+	}
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("serialized lines:\n%s\nplaceholders: %v", result.Bytes(), spew.Sdump(placeholders))
+	}
+	return result.Bytes(), placeholders
 }

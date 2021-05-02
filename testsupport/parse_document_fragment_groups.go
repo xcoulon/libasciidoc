@@ -7,8 +7,8 @@ import (
 	"github.com/bytesparadise/libasciidoc/pkg/types"
 )
 
-// ParseDocumentFragments parses the actual source with the options
-func ParseDocumentFragments(actual string, options ...interface{}) ([]types.DocumentFragmentGroup, error) {
+// ParseDocumentFragmentGroups parses the actual source with the options
+func ParseDocumentFragmentGroups(actual string, options ...interface{}) ([]types.DocumentFragmentGroup, error) {
 	r := strings.NewReader(actual)
 	c := &rawDocumentParserConfig{
 		filename: "test.adoc",
@@ -24,7 +24,7 @@ func ParseDocumentFragments(actual string, options ...interface{}) ([]types.Docu
 	}
 	done := make(chan interface{})
 	defer close(done)
-	fragmentStream := parser.ParseDocumentFragments(r, done, parserOptions...)
+	fragmentStream := parser.ParseDocumentFragmentGroups(r, done, parserOptions...)
 	result := []types.DocumentFragmentGroup{}
 	for f := range fragmentStream {
 		result = append(result, f)

@@ -230,7 +230,7 @@ package parser
 // 								Content: "a link to ",
 // 							},
 // 							types.InlineLink{
-// 								Location: types.Location{
+// 								Location: &types.Location{
 // 									Scheme: "https://",
 // 									Path: []interface{}{
 // 										types.StringElement{
@@ -429,7 +429,7 @@ package parser
 // 							},
 // 						},
 // 					},
-// 					Location: types.Location{
+// 					Location: &types.Location{
 // 						Path: []interface{}{
 // 							types.StringElement{Content: "foo.png"},
 // 						},
@@ -454,7 +454,7 @@ package parser
 // 					Attributes: types.Attributes{
 // 						types.AttrImageAlt: "cookie", // substituted
 // 					},
-// 					Location: types.Location{
+// 					Location: &types.Location{
 // 						Path: []interface{}{
 // 							types.StringElement{Content: "foo.png"},
 // 						},
@@ -466,7 +466,7 @@ package parser
 // 		It("should substitute inline attribute", func() {
 // 			elements := []interface{}{
 // 				types.ImageBlock{
-// 					Location: types.Location{
+// 					Location: &types.Location{
 // 						Path: []interface{}{
 // 							types.AttributeSubstitution{
 // 								Name: "path",
@@ -490,7 +490,7 @@ package parser
 // 			Expect(err).To(Not(HaveOccurred()))
 // 			Expect(result).To(Equal([]interface{}{
 // 				types.ImageBlock{
-// 					Location: types.Location{
+// 					Location: &types.Location{
 // 						Path: []interface{}{
 // 							types.StringElement{Content: "cookie.png"},
 // 						},
@@ -718,7 +718,7 @@ package parser
 // 							types.StringElement{
 // 								Content: "hello ",
 // 							},
-// 							types.QuotedText{
+// 							&types.QuotedText{
 // 								Elements: []interface{}{
 // 									types.AttributeSubstitution{
 // 										Name: "foo",
@@ -757,7 +757,7 @@ package parser
 // 							types.StringElement{
 // 								Content: "hello ",
 // 							},
-// 							types.QuotedText{
+// 							&types.QuotedText{
 // 								Elements: []interface{}{
 // 									types.StringElement{
 // 										Content: "bar and more content.",

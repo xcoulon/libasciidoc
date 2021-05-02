@@ -36,7 +36,7 @@ ____`
 										types.StringElement{
 											Content: "some ",
 										},
-										types.QuotedText{
+										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
 												types.StringElement{
@@ -53,7 +53,7 @@ ____`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("multi-line verse with unrendered list and author only", func() {
@@ -94,7 +94,7 @@ ____
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("multi-line verse with title only", func() {
@@ -123,7 +123,7 @@ ____
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("multi-line verse with unrendered lists and block without author and title", func() {
@@ -174,7 +174,7 @@ ____`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("multi-line verse with unrendered list without author and title", func() {
@@ -211,7 +211,7 @@ ____`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("empty verse without author and title", func() {
@@ -233,7 +233,7 @@ ____`
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("unclosed verse without author and title", func() {
@@ -260,7 +260,7 @@ foo
 						},
 					},
 				}
-				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			Context("with custom substitutions", func() {
@@ -303,7 +303,7 @@ ____
 												Content: "a link to ",
 											},
 											types.InlineLink{
-												Location: types.Location{
+												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
 														types.StringElement{
@@ -344,7 +344,7 @@ ____
 											types.LineBreak{},
 										},
 										{
-											types.QuotedText{
+											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
 													types.StringElement{
@@ -356,7 +356,7 @@ ____
 												Content: " lines with a link to ",
 											},
 											types.InlineLink{
-												Location: types.Location{
+												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
 														types.StringElement{
@@ -392,7 +392,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'normal' substitution", func() {
@@ -419,7 +419,7 @@ ____
 												Content: "a link to ",
 											},
 											types.InlineLink{
-												Location: types.Location{
+												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
 														types.StringElement{
@@ -460,7 +460,7 @@ ____
 											types.LineBreak{},
 										},
 										{
-											types.QuotedText{
+											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
 													types.StringElement{
@@ -472,7 +472,7 @@ ____
 												Content: " lines with a link to ",
 											},
 											types.InlineLink{
-												Location: types.Location{
+												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
 														types.StringElement{
@@ -508,7 +508,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'quotes' substitution", func() {
@@ -541,7 +541,7 @@ ____
 											},
 										},
 										{
-											types.QuotedText{
+											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
 													types.StringElement{
@@ -579,7 +579,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'macros' substitution", func() {
@@ -606,7 +606,7 @@ ____
 												Content: "a link to ",
 											},
 											types.InlineLink{
-												Location: types.Location{
+												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
 														types.StringElement{
@@ -655,7 +655,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'attributes' substitution", func() {
@@ -718,7 +718,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'attributes,macros' substitution", func() {
@@ -745,7 +745,7 @@ ____
 												Content: "a link to ",
 											},
 											types.InlineLink{
-												Location: types.Location{
+												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
 														types.StringElement{
@@ -768,7 +768,7 @@ ____
 												Content: "*next* lines with a link to ",
 											},
 											types.InlineLink{
-												Location: types.Location{
+												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
 														types.StringElement{
@@ -804,7 +804,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'specialchars' substitution", func() {
@@ -888,7 +888,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'replacements' substitution", func() {
@@ -951,7 +951,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'post_replacements' substitution", func() {
@@ -1015,7 +1015,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'quotes,macros' substitution", func() {
@@ -1042,7 +1042,7 @@ ____
 												Content: "a link to ",
 											},
 											types.InlineLink{
-												Location: types.Location{
+												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
 														types.StringElement{
@@ -1061,7 +1061,7 @@ ____
 											},
 										},
 										{
-											types.QuotedText{
+											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
 													types.StringElement{
@@ -1099,7 +1099,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'macros,quotes' substitution", func() {
@@ -1126,7 +1126,7 @@ ____
 												Content: "a link to ",
 											},
 											types.InlineLink{
-												Location: types.Location{
+												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
 														types.StringElement{
@@ -1145,7 +1145,7 @@ ____
 											},
 										},
 										{
-											types.QuotedText{
+											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
 													types.StringElement{
@@ -1183,7 +1183,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'none' substitution", func() {
@@ -1246,7 +1246,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 			})
 		})
@@ -1274,7 +1274,7 @@ ____`
 									types.StringElement{
 										Content: "some ",
 									},
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
 											types.StringElement{

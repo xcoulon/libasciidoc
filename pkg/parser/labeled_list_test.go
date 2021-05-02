@@ -80,7 +80,7 @@ on 2 lines`
 						Items: []types.LabeledListItem{
 							{
 								Term: []interface{}{
-									types.QuotedText{
+									&types.QuotedText{
 										Kind: types.SingleQuoteMonospace,
 										Elements: []interface{}{
 											types.StringElement{
@@ -97,7 +97,7 @@ on 2 lines`
 												types.StringElement{
 													Content: "This function is ",
 												},
-												types.QuotedText{
+												&types.QuotedText{
 													Kind: types.SingleQuoteItalic,
 													Elements: []interface{}{
 														types.StringElement{
@@ -130,7 +130,7 @@ on 2 lines`
 								Term: []interface{}{
 									types.IndexTerm{
 										Term: []interface{}{
-											types.QuotedText{
+											&types.QuotedText{
 												Kind: types.SingleQuoteMonospace,
 												Elements: []interface{}{
 													types.StringElement{
@@ -149,7 +149,7 @@ on 2 lines`
 												types.StringElement{
 													Content: "This function is ",
 												},
-												types.QuotedText{
+												&types.QuotedText{
 													Kind: types.SingleQuoteItalic,
 													Elements: []interface{}{
 														types.StringElement{
@@ -194,7 +194,7 @@ on 2 lines`
 												types.StringElement{
 													Content: "This function is ",
 												},
-												types.QuotedText{
+												&types.QuotedText{
 													Kind: types.SingleQuoteItalic,
 													Elements: []interface{}{
 														types.StringElement{

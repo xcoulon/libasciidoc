@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/davecgh/go-spew/spew"
+	log "github.com/sirupsen/logrus"
 )
 
 // ------------------------------------------
@@ -202,10 +205,9 @@ func toAttributes(attrs interface{}) Attributes {
 }
 
 func toAttributesWithMapping(attrs interface{}, mapping map[string]string) Attributes {
-	// if log.IsLevelEnabled(log.DebugLevel) {
-	// 	log.Debug("processing attributes with mapping on")
-	// 	spew.Fdump(log.StandardLogger().Out, attrs)
-	// }
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("processing attributes with mapping on\n", spew.Sdump(attrs))
+	}
 	if attrs, ok := attrs.(Attributes); ok {
 		for source, target := range mapping {
 			if v, exists := attrs[source]; exists {
@@ -424,6 +426,7 @@ func NewTitleAttribute(title interface{}) (Attribute, error) {
 // NewRoleAttribute initializes a new attribute map with a single entry for the title using the given value
 func NewRoleAttribute(role interface{}) (Attribute, error) {
 	role = Reduce(role)
+	// log.Debugf("new role attribute: '%v'", spew.Sdump(role))
 	return Attribute{
 		Key:   AttrRole,
 		Value: role,

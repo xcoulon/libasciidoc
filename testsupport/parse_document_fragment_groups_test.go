@@ -8,14 +8,13 @@ import (
 	. "github.com/onsi/gomega" //nolint golint
 )
 
-var _ = Describe("raw document assertions", func() {
+var _ = Describe("parse document fragment groups", func() {
 
-	expected := []interface{}{
-		[][]interface{}{
-			{
-				types.StringElement{
-					Content: "hello, world!",
-				},
+	expected := []types.DocumentFragmentGroup{
+		{
+			LineOffset: 1,
+			Content: []interface{}{
+				types.RawLine("hello, world!"),
 			},
 		},
 	}
@@ -24,7 +23,7 @@ var _ = Describe("raw document assertions", func() {
 		// given
 		actual := "hello, world!"
 		// when
-		result, err := testsupport.ParseDocumentFragments(actual)
+		result, err := testsupport.ParseDocumentFragmentGroups(actual)
 		// then
 		Expect(err).ToNot(HaveOccurred())
 		Expect(result).To(Equal(expected))
@@ -34,7 +33,7 @@ var _ = Describe("raw document assertions", func() {
 		// given
 		actual := "foo"
 		// when
-		result, err := testsupport.ParseDocumentFragments(actual)
+		result, err := testsupport.ParseDocumentFragmentGroups(actual)
 		// then
 		Expect(err).ToNot(HaveOccurred())
 		Expect(result).NotTo(Equal(expected))

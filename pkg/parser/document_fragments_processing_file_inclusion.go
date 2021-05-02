@@ -45,7 +45,7 @@ func absoluteOffset(offset int) levelOffset {
 	}
 }
 
-// func parseFileToInclude(ctx *parserContext, incl types.FileInclusion, options ...Option) ([]interface{}, error) {
+// func parseFileToInclude(ctx *parserContext, incl types.FileInclusion, opts ...Option) ([]interface{}, error) {
 // 	incl.Location.Path = substituteAttributes(incl.Location.Path, ctx.attributes)
 // 	path := incl.Location.Stringify()
 // 	currentDir := filepath.Dir(ctx.config.Filename)
@@ -114,7 +114,7 @@ func absoluteOffset(offset int) levelOffset {
 // 	}()
 // 	ctx.config.Filename = absPath
 // 	// now, let's parse this content and process nested file inclusions (recursively)
-// 	return parseDocumentFragments(ctx, content, options...)
+// 	return parseDocumentFragments(ctx, content, opts...)
 // }
 
 // lineRanges parses the `lines` attribute if it exists in the given FileInclusion, and returns

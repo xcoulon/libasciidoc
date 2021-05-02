@@ -56,7 +56,7 @@ package parser
 // 	for i, e := range elements {
 // 		if a, ok := e.(types.WithAttributesToSubstitute); ok {
 // 			log.Debugf("applying substitution on attributes of element of type '%T'", e)
-// 			attrs, err := applyAttributeSubstitutionsOnAttributes(ctx, a.AttributesToSubstitute())
+// 			attrs, err := applyAttributeSubstitutionsOnAttributes(ctx, a.GetAttributes())
 // 			if err != nil {
 // 				return nil, err
 // 			}
@@ -425,12 +425,12 @@ package parser
 // 	}
 // }
 
-// func parserPlaceHolderElements(elements []interface{}, options ...Option) ([]interface{}, error) {
+// func parserPlaceHolderElements(elements []interface{}, opts ...Option) ([]interface{}, error) {
 // 	result := make([]interface{}, 0, len(elements)) // default capacity (but may not be enough)
 // 	for _, element := range elements {
 // 		switch element := element.(type) {
 // 		case types.StringElement:
-// 			elmts, err := parseContent("", element.Content, options...)
+// 			elmts, err := parseContent("", element.Content, opts...)
 // 			if err != nil {
 // 				return nil, err
 // 			}
@@ -442,8 +442,8 @@ package parser
 // 	return result, nil
 // }
 
-// func parseContent(filename string, content string, options ...Option) ([]interface{}, error) {
-// 	result, err := ParseReader(filename, strings.NewReader(content), options...)
+// func parseContent(filename string, content string, opts ...Option) ([]interface{}, error) {
+// 	result, err := ParseReader(filename, strings.NewReader(content), opts...)
 // 	if err != nil {
 // 		return nil, errors.Wrapf(err, "unable to parse '%s'", content)
 // 	}

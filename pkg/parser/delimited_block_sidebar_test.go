@@ -28,7 +28,7 @@ some *verse* content
 											types.StringElement{
 												Content: "some ",
 											},
-											types.QuotedText{
+											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
 													types.StringElement{
@@ -72,7 +72,7 @@ bar
 											types.StringElement{
 												Content: "some ",
 											},
-											types.QuotedText{
+											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
 													types.StringElement{
@@ -142,7 +142,7 @@ some *verse* content
 											types.StringElement{
 												Content: "some ",
 											},
-											types.QuotedText{
+											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
 													types.StringElement{
@@ -186,7 +186,7 @@ bar
 											types.StringElement{
 												Content: "some ",
 											},
-											types.QuotedText{
+											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
 													types.StringElement{

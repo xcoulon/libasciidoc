@@ -19,7 +19,7 @@ var _ = Describe("inline elements", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.QuotedText{
+								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
 										types.StringElement{Content: "some bold content"},
@@ -41,7 +41,7 @@ var _ = Describe("inline elements", func() {
 						Lines: [][]interface{}{
 							{
 								types.StringElement{Content: "("},
-								types.QuotedText{
+								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
 										types.StringElement{Content: "some bold content"},
@@ -126,7 +126,7 @@ var _ = Describe("inline elements", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.QuotedText{
+								&types.QuotedText{
 									Kind: types.DoubleQuoteBold,
 									Elements: []interface{}{
 										types.StringElement{Content: "foo"},

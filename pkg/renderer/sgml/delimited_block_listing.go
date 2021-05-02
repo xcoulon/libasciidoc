@@ -48,7 +48,7 @@ func (r *sgmlRenderer) renderListingBlock(ctx *renderer.Context, b types.Listing
 	return result.String(), err
 }
 
-func (r *sgmlRenderer) renderListingParagraph(ctx *renderer.Context, p types.Paragraph) (string, error) {
+func (r *sgmlRenderer) renderListingParagraph(ctx *renderer.Context, p *types.Paragraph) (string, error) {
 	result := &strings.Builder{}
 	content, err := r.renderLines(ctx, p.Lines)
 	if err != nil {
