@@ -34,45 +34,15 @@ func parseDocumentFragments(source io.Reader, done <-chan interface{}, opts ...O
 		}
 		log.WithField("stage", "fragment_parsing").Debug("end of fragment parsing")
 	}()
-	// return fragmentStream, errStream
 	return fragmentStream
-	// // front-matter
-	// frontmatterFragments, done := parseDocumentFrontMatter(ctx, scanner, opts...)
-	// fragments = append(fragments, frontmatterFragments...)
-	// if log.IsLevelEnabled(log.WithField("stage", "fragment_parsing").DebugLevel) {
-	// 	log.WithField("stage", "fragment_parsing").Debug("front-matter:")
-	// 	spew.Fdump(log.StandardLogger().Out, fragments)
-	// }
-	// if done {
-	// 	return fragments, nil
-	// }
-	// // document header
-	// headerFragments, done := parseDocumentHeader(ctx, scanner, opts...)
-	// fragments = append(fragments, headerFragments...)
-	// if log.IsLevelEnabled(log.WithField("stage", "fragment_parsing").DebugLevel) {
-	// 	log.WithField("stage", "fragment_parsing").Debug("document header:")
-	// 	spew.Fdump(log.StandardLogger().Out, fragments)
-	// }
-	// if done {
-	// 	return fragments, nil
-	// }
-	// // document body
-	// bodyFragments, err := parseDocumentBody(ctx, scanner, opts...)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// fragments = append(fragments, bodyFragments...)
-
-	// make sure the scanner reached the end of the source
-	// return scanner.Err()
 }
 
 type DocumentFragmentScanner struct {
-	opts       []Option
-	scanner    *bufio.Scanner
-	lineNumber int
-	err        error // sticky error
-	fragments  types.DocumentFragmentGroup
+	opts         []Option
+	scanner      *bufio.Scanner
+	lineNumber   int
+	err          error // sticky error
+	currentGroup types.DocumentFragmentGroup
 }
 
 func NewDocumentFragmentScanner(source io.Reader, opts ...Option) *DocumentFragmentScanner {
@@ -92,21 +62,21 @@ func (s *DocumentFragmentScanner) Scan() bool {
 		return false
 	}
 	elements := []interface{}{}
-	s.fragments = types.DocumentFragmentGroup{
+	s.currentGroup = types.DocumentFragmentGroup{
 		LineOffset: s.lineNumber + 1, // next fragment will begin at the next line read by the underlying scanner
 	}
 	blockDelimiters := newStack()
 scan:
 	for s.scanner.Scan() {
 		s.lineNumber++
-		element, err := Parse("", s.scanner.Bytes(), s.opts...)
+		element, err := Parse("", s.scanner.Bytes(), s.opts...) // TODO: only parse for Blankline and SingleLineComments if within a paragraph
 		if err != nil {
 			// assume that the content is just a RawLine
 			element = types.RawLine(s.scanner.Text())
 		}
-		if log.IsLevelEnabled(log.DebugLevel) {
-			log.Debugf("parsed '%s' -> %s", s.scanner.Text(), spew.Sdump(element))
-		}
+		// if log.IsLevelEnabled(log.DebugLevel) {
+		// 	log.Debugf("parsed '%s':\n%s\nerr=%v", s.scanner.Text(), spew.Sdump(element), err)
+		// }
 
 		switch element := element.(type) {
 		case types.BlankLine:
@@ -129,7 +99,7 @@ scan:
 	if err := s.scanner.Err(); err != nil {
 		log.WithError(err).Error("failed to read the content")
 		s.err = err // will cause next call to `Scan()` to return false
-		s.fragments.Error = err
+		s.currentGroup.Error = err
 		return true // this fragment needs to be processed upstream
 	}
 	if len(elements) > 0 {
@@ -137,7 +107,7 @@ scan:
 			log.Debugf("parsed fragment elements:\n%s", spew.Sdump(elements))
 		}
 
-		s.fragments.Content = elements
+		s.currentGroup.Content = elements
 		return true // also return the underlying scanner's error (if something wrong happened)
 	}
 	// reached the end of source
@@ -156,7 +126,7 @@ scan:
 // Fragments returns document fragments that were read by the last call to `Next`.
 // Multiple calls will return the same value, until `Next` is called again
 func (s *DocumentFragmentScanner) Fragments() types.DocumentFragmentGroup {
-	return s.fragments
+	return s.currentGroup
 }
 
 // // parseDocumentFrontMatter attempts to read the front-matter if it exists.

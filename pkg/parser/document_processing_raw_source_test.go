@@ -628,7 +628,7 @@ include::hello_world.go.txt[]
 						},
 					},
 				}
-				result, err := ParseDocumentFragmentGroups(source)
+				result, err := AssembleDocumentFragments(source)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(result).To(MatchDocumentFragmentGroups(expected))
 			})
@@ -780,7 +780,7 @@ include::hello_world.go.txt[]
 								},
 							},
 						}
-						result, err := ParseDocumentFragmentGroups(source)
+						result, err := AssembleDocumentFragments(source)
 						Expect(err).NotTo(HaveOccurred())
 						Expect(result).To(MatchDocumentFragmentGroups(expected))
 					})
@@ -789,7 +789,7 @@ include::hello_world.go.txt[]
 						_, reset := ConfigureLogger(log.WarnLevel)
 						defer reset()
 						source := `include::../../test/includes/chapter-a.adoc[lines=1;3..4;6..foo]` // not a number
-						_, err := ParseDocumentFragmentGroups(source)
+						_, err := AssembleDocumentFragments(source)
 						Expect(err).To(HaveOccurred())
 					})
 
@@ -922,7 +922,7 @@ include::hello_world.go.txt[]
 						_, reset := ConfigureLogger(log.WarnLevel)
 						defer reset()
 						source := `include::../../test/includes/chapter-a.adoc[lines="1,3..4,6..foo"]` // not a number
-						_, err := ParseDocumentFragmentGroups(source)
+						_, err := AssembleDocumentFragments(source)
 						Expect(err).To(HaveOccurred())
 					})
 
@@ -1045,7 +1045,7 @@ include::hello_world.go.txt[]
 					// given
 					source := `include::../../test/includes/tag-include.adoc[tag=unknown]`
 					// when/then
-					_, err := ParseDocumentFragmentGroups(source)
+					_, err := AssembleDocumentFragments(source)
 					// verify error in logs
 					Expect(err).To(MatchError("tag 'unknown' not found in include file: ../../test/includes/tag-include.adoc"))
 				})
@@ -1278,19 +1278,19 @@ include::hello_world.go.txt[]
 
 				It("should fail if directory does not exist in standalone block", func() {
 					source := `include::{unknown}/unknown.adoc[leveloffset=+1]`
-					_, err := ParseDocumentFragmentGroups(source)
+					_, err := AssembleDocumentFragments(source)
 					Expect(err).To(MatchError("Unresolved directive in test.adoc - include::{unknown}/unknown.adoc[leveloffset=+1]"))
 				})
 
 				It("should fail if file is missing in standalone block", func() {
 					source := `include::{unknown}/unknown.adoc[leveloffset=+1]`
-					_, err := ParseDocumentFragmentGroups(source)
+					_, err := AssembleDocumentFragments(source)
 					Expect(err).To(MatchError("Unresolved directive in test.adoc - include::{unknown}/unknown.adoc[leveloffset=+1]"))
 				})
 
 				It("should fail if file with attribute in path is not resolved in standalone block", func() {
 					source := `include::{includedir}/unknown.adoc[leveloffset=+1]`
-					_, err := ParseDocumentFragmentGroups(source)
+					_, err := AssembleDocumentFragments(source)
 					Expect(err).To(MatchError("Unresolved directive in test.adoc - include::{includedir}/unknown.adoc[leveloffset=+1]"))
 				})
 
@@ -1298,7 +1298,7 @@ include::hello_world.go.txt[]
 					source := `----
 include::../../test/includes/unknown.adoc[leveloffset=+1]
 ----`
-					_, err := ParseDocumentFragmentGroups(source)
+					_, err := AssembleDocumentFragments(source)
 					Expect(err).To(MatchError("Unresolved directive in test.adoc - include::../../test/includes/unknown.adoc[leveloffset=+1]"))
 				})
 
@@ -1307,7 +1307,7 @@ include::../../test/includes/unknown.adoc[leveloffset=+1]
 					source := `----
 include::{includedir}/unknown.adoc[leveloffset=+1]
 ----`
-					_, err := ParseDocumentFragmentGroups(source)
+					_, err := AssembleDocumentFragments(source)
 					Expect(err).To(MatchError("Unresolved directive in test.adoc - include::{includedir}/unknown.adoc[leveloffset=+1]"))
 				})
 			})
@@ -1486,7 +1486,7 @@ include::../../test/includes/hello_world.go.txt[]
 							},
 						},
 					}
-					result, err := ParseDocumentFragmentGroups(source)
+					result, err := AssembleDocumentFragments(source)
 					Expect(err).NotTo(HaveOccurred())
 					Expect(result).To(MatchDocumentFragmentGroups(expected))
 				})
@@ -1514,7 +1514,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 							},
 						},
 					}
-					result, err := ParseDocumentFragmentGroups(source)
+					result, err := AssembleDocumentFragments(source)
 					Expect(err).NotTo(HaveOccurred())
 					Expect(result).To(MatchDocumentFragmentGroups(expected))
 				})

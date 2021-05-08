@@ -8,15 +8,14 @@ import (
 	. "github.com/onsi/gomega" //nolint golint
 )
 
-var _ = Describe("parse document", func() {
+var _ = Describe("assemble document fragments", func() {
 
-	expected := types.Document{
-		Elements: []interface{}{
-			&types.Paragraph{
+	expected := []types.DocumentFragment{
+		{
+			LineOffset: 1,
+			Content: &types.Paragraph{
 				Elements: []interface{}{
-					types.StringElement{
-						Content: "hello, world!",
-					},
+					types.RawLine("hello, world!"),
 				},
 			},
 		},
@@ -26,7 +25,7 @@ var _ = Describe("parse document", func() {
 		// given
 		actual := "hello, world!"
 		// when
-		result, err := testsupport.ParseDocument(actual)
+		result, err := testsupport.AssembleDocumentFragments(actual)
 		// then
 		Expect(err).ToNot(HaveOccurred())
 		Expect(result).To(Equal(expected))
@@ -36,10 +35,9 @@ var _ = Describe("parse document", func() {
 		// given
 		actual := "foo"
 		// when
-		result, err := testsupport.ParseDocument(actual)
+		result, err := testsupport.AssembleDocumentFragments(actual)
 		// then
 		Expect(err).ToNot(HaveOccurred())
 		Expect(result).NotTo(Equal(expected))
 	})
-
 })

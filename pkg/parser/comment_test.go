@@ -110,7 +110,7 @@ another line // not a comment`
 							},
 						},
 					}
-					result, err := ParseDocumentFragmentGroups(source)
+					result, err := AssembleDocumentFragments(source)
 					Expect(err).NotTo(HaveOccurred())
 					Expect(result).To(MatchDocumentFragmentGroups(expected))
 				})

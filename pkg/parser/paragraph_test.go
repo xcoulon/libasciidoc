@@ -51,7 +51,7 @@ pasta`
 						},
 					},
 				}
-				result, err := ParseDocumentFragmentGroups(source)
+				result, err := AssembleDocumentFragments(source)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(result).To(MatchDocumentFragmentGroups(expected))
 			})
@@ -197,7 +197,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 							},
 						},
 					}
-					result, err := ParseDocumentFragmentGroups(s)
+					result, err := AssembleDocumentFragments(s)
 					Expect(err).NotTo(HaveOccurred())
 					Expect(result).To(MatchDocumentFragmentGroups(expected))
 				})

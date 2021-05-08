@@ -2432,7 +2432,7 @@ _foo_
 
 			It("should fail when substitution is invalid", func() {
 				s := strings.ReplaceAll(source, "$SUBS", "invalid")
-				_, err := ParseDocumentFragmentGroups(s)
+				_, err := AssembleDocumentFragments(s)
 				Expect(err).To(HaveOccurred())
 			})
 		})

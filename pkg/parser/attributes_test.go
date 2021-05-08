@@ -24,7 +24,7 @@ var _ = Describe("attributes", func() {
 				{
 					LineOffset: 1,
 					Content: []interface{}{
-						types.ImageBlock{
+						&types.ImageBlock{
 							Location: &types.Location{
 								Path: []interface{}{
 									types.StringElement{Content: "foo.png"},
@@ -43,7 +43,7 @@ var _ = Describe("attributes", func() {
 				{
 					LineOffset: 1,
 					Content: []interface{}{
-						types.ImageBlock{
+						&types.ImageBlock{
 							Location: &types.Location{
 								Path: []interface{}{
 									types.StringElement{Content: "foo.png"},
@@ -62,7 +62,7 @@ var _ = Describe("attributes", func() {
 				{
 					LineOffset: 1,
 					Content: []interface{}{
-						types.ImageBlock{
+						&types.ImageBlock{
 							Location: &types.Location{
 								Path: []interface{}{
 									types.StringElement{Content: "foo.png"},
@@ -81,7 +81,7 @@ var _ = Describe("attributes", func() {
 				{
 					LineOffset: 1,
 					Content: []interface{}{
-						types.ImageBlock{
+						&types.ImageBlock{
 							Attributes: types.Attributes{
 								types.AttrWidth: "200",
 							},
@@ -103,7 +103,7 @@ var _ = Describe("attributes", func() {
 				{
 					LineOffset: 1,
 					Content: []interface{}{
-						types.ImageBlock{
+						&types.ImageBlock{
 							Attributes: types.Attributes{
 								types.AttrImageAlt: `Quoted, Here`,
 							},
@@ -125,7 +125,7 @@ var _ = Describe("attributes", func() {
 				{
 					LineOffset: 1,
 					Content: []interface{}{
-						types.ImageBlock{
+						&types.ImageBlock{
 							Attributes: types.Attributes{
 								types.AttrImageAlt: `The Foo"Bar" here`,
 							},
@@ -147,7 +147,7 @@ var _ = Describe("attributes", func() {
 				{
 					LineOffset: 1,
 					Content: []interface{}{
-						types.ImageBlock{
+						&types.ImageBlock{
 							Attributes: types.Attributes{
 								types.AttrImageAlt: `Quoted, Here`,
 								types.AttrHeight:   "100",
@@ -161,7 +161,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			result, err := ParseDocumentFragmentGroups(source)
+			result, err := AssembleDocumentFragments(source)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result).To(MatchDocumentFragmentGroups(expected))
 		})
@@ -172,7 +172,7 @@ var _ = Describe("attributes", func() {
 				{
 					LineOffset: 1,
 					Content: []interface{}{
-						types.ImageBlock{
+						&types.ImageBlock{
 							Attributes: types.Attributes{
 								types.AttrImageAlt: `Quoted, Here`,
 								types.AttrHeight:   "100", // last one wins
@@ -196,7 +196,7 @@ var _ = Describe("attributes", func() {
 				{
 					LineOffset: 1,
 					Content: []interface{}{
-						types.ImageBlock{
+						&types.ImageBlock{
 							Attributes: types.Attributes{
 								types.AttrImageAlt: `Quoted, Here`,
 								types.AttrHeight:   "100", // last one wins
@@ -222,7 +222,7 @@ var _ = Describe("attributes", func() {
 				{
 					LineOffset: 1,
 					Content: []interface{}{
-						types.ImageBlock{
+						&types.ImageBlock{
 							Attributes: types.Attributes{
 								types.AttrImageAlt: `Quoted, Here`,
 								types.AttrHeight:   "100", // last one wins

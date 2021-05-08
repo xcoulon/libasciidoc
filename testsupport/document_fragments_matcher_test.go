@@ -12,10 +12,10 @@ import (
 	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
-var _ = Describe("document fragment groups matcher", func() {
+var _ = Describe("document fragments matcher", func() {
 
 	// given
-	expected := []types.DocumentFragmentGroup{
+	expected := []types.DocumentFragment{
 		{
 			LineOffset: 1,
 			Content: []interface{}{
@@ -23,11 +23,11 @@ var _ = Describe("document fragment groups matcher", func() {
 			},
 		},
 	}
-	matcher := testsupport.MatchDocumentFragmentGroups(expected)
+	matcher := testsupport.MatchDocumentFragments(expected)
 
 	It("should match", func() {
 		// given
-		actual := []types.DocumentFragmentGroup{
+		actual := []types.DocumentFragment{
 			{
 				LineOffset: 1,
 				Content: []interface{}{
@@ -44,7 +44,7 @@ var _ = Describe("document fragment groups matcher", func() {
 
 	It("should not match", func() {
 		// given
-		actual := []types.DocumentFragmentGroup{
+		actual := []types.DocumentFragment{
 			{
 				LineOffset: 1,
 				Content: []interface{}{
@@ -59,8 +59,8 @@ var _ = Describe("document fragment groups matcher", func() {
 		Expect(result).To(BeFalse())
 		dmp := diffmatchpatch.New()
 		diffs := dmp.DiffMain(spew.Sdump(actual), spew.Sdump(expected), true)
-		Expect(matcher.FailureMessage(actual)).To(Equal(fmt.Sprintf("expected document fragment groups to match:\n%s", dmp.DiffPrettyText(diffs))))
-		Expect(matcher.NegatedFailureMessage(actual)).To(Equal(fmt.Sprintf("expected document fragment groups not to match:\n%s", dmp.DiffPrettyText(diffs))))
+		Expect(matcher.FailureMessage(actual)).To(Equal(fmt.Sprintf("expected document fragments to match:\n%s", dmp.DiffPrettyText(diffs))))
+		Expect(matcher.NegatedFailureMessage(actual)).To(Equal(fmt.Sprintf("expected document fragments not to match:\n%s", dmp.DiffPrettyText(diffs))))
 	})
 
 	It("should return error when invalid type is input", func() {
@@ -68,7 +68,7 @@ var _ = Describe("document fragment groups matcher", func() {
 		result, err := matcher.Match(1)
 		// then
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(Equal("MatchDocumentFragmentGroups matcher expects an array of types.DocumentFragmentGroup (actual: int)"))
+		Expect(err.Error()).To(Equal("MatchDocumentFragments matcher expects an array of types.DocumentFragmentGroup (actual: int)"))
 		Expect(result).To(BeFalse())
 	})
 

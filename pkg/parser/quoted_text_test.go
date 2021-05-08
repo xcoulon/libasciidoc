@@ -350,6 +350,46 @@ var _ = Describe("quoted texts", func() {
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
+			It("suite of regular text mised with bold, italic and monospaced content", func() {
+				source := "a _a_ b *b* c `c`"
+				expected := types.Document{
+					Elements: []interface{}{
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "a ",
+								},
+								&types.QuotedText{
+									Kind: types.SingleQuoteItalic,
+									Elements: []interface{}{
+										types.StringElement{Content: "a"},
+									},
+								},
+								types.StringElement{
+									Content: " b ",
+								},
+								&types.QuotedText{
+									Kind: types.SingleQuoteBold,
+									Elements: []interface{}{
+										types.StringElement{Content: "b"},
+									},
+								},
+								types.StringElement{
+									Content: " c ",
+								},
+								&types.QuotedText{
+									Kind: types.SingleQuoteMonospace,
+									Elements: []interface{}{
+										types.StringElement{Content: "c"},
+									},
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
+			})
+
 		})
 
 		Context("with double punctuation", func() {

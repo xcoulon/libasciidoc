@@ -16,7 +16,7 @@ var _ = Describe("block images", func() {
 			source := "image::images/foo.png[]"
 			expected := types.Document{
 				Elements: []interface{}{
-					types.ImageBlock{
+					&types.ImageBlock{
 						Location: &types.Location{
 							Path: []interface{}{
 								types.StringElement{Content: "images/foo.png"},
@@ -37,7 +37,11 @@ image::images/foo.png[{alt}]`
 					"alt": "the foo.png image",
 				},
 				Elements: []interface{}{
-					types.ImageBlock{
+					types.AttributeDeclaration{
+						Name:  "alt",
+						Value: "the foo.png image",
+					},
+					&types.ImageBlock{
 						Attributes: types.Attributes{
 							types.AttrImageAlt: "the foo.png image", // substituted
 						},
@@ -62,11 +66,16 @@ image::foo.png[]`
 					"imagesdir": "./path/to/images",
 				},
 				Elements: []interface{}{
-					types.ImageBlock{
+					types.AttributeDeclaration{
+						Name:  "imagesdir",
+						Value: "./path/to/images",
+					},
+					&types.ImageBlock{
 						Location: &types.Location{
 							Path: []interface{}{
-								types.StringElement{Content: "./path/to/images/"},
-								types.StringElement{Content: "foo.png"},
+								types.StringElement{
+									Content: "./path/to/images/foo.png",
+								},
 							},
 						},
 					},
@@ -85,7 +94,11 @@ image::{dir}/foo.png[]`
 					"dir": "./path/to/images",
 				},
 				Elements: []interface{}{
-					types.ImageBlock{
+					types.AttributeDeclaration{
+						Name:  "dir",
+						Value: "./path/to/images",
+					},
+					&types.ImageBlock{
 						Location: &types.Location{
 							Path: []interface{}{
 								types.StringElement{Content: "./path/to/images/foo.png"},
@@ -107,11 +120,14 @@ image::foo.png[]`
 					"imagesdir": "./path/to/images",
 				},
 				Elements: []interface{}{
-					types.ImageBlock{
+					types.AttributeDeclaration{
+						Name:  "imagesdir",
+						Value: "./path/to/images",
+					},
+					&types.ImageBlock{
 						Location: &types.Location{
 							Path: []interface{}{
-								types.StringElement{Content: "./path/to/images/"},
-								types.StringElement{Content: "foo.png"},
+								types.StringElement{Content: "./path/to/images/foo.png"},
 							},
 						},
 					},
@@ -130,11 +146,14 @@ image::{imagesdir}/foo.png[]`
 					"imagesdir": "./path/to/images",
 				},
 				Elements: []interface{}{
-					types.ImageBlock{
+					types.AttributeDeclaration{
+						Name:  "imagesdir",
+						Value: "./path/to/images",
+					},
+					&types.ImageBlock{
 						Location: &types.Location{
 							Path: []interface{}{
-								types.StringElement{Content: "./path/to/images/"},
-								types.StringElement{Content: "./path/to/images/foo.png"},
+								types.StringElement{Content: "./path/to/images/./path/to/images/foo.png"},
 							},
 						},
 					},
@@ -148,14 +167,14 @@ image::{imagesdir}/foo.png[]`
 image::images/bar.png[]`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.ImageBlock{
+					&types.ImageBlock{
 						Location: &types.Location{
 							Path: []interface{}{
 								types.StringElement{Content: "images/foo.png"},
 							},
 						},
 					},
-					types.ImageBlock{
+					&types.ImageBlock{
 						Location: &types.Location{
 							Path: []interface{}{
 								types.StringElement{Content: "images/bar.png"},
@@ -174,17 +193,10 @@ image::images/bar.png[]`
 			source := "a paragraph\nimage::images/foo.png[]"
 			expected := types.Document{
 				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "a paragraph",
-								},
-							},
-							{
-								types.StringElement{
-									Content: "image::images/foo.png[]",
-								},
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.StringElement{
+								Content: "a paragraph\nimage::images/foo.png[]",
 							},
 						},
 					},
@@ -197,11 +209,9 @@ image::images/bar.png[]`
 			source := "a foo image::foo.png[foo image, 600, 400] bar"
 			expected := types.Document{
 				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "a foo image::foo.png[foo image, 600, 400] bar"},
-							},
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.StringElement{Content: "a foo image::foo.png[foo image, 600, 400] bar"},
 						},
 					},
 				},
@@ -219,14 +229,12 @@ var _ = Describe("inline images", func() {
 			source := "image:images/foo.png[]"
 			expected := types.Document{
 				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.InlineImage{
-									Location: &types.Location{
-										Path: []interface{}{
-											types.StringElement{Content: "images/foo.png"},
-										},
+					&types.Paragraph{
+						Elements: []interface{}{
+							&types.InlineImage{
+								Location: &types.Location{
+									Path: []interface{}{
+										types.StringElement{Content: "images/foo.png"},
 									},
 								},
 							},
@@ -247,19 +255,17 @@ an image:{dir}/foo.png[].`
 					"dir": "./path/to/images",
 				},
 				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "an "},
-								types.InlineImage{
-									Location: &types.Location{
-										Path: []interface{}{
-											types.StringElement{Content: "./path/to/images/foo.png"},
-										},
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.StringElement{Content: "an "},
+							&types.InlineImage{
+								Location: &types.Location{
+									Path: []interface{}{
+										types.StringElement{Content: "./path/to/images/foo.png"},
 									},
 								},
-								types.StringElement{Content: "."},
 							},
+							types.StringElement{Content: "."},
 						},
 					},
 				},
@@ -277,20 +283,18 @@ an image:foo.png[].`
 					"imagesdir": "./path/to/images",
 				},
 				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "an "},
-								types.InlineImage{
-									Location: &types.Location{
-										Path: []interface{}{
-											types.StringElement{Content: "./path/to/images/"},
-											types.StringElement{Content: "foo.png"},
-										},
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.StringElement{Content: "an "},
+							&types.InlineImage{
+								Location: &types.Location{
+									Path: []interface{}{
+										types.StringElement{Content: "./path/to/images/"},
+										types.StringElement{Content: "foo.png"},
 									},
 								},
-								types.StringElement{Content: "."},
 							},
+							types.StringElement{Content: "."},
 						},
 					},
 				},
@@ -308,20 +312,18 @@ an image:{imagesdir}/foo.png[].`
 					"imagesdir": "./path/to/images",
 				},
 				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "an "},
-								types.InlineImage{
-									Location: &types.Location{
-										Path: []interface{}{
-											types.StringElement{Content: "./path/to/images/"},
-											types.StringElement{Content: "./path/to/images/foo.png"},
-										},
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.StringElement{Content: "an "},
+							&types.InlineImage{
+								Location: &types.Location{
+									Path: []interface{}{
+										types.StringElement{Content: "./path/to/images/"},
+										types.StringElement{Content: "./path/to/images/foo.png"},
 									},
 								},
-								types.StringElement{Content: "."},
 							},
+							types.StringElement{Content: "."},
 						},
 					},
 				},
@@ -332,16 +334,20 @@ an image:{imagesdir}/foo.png[].`
 		It("with document attribute in URL", func() {
 			source := `:path: ./path/to/images
 
-image::{path}/foo.png[]`
+image:{path}/foo.png[]`
 			expected := types.Document{
 				Attributes: types.Attributes{
 					"path": "./path/to/images",
 				},
 				Elements: []interface{}{
-					types.ImageBlock{
-						Location: &types.Location{
-							Path: []interface{}{
-								types.StringElement{Content: "./path/to/images/foo.png"}, // resolved
+					&types.Paragraph{
+						Elements: []interface{}{
+							&types.InlineImage{
+								Location: &types.Location{
+									Path: []interface{}{
+										types.StringElement{Content: "./path/to/images/foo.png"},
+									},
+								},
 							},
 						},
 					},
@@ -351,25 +357,4 @@ image::{path}/foo.png[]`
 		})
 	})
 
-	Context("errors", func() {
-
-		It("appending inline content", func() {
-			source := "a paragraph\nimage::images/foo.png[]"
-			expected := types.Document{
-				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "a paragraph"},
-							},
-							{
-								types.StringElement{Content: "image::images/foo.png[]"},
-							},
-						},
-					},
-				},
-			}
-			Expect(ParseDocument(source)).To(MatchDocument(expected))
-		})
-	})
 })

@@ -14,20 +14,20 @@ import (
 
 // MatchDocumentFragmentGroups a custom matcher to verify that a document matches the given expectation
 // Similar to the standard `Equal` matcher, but display a diff when the values don't match
-func MatchDocumentFragmentGroups(expected []types.DocumentFragmentGroup) gomegatypes.GomegaMatcher {
-	return &documentFragmentGroupsMatcher{
+func MatchDocumentFragments(expected []types.DocumentFragment) gomegatypes.GomegaMatcher {
+	return &documentFragmentsMatcher{
 		expected: expected,
 	}
 }
 
-type documentFragmentGroupsMatcher struct {
-	expected []types.DocumentFragmentGroup
+type documentFragmentsMatcher struct {
+	expected []types.DocumentFragment
 	diffs    string
 }
 
-func (m *documentFragmentGroupsMatcher) Match(actual interface{}) (success bool, err error) {
-	if _, ok := actual.([]types.DocumentFragmentGroup); !ok {
-		return false, errors.Errorf("MatchDocumentFragmentGroups matcher expects an array of types.DocumentFragmentGroup (actual: %T)", actual)
+func (m *documentFragmentsMatcher) Match(actual interface{}) (success bool, err error) {
+	if _, ok := actual.([]types.DocumentFragment); !ok {
+		return false, errors.Errorf("MatchDocumentFragments matcher expects an array of types.DocumentFragmentGroup (actual: %T)", actual)
 	}
 	if !reflect.DeepEqual(m.expected, actual) {
 		if log.IsLevelEnabled(log.DebugLevel) {
@@ -42,10 +42,10 @@ func (m *documentFragmentGroupsMatcher) Match(actual interface{}) (success bool,
 	return true, nil
 }
 
-func (m *documentFragmentGroupsMatcher) FailureMessage(_ interface{}) (message string) {
-	return fmt.Sprintf("expected document fragment groups to match:\n%s", m.diffs)
+func (m *documentFragmentsMatcher) FailureMessage(_ interface{}) (message string) {
+	return fmt.Sprintf("expected document fragments to match:\n%s", m.diffs)
 }
 
-func (m *documentFragmentGroupsMatcher) NegatedFailureMessage(_ interface{}) (message string) {
-	return fmt.Sprintf("expected document fragment groups not to match:\n%s", m.diffs)
+func (m *documentFragmentsMatcher) NegatedFailureMessage(_ interface{}) (message string) {
+	return fmt.Sprintf("expected document fragments not to match:\n%s", m.diffs)
 }

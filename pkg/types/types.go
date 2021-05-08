@@ -67,16 +67,16 @@ import (
 
 // RawSection a document section (when processing file inclusions)
 // We only care about the level here
-type RawSection struct {
-	Level   int
-	Title   string
-	RawText string
-}
+// type RawSection struct {
+// 	Level   int
+// 	Title   string
+// 	RawText string
+// }
 
 // NewRawSection returns a new RawSection
-func NewRawSection(level int, title string) (RawSection, error) {
+func NewRawSection(level int, title []interface{}) (*Section, error) {
 	// log.Debugf("new rawsection: '%s' (%d)", title, level)
-	return RawSection{
+	return &Section{
 		Level: level,
 		Title: title,
 	}, nil
@@ -126,38 +126,41 @@ type RawText interface {
 // Substitution support
 // ------------------------------------------
 
-type WithNestedElements interface {
-	WithAttributes
+// BlockWithAttributes base interface for types on which attributes can be substituted
+type BlockWithAttributes interface {
+	GetAttributes() Attributes
+	SetAttributes(Attributes) interface{} // TODO: remove the returned `interface{}`?
+}
+
+type BlockWithNestedElements interface {
+	BlockWithAttributes
 	GetElements() []interface{}
 	AddElement(interface{})
 	SetElements([]interface{})
 }
 
-type WithLocation interface {
-	WithAttributes
+type BlockWithLocation interface {
+	BlockWithAttributes
 	GetLocation() *Location
 	SetLocation(*Location) // TODO: unused?
 }
 
 // WithCustomSubstitutions base interface for types on which custom substitutions apply
+// DEPRECATED
 type WithCustomSubstitutions interface {
 	SubstitutionsToApply() ([]string, error)
 	DefaultSubstitutions() []string
 }
 
-// WithAttributes base interface for types on which attributes can be substituted
-type WithAttributes interface {
-	GetAttributes() Attributes
-	SetAttributes(Attributes) interface{}
-}
-
 // WithElementsToSubstitute interface for types on which elements can be substituted
+// DEPRECATED
 type WithElementsToSubstitute interface {
 	ElementsToSubstitute() []interface{}
 	ReplaceElements([]interface{}) interface{}
 }
 
 // WithLineSubstitution interface for types on which lines can be substituted
+// DEPRECATED
 type WithLineSubstitution interface {
 	WithCustomSubstitutions
 	LinesToSubstitute() [][]interface{}
@@ -165,6 +168,7 @@ type WithLineSubstitution interface {
 }
 
 // WithNestedElementSubstitution a block in which nested elements can be substituted
+// DEPRECATED
 type WithNestedElementSubstitution interface {
 	WithCustomSubstitutions
 	WithElementsToSubstitute
@@ -719,7 +723,7 @@ func NewSection(level int, title []interface{}, ids []interface{}) (*Section, er
 	}, nil
 }
 
-var _ WithNestedElements = &Section{}
+var _ BlockWithNestedElements = &Section{}
 
 // GetElements returns this section's title
 func (s *Section) GetElements() []interface{} {
@@ -729,6 +733,7 @@ func (s *Section) GetElements() []interface{} {
 // SetElements sets this section's title
 func (s *Section) SetElements(title []interface{}) {
 	s.Title = title
+	// TODO: set ID attribute
 }
 
 var _ WithElementsToSubstitute = Section{}
@@ -744,7 +749,7 @@ func (s Section) ReplaceElements(title []interface{}) interface{} {
 	return s
 }
 
-var _ WithAttributes = &Section{}
+var _ BlockWithAttributes = &Section{}
 
 // GetAttributes returns this section's attributes
 func (s *Section) GetAttributes() Attributes {
@@ -1039,7 +1044,7 @@ func (i OrderedListItem) ReplaceElements(elements []interface{}) interface{} {
 	return i
 }
 
-var _ WithAttributes = OrderedListItem{}
+var _ BlockWithAttributes = OrderedListItem{}
 
 // GetAttributes returns this list item's attributes
 func (i OrderedListItem) GetAttributes() Attributes {
@@ -1173,7 +1178,7 @@ func (i UnorderedListItem) ReplaceElements(elements []interface{}) interface{} {
 	return i
 }
 
-var _ WithAttributes = UnorderedListItem{}
+var _ BlockWithAttributes = UnorderedListItem{}
 
 // GetAttributes returns this list item's attributes
 func (i UnorderedListItem) GetAttributes() Attributes {
@@ -1381,7 +1386,7 @@ func (i LabeledListItem) ReplaceElements(elements []interface{}) interface{} {
 	return i
 }
 
-var _ WithAttributes = LabeledListItem{}
+var _ BlockWithAttributes = LabeledListItem{}
 
 // GetAttributes returns this list item's attributes
 func (i LabeledListItem) GetAttributes() Attributes {
@@ -1440,7 +1445,7 @@ func NewParagraph(elements []interface{}, attributes interface{}) (*Paragraph, e
 	}, nil
 }
 
-var _ WithNestedElements = &Paragraph{}
+var _ BlockWithNestedElements = &Paragraph{}
 
 // GetElements returns this paragraph's elements (or lines)
 func (p *Paragraph) GetElements() []interface{} {
@@ -1673,7 +1678,7 @@ type ImageBlock struct {
 }
 
 // NewImageBlock initializes a new `ImageBlock`
-func NewImageBlock(location *Location, inlineAttributes Attributes, attributes interface{}) (ImageBlock, error) {
+func NewImageBlock(location *Location, inlineAttributes Attributes, attributes interface{}) (*ImageBlock, error) {
 	// inline attributes trump block attributes
 	attrs := toAttributes(inlineAttributes)
 	attrs.SetAll(attributes)
@@ -1682,7 +1687,7 @@ func NewImageBlock(location *Location, inlineAttributes Attributes, attributes i
 		AttrPositional2: AttrWidth,
 		AttrPositional3: AttrHeight,
 	})
-	return ImageBlock{
+	return &ImageBlock{
 		Location:   location,
 		Attributes: attrs,
 	}, nil
@@ -1704,17 +1709,25 @@ func (i ImageBlock) RestoreAttributes(placeholders map[string]interface{}) inter
 // 	return i
 // }
 
-var _ WithAttributes = ImageBlock{}
+var _ BlockWithLocation = &ImageBlock{}
 
 // GetAttributes returns this list item's attributes
-func (i ImageBlock) GetAttributes() Attributes {
+func (i *ImageBlock) GetAttributes() Attributes {
 	return i.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this list item
-func (i ImageBlock) SetAttributes(attributes Attributes) interface{} {
+func (i *ImageBlock) SetAttributes(attributes Attributes) interface{} {
 	i.Attributes = attributes
 	return i
+}
+
+func (i *ImageBlock) GetLocation() *Location {
+	return i.Location
+}
+
+func (i *ImageBlock) SetLocation(value *Location) {
+	i.Location = value
 }
 
 // var _ WithElementsToSubstitute = ImageBlock{}
@@ -1738,7 +1751,7 @@ type InlineImage struct {
 
 // NewInlineImage initializes a new `InlineImage` (similar to ImageBlock, but without attributes)
 func NewInlineImage(location *Location, attributes interface{}, imagesdir interface{}) (InlineImage, error) {
-	location.WithPathPrefix(imagesdir)
+	location.SetPathPrefix(imagesdir)
 	attrs := toAttributesWithMapping(attributes, map[string]string{
 		AttrPositional1: AttrImageAlt,
 		AttrPositional2: AttrWidth,
@@ -1766,7 +1779,7 @@ func (i InlineImage) RestoreAttributes(placeholders map[string]interface{}) inte
 // 	return i
 // }
 
-var _ WithAttributes = InlineImage{}
+var _ BlockWithAttributes = InlineImage{}
 
 // GetAttributes returns this inline image's attributes
 func (i InlineImage) GetAttributes() Attributes {
@@ -1981,7 +1994,7 @@ func (b ExampleBlock) ReplaceElements(elements []interface{}) interface{} {
 	return b
 }
 
-var _ WithAttributes = ExampleBlock{}
+var _ BlockWithAttributes = ExampleBlock{}
 
 // GetAttributes returns this example block's attributes
 func (b ExampleBlock) GetAttributes() Attributes {
@@ -2042,7 +2055,7 @@ func (b QuoteBlock) ReplaceElements(elements []interface{}) interface{} {
 	return b
 }
 
-var _ WithAttributes = QuoteBlock{}
+var _ BlockWithAttributes = QuoteBlock{}
 
 // GetAttributes returns this quote block's attributes
 func (b QuoteBlock) GetAttributes() Attributes {
@@ -2101,7 +2114,7 @@ func (b SidebarBlock) ReplaceElements(elements []interface{}) interface{} {
 	return b
 }
 
-var _ WithAttributes = SidebarBlock{}
+var _ BlockWithAttributes = SidebarBlock{}
 
 // GetAttributes returns this sidebar block's attributes
 func (b SidebarBlock) GetAttributes() Attributes {
@@ -2164,7 +2177,7 @@ func (b FencedBlock) SubstituteLines(lines [][]interface{}) interface{} {
 	return b
 }
 
-var _ WithAttributes = FencedBlock{}
+var _ BlockWithAttributes = FencedBlock{}
 
 // GetAttributes returns this fenced block's attributes
 func (b FencedBlock) GetAttributes() Attributes {
@@ -2279,7 +2292,7 @@ func (b ListingBlock) SubstituteLines(lines [][]interface{}) interface{} {
 	return b
 }
 
-var _ WithAttributes = ListingBlock{}
+var _ BlockWithAttributes = ListingBlock{}
 
 // GetAttributes returns this listing block's attributes
 func (b ListingBlock) GetAttributes() Attributes {
@@ -2344,7 +2357,7 @@ func (b VerseBlock) SubstituteLines(lines [][]interface{}) interface{} {
 	return b
 }
 
-var _ WithAttributes = VerseBlock{}
+var _ BlockWithAttributes = VerseBlock{}
 
 // GetAttributes returns this verse block's attributes
 func (b VerseBlock) GetAttributes() Attributes {
@@ -2429,7 +2442,7 @@ func (b PassthroughBlock) SubstituteLines(lines [][]interface{}) interface{} {
 	return b
 }
 
-var _ WithAttributes = PassthroughBlock{}
+var _ BlockWithAttributes = PassthroughBlock{}
 
 // GetAttributes returns this passthrough block's attributes
 func (b PassthroughBlock) GetAttributes() Attributes {
@@ -2794,7 +2807,7 @@ func toRawText(elements []interface{}) (string, error) {
 	return result.String(), nil
 }
 
-var _ WithNestedElements = &QuotedText{}
+var _ BlockWithNestedElements = &QuotedText{}
 
 // GetElements returns this QuotedText's elements
 func (q *QuotedText) GetElements() []interface{} {
@@ -3014,7 +3027,7 @@ func NewInlineLink(url *Location, attributes interface{}) (*InlineLink, error) {
 	}, nil
 }
 
-var _ WithLocation = &InlineLink{}
+var _ BlockWithLocation = &InlineLink{}
 
 // GetAttributes returns this link's attributes
 func (l *InlineLink) GetAttributes() Attributes {
@@ -3429,10 +3442,13 @@ func NewLocation(scheme interface{}, path []interface{}) (*Location, error) {
 // func (l *Location) SetElements(path []interface{}) {
 // 	l.Path = path
 // }
+func (l *Location) SetPath(elements []interface{}) {
+	l.Path = Merge(elements)
+}
 
-// WithPathPrefix adds the given prefix to the path if this latter is NOT an absolute
+// SetPathPrefix adds the given prefix to the path if this latter is NOT an absolute
 // path and if there is no defined scheme
-func (l *Location) WithPathPrefix(p interface{}) {
+func (l *Location) SetPathPrefix(p interface{}) {
 	if p, ok := p.(string); ok && p != "" {
 		if !strings.HasSuffix(p, "/") {
 			p = p + "/"

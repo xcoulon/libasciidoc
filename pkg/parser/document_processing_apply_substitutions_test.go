@@ -421,7 +421,7 @@ package parser
 
 // 		It("should substitute inline attribute", func() {
 // 			elements := []interface{}{
-// 				types.ImageBlock{
+// 				&types.ImageBlock{
 // 					Attributes: types.Attributes{
 // 						types.AttrImageAlt: []interface{}{
 // 							types.AttributeSubstitution{
@@ -450,7 +450,7 @@ package parser
 // 			// then
 // 			Expect(err).To(Not(HaveOccurred()))
 // 			Expect(result).To(Equal([]interface{}{
-// 				types.ImageBlock{
+// 				&types.ImageBlock{
 // 					Attributes: types.Attributes{
 // 						types.AttrImageAlt: "cookie", // substituted
 // 					},
@@ -465,7 +465,7 @@ package parser
 
 // 		It("should substitute inline attribute", func() {
 // 			elements := []interface{}{
-// 				types.ImageBlock{
+// 				&types.ImageBlock{
 // 					Location: &types.Location{
 // 						Path: []interface{}{
 // 							types.AttributeSubstitution{
@@ -489,7 +489,7 @@ package parser
 // 			// then
 // 			Expect(err).To(Not(HaveOccurred()))
 // 			Expect(result).To(Equal([]interface{}{
-// 				types.ImageBlock{
+// 				&types.ImageBlock{
 // 					Location: &types.Location{
 // 						Path: []interface{}{
 // 							types.StringElement{Content: "cookie.png"},

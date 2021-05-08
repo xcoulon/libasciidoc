@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-
-	"github.com/davecgh/go-spew/spew"
-	log "github.com/sirupsen/logrus"
 )
 
 // ------------------------------------------
@@ -205,9 +202,9 @@ func toAttributes(attrs interface{}) Attributes {
 }
 
 func toAttributesWithMapping(attrs interface{}, mapping map[string]string) Attributes {
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("processing attributes with mapping on\n", spew.Sdump(attrs))
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debugf("processing attributes with mapping on\n%s", spew.Sdump(attrs))
+	// }
 	if attrs, ok := attrs.(Attributes); ok {
 		for source, target := range mapping {
 			if v, exists := attrs[source]; exists {

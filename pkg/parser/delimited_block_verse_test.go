@@ -392,7 +392,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'normal' substitution", func() {
@@ -508,7 +508,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'quotes' substitution", func() {
@@ -579,7 +579,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'macros' substitution", func() {
@@ -655,7 +655,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'attributes' substitution", func() {
@@ -718,7 +718,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'attributes,macros' substitution", func() {
@@ -804,7 +804,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'specialchars' substitution", func() {
@@ -888,7 +888,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'replacements' substitution", func() {
@@ -951,7 +951,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'post_replacements' substitution", func() {
@@ -1015,7 +1015,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'quotes,macros' substitution", func() {
@@ -1099,7 +1099,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'macros,quotes' substitution", func() {
@@ -1183,7 +1183,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("should apply the 'none' substitution", func() {
@@ -1246,7 +1246,7 @@ ____
 							},
 						},
 					}
-					Expect(ParseDocumentFragmentGroups(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
 				})
 			})
 		})

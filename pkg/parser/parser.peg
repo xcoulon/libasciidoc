@@ -21,11 +21,13 @@ import (
 DocumentFragmentElement <- 
     BlankLine
     / Section
-    / AttributeDeclaration
+    / ImageBlock
     / BlockAttributes
     / FileInclusion 
     / BlockDelimiter 
     / SingleLineComment
+    / AttributeDeclaration
+    / AttributeReset
     // if nothing match, will return an error and content will be store in a RawLine
 
 // ------------------------------------------
@@ -102,7 +104,14 @@ BlockAttributes <-
 
 InlineAttributes <-
     "["
-    attributes:(PositionalAttribute / NamedAttribute)*
+    attributes:(
+        (
+            !"]" // quick escape
+            attribute:(PositionalAttribute / NamedAttribute)
+        ) {
+            return attribute, nil
+        }
+    )*
     "]" {
         return types.NewAttributes(attributes.([]interface{})...)
     }
@@ -266,12 +275,14 @@ AttributeValue <-
 SingleQuotedAttributeValue <- 
     "'" 
     elements:(
+        // TODO: exclude quote markers from following rule to speed up parsing?
         Quote
-        / ([^'\r\n\uFFFD\\{]+ { // = and , signs are allowed within ' quotes 
+        / ([^\r\n\uFFFD\\{&<>']+ { // = and , signs are allowed within ' quotes 
             return types.NewStringElement(string(c.text))
         })
-        / ElementPlaceHolder
         / AttributeSubstitution
+        / SpecialCharacter
+        / ElementPlaceHolder
         / (`\'` { 
             return types.NewStringElement(`'`) // escaped quote
         }
@@ -287,11 +298,12 @@ DoubleQuotedAttributeValue <-
     "\"" 
     elements:(
         Quote
-        / ([^\r\n\uFFFD"\\{]+ { // = and , signs are allowed within " quotes
+        / ([^\r\n\uFFFD&<>"\\{]+ { // = and , signs are allowed within " quotes
             return types.NewStringElement(string(c.text))
         }) 
-        / ElementPlaceHolder
         / AttributeSubstitution
+        / SpecialCharacter
+        / ElementPlaceHolder
         / (`\"` { 
             return types.NewStringElement(`"`) // escaped quote
         }
@@ -307,19 +319,25 @@ DoubleQuotedAttributeValue <-
 UnquotedAttributeValue <- 
     !Space
     elements:(
-        Quote
-        / Space
-        / ([^,=\r\n\uFFFD{\]]+ {
-            return types.NewStringElement(string(c.text))
-        }) 
-        / ElementPlaceHolder
-        / AttributeSubstitution
-        / ("{" { 
-            return types.NewStringElement(string(c.text))
-        })
+        !"]" // Quick escape
+        element:(
+            Quote
+            / ([^,=\r\n\uFFFD&<>{\] ]+ {
+                return types.NewStringElement(string(c.text))
+            }) 
+            / Space
+            / AttributeSubstitution
+            / SpecialCharacter
+            / ElementPlaceHolder
+            / ("{" { 
+                return types.NewStringElement(string(c.text))
+            })
+        ) {
+            return element, nil
+        }
     )+ 
     &{
-        // empty string is not a valid value
+        // post-parsing condition to verify that the value is not an empty string
         return types.Reduce(elements, strings.TrimSpace) != "", nil
     }
     {
@@ -859,11 +877,16 @@ ConcealedIndexTermContent <- (Alphanum / Space)+ {
 // Images
 // ------------------------------------------
 ImageBlock <- 
-    &{
-        // AttrPositional1 must not be set
-        return types.HasNotAttribute(c.globalStore.getAttributes(), types.AttrPositional1), nil
+    // &{
+    //     // AttrPositional1 must not be set
+    //     return types.HasNotAttribute(c.globalStore.getAttributes(), types.AttrPositional1), nil
+    // }
+    #{
+        // for images, we always enable the 'normal' substitutions
+        return c.setSubstitutionPhase("normal")
     }
-    "image::" path:(Location) inlineAttributes:(InlineAttributes) Space* EOL {
+    "image::" path:(Location) inlineAttributes:(InlineAttributes) Space* {
+        c.unsetSubstitutionPhase()
         // 'imagesdir' attribute is added after applying the attribute substitutions on the image location
         return types.NewImageBlock(path.(*types.Location), inlineAttributes.(types.Attributes), c.globalStore.getAttributes())
     }
@@ -952,7 +975,7 @@ ExternalLink <- url:(LocationWithScheme) inlineAttributes:(InlineAttributes)? {
 // ----------------------------------------------------------------------------
 QuotedText <- 
     (
-        attributes:(LongHandAttributes)? 
+        attributes:(LongHandAttributes)? // TODO: do not check for attributes on quoted text if we're already parsing an attribute value?
         text:(UnconstrainedQuotedText / ConstrainedQuotedText) {
             return text.(*types.QuotedText).WithAttributes(attributes)
         }
@@ -1494,20 +1517,23 @@ Section <-
         // use a predicate to make sure that only `=` (level 0) to `======` (level 5) are allowed
         return level.(int) <= 5, nil 
     } 
-    #{
-        // for section, we always enable the 'normal' substitutions
-        return c.setSubstitutionPhase("normal")
-    }
-    Space+ title:(SectionTitleElements) id:(InlineElementID*) {
-        c.unsetSubstitutionPhase()
-        return types.NewSection(level.(int), title.(types.InlineElements), id.([]interface{})) 
+    // #{
+    //     // for section, we always enable the 'normal' substitutions
+    //     return c.setSubstitutionPhase("normal")
+    // }
+    // Space+ title:(SectionTitleElements) id:(InlineElementID*) {
+    //     c.unsetSubstitutionPhase()
+    //     return types.NewSection(level.(int), title.(types.InlineElements), id.([]interface{})) 
+    // }
+    Space+ title:(RawSectionTitle) EOL {
+        return types.NewRawSection(level.(int), title.([]interface{})) 
     }
 
-SectionTitleElements <- elements:(!Newline !InlineElementID SectionTitleElement)+ { // absorbs heading and trailing spaces
-        return types.NewInlineElements(elements.([]interface{}))
-    } 
+// SectionTitleElements <- elements:(!Newline !InlineElementID SectionTitleElement)+ { // absorbs heading and trailing spaces
+//         return types.NewInlineElements(elements.([]interface{}))
+//     } 
 
-SectionTitleElement <- NormalGroup
+// SectionTitleElement <- NormalGroup
 
 // // we need to identify section titles to properly handle file inclusions with level offsets
 // RawSection <- 
@@ -1523,9 +1549,11 @@ SectionTitleElement <- NormalGroup
 //     return types.NewRawSection(level.(int), title.(string)) 
 // }
 
-// RawSectionTitle <- [^\r\n]* { 
-//     return string(c.text), nil 
-// }
+RawSectionTitle <- [^\r\n]* { 
+    return []interface{}{
+        types.StringElement{Content: string(c.text)},
+    }, nil 
+}
 
 // -------------------------------------------------------------------------------------
 // Substitutions
@@ -1566,8 +1594,25 @@ HeaderGroup <- elements:(
     / AnyChar)+ EOF { 
         return types.Merge(elements), nil
     }
+    
+// Substitution group element attributes
+ElementAttributesGroup <- elements:(
+    InlineWord
+    / AttributeSubstitution
+    / Quotes
+    / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
+    / Newline
+    / AnyChar)+ EOF { 
+        return types.Merge(elements), nil
+    }
 
-// Default substitutions or Block Attributes and Inline Attributes
+// The 'none' substitution
+NoneGroup <- content:(.)* EOF {
+        s, _ := types.NewStringElement(string(c.text))
+        return []interface{}{s}, nil
+    }
+
+// Substitution group for 'attributes' only
 AttributesGroup <- elements:(
     InlineWord
     / InlinePassthrough
@@ -1596,12 +1641,6 @@ QuotesGroup <- elements:(
     / Newline
     / AnyChar)+ EOF { 
         return types.Merge(elements), nil
-    }
-
-// Special 'none' substitution
-NoneGroup <- content:(.)* EOF {
-        s, _ := types.NewStringElement(string(c.text))
-        return []interface{}{s}, nil
     }
 
 // Substitution group for 'replacements' only
@@ -1832,10 +1871,12 @@ LocationWithScheme <- scheme:(Scheme) path:(Filename / ElementPlaceHolder)+ {
     }
 
 Filename <- elements:(
-    ([^\r\n[\]\uFFFD{ ])+ { // not supported for now: EOL, space, "[", "]"
+    // TODO: quick escape on `]`
+    ([^\r\n[\]\uFFFD{&<> ])+ { // not supported for now: EOL, space, "[", "]"
         return types.NewStringElement(string(c.text))
     }
     / AttributeSubstitution 
+    / SpecialCharacter
     / "{" {
         return types.NewStringElement(string(c.text))
     })+ {

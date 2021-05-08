@@ -99,7 +99,7 @@ second paragraph
 					Content:    []interface{}{},
 				},
 			}
-			result, err := ParseDocumentFragmentGroups(source) // , parser.Debug(true))
+			result, err := AssembleDocumentFragments(source) // , parser.Debug(true))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result).To(MatchDocumentFragmentGroups(expected))
 		})
