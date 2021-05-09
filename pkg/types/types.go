@@ -293,11 +293,11 @@ func NewDocumentFragment(lineOffset int, element interface{}) DocumentFragment {
 
 type RawDelimitedBlock struct {
 	Attributes Attributes
-	Kind       DelimiterKind
+	Kind       DelimitedBlockKind
 	Lines      []RawLine
 }
 
-func NewRawDelimitedBlock(kind DelimiterKind, attributes Attributes) *RawDelimitedBlock {
+func NewRawDelimitedBlock(kind DelimitedBlockKind, attributes Attributes) *RawDelimitedBlock {
 	return &RawDelimitedBlock{
 		Attributes: attributes,
 		Kind:       kind,
@@ -2192,60 +2192,101 @@ func (b FencedBlock) SetAttributes(attributes Attributes) interface{} {
 
 // ListingBlockDelimiter an empty type that is returned by the parser when a listing block is starting or ending
 type BlockDelimiter struct {
-	Kind DelimiterKind
+	Kind DelimitedBlockKind
 }
 
-func NewBlockDelimiter(kind DelimiterKind) (BlockDelimiter, error) {
+func NewBlockDelimiter(kind DelimitedBlockKind) (BlockDelimiter, error) {
 	return BlockDelimiter{
 		Kind: kind,
 	}, nil
 }
 
-type DelimiterKind string
+type DelimitedBlockKind string
 
 const (
 	// FrontMatter a front-matter block
-	FrontMatter DelimiterKind = "front-matter"
+	FrontMatter DelimitedBlockKind = "front-matter"
 	// Fenced a fenced block
-	Fenced DelimiterKind = "fenced"
+	Fenced DelimitedBlockKind = "fenced"
 	// Listing a listing block
-	Listing DelimiterKind = "listing"
+	Listing DelimitedBlockKind = "listing"
 	// Example an example block
-	Example DelimiterKind = "example"
+	Example DelimitedBlockKind = "example"
 	// Comment a comment block
-	Comment DelimiterKind = "comment"
+	Comment DelimitedBlockKind = "comment"
 	// Quote a quote block
-	Quote DelimiterKind = "quote"
+	Quote DelimitedBlockKind = "quote"
 	// MarkdownQuote a quote block in the Markdown style
-	MarkdownQuote DelimiterKind = "markdown-quote"
+	MarkdownQuote DelimitedBlockKind = "markdown-quote"
 	// Verse a verse block
-	Verse DelimiterKind = "verse"
+	Verse DelimitedBlockKind = "verse"
 	// Sidebar a sidebar block
-	Sidebar DelimiterKind = "sidebar"
+	Sidebar DelimitedBlockKind = "sidebar"
 	// Literal a literal block
-	Literal DelimiterKind = "literal"
+	Literal DelimitedBlockKind = "literal"
 	// Source a source block
-	Source DelimiterKind = "source"
+	Source DelimitedBlockKind = "source"
 	// Passthrough a passthrough block
-	Passthrough DelimiterKind = "pass"
+	Passthrough DelimitedBlockKind = "pass"
 
 	// AttrSourceBlockOption the option set on a source block, using the `source%<option>` attribute
 	AttrSourceBlockOption = "source-option" // DEPRECATED
 )
 
+// DelinmitedBlock the structure for the Listing blocks
+type DelimitedBlock struct {
+	Kind       DelimitedBlockKind
+	Attributes Attributes
+	Elements   []interface{}
+}
+
+func NewDelimitedBlock(kind DelimitedBlockKind, attributes Attributes) *DelimitedBlock {
+	return &DelimitedBlock{
+		Kind:       kind,
+		Attributes: attributes,
+	}
+}
+
+var _ BlockWithNestedElements = &DelimitedBlock{}
+
+// GetElements returns this paragraph's elements (or lines)
+func (b *DelimitedBlock) GetElements() []interface{} {
+	return b.Elements
+}
+
+// SetElements sets this paragraph's elements
+func (b *DelimitedBlock) SetElements(elements []interface{}) {
+	b.Elements = elements
+}
+
+func (b *DelimitedBlock) AddElement(e interface{}) {
+	b.Elements = append(b.Elements, e)
+}
+
+// GetAttributes returns the attributes of this paragraph so that substitutions can be applied onto them
+func (b *DelimitedBlock) GetAttributes() Attributes {
+	return b.Attributes
+}
+
+// ReplaceAttributes replaces the attributes in this paragraph
+func (b *DelimitedBlock) SetAttributes(attributes Attributes) interface{} {
+	b.Attributes = attributes
+	return b
+}
+
 // ListingBlock the structure for the Listing blocks
 type ListingBlock struct {
 	Attributes Attributes
-	Lines      [][]interface{}
+	Elements   []interface{}
 }
 
 // NewListingBlock initializes a new `ListingBlock` with the given lines
-func NewListingBlock(lines []interface{}, attributes interface{}) (ListingBlock, error) {
+func NewListingBlock(elements []interface{}, attributes interface{}) (ListingBlock, error) {
 	// log.Debugf("new ListingBlock with %d lines", len(lines))
-	l, err := toLines(lines)
-	if err != nil {
-		return ListingBlock{}, errors.Wrapf(err, "failed to initialize a new listing block")
-	}
+	// l, err := toLines(lines)
+	// if err != nil {
+	// 	return ListingBlock{}, errors.Wrapf(err, "failed to initialize a new listing block")
+	// }
 	attrs := toAttributesWithMapping(attributes, map[string]string{
 		AttrPositional1: AttrStyle,
 	})
@@ -2260,37 +2301,37 @@ func NewListingBlock(lines []interface{}, attributes interface{}) (ListingBlock,
 	}
 	return ListingBlock{
 		Attributes: attrs,
-		Lines:      l,
+		Elements:   elements,
 	}, nil
 }
 
-var _ WithLineSubstitution = ListingBlock{}
+// var _ WithLineSubstitution = ListingBlock{}
 
-// SubstitutionsToApply returns the name of the substitutions to apply
-func (b ListingBlock) SubstitutionsToApply() ([]string, error) {
-	if subs, found, err := b.Attributes.GetAsString(AttrSubstitutions); err != nil {
-		return nil, err
-	} else if found {
-		return strings.Split(subs, ","), nil
-	}
-	return b.DefaultSubstitutions(), nil
-}
+// // SubstitutionsToApply returns the name of the substitutions to apply
+// func (b ListingBlock) SubstitutionsToApply() ([]string, error) {
+// 	if subs, found, err := b.Attributes.GetAsString(AttrSubstitutions); err != nil {
+// 		return nil, err
+// 	} else if found {
+// 		return strings.Split(subs, ","), nil
+// 	}
+// 	return b.DefaultSubstitutions(), nil
+// }
 
-// DefaultSubstitutions the default substitutions for the paragraph
-func (b ListingBlock) DefaultSubstitutions() []string {
-	return defaultListingBlockSubstitutions
-}
+// // DefaultSubstitutions the default substitutions for the paragraph
+// func (b ListingBlock) DefaultSubstitutions() []string {
+// 	return defaultListingBlockSubstitutions
+// }
 
-// LinesToSubstitute returns the lines of this listing block so that substitutions can be applied onto them
-func (b ListingBlock) LinesToSubstitute() [][]interface{} {
-	return b.Lines
-}
+// // LinesToSubstitute returns the lines of this listing block so that substitutions can be applied onto them
+// func (b ListingBlock) LinesToSubstitute() [][]interface{} {
+// 	return b.Elements
+// }
 
-// SubstituteLines replaces the elements in this listing block
-func (b ListingBlock) SubstituteLines(lines [][]interface{}) interface{} {
-	b.Lines = lines
-	return b
-}
+// // SubstituteLines replaces the elements in this listing block
+// func (b ListingBlock) SubstituteLines(lines [][]interface{}) interface{} {
+// 	b.Elements = lines
+// 	return b
+// }
 
 var _ BlockWithAttributes = ListingBlock{}
 

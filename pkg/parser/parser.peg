@@ -18,7 +18,7 @@ import (
 // Document Raw Line (main rule)
 // Identify the delimiters for raw blocks
 // ------------------------------------------
-DocumentFragmentElement <- 
+DefaultDocumentFragmentElement <- 
     BlankLine
     / Section
     / ImageBlock
@@ -28,6 +28,28 @@ DocumentFragmentElement <-
     / SingleLineComment
     / AttributeDeclaration
     / AttributeReset
+    // if nothing match, will return an error and content will be store in a RawLine
+
+// when parsing rawlines within a delimited block, there are less
+// type of fragment elements to expect.
+DocumentFragmentElementWithinParagraph <- 
+    BlankLine
+    / SingleLineComment
+    // if nothing match, will return an error and content will be store in a RawLine
+
+// when parsing rawlines within a delimited block, there are less
+// type of fragment elements to expect.
+DocumentFragmentElementWithinDelimitedBlock <- 
+    BlankLine
+    / (
+        delimiter:(BlockDelimiter)
+        &{
+            // only accept if the delimiter matches the current delimited block
+            return c.isValidBlockDelimiter(delimiter.(types.BlockDelimiter))
+        }
+        {
+            return delimiter, nil
+        })
     // if nothing match, will return an error and content will be store in a RawLine
 
 // ------------------------------------------
@@ -70,9 +92,9 @@ AttributeDeclarationValueElement <- !EOL
         return element, nil
     }
 
-AttributeReset <- ":!" name:(AttributeName) ":" Space* EOL {
+AttributeReset <- ":!" name:(AttributeName) ":" Space* EOF {
     return types.NewAttributeReset(name.(string))
-} / ":" name:(AttributeName) "!:" Space* EOL {
+} / ":" name:(AttributeName) "!:" Space* EOF {
     return types.NewAttributeReset(name.(string))
 }
 
@@ -489,37 +511,37 @@ BlockDelimiter <- !(Alphanum) // quick escape
         return delimiter, nil
     }
 
-LiteralBlockDelimiter <- "...." Space* EOL {
+LiteralBlockDelimiter <- "...." Space* EOF {
     return types.NewBlockDelimiter(types.Literal)
 }
 
-FencedBlockDelimiter <- "```" Space* EOL {
+FencedBlockDelimiter <- "```" Space* EOF {
     return types.NewBlockDelimiter(types.Fenced)
 }
 
-ListingBlockDelimiter <- "----" Space* EOL {
+ListingBlockDelimiter <- "----" Space* {
     return types.NewBlockDelimiter(types.Listing)
 }
 
 SourceBlockDelimiter <- ListingBlockDelimiter
 
-ExampleBlockDelimiter <- "====" Space* EOL {
+ExampleBlockDelimiter <- "====" Space* EOF {
     return types.NewBlockDelimiter(types.Example)
 }
 
-CommentBlockDelimiter <- "////" Space* EOL {
+CommentBlockDelimiter <- "////" Space* EOF {
     return types.NewBlockDelimiter(types.Comment)
 }
 
-QuoteBlockDelimiter <- "____" Space* EOL {
+QuoteBlockDelimiter <- "____" Space* EOF {
     return types.NewBlockDelimiter(types.Quote)
 }
 
-SidebarBlockDelimiter <- "****" Space* EOL {
+SidebarBlockDelimiter <- "****" Space* EOF {
     return types.NewBlockDelimiter(types.Sidebar)
 }
 
-PassthroughBlockDelimiter <- "++++" Space* EOL {
+PassthroughBlockDelimiter <- "++++" Space* EOF {
     return types.NewBlockDelimiter(types.Sidebar)
 }
 

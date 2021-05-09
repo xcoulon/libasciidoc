@@ -18,7 +18,7 @@ func (r *sgmlRenderer) renderListingBlock(ctx *renderer.Context, b types.Listing
 	}()
 	ctx.WithinDelimitedBlock = true
 	result := &strings.Builder{}
-	lines := discardEmptyLines(b.Lines)
+	lines := [][]interface{}{} // discardEmptyLines(b.Elements)
 	content, err := r.renderLines(ctx, lines)
 	if err != nil {
 		return "", errors.Wrap(err, "unable to render listing block content")

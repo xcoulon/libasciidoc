@@ -68,7 +68,7 @@ func (r *sgmlRenderer) renderSourceParagraph(ctx *renderer.Context, p *types.Par
 	attributes[types.AttrStyle] = types.Source
 	return r.renderSourceBlock(ctx, types.ListingBlock{
 		Attributes: attributes,
-		Lines:      lines,
+		Elements:   []interface{}{}, //lines,
 	})
 }
 
@@ -79,7 +79,7 @@ func (r *sgmlRenderer) renderSourceLines(ctx *renderer.Context, b types.ListingB
 	}()
 	ctx.WithinDelimitedBlock = true
 
-	lines := discardEmptyLines(b.Lines)
+	lines := [][]interface{}{} // discardEmptyLines(b.Elements)
 	highlighter, _, err := ctx.Attributes.GetAsString(types.AttrSyntaxHighlighter)
 	if err != nil {
 		return "", "", "", err

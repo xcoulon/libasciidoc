@@ -1176,20 +1176,16 @@ another delimited block
 											},
 										},
 										types.ListingBlock{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "a delimited block",
-													},
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "a delimited block",
 												},
 											},
 										},
 										types.ListingBlock{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "another delimited block",
-													},
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "another delimited block",
 												},
 											},
 										},
@@ -1409,11 +1405,9 @@ another delimited block
 							},
 						},
 						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a delimited block",
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "a delimited block",
 								},
 							},
 						},
@@ -1436,12 +1430,10 @@ another delimited block
 							},
 						},
 						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
+							Elements: []interface{}{
 									types.StringElement{
 										Content: "another delimited block",
 									},
-								},
 							},
 						},
 					},

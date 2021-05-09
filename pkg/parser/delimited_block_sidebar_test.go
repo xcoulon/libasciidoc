@@ -88,16 +88,12 @@ bar
 								},
 								types.BlankLine{}, // blankline is required between paragraph and the next block
 								types.ListingBlock{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "foo",
-											},
+									Elements: []interface{}{
+										types.StringElement{
+											Content: "foo",
 										},
-										{
-											types.StringElement{
-												Content: "bar",
-											},
+										types.StringElement{
+											Content: "bar",
 										},
 									},
 								},
@@ -202,16 +198,12 @@ bar
 								},
 								types.BlankLine{}, // blankline is required between paragraph and the next block
 								types.ListingBlock{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "foo",
-											},
+									Elements: []interface{}{
+										types.StringElement{
+											Content: "foo",
 										},
-										{
-											types.StringElement{
-												Content: "bar",
-											},
+										types.StringElement{
+											Content: "bar",
 										},
 									},
 								},

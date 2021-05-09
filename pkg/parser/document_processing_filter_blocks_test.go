@@ -12,9 +12,7 @@ var _ = Describe("block filters", func() {
 	It("should retain blank line in a delimited block", func() {
 		actual := []interface{}{
 			types.ListingBlock{
-				Lines: [][]interface{}{
-					{},
-				},
+				Elements: []interface{}{},
 			},
 			types.Paragraph{
 				Lines: [][]interface{}{
@@ -26,9 +24,7 @@ var _ = Describe("block filters", func() {
 		}
 		expected := []interface{}{
 			types.ListingBlock{
-				Lines: [][]interface{}{
-					{},
-				},
+				Elements: []interface{}{},
 			},
 			types.Paragraph{
 				Lines: [][]interface{}{

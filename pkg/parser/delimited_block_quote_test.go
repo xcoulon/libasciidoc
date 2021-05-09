@@ -217,12 +217,10 @@ ____`
 									},
 								},
 								types.ListingBlock{
-									Lines: [][]interface{}{
-										{
+									Elements: []interface{}{
 											types.StringElement{
 												Content: "* quote ",
 											},
-										},
 									},
 								},
 								types.UnorderedList{

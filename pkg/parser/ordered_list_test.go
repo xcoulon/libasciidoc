@@ -959,20 +959,16 @@ another delimited block
 											},
 										},
 										types.ListingBlock{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "a delimited block",
-													},
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "a delimited block",
 												},
 											},
 										},
 										types.ListingBlock{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "another delimited block",
-													},
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "another delimited block",
 												},
 											},
 										},
@@ -1025,11 +1021,9 @@ print("two")
 											},
 										},
 										types.ListingBlock{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "print(\"one\")",
-													},
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "print(\"one\")",
 												},
 											},
 										},
@@ -1047,11 +1041,9 @@ print("two")
 											},
 										},
 										types.ListingBlock{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "print(\"two\")",
-													},
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "print(\"two\")",
 												},
 											},
 										},

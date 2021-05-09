@@ -63,17 +63,12 @@ paragraphs
 								Attributes: types.Attributes{
 									types.AttrStyle: types.Note,
 								},
-								Lines: [][]interface{}{
-									{
-										types.StringElement{
-											Content: "multiple",
-										},
+								Elements: []interface{}{
+									types.StringElement{
+										Content: "multiple",
 									},
-									{},
-									{
-										types.StringElement{
-											Content: "paragraphs",
-										},
+									types.StringElement{
+										Content: "paragraphs",
 									},
 								},
 							},

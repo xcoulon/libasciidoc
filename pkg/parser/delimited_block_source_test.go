@@ -29,27 +29,18 @@ end
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Source,
 							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "require 'sinatra'",
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "require 'sinatra'",
 								},
-								{},
-								{
-									types.StringElement{
-										Content: "get '/hi' do",
-									},
+								types.StringElement{
+									Content: "get '/hi' do",
 								},
-								{
-									types.StringElement{
-										Content: "  \"Hello World!\"",
-									},
+								types.StringElement{
+									Content: "  \"Hello World!\"",
 								},
-								{
-									types.StringElement{
-										Content: "end",
-									},
+								types.StringElement{
+									Content: "end",
 								},
 							},
 						},
@@ -76,27 +67,18 @@ end
 								types.AttrLanguage: "ruby",
 								types.AttrTitle:    "Source block title",
 							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "require 'sinatra'",
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "require 'sinatra'",
 								},
-								{},
-								{
-									types.StringElement{
-										Content: "get '/hi' do",
-									},
+								types.StringElement{
+									Content: "get '/hi' do",
 								},
-								{
-									types.StringElement{
-										Content: "  \"Hello World!\"",
-									},
+								types.StringElement{
+									Content: "  \"Hello World!\"",
 								},
-								{
-									types.StringElement{
-										Content: "end",
-									},
+								types.StringElement{
+									Content: "end",
 								},
 							},
 						},
@@ -125,27 +107,18 @@ end
 								types.AttrID:       "id-for-source-block",
 								types.AttrTitle:    "app.rb",
 							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "require 'sinatra'",
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "require 'sinatra'",
 								},
-								{},
-								{
-									types.StringElement{
-										Content: "get '/hi' do",
-									},
+								types.StringElement{
+									Content: "get '/hi' do",
 								},
-								{
-									types.StringElement{
-										Content: "  \"Hello World!\"",
-									},
+								types.StringElement{
+									Content: "  \"Hello World!\"",
 								},
-								{
-									types.StringElement{
-										Content: "end",
-									},
+								types.StringElement{
+									Content: "end",
 								},
 							},
 						},
@@ -172,14 +145,12 @@ a note
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Source,
 							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: `const cookies = "cookies" `,
-									},
-									types.Callout{
-										Ref: 1,
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: `const cookies = "cookies" `,
+								},
+								types.Callout{
+									Ref: 1,
 								},
 							},
 						},

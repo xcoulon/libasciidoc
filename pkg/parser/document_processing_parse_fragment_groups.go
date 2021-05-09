@@ -2,6 +2,7 @@ package parser
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 
 	"github.com/bytesparadise/libasciidoc/pkg/types"
@@ -41,14 +42,23 @@ type DocumentFragmentScanner struct {
 	opts         []Option
 	scanner      *bufio.Scanner
 	lineNumber   int
-	err          error // sticky error
 	currentGroup types.DocumentFragmentGroup
+	scope        scanningScope
+	err          error // sticky error
 }
+
+type scanningScope string
+
+const (
+	defaultScope       scanningScope = "default"
+	withinParagraph    scanningScope = "within_paragraph"
+	withinListingBlock scanningScope = "within_listing_block"
+)
 
 func NewDocumentFragmentScanner(source io.Reader, opts ...Option) *DocumentFragmentScanner {
 	return &DocumentFragmentScanner{
 		scanner: bufio.NewScanner(source),
-		opts:    append(opts, Entrypoint("DocumentFragmentElement")),
+		opts:    opts,
 	}
 }
 
@@ -65,31 +75,43 @@ func (s *DocumentFragmentScanner) Scan() bool {
 	s.currentGroup = types.DocumentFragmentGroup{
 		LineOffset: s.lineNumber + 1, // next fragment will begin at the next line read by the underlying scanner
 	}
-	blockDelimiters := newStack()
+	s.scope = defaultScope
 scan:
 	for s.scanner.Scan() {
 		s.lineNumber++
-		element, err := Parse("", s.scanner.Bytes(), s.opts...) // TODO: only parse for Blankline and SingleLineComments if within a paragraph
+		element, err := Parse("", s.scanner.Bytes(), append(s.opts, s.entrypoint()...)...) // TODO: only parse for Blankline and SingleLineComments if within a paragraph
 		if err != nil {
 			// assume that the content is just a RawLine
 			element = types.RawLine(s.scanner.Text())
 		}
-		// if log.IsLevelEnabled(log.DebugLevel) {
-		// 	log.Debugf("parsed '%s':\n%s\nerr=%v", s.scanner.Text(), spew.Sdump(element), err)
-		// }
-
+		if log.IsLevelEnabled(log.DebugLevel) {
+			log.Debugf("parsed '%s':\n%s\nerr=%v", s.scanner.Text(), spew.Sdump(element), err)
+		}
 		switch element := element.(type) {
 		case types.BlankLine:
 			elements = append(elements, types.BlankLine{})
 			// blanklines outside of a delimited block causes the scanner to stop (for this call)
-			if blockDelimiters.empty() {
+			if s.scope == defaultScope || s.scope == withinParagraph {
 				break scan
 			}
 		case types.BlockDelimiter:
-			if blockDelimiters.get() == element { // match starting/ending delimiters
-				blockDelimiters.pop() // remove element from the top of the stack
-			} else {
-				blockDelimiters.push(element)
+			switch element.Kind {
+			case types.Listing:
+				// switching scope
+				if s.scope == defaultScope {
+					s.scope = withinListingBlock
+				} else {
+					s.scope = defaultScope
+				}
+			default:
+				s.err = fmt.Errorf("unsupported kind of block delimiter: %v", element.Kind)
+				break scan
+			}
+			elements = append(elements, element)
+		case types.RawLine:
+			if s.scope == defaultScope {
+				// we're now within a paragraph
+				s.scope = withinParagraph
 			}
 			elements = append(elements, element)
 		default:
@@ -98,7 +120,8 @@ scan:
 	}
 	if err := s.scanner.Err(); err != nil {
 		log.WithError(err).Error("failed to read the content")
-		s.err = err // will cause next call to `Scan()` to return false
+		s.err = err                  // will cause next call to `Scan()` to return false
+		s.currentGroup.Content = nil // reset
 		s.currentGroup.Error = err
 		return true // this fragment needs to be processed upstream
 	}
@@ -108,20 +131,47 @@ scan:
 		}
 
 		s.currentGroup.Content = elements
-		return true // also return the underlying scanner's error (if something wrong happened)
+		return true // (and will also return the underlying scanner's error if something wrong happened)
 	}
 	// reached the end of source
-	return false // also return the underlying scanner's error (if something wrong happened)
+	return false // (and will also return the underlying scanner's error if something wrong happened)
 }
 
-// // Err returns the error that way have occurred when the underlying scanner
-// // was reading the source, or when parsing the content to find the next block
-// func (s *DocumentFragmentScanner) Err() error {
-// 	if s.err != nil {
-// 		return s.err
-// 	}
-// 	return s.scanner.Err()
-// }
+func (c *current) isValidBlockDelimiter(d types.BlockDelimiter) (bool, error) {
+	if k, ok := c.globalStore[validDelimitedBlockKind].(types.DelimitedBlockKind); ok {
+		if log.IsLevelEnabled(log.DebugLevel) {
+			log.Debugf("checking if delimiter matches kind '%v': %s", k, spew.Sdump(d))
+		}
+		return d.Kind == k, nil
+	}
+	log.Debug("no valid delimiter registered in the GlobalStore")
+	return false, nil
+}
+
+const validDelimitedBlockKind = "valid_delimited_block_kind"
+
+// returns the EntryPoint and GlobalStore if within a delimited block,
+// so we know which delimiter can be accepted
+func (s *DocumentFragmentScanner) entrypoint() []Option {
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("current parsing scope: %v", s.scope)
+	}
+	switch s.scope {
+	case withinParagraph:
+		return []Option{
+			Entrypoint("DocumentFragmentElementWithinParagraph"),
+		}
+	case withinListingBlock:
+		return []Option{
+			Entrypoint("DocumentFragmentElementWithinDelimitedBlock"),
+			GlobalStore(validDelimitedBlockKind, types.Listing),
+		}
+	default:
+		return []Option{
+			Entrypoint("DefaultDocumentFragmentElement"),
+		}
+	}
+}
 
 // Fragments returns document fragments that were read by the last call to `Next`.
 // Multiple calls will return the same value, until `Next` is called again

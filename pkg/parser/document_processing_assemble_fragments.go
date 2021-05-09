@@ -56,15 +56,15 @@ func AssembleFragmentElements(f types.DocumentFragmentGroup) []types.DocumentFra
 			attributes = types.Attributes{} // reset
 			// send the section block downstream
 			result = append(result, types.NewDocumentFragment(f.LineOffset, e))
-		// case types.BlockDelimiter:
-		// 	// TODO: support nested blocks with the help of a Stack object?
-		// 	if block == nil {
-		// 		block = types.NewDelimitedBlock(e.Kind, attributes)
-		// 		attributes = nil // reset
-		// 		result = append(result, types.NewDocumentFragment(f.LineOffset, block))
-		// 	} else {
-		// 		block = nil // reset, in case there is more content afterwards
-		// 	}
+		case types.BlockDelimiter:
+			// TODO: support nested blocks with the help of a Stack object?
+			if block == nil {
+				block = types.NewDelimitedBlock(e.Kind, attributes)
+				attributes = nil // reset
+				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
+			} else {
+				block = nil // reset, in case there is more content afterwards
+			}
 		case types.RawLine:
 			if block == nil {
 				block, _ = types.NewParagraph([]interface{}{}, attributes)
@@ -75,7 +75,10 @@ func AssembleFragmentElements(f types.DocumentFragmentGroup) []types.DocumentFra
 		case types.SingleLineComment, *types.ImageBlock:
 			result = append(result, types.NewDocumentFragment(f.LineOffset+i, e))
 		case types.BlankLine:
-			// do nothing for now
+			// skip unless we're in a delimited block
+			if b, ok := block.(*types.DelimitedBlock); ok {
+				b.AddElement(e)
+			}
 		default:
 			// unknow type fragment element: set an error on the fragment and send it downstream
 			fr := types.NewDocumentFragment(f.LineOffset, block)

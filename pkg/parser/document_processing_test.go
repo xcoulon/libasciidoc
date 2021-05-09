@@ -27,11 +27,9 @@ foo
 						Attributes: types.Attributes{
 							types.AttrStyle: types.Source,
 						},
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "foo",
-								},
+						Elements: []interface{}{
+							types.StringElement{
+								Content: "foo",
 							},
 						},
 					},

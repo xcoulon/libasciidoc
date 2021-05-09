@@ -575,11 +575,9 @@ another fenced block
 
 								Elements: []interface{}{
 									types.ListingBlock{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "a fenced block",
-												},
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "a fenced block",
 											},
 										},
 									},
@@ -602,11 +600,9 @@ another fenced block
 										},
 									},
 									types.ListingBlock{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "another fenced block",
-												},
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "another fenced block",
 											},
 										},
 									},
@@ -646,11 +642,9 @@ another fenced block
 						},
 					},
 					types.ListingBlock{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "a fenced block",
-								},
+						Elements: []interface{}{
+							types.StringElement{
+								Content: "a fenced block",
 							},
 						},
 					},
@@ -677,11 +671,9 @@ another fenced block
 						},
 					},
 					types.ListingBlock{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{
-									Content: "another fenced block",
-								},
+						Elements: []interface{}{
+							types.StringElement{
+								Content: "another fenced block",
 							},
 						},
 					},

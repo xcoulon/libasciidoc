@@ -21,11 +21,9 @@ some *listing* code
 				expected := types.Document{
 					Elements: []interface{}{
 						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some *listing* code",
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "some *listing* code",
 								},
 							},
 						},
@@ -40,9 +38,7 @@ some *listing* code
 				expected := types.Document{
 					Elements: []interface{}{
 						types.ListingBlock{
-							Lines: [][]interface{}{
-								{},
-							},
+							Elements: []interface{}{},
 						},
 					},
 				}
@@ -59,22 +55,15 @@ in the middle
 				expected := types.Document{
 					Elements: []interface{}{
 						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some listing code",
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "some listing code",
 								},
-								{
-									types.StringElement{
-										Content: "with an empty line",
-									},
+								types.StringElement{
+									Content: "with an empty line",
 								},
-								{},
-								{
-									types.StringElement{
-										Content: "in the middle",
-									},
+								types.StringElement{
+									Content: "in the middle",
 								},
 							},
 						},
@@ -92,21 +81,15 @@ in the middle
 				expected := types.Document{
 					Elements: []interface{}{
 						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "* some ",
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "* some ",
 								},
-								{
-									types.StringElement{
-										Content: "* listing ",
-									},
+								types.StringElement{
+									Content: "* listing ",
 								},
-								{
-									types.StringElement{
-										Content: "* content",
-									},
+								types.StringElement{
+									Content: "* content",
 								},
 							},
 						},
@@ -126,22 +109,15 @@ then a normal paragraph.`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some listing code",
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "some listing code",
 								},
-								{
-									types.StringElement{
-										Content: "with an empty line",
-									},
+								types.StringElement{
+									Content: "with an empty line",
 								},
-								{},
-								{
-									types.StringElement{
-										Content: "in the middle",
-									},
+								types.StringElement{
+									Content: "in the middle",
 								},
 							},
 						},
@@ -176,11 +152,9 @@ some listing code
 							},
 						},
 						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some listing code",
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "some listing code",
 								},
 							},
 						},
@@ -195,11 +169,9 @@ End of file here.`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "End of file here.",
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "End of file here.",
 								},
 							},
 						},
@@ -216,14 +188,12 @@ import <1>
 				expected := types.Document{
 					Elements: []interface{}{
 						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "import ",
-									},
-									types.Callout{
-										Ref: 1,
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "import ",
+								},
+								types.Callout{
+									Ref: 1,
 								},
 							},
 						},
@@ -261,23 +231,18 @@ func foo() {} <2>
 				expected := types.Document{
 					Elements: []interface{}{
 						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "import ",
-									},
-									types.Callout{
-										Ref: 1,
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "import ",
 								},
-								{},
-								{
-									types.StringElement{
-										Content: "func foo() {} ",
-									},
-									types.Callout{
-										Ref: 2,
-									},
+								types.Callout{
+									Ref: 1,
+								},
+								types.StringElement{
+									Content: "func foo() {} ",
+								},
+								types.Callout{
+									Ref: 2,
 								},
 							},
 						},
@@ -331,29 +296,24 @@ func foo() {} <4>
 				expected := types.Document{
 					Elements: []interface{}{
 						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "import ",
-									},
-									types.Callout{
-										Ref: 1,
-									},
-									types.Callout{
-										Ref: 2,
-									},
-									types.Callout{
-										Ref: 3,
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "import ",
 								},
-								{},
-								{
-									types.StringElement{
-										Content: "func foo() {} ",
-									},
-									types.Callout{
-										Ref: 4,
-									},
+								types.Callout{
+									Ref: 1,
+								},
+								types.Callout{
+									Ref: 2,
+								},
+								types.Callout{
+									Ref: 3,
+								},
+								types.StringElement{
+									Content: "func foo() {} ",
+								},
+								types.Callout{
+									Ref: 4,
 								},
 							},
 						},
@@ -430,20 +390,18 @@ import <a>
 				expected := types.Document{
 					Elements: []interface{}{
 						types.ListingBlock{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "import ",
-									},
-									types.SpecialCharacter{
-										Name: "<",
-									},
-									types.StringElement{
-										Content: "a",
-									},
-									types.SpecialCharacter{
-										Name: ">",
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "import ",
+								},
+								types.SpecialCharacter{
+									Name: "<",
+								},
+								types.StringElement{
+									Content: "a",
+								},
+								types.SpecialCharacter{
+									Name: ">",
 								},
 							},
 						},
