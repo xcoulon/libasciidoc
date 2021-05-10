@@ -12,7 +12,7 @@ var _ = Describe("listing blocks", func() {
 
 	Context("in final documents", func() {
 
-		Context("delimited blocks", func() {
+		Context("as delimited blocks", func() {
 
 			It("with single rich line", func() {
 				source := `----
@@ -20,7 +20,8 @@ some *listing* code
 ----`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.ListingBlock{
+						&types.DelimitedBlock{
+							Kind: types.Listing,
 							Elements: []interface{}{
 								types.StringElement{
 									Content: "some *listing* code",
@@ -37,8 +38,8 @@ some *listing* code
 ----`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.ListingBlock{
-							Elements: []interface{}{},
+						&types.DelimitedBlock{
+							Kind: types.Listing,
 						},
 					},
 				}
@@ -54,14 +55,13 @@ in the middle
 ----`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.ListingBlock{
+						&types.DelimitedBlock{
+							Kind: types.Listing,
 							Elements: []interface{}{
 								types.StringElement{
-									Content: "some listing code",
+									Content: "some listing code\nwith an empty line\n",
 								},
-								types.StringElement{
-									Content: "with an empty line",
-								},
+								types.BlankLine{},
 								types.StringElement{
 									Content: "in the middle",
 								},
@@ -80,16 +80,11 @@ in the middle
 ----`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.ListingBlock{
+						&types.DelimitedBlock{
+							Kind: types.Listing,
 							Elements: []interface{}{
 								types.StringElement{
-									Content: "* some ",
-								},
-								types.StringElement{
-									Content: "* listing ",
-								},
-								types.StringElement{
-									Content: "* content",
+									Content: "* some \n* listing \n* content",
 								},
 							},
 						},
@@ -108,25 +103,22 @@ in the middle
 then a normal paragraph.`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.ListingBlock{
+						&types.DelimitedBlock{
+							Kind: types.Listing,
 							Elements: []interface{}{
 								types.StringElement{
-									Content: "some listing code",
+									Content: "some listing code\nwith an empty line\n",
 								},
-								types.StringElement{
-									Content: "with an empty line",
-								},
+								types.BlankLine{},
 								types.StringElement{
 									Content: "in the middle",
 								},
 							},
 						},
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "then a normal paragraph."},
-								},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "then a normal paragraph."},
 							},
 						},
 					},
@@ -142,16 +134,15 @@ some listing code
 ----`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a paragraph.",
-									},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "a paragraph.",
 								},
 							},
 						},
-						types.ListingBlock{
+						&types.DelimitedBlock{
+							Kind: types.Listing,
 							Elements: []interface{}{
 								types.StringElement{
 									Content: "some listing code",
@@ -168,7 +159,8 @@ some listing code
 End of file here.`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.ListingBlock{
+						&types.DelimitedBlock{
+							Kind: types.Listing,
 							Elements: []interface{}{
 								types.StringElement{
 									Content: "End of file here.",
@@ -187,7 +179,8 @@ import <1>
 <1> an import`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.ListingBlock{
+						&types.DelimitedBlock{
+							Kind: types.Listing,
 							Elements: []interface{}{
 								types.StringElement{
 									Content: "import ",
@@ -202,12 +195,10 @@ import <1>
 								{
 									Ref: 1,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "an import",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "an import",
 												},
 											},
 										},
@@ -230,7 +221,8 @@ func foo() {} <2>
 <2> a func`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.ListingBlock{
+						&types.DelimitedBlock{
+							Kind: types.Listing,
 							Elements: []interface{}{
 								types.StringElement{
 									Content: "import ",
@@ -251,12 +243,10 @@ func foo() {} <2>
 								{
 									Ref: 1,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "an import",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "an import",
 												},
 											},
 										},
@@ -265,12 +255,10 @@ func foo() {} <2>
 								{
 									Ref: 2,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "a func",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "a func",
 												},
 											},
 										},
@@ -295,7 +283,8 @@ func foo() {} <4>
 <4> a func`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.ListingBlock{
+						&types.DelimitedBlock{
+							Kind: types.Listing,
 							Elements: []interface{}{
 								types.StringElement{
 									Content: "import ",
@@ -322,12 +311,10 @@ func foo() {} <4>
 								{
 									Ref: 1,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "an import",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "an import",
 												},
 											},
 										},
@@ -336,12 +323,10 @@ func foo() {} <4>
 								{
 									Ref: 2,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "a single import",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "a single import",
 												},
 											},
 										},
@@ -350,12 +335,10 @@ func foo() {} <4>
 								{
 									Ref: 3,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "a single basic import",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "a single basic import",
 												},
 											},
 										},
@@ -364,12 +347,10 @@ func foo() {} <4>
 								{
 									Ref: 4,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "a func",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "a func",
 												},
 											},
 										},
@@ -389,7 +370,8 @@ import <a>
 <a> an import`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.ListingBlock{
+						&types.DelimitedBlock{
+							Kind: types.Listing,
 							Elements: []interface{}{
 								types.StringElement{
 									Content: "import ",
@@ -405,21 +387,19 @@ import <a>
 								},
 							},
 						},
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.SpecialCharacter{
-										Name: "<",
-									},
-									types.StringElement{
-										Content: "a",
-									},
-									types.SpecialCharacter{
-										Name: ">",
-									},
-									types.StringElement{
-										Content: " an import",
-									},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.SpecialCharacter{
+									Name: "<",
+								},
+								types.StringElement{
+									Content: "a",
+								},
+								types.SpecialCharacter{
+									Name: ">",
+								},
+								types.StringElement{
+									Content: " an import",
 								},
 							},
 						},
@@ -429,22 +409,20 @@ import <a>
 			})
 		})
 
-		Context("paragraph blocks", func() {
+		Context("as paragraph blocks", func() {
 
 			It("with single rich line", func() {
 				source := `[listing]
 some *listing* content`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
+						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Listing,
 							},
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "some *listing* content", // no quote substitution
-									},
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "some *listing* content", // no quote substitution
 								},
 							},
 						},

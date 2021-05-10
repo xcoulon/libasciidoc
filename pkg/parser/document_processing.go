@@ -10,6 +10,7 @@ import (
 	"github.com/bytesparadise/libasciidoc/pkg/configuration"
 	"github.com/bytesparadise/libasciidoc/pkg/types"
 	"github.com/davecgh/go-spew/spew"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -245,12 +246,16 @@ func applyAttributeSubstitutionsOnAttributes(ctx *processContext, b types.BlockW
 
 func processNestedElements(ctx *processContext, b types.BlockWithNestedElements) error {
 	log.Debugf("applying substitutions on elements of block of type '%T'", b)
-	plan, err := newSubstitutionPlan(b.GetAttributes().GetAsStringWithDefault(types.AttrSubstitutions, ""))
+	plan, err := newSubstitutionPlan(b)
 	if err != nil {
 		return err
 	}
 
 	elements := b.GetElements()
+	// skip if there's nothing to do
+	if len(elements) == 0 {
+		return nil
+	}
 	for _, step := range plan.steps {
 		log.Debugf("applying step '%s'", step.group)
 		if elements, err = parseElements(elements, step.group, GlobalStore(substitutionPhaseKey, step)); err != nil {
@@ -302,7 +307,14 @@ type substitutionPlan struct {
 	steps []*substitutionStep
 }
 
-func newSubstitutionPlan(subs string) (*substitutionPlan, error) {
+func newSubstitutionPlan(b types.BlockWithNestedElements) (*substitutionPlan, error) {
+	// TODO: introduce a `types.BlockWithSubstitution` interface?
+	// note: would also be helpful for paragraphs with `[listing]` style.
+	s, err := defaultSubstitution(b)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to determine substitution plan")
+	}
+	subs := b.GetAttributes().GetAsStringWithDefault(types.AttrSubstitutions, s)
 	phases := strings.Split(subs, ",")
 	plan := &substitutionPlan{
 		steps: make([]*substitutionStep, len(phases)),
@@ -324,6 +336,22 @@ func newSubstitutionPlan(subs string) (*substitutionPlan, error) {
 	return plan, nil
 }
 
+func defaultSubstitution(b interface{}) (string, error) {
+	switch b := b.(type) {
+	case *types.DelimitedBlock:
+		switch b.Kind {
+		case types.Listing:
+			return "verbatim", nil
+		default:
+			return "", fmt.Errorf("unsupported kind of delimited block: '%v'", b.Kind)
+		}
+	case *types.Paragraph:
+		return "normal", nil
+	default:
+		return "", fmt.Errorf("unsupported kind of element: '%T'", b)
+	}
+}
+
 type substitutionStep struct {
 	group                     substitutionGroup
 	enablements               map[SubstitutionKind]bool
@@ -342,6 +370,7 @@ const (
 	QuotesGroup            substitutionGroup = "QuotesGroup"
 	ReplacementsGroup      substitutionGroup = "ReplacementsGroup"
 	SpecialcharactersGroup substitutionGroup = "SpecialCharactersGroup"
+	VerbatimGroup          substitutionGroup = "VerbatimGroup"
 )
 
 //TODO: simplify by using a single grammar rule and turn-off choices?
@@ -356,6 +385,7 @@ var substitutionGroups = map[string]substitutionGroup{
 	"replacements":      ReplacementsGroup,
 	"specialchars":      SpecialcharactersGroup,
 	"specialcharacters": SpecialcharactersGroup,
+	"verbatim":          VerbatimGroup,
 }
 
 func newSubstitutionStep(kind string) (*substitutionStep, error) {
@@ -417,6 +447,11 @@ func (s *substitutionStep) reset() {
 	case SpecialcharactersGroup:
 		s.enablements = map[SubstitutionKind]bool{
 			SpecialCharacters: true,
+		}
+	case VerbatimGroup:
+		s.enablements = map[SubstitutionKind]bool{
+			SpecialCharacters: true,
+			Callouts:          true,
 		}
 	}
 }
@@ -497,24 +532,24 @@ const (
 	// substitutionPhaseKey the key in which substitutions contexts are stored
 	substitutionPhaseKey string = "substitution_contexts"
 
-	// InlinePassthroughs the "inline_passthrough" substitution
-	InlinePassthroughs SubstitutionKind = "inline_passthrough"
 	// Attributes the "attributes" substitution
 	Attributes SubstitutionKind = "attributes"
-	// SpecialCharacters the "specialcharacters" substitution
-	SpecialCharacters SubstitutionKind = "specialcharacters"
 	// Callouts the "callouts" substitution
 	Callouts SubstitutionKind = "callouts"
+	// InlinePassthroughs the "inline_passthrough" substitution
+	InlinePassthroughs SubstitutionKind = "inline_passthrough"
+	// Macros the "macros" substitution
+	Macros SubstitutionKind = "macros"
+	// None the "none" substitution
+	None SubstitutionKind = "none"
+	// PostReplacements the "post_replacements" substitution
+	PostReplacements SubstitutionKind = "post_replacements"
 	// Quotes the "quotes" substitution
 	Quotes SubstitutionKind = "quotes"
 	// Replacements the "replacements" substitution
 	Replacements SubstitutionKind = "replacements"
-	// Macros the "macros" substitution
-	Macros SubstitutionKind = "macros"
-	// PostReplacements the "post_replacements" substitution
-	PostReplacements SubstitutionKind = "post_replacements"
-	// None the "none" substitution
-	None SubstitutionKind = "none"
+	// SpecialCharacters the "specialcharacters" substitution
+	SpecialCharacters SubstitutionKind = "specialcharacters"
 )
 
 func parseElements(elements []interface{}, group substitutionGroup, opts ...Option) ([]interface{}, error) {

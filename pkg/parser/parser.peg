@@ -414,7 +414,12 @@ BlankLine <- Space* EOF {
 // ------------------------------------------------------------------------------------
 // Callouts
 // ------------------------------------------------------------------------------------
-Callout <- "<" ref:([0-9]+ { return strconv.Atoi(string(c.text)) }) ">" Space* &(EOL / Callout) {
+Callout <- 
+    // check if enabled with the current substitution context
+    &{
+        return c.isSubstitutionEnabled(Callouts)
+    }
+    "<" ref:([0-9]+ { return strconv.Atoi(string(c.text)) }) ">" Space* &(EOL / Callout) {
         return types.NewCallout(ref.(int))
     }
 
@@ -1581,6 +1586,57 @@ RawSectionTitle <- [^\r\n]* {
 // Substitutions
 // -------------------------------------------------------------------------------------
 
+// Substitution group for 'attributes' only
+AttributesGroup <- elements:(
+    InlineWord
+    / InlinePassthrough
+    / AttributeSubstitution
+    / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
+    / Newline
+    / AnyChar)+ EOF { 
+        return types.Merge(elements), nil
+    }
+
+// Substitution group element attributes
+ElementAttributesGroup <- elements:(
+    InlineWord
+    / AttributeSubstitution
+    / Quotes
+    / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
+    / Newline
+    / AnyChar)+ EOF { 
+        return types.Merge(elements), nil
+    }
+
+// Default substitutions for Section Titles
+HeaderGroup <- elements:(
+    InlineWord
+    / InlinePassthrough
+    / SpecialCharacter
+    / Quote
+    / AttributeSubstitution
+    / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
+    / Replacement
+    / AnyChar)+ EOF { 
+        return types.Merge(elements), nil
+    }
+
+// Substitution group for 'macros' only
+MacrosGroup <- elements:(
+    InlineWord
+    / InlineMacro
+    / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
+    / Newline
+    / AnyChar)+ EOF { 
+        return types.Merge(elements), nil
+    }
+
+// The 'none' substitution
+NoneGroup <- content:(.)* EOF {
+        s, _ := types.NewStringElement(string(c.text))
+        return []interface{}{s}, nil
+    }
+
 // Default substitutions for Paragrapghs
 // TODO: extract the substitutionContext once and check every rule choice here. Will also avoid setting "fake" context for BlockAttributes, SectionTitle, etc.
 NormalGroup <- elements:(NormalGroupElement)+ EOF { 
@@ -1603,57 +1659,6 @@ NormalGroupElement <- !EOF
         / AnyChar) {
             return element, nil
         }
-
-// Default substitutions for Section Titles
-HeaderGroup <- elements:(
-    InlineWord
-    / InlinePassthrough
-    / SpecialCharacter
-    / Quote
-    / AttributeSubstitution
-    / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
-    / Replacement
-    / AnyChar)+ EOF { 
-        return types.Merge(elements), nil
-    }
-    
-// Substitution group element attributes
-ElementAttributesGroup <- elements:(
-    InlineWord
-    / AttributeSubstitution
-    / Quotes
-    / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
-    / Newline
-    / AnyChar)+ EOF { 
-        return types.Merge(elements), nil
-    }
-
-// The 'none' substitution
-NoneGroup <- content:(.)* EOF {
-        s, _ := types.NewStringElement(string(c.text))
-        return []interface{}{s}, nil
-    }
-
-// Substitution group for 'attributes' only
-AttributesGroup <- elements:(
-    InlineWord
-    / InlinePassthrough
-    / AttributeSubstitution
-    / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
-    / Newline
-    / AnyChar)+ EOF { 
-        return types.Merge(elements), nil
-    }
-
-// Substitution group for 'macros' only
-MacrosGroup <- elements:(
-    InlineWord
-    / InlineMacro
-    / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
-    / Newline
-    / AnyChar)+ EOF { 
-        return types.Merge(elements), nil
-    }
 
 // Substitution group for 'quotes' only
 QuotesGroup <- elements:(
@@ -1685,6 +1690,16 @@ SpecialCharactersGroup <- elements:(
         return types.Merge(elements), nil
     }
 
+VerbatimGroup <- elements:(
+    InlineWord
+    / Callout // must be placed before SpecialCharacter
+    / SpecialCharacter
+    / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
+    / Newline
+    / AnyChar)+ EOF { 
+        return types.Merge(elements), nil
+    }
+    
 InlineMacro <- 
     // check if enabled with the current substitution context
     &{
