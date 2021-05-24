@@ -35,7 +35,7 @@ func (r *sgmlRenderer) renderCalloutList(ctx *renderer.Context, l types.CalloutL
 		Title   string
 		Roles   string
 		Content string
-		Items   []types.CalloutListItem
+		Items   []*types.CalloutListElement
 	}{
 		Context: ctx,
 		ID:      r.renderElementID(l.Attributes),
@@ -50,7 +50,7 @@ func (r *sgmlRenderer) renderCalloutList(ctx *renderer.Context, l types.CalloutL
 	return result.String(), nil
 }
 
-func (r *sgmlRenderer) renderCalloutListItem(ctx *renderer.Context, w io.Writer, item types.CalloutListItem) error {
+func (r *sgmlRenderer) renderCalloutListItem(ctx *renderer.Context, w io.Writer, item *types.CalloutListElement) error {
 
 	content, err := r.renderListElements(ctx, item.Elements)
 	if err != nil {

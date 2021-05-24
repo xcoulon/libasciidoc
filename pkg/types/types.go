@@ -122,28 +122,30 @@ type RawText interface {
 	RawText() (string, error)
 }
 
-// ------------------------------------------
-// Substitution support
-// ------------------------------------------
-
-// BlockWithAttributes base interface for types on which attributes can be substituted
-type BlockWithAttributes interface {
+// WithAttributes base interface for types on which attributes can be substituted
+type WithAttributes interface {
 	GetAttributes() Attributes
-	SetAttributes(Attributes) interface{} // TODO: remove the returned `interface{}`?
+	SetAttributes(Attributes)
 }
-
-type BlockWithNestedElements interface {
-	BlockWithAttributes
+type WithElementAddition interface {
+	AddElement(interface{}) error
+}
+type WithElements interface {
+	WithAttributes
+	WithElementAddition
 	GetElements() []interface{}
-	AddElement(interface{})
-	SetElements([]interface{})
+	SetElements([]interface{}) error
 }
 
-type BlockWithLocation interface {
-	BlockWithAttributes
+type WithLocation interface {
+	WithAttributes
 	GetLocation() *Location
 	SetLocation(*Location) // TODO: unused?
 }
+
+// ------------------------------------------
+// Substitution support
+// ------------------------------------------
 
 // WithCustomSubstitutions base interface for types on which custom substitutions apply
 // DEPRECATED
@@ -723,7 +725,7 @@ func NewSection(level int, title []interface{}, ids []interface{}) (*Section, er
 	}, nil
 }
 
-var _ BlockWithNestedElements = &Section{}
+var _ WithElements = &Section{}
 
 // GetElements returns this section's title
 func (s *Section) GetElements() []interface{} {
@@ -731,9 +733,10 @@ func (s *Section) GetElements() []interface{} {
 }
 
 // SetElements sets this section's title
-func (s *Section) SetElements(title []interface{}) {
+// TODO: set ID attribute
+func (s *Section) SetElements(title []interface{}) error {
 	s.Title = title
-	// TODO: set ID attribute
+	return nil
 }
 
 var _ WithElementsToSubstitute = Section{}
@@ -749,7 +752,7 @@ func (s Section) ReplaceElements(title []interface{}) interface{} {
 	return s
 }
 
-var _ BlockWithAttributes = &Section{}
+var _ WithAttributes = &Section{}
 
 // GetAttributes returns this section's attributes
 func (s *Section) GetAttributes() Attributes {
@@ -757,9 +760,8 @@ func (s *Section) GetAttributes() Attributes {
 }
 
 // ReplaceAttributes replaces the attributes in this section
-func (s *Section) SetAttributes(attributes Attributes) interface{} {
+func (s *Section) SetAttributes(attributes Attributes) {
 	s.Attributes = attributes
-	return s
 }
 
 // ResolveID resolves/updates the "ID" attribute in the section (in case the title changed after some document attr substitution)
@@ -784,8 +786,9 @@ func (s Section) ResolveID(docAttributes AttributesWithOverrides) (Section, erro
 }
 
 // AddElement adds the given child element to this section
-func (s *Section) AddElement(e interface{}) {
+func (s *Section) AddElement(e interface{}) error {
 	s.Elements = append(s.Elements, e)
+	return nil
 }
 
 var _ FootnotesContainer = Section{}
@@ -906,12 +909,166 @@ func expandRevision(revision DocumentRevision) Attributes {
 
 // List a list of items
 type List interface {
-	LastItem() ListItem
+	AddElement(e interface{}) error
+	// LastElement() ListElement //
 }
 
-// ListItem a list item
-type ListItem interface { // TODO: convert to struct and use as composant in OrderedListItem, etc.
-	AddElement(interface{})
+// ListElement a list item
+type ListElement interface { // TODO: convert to struct and use as composant in OrderedListElement, etc.
+	WithElements
+	ListKind() ListKind
+	GetLevel() int
+	SetLevel(int)
+}
+
+type ListItemBucket struct {
+	Kind     ListKind
+	Elements []interface{}
+	lists    []List
+}
+
+type GenericList struct { // TODO: remove `ListItem` interface, `LabeledList`, etc. and rename this type `ListItem`.
+	Kind            ListKind
+	Attributes      Attributes
+	Elements        []interface{}
+	lastListByLevel map[int]*GenericList
+}
+
+type ListKind string
+
+const (
+	LabeledListKind   ListKind = "labeled_list"
+	OrderedListKind   ListKind = "ordered_list"
+	UnorderedListKind ListKind = "unordereed_list"
+	CalloutListKind   ListKind = "callout_list"
+)
+
+func NewList(element ListElement) (*GenericList, error) {
+	if element.GetLevel() != 1 {
+		// adjust
+		element.SetLevel(1)
+	}
+	// also, move the element attributes to the List
+	attrs := element.GetAttributes()
+	element.SetAttributes(nil)
+	list := &GenericList{
+		Kind:       element.ListKind(),
+		Attributes: attrs,
+		Elements: []interface{}{
+			element,
+		},
+		lastListByLevel: map[int]*GenericList{},
+	}
+	list.lastListByLevel[1] = list // auto-reference this list for the top-level
+	return list, nil
+}
+
+func newSubList(element ListElement) *GenericList {
+	// also, move the element attributes to the List
+	attrs := element.GetAttributes()
+	element.SetAttributes(nil)
+	return &GenericList{
+		Kind:       element.ListKind(),
+		Attributes: attrs,
+		Elements: []interface{}{
+			element,
+		},
+	}
+}
+
+var _ WithElements = &GenericList{}
+
+// AddElement adds the given element `e` in the target list or sublist (depending on its type)
+func (l *GenericList) AddElement(element interface{}) error {
+	switch e := element.(type) {
+	case ListElement:
+		// look-up the list in which the given element should be appended (or create a new one)
+		if e.ListKind() == l.Kind {
+			// TODO: adjust element level if needed
+
+			// look-up the parent element
+			if list, exists := l.lastListByLevel[e.GetLevel()]; exists {
+				list.addElement(e)
+				// also, clear the index for all sublists
+				level := e.GetLevel()
+				for {
+					level++
+					_, exists := l.lastListByLevel[level]
+					if !exists {
+						break
+					}
+					log.Debug("removing entry for level %d", level)
+					delete(l.lastListByLevel, level)
+				}
+			} else {
+				// append new list on the last element of the upper list
+				list := newSubList(e)
+				// attach to parent list
+				parentList, exists := l.lastListByLevel[e.GetLevel()-1]
+				if !exists {
+					return fmt.Errorf("invalid level for list item: %d: unable to find a parent list at level %d", e.GetLevel(), (e.GetLevel() - 1))
+				}
+				parentList.lastElement().AddElement(list)
+				l.lastListByLevel[e.GetLevel()] = list
+			}
+		}
+		return nil
+	case RawLine:
+		// look-up the list element to which this rawline shall be appended
+		l.lastElement().AddElement(e)
+		return nil
+	default:
+		return errors.Errorf("unexpected type of element to add to the list: '%T'", element)
+	}
+}
+
+// just adds (appends) the given element
+func (l *GenericList) addElement(element ListElement) {
+	l.Elements = append(l.Elements, element)
+}
+
+// returns the last element of the list
+func (l *GenericList) lastElement() ListElement {
+	if len(l.Elements) == 0 {
+		return nil
+	}
+	return l.Elements[len(l.Elements)-1].(ListElement)
+}
+
+// GetElements returns this paragraph's elements (or lines)
+func (l *GenericList) GetElements() []interface{} {
+	return l.Elements
+}
+
+// SetElements sets this paragraph's elements
+func (l *GenericList) SetElements(elements []interface{}) error {
+	// ensure that all elements are `ListElement`
+	for _, e := range elements {
+		if _, ok := e.(ListElement); !ok {
+			return fmt.Errorf("unexpected kind of element to set in a list: '%T'", e)
+		}
+	}
+	l.Elements = elements
+	return nil
+}
+
+// GetAttributes returns this first item's attributes (if applicable)
+func (l *GenericList) GetAttributes() Attributes {
+	if len(l.Elements) > 0 {
+		if f, ok := l.Elements[0].(WithAttributes); ok {
+			return f.GetAttributes()
+		}
+	}
+	return Attributes(nil)
+}
+
+// SetAttributes replaces the attributes in this fist list item (if applicable)
+func (l *GenericList) SetAttributes(attributes Attributes) {
+	if len(l.Elements) > 0 {
+		if f, ok := l.Elements[0].(WithAttributes); ok {
+			f.SetAttributes(attributes)
+		}
+	}
 }
 
 // ContinuedListItemElement a wrapper for an element which should be attached to a list item (same level or an ancestor)
@@ -936,12 +1093,13 @@ func NewContinuedListItemElement(element interface{}) (ContinuedListItemElement,
 // OrderedList the structure for the Ordered Lists
 type OrderedList struct {
 	Attributes Attributes
-	Items      []OrderedListItem
+	Items      []*OrderedListElement
 }
 
 var _ List = &OrderedList{}
 
 const (
+	// TODO: define a `NumberingStyle` type
 	// Arabic the arabic numbering (1, 2, 3, etc.)
 	Arabic = "arabic"
 	// LowerAlpha the lower-alpha numbering (a, b, c, etc.)
@@ -958,13 +1116,13 @@ const (
 )
 
 // NewOrderedList initializes a new ordered list with the given item
-func NewOrderedList(item *OrderedListItem) *OrderedList {
+func NewOrderedList(item *OrderedListElement) *OrderedList {
 	attrs := rearrangeListAttributes(item.Attributes)
 	item.Attributes = nil
 	return &OrderedList{
 		Attributes: attrs, // move the item's attributes to the list level
-		Items: []OrderedListItem{
-			*item,
+		Items: []*OrderedListElement{
+			item,
 		},
 	}
 }
@@ -995,77 +1153,135 @@ func rearrangeListAttributes(attributes Attributes) Attributes {
 }
 
 // AddItem adds the given item
-func (l *OrderedList) AddItem(item OrderedListItem) {
-	l.Items = append(l.Items, item)
+func (l *OrderedList) AddElement(element interface{}) error {
+	if item, ok := element.(*OrderedListElement); ok {
+		l.Items = append(l.Items, item)
+		return nil
+	}
+	return fmt.Errorf("unexpected type of element to add to OrderedList: '%T'", element)
 }
 
-// LastItem returns the last item in this list
-func (l *OrderedList) LastItem() ListItem {
-	return &(l.Items[len(l.Items)-1])
-}
+// // LastItem returns the last item in this list
+// func (l *OrderedList) LastElement() ListElement {
+// 	return l.Items[len(l.Items)-1]
+// }
 
-// OrderedListItem the structure for the ordered list items
-type OrderedListItem struct {
+// OrderedListElement the structure for the ordered list items
+type OrderedListElement struct {
 	Attributes Attributes
 	Level      int
-	Style      string
+	Style      string        // TODO: rename to `NumberingStyle`?
 	Elements   []interface{} // TODO: rename to `Blocks`?
 }
 
-// making sure that the `ListItem` interface is implemented by `OrderedListItem`
-var _ ListItem = &OrderedListItem{}
+// making sure that the `ListItem` interface is implemented by `OrderedListElement`
+var _ ListElement = &OrderedListElement{}
 
-// NewOrderedListItem initializes a new `orderedListItem` from the given content
-func NewOrderedListItem(prefix OrderedListItemPrefix, elements []interface{}, attributes interface{}) (OrderedListItem, error) {
-	// log.Debugf("new OrderedListItem")
-	return OrderedListItem{
-		Attributes: toAttributesWithMapping(attributes, map[string]string{AttrPositional1: AttrStyle}),
-		Style:      prefix.Style,
-		Level:      prefix.Level,
-		Elements:   elements,
+// NewOrderedListElement initializes a new `orderedListItem` from the given content
+func NewOrderedListElement(prefix OrderedListElementPrefix, elements []interface{}) (*OrderedListElement, error) {
+	// log.Debugf("new OrderedListElement")
+	return &OrderedListElement{
+		Style:    prefix.Style,
+		Level:    prefix.Level,
+		Elements: elements,
 	}, nil
 }
 
-// AddElement add an element to this OrderedListItem
-func (i *OrderedListItem) AddElement(element interface{}) {
-	i.Elements = append(i.Elements, element)
+// GetLevel returns the level of this element
+func (e *OrderedListElement) GetLevel() int {
+	return e.Level
 }
 
-var _ WithElementsToSubstitute = OrderedListItem{}
+// SetLevel sets the level of this element
+func (e *OrderedListElement) SetLevel(level int) {
+	e.Level = level
+	switch e.Level {
+	case 1:
+		e.Style = Arabic
+	case 2:
+		e.Style = LowerAlpha
+	case 3:
+		e.Style = LowerRoman
+	case 4:
+		e.Style = UpperAlpha
+	default:
+		e.Style = UpperRoman
+	}
+}
+
+// ListKind returns the kind of list to which this element shall be attached
+func (e *OrderedListElement) ListKind() ListKind {
+	return OrderedListKind
+}
+
+// GetElements returns this item's elements
+func (e *OrderedListElement) GetElements() []interface{} {
+	return e.Elements
+}
+
+// SetElements sets this OrderedListElement's elements
+func (e *OrderedListElement) SetElements(elements []interface{}) error {
+	e.Elements = elements
+	return nil
+}
+
+// AddElement add an element to this OrderedListElement
+func (e *OrderedListElement) AddElement(element interface{}) error {
+	switch element := element.(type) {
+	case RawLine:
+		// append to last element of this OrderedListElement if it's a Paragraph,
+		// otherwise, append a new Paragraph with this RawLine
+		if len(e.Elements) > 0 {
+			if p, ok := e.Elements[len(e.Elements)-1].(*Paragraph); ok {
+				p.AddElement(element)
+				return nil
+			}
+		}
+		e.Elements = append(e.Elements, Paragraph{
+			Elements: []interface{}{
+				element,
+			},
+		})
+	default:
+		e.Elements = append(e.Elements, element)
+	}
+	return nil
+}
+
+var _ WithElementsToSubstitute = OrderedListElement{}
 
 // ElementsToSubstitute returns this item's elements so that substitutions can be applied onto them
-func (i OrderedListItem) ElementsToSubstitute() []interface{} {
+func (i OrderedListElement) ElementsToSubstitute() []interface{} {
 	return i.Elements
 }
 
 // ReplaceElements replaces the elements in this example block
-func (i OrderedListItem) ReplaceElements(elements []interface{}) interface{} {
+func (i OrderedListElement) ReplaceElements(elements []interface{}) interface{} {
 	i.Elements = elements
 	return i
 }
 
-var _ BlockWithAttributes = OrderedListItem{}
+var _ WithAttributes = &OrderedListElement{}
 
 // GetAttributes returns this list item's attributes
-func (i OrderedListItem) GetAttributes() Attributes {
+func (i *OrderedListElement) GetAttributes() Attributes {
 	return i.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this list item
-func (i OrderedListItem) SetAttributes(attributes Attributes) interface{} {
-	i.Attributes = attributes
-	return i
+func (i *OrderedListElement) SetAttributes(attributes Attributes) {
+	i.Attributes = toAttributesWithMapping(attributes, map[string]string{AttrPositional1: AttrStyle})
 }
 
-// OrderedListItemPrefix the prefix used to construct an OrderedListItem
-type OrderedListItemPrefix struct {
+// OrderedListElementPrefix the prefix used to construct an OrderedListElement
+type OrderedListElementPrefix struct {
 	Style string
 	Level int
 }
 
-// NewOrderedListItemPrefix initializes a new OrderedListItemPrefix
-func NewOrderedListItemPrefix(s string, l int) (OrderedListItemPrefix, error) {
-	return OrderedListItemPrefix{
+// NewOrderedListElementPrefix initializes a new OrderedListElementPrefix
+func NewOrderedListElementPrefix(s string, l int) (OrderedListElementPrefix, error) {
+	return OrderedListElementPrefix{
 		Style: s,
 		Level: l,
 	}, nil
@@ -1078,24 +1294,24 @@ func NewOrderedListItemPrefix(s string, l int) (OrderedListItemPrefix, error) {
 // UnorderedList the structure for the Unordered Lists
 type UnorderedList struct {
 	Attributes Attributes
-	Items      []UnorderedListItem
+	Items      []*UnorderedListElement
 }
 
 var _ List = &UnorderedList{}
 
 // NewUnorderedList returns a new UnorderedList with 1 item
 // The attributes of the given item are moved to the resulting list
-func NewUnorderedList(item UnorderedListItem) *UnorderedList {
+func NewUnorderedList(item *UnorderedListElement) *UnorderedList {
 	attrs := item.Attributes
 	item.Attributes = nil // move the item's attributes to the list level
 	// convert the checkstyle attribute if the list is interactive
 	// log.Debugf("interactive list: %t", attrs.HasOption(AttrInteractive))
 	if attrs.HasOption(AttrInteractive) {
-		item = item.toInteractiveListItem()
+		item.toInteractiveListItem()
 	}
 	list := &UnorderedList{
 		Attributes: attrs, // move the item's attributes to the list level
-		Items: []UnorderedListItem{
+		Items: []*UnorderedListElement{
 			item,
 		},
 	}
@@ -1103,20 +1319,21 @@ func NewUnorderedList(item UnorderedListItem) *UnorderedList {
 }
 
 // AddItem adds the given item
-func (l *UnorderedList) AddItem(item UnorderedListItem) {
-	if l.Attributes.HasOption(AttrInteractive) {
-		item = item.toInteractiveListItem()
+func (l *UnorderedList) AddElement(item interface{}) error {
+	if item, ok := item.(*UnorderedListElement); ok {
+		l.Items = append(l.Items, item)
+		return nil
 	}
-	l.Items = append(l.Items, item)
+	return fmt.Errorf("unexpected type of item: '%T'", item)
 }
 
-// LastItem returns the last item in this list
-func (l *UnorderedList) LastItem() ListItem {
-	return &(l.Items[len(l.Items)-1])
-}
+// // LastItem returns the last item in this list
+// func (l *UnorderedList) LastElement() ListElement {
+// 	return l.Items[len(l.Items)-1]
+// }
 
-// UnorderedListItem the structure for the unordered list items
-type UnorderedListItem struct {
+// UnorderedListElement the structure for the unordered list items
+type UnorderedListElement struct {
 	Level       int
 	BulletStyle BulletStyle
 	CheckStyle  UnorderedListItemCheckStyle
@@ -1124,8 +1341,10 @@ type UnorderedListItem struct {
 	Elements    []interface{} // TODO: rename to `Blocks`?
 }
 
+var _ ListElement = &UnorderedListElement{}
+
 // NewUnorderedListItem initializes a new `UnorderedListItem` from the given content
-func NewUnorderedListItem(prefix UnorderedListItemPrefix, checkstyle interface{}, elements []interface{}, attributes interface{}) (UnorderedListItem, error) {
+func NewUnorderedListItem(prefix UnorderedListItemPrefix, checkstyle interface{}, elements []interface{}, attributes interface{}) (UnorderedListElement, error) {
 	// log.Debugf("new UnorderedListItem with %d elements", len(elements))
 	cs := toCheckStyle(checkstyle)
 	if cs != NoCheck && len(elements) > 0 {
@@ -1137,7 +1356,7 @@ func NewUnorderedListItem(prefix UnorderedListItemPrefix, checkstyle interface{}
 			p.Attributes[AttrCheckStyle] = cs
 		}
 	}
-	return UnorderedListItem{
+	return UnorderedListElement{
 		Level:       prefix.Level,
 		Attributes:  toAttributesWithMapping(attributes, map[string]string{AttrPositional1: AttrStyle}),
 		BulletStyle: prefix.BulletStyle,
@@ -1146,49 +1365,74 @@ func NewUnorderedListItem(prefix UnorderedListItemPrefix, checkstyle interface{}
 	}, nil
 }
 
-func (i UnorderedListItem) toInteractiveListItem() UnorderedListItem {
-	i.CheckStyle = i.CheckStyle.toInteractive()
-	if i.CheckStyle != NoCheck && len(i.Elements) > 0 {
-		if p, ok := i.Elements[0].(Paragraph); ok {
+// GetLevel returns the level of this element
+func (e *UnorderedListElement) GetLevel() int {
+	return e.Level
+}
+
+// SetLevel sets the level of this element
+func (e *UnorderedListElement) SetLevel(level int) {
+	e.Level = level
+}
+
+// ListKind returns the kind of list to which this element shall be attached
+func (e *UnorderedListElement) ListKind() ListKind {
+	return UnorderedListKind
+}
+
+func (e *UnorderedListElement) toInteractiveListItem() {
+	e.CheckStyle = e.CheckStyle.toInteractive()
+	if e.CheckStyle != NoCheck && len(e.Elements) > 0 {
+		if p, ok := e.Elements[0].(Paragraph); ok {
 			if p.Attributes == nil {
 				p.Attributes = Attributes{}
-				i.Elements[0] = p // need to update the element in the slice
+				e.Elements[0] = p // need to update the element in the slice
 			}
-			p.Attributes[AttrCheckStyle] = i.CheckStyle
+			p.Attributes[AttrCheckStyle] = e.CheckStyle
 		}
 	}
-	return i
 }
 
 // AddElement add an element to this UnorderedListItem
-func (i *UnorderedListItem) AddElement(element interface{}) {
-	i.Elements = append(i.Elements, element)
+func (e *UnorderedListElement) AddElement(element interface{}) error {
+	e.Elements = append(e.Elements, element)
+	return nil
 }
 
-var _ WithElementsToSubstitute = UnorderedListItem{}
+// GetElements returns this UnorderedListElement's elements
+func (e *UnorderedListElement) GetElements() []interface{} {
+	return e.Elements
+}
+
+// SetElements sets this UnorderedListElement's elements
+func (e *UnorderedListElement) SetElements(elements []interface{}) error {
+	e.Elements = elements
+	return nil
+}
+
+var _ WithElementsToSubstitute = UnorderedListElement{}
 
 // ElementsToSubstitute returns this item's elements so that substitutions can be applied onto them
-func (i UnorderedListItem) ElementsToSubstitute() []interface{} {
+func (i UnorderedListElement) ElementsToSubstitute() []interface{} {
 	return i.Elements
 }
 
 // ReplaceElements replaces the elements in this example block
-func (i UnorderedListItem) ReplaceElements(elements []interface{}) interface{} {
+func (i UnorderedListElement) ReplaceElements(elements []interface{}) interface{} {
 	i.Elements = elements
 	return i
 }
 
-var _ BlockWithAttributes = UnorderedListItem{}
+var _ WithAttributes = UnorderedListElement{}
 
 // GetAttributes returns this list item's attributes
-func (i UnorderedListItem) GetAttributes() Attributes {
+func (i UnorderedListElement) GetAttributes() Attributes {
 	return i.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this list item
-func (i UnorderedListItem) SetAttributes(attributes Attributes) interface{} {
+func (i UnorderedListElement) SetAttributes(attributes Attributes) {
 	i.Attributes = attributes
-	return i
 }
 
 // UnorderedListItemCheckStyle the check style that applies on an unordered list item
@@ -1311,19 +1555,19 @@ func NewListItemContent(content []interface{}) ([]interface{}, error) {
 // LabeledList the structure for the Labeled Lists
 type LabeledList struct {
 	Attributes Attributes
-	Items      []LabeledListItem
+	Items      []*LabeledListElement
 }
 
 var _ List = &LabeledList{}
 
 // NewLabeledList returns a new LabeledList with 1 item
 // The attributes of the given item are moved to the resulting list
-func NewLabeledList(item LabeledListItem) *LabeledList {
+func NewLabeledList(item *LabeledListElement) *LabeledList {
 	attrs := item.Attributes
 	item.Attributes = nil
 	result := LabeledList{
 		Attributes: attrs, // move the item's attributes to the list level
-		Items: []LabeledListItem{
+		Items: []*LabeledListElement{
 			item,
 		},
 	}
@@ -1331,17 +1575,21 @@ func NewLabeledList(item LabeledListItem) *LabeledList {
 }
 
 // AddItem adds the given item
-func (l *LabeledList) AddItem(item LabeledListItem) {
-	l.Items = append(l.Items, item)
+func (l *LabeledList) AddElement(item interface{}) error {
+	if item, ok := item.(*LabeledListElement); ok {
+		l.Items = append(l.Items, item)
+		return nil
+	}
+	return fmt.Errorf("unexpected type of item: '%T'", item)
 }
 
-// LastItem returns the last item in this list
-func (l *LabeledList) LastItem() ListItem {
-	return &(l.Items[len(l.Items)-1])
-}
+// // LastItem returns the last item in this list
+// func (l *LabeledList) LastElement() ListElement {
+// 	return l.Items[len(l.Items)-1]
+// }
 
-// LabeledListItem an item in a labeled
-type LabeledListItem struct {
+// LabeledListElement an item in a labeled
+type LabeledListElement struct {
 	Term       []interface{}
 	Level      int
 	Attributes Attributes
@@ -1349,10 +1597,10 @@ type LabeledListItem struct {
 }
 
 // making sure that the `ListItem` interface is implemented by `LabeledListItem`
-var _ ListItem = &LabeledListItem{}
+var _ ListElement = &LabeledListElement{}
 
 // NewLabeledListItem initializes a new LabeledListItem
-func NewLabeledListItem(level int, term []interface{}, description interface{}, attributes interface{}) (LabeledListItem, error) {
+func NewLabeledListItem(level int, term []interface{}, description interface{}, attributes interface{}) (LabeledListElement, error) {
 	// log.Debugf("new LabeledListItem")
 	var elements []interface{}
 	if description, ok := description.([]interface{}); ok {
@@ -1360,7 +1608,7 @@ func NewLabeledListItem(level int, term []interface{}, description interface{}, 
 	} else {
 		elements = []interface{}{}
 	}
-	return LabeledListItem{
+	return LabeledListElement{
 		Attributes: toAttributesWithMapping(attributes, map[string]string{AttrPositional1: AttrStyle}),
 		Term:       term,
 		Level:      level,
@@ -1368,35 +1616,61 @@ func NewLabeledListItem(level int, term []interface{}, description interface{}, 
 	}, nil
 }
 
-// AddElement add an element to this LabeledListItem
-func (i *LabeledListItem) AddElement(element interface{}) {
-	i.Elements = append(i.Elements, element)
+// GetLevel returns the level of this element
+func (e *LabeledListElement) GetLevel() int {
+	return e.Level
 }
 
-var _ WithElementsToSubstitute = LabeledListItem{}
+// SetLevel sets the level of this element
+func (e *LabeledListElement) SetLevel(level int) {
+	e.Level = level
+}
+
+// ListKind returns the kind of list to which this element shall be attached
+func (e *LabeledListElement) ListKind() ListKind {
+	return LabeledListKind
+}
+
+// AddElement add an element to this LabeledListElement
+func (e *LabeledListElement) AddElement(element interface{}) error {
+	e.Elements = append(e.Elements, element)
+	return nil
+}
+
+// GetElements returns this LabeledListElement's elements
+func (e *LabeledListElement) GetElements() []interface{} {
+	return e.Elements
+}
+
+// SetElements sets this LabeledListElement's elements
+func (i *LabeledListElement) SetElements(elements []interface{}) error {
+	i.Elements = elements
+	return nil
+}
+
+var _ WithElementsToSubstitute = LabeledListElement{}
 
 // ElementsToSubstitute returns this item's elements so that substitutions can be applied onto them
-func (i LabeledListItem) ElementsToSubstitute() []interface{} {
+func (i LabeledListElement) ElementsToSubstitute() []interface{} {
 	return i.Elements
 }
 
 // ReplaceElements replaces the elements in this example block
-func (i LabeledListItem) ReplaceElements(elements []interface{}) interface{} {
+func (i LabeledListElement) ReplaceElements(elements []interface{}) interface{} {
 	i.Elements = elements
 	return i
 }
 
-var _ BlockWithAttributes = LabeledListItem{}
+var _ WithAttributes = LabeledListElement{}
 
 // GetAttributes returns this list item's attributes
-func (i LabeledListItem) GetAttributes() Attributes {
+func (i LabeledListElement) GetAttributes() Attributes {
 	return i.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this list item
-func (i LabeledListItem) SetAttributes(attributes Attributes) interface{} {
+func (i LabeledListElement) SetAttributes(attributes Attributes) {
 	i.Attributes = attributes
-	return i
 }
 
 // ------------------------------------------
@@ -1445,7 +1719,7 @@ func NewParagraph(elements []interface{}, attributes interface{}) (*Paragraph, e
 	}, nil
 }
 
-var _ BlockWithNestedElements = &Paragraph{}
+var _ WithElements = &Paragraph{}
 
 // GetElements returns this paragraph's elements (or lines)
 func (p *Paragraph) GetElements() []interface{} {
@@ -1453,12 +1727,14 @@ func (p *Paragraph) GetElements() []interface{} {
 }
 
 // SetElements sets this paragraph's elements
-func (p *Paragraph) SetElements(elements []interface{}) {
+func (p *Paragraph) SetElements(elements []interface{}) error {
 	p.Elements = elements
+	return nil
 }
 
-func (p *Paragraph) AddElement(e interface{}) {
+func (p *Paragraph) AddElement(e interface{}) error {
 	p.Elements = append(p.Elements, e)
+	return nil
 }
 
 func toLines(lines []interface{}) ([][]interface{}, error) {
@@ -1476,15 +1752,16 @@ func toLines(lines []interface{}) ([][]interface{}, error) {
 	return result, nil
 }
 
+var _ WithAttributes = &Paragraph{}
+
 // GetAttributes returns the attributes of this paragraph so that substitutions can be applied onto them
 func (p *Paragraph) GetAttributes() Attributes {
 	return p.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this paragraph
-func (p *Paragraph) SetAttributes(attributes Attributes) interface{} {
+func (p *Paragraph) SetAttributes(attributes Attributes) {
 	p.Attributes = attributes
-	return p
 }
 
 var _ WithLineSubstitution = Paragraph{}
@@ -1709,7 +1986,7 @@ func (i ImageBlock) RestoreAttributes(placeholders map[string]interface{}) inter
 // 	return i
 // }
 
-var _ BlockWithLocation = &ImageBlock{}
+var _ WithAttributes = &ImageBlock{}
 
 // GetAttributes returns this list item's attributes
 func (i *ImageBlock) GetAttributes() Attributes {
@@ -1717,10 +1994,11 @@ func (i *ImageBlock) GetAttributes() Attributes {
 }
 
 // ReplaceAttributes replaces the attributes in this list item
-func (i *ImageBlock) SetAttributes(attributes Attributes) interface{} {
+func (i *ImageBlock) SetAttributes(attributes Attributes) {
 	i.Attributes = attributes
-	return i
 }
+
+var _ WithLocation = &ImageBlock{}
 
 func (i *ImageBlock) GetLocation() *Location {
 	return i.Location
@@ -1779,7 +2057,7 @@ func (i InlineImage) RestoreAttributes(placeholders map[string]interface{}) inte
 // 	return i
 // }
 
-var _ BlockWithAttributes = InlineImage{}
+var _ WithAttributes = InlineImage{}
 
 // GetAttributes returns this inline image's attributes
 func (i InlineImage) GetAttributes() Attributes {
@@ -1787,9 +2065,8 @@ func (i InlineImage) GetAttributes() Attributes {
 }
 
 // ReplaceAttributes replaces the attributes in this inline image
-func (i InlineImage) SetAttributes(attributes Attributes) interface{} {
+func (i InlineImage) SetAttributes(attributes Attributes) {
 	i.Attributes = attributes
-	return i
 }
 
 // var _ WithElementsToSubstitute = InlineImage{}
@@ -1994,7 +2271,7 @@ func (b ExampleBlock) ReplaceElements(elements []interface{}) interface{} {
 	return b
 }
 
-var _ BlockWithAttributes = ExampleBlock{}
+var _ WithAttributes = ExampleBlock{}
 
 // GetAttributes returns this example block's attributes
 func (b ExampleBlock) GetAttributes() Attributes {
@@ -2002,9 +2279,8 @@ func (b ExampleBlock) GetAttributes() Attributes {
 }
 
 // ReplaceAttributes replaces the attributes in this example block
-func (b ExampleBlock) SetAttributes(attributes Attributes) interface{} {
+func (b ExampleBlock) SetAttributes(attributes Attributes) {
 	b.Attributes = attributes
-	return b
 }
 
 // QuoteBlock the structure for the quote blocks
@@ -2055,7 +2331,7 @@ func (b QuoteBlock) ReplaceElements(elements []interface{}) interface{} {
 	return b
 }
 
-var _ BlockWithAttributes = QuoteBlock{}
+var _ WithAttributes = QuoteBlock{}
 
 // GetAttributes returns this quote block's attributes
 func (b QuoteBlock) GetAttributes() Attributes {
@@ -2063,9 +2339,8 @@ func (b QuoteBlock) GetAttributes() Attributes {
 }
 
 // ReplaceAttributes replaces the attributes in this quote block
-func (b QuoteBlock) SetAttributes(attributes Attributes) interface{} {
+func (b QuoteBlock) SetAttributes(attributes Attributes) {
 	b.Attributes = attributes
-	return b
 }
 
 // SidebarBlock the structure for the example blocks
@@ -2114,7 +2389,7 @@ func (b SidebarBlock) ReplaceElements(elements []interface{}) interface{} {
 	return b
 }
 
-var _ BlockWithAttributes = SidebarBlock{}
+var _ WithAttributes = SidebarBlock{}
 
 // GetAttributes returns this sidebar block's attributes
 func (b SidebarBlock) GetAttributes() Attributes {
@@ -2122,9 +2397,8 @@ func (b SidebarBlock) GetAttributes() Attributes {
 }
 
 // ReplaceAttributes replaces the attributes in this sidebar block
-func (b SidebarBlock) SetAttributes(attributes Attributes) interface{} {
+func (b SidebarBlock) SetAttributes(attributes Attributes) {
 	b.Attributes = attributes
-	return b
 }
 
 // FencedBlock the structure for the fenced blocks
@@ -2177,7 +2451,7 @@ func (b FencedBlock) SubstituteLines(lines [][]interface{}) interface{} {
 	return b
 }
 
-var _ BlockWithAttributes = FencedBlock{}
+var _ WithAttributes = FencedBlock{}
 
 // GetAttributes returns this fenced block's attributes
 func (b FencedBlock) GetAttributes() Attributes {
@@ -2185,9 +2459,8 @@ func (b FencedBlock) GetAttributes() Attributes {
 }
 
 // ReplaceAttributes replaces the attributes in this fenced block
-func (b FencedBlock) SetAttributes(attributes Attributes) interface{} {
+func (b FencedBlock) SetAttributes(attributes Attributes) {
 	b.Attributes = attributes
-	return b
 }
 
 // ListingBlockDelimiter an empty type that is returned by the parser when a listing block is starting or ending
@@ -2247,7 +2520,7 @@ func NewDelimitedBlock(kind DelimitedBlockKind, attributes Attributes) *Delimite
 	}
 }
 
-var _ BlockWithNestedElements = &DelimitedBlock{}
+var _ WithElements = &DelimitedBlock{}
 
 // GetElements returns this paragraph's elements (or lines)
 func (b *DelimitedBlock) GetElements() []interface{} {
@@ -2255,13 +2528,17 @@ func (b *DelimitedBlock) GetElements() []interface{} {
 }
 
 // SetElements sets this paragraph's elements
-func (b *DelimitedBlock) SetElements(elements []interface{}) {
+func (b *DelimitedBlock) SetElements(elements []interface{}) error {
 	b.Elements = elements
+	return nil
 }
 
-func (b *DelimitedBlock) AddElement(e interface{}) {
+func (b *DelimitedBlock) AddElement(e interface{}) error {
 	b.Elements = append(b.Elements, e)
+	return nil
 }
+
+var _ WithAttributes = &DelimitedBlock{}
 
 // GetAttributes returns the attributes of this paragraph so that substitutions can be applied onto them
 func (b *DelimitedBlock) GetAttributes() Attributes {
@@ -2269,9 +2546,8 @@ func (b *DelimitedBlock) GetAttributes() Attributes {
 }
 
 // ReplaceAttributes replaces the attributes in this paragraph
-func (b *DelimitedBlock) SetAttributes(attributes Attributes) interface{} {
+func (b *DelimitedBlock) SetAttributes(attributes Attributes) {
 	b.Attributes = attributes
-	return b
 }
 
 // ListingBlock the structure for the Listing blocks
@@ -2333,17 +2609,16 @@ func NewListingBlock(elements []interface{}, attributes interface{}) (ListingBlo
 // 	return b
 // }
 
-var _ BlockWithAttributes = ListingBlock{}
+var _ WithAttributes = &ListingBlock{}
 
 // GetAttributes returns this listing block's attributes
-func (b ListingBlock) GetAttributes() Attributes {
+func (b *ListingBlock) GetAttributes() Attributes {
 	return b.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this listing block
-func (b ListingBlock) SetAttributes(attributes Attributes) interface{} {
+func (b *ListingBlock) SetAttributes(attributes Attributes) {
 	b.Attributes = attributes
-	return b
 }
 
 // VerseBlock the structure for the Listing blocks
@@ -2398,17 +2673,16 @@ func (b VerseBlock) SubstituteLines(lines [][]interface{}) interface{} {
 	return b
 }
 
-var _ BlockWithAttributes = VerseBlock{}
+var _ WithAttributes = &VerseBlock{}
 
 // GetAttributes returns this verse block's attributes
-func (b VerseBlock) GetAttributes() Attributes {
+func (b *VerseBlock) GetAttributes() Attributes {
 	return b.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this verse block
-func (b VerseBlock) SetAttributes(attributes Attributes) interface{} {
+func (b *VerseBlock) SetAttributes(attributes Attributes) {
 	b.Attributes = attributes
-	return b
 }
 
 // MarkdownQuoteBlock the structure for the markdown quote blocks
@@ -2483,17 +2757,16 @@ func (b PassthroughBlock) SubstituteLines(lines [][]interface{}) interface{} {
 	return b
 }
 
-var _ BlockWithAttributes = PassthroughBlock{}
+var _ WithAttributes = &PassthroughBlock{}
 
 // GetAttributes returns this passthrough block's attributes
-func (b PassthroughBlock) GetAttributes() Attributes {
+func (b *PassthroughBlock) GetAttributes() Attributes {
 	return b.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this passthrough block
-func (b PassthroughBlock) SetAttributes(attributes Attributes) interface{} {
+func (b *PassthroughBlock) SetAttributes(attributes Attributes) {
 	b.Attributes = attributes
-	return b
 }
 
 // CommentBlock the structure for the comment blocks
@@ -2572,15 +2845,16 @@ func (b LiteralBlock) DefaultSubstitutions() []string {
 	return defaultLiteralBlockSubstitutions
 }
 
+var _ WithAttributes = &LiteralBlock{}
+
 // GetAttributes returns this literal block's attributes
-func (b LiteralBlock) GetAttributes() Attributes {
+func (b *LiteralBlock) GetAttributes() Attributes {
 	return b.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this literal block
-func (b LiteralBlock) SetAttributes(attributes Attributes) interface{} {
+func (b *LiteralBlock) SetAttributes(attributes Attributes) {
 	b.Attributes = attributes
-	return b
 }
 
 // LinesToSubstitute returns the lines of this literal block so that substitutions can be applied onto them
@@ -2622,65 +2896,128 @@ func NewCallout(ref int) (Callout, error) {
 	}, nil
 }
 
-// CalloutListItem the description of a call out which will appear as an ordered list item after the delimited block
-type CalloutListItem struct {
+// CalloutListElement the description of a call out which will appear as an ordered list item after the delimited block
+type CalloutListElement struct {
 	Attributes Attributes
 	Ref        int
 	Elements   []interface{}
 }
 
-var _ ListItem = &CalloutListItem{}
+var _ ListElement = &CalloutListElement{}
 
-var _ DocumentElement = &CalloutListItem{}
+var _ DocumentElement = &CalloutListElement{}
 
-// GetAttributes returns the elements of this CalloutListItem
-func (i CalloutListItem) GetAttributes() Attributes {
-	return i.Attributes
-}
-
-// AddElement add an element to this CalloutListItem
-func (i *CalloutListItem) AddElement(element interface{}) {
-	i.Elements = append(i.Elements, element)
-}
-
-// NewCalloutListItem returns a new CalloutListItem
-func NewCalloutListItem(ref int, description []interface{}) (CalloutListItem, error) {
-	return CalloutListItem{
+// NewCalloutListElement returns a new CalloutListElement
+func NewCalloutListElement(ref int, description []interface{}) (*CalloutListElement, error) {
+	return &CalloutListElement{
 		Attributes: nil,
 		Ref:        ref,
 		Elements:   description,
 	}, nil
 }
 
+// GetLevel returns the level of this element
+func (e *CalloutListElement) GetLevel() int {
+	return 1 // no nesting in Callout Lists
+}
+
+// SetLevel sets the level of this element
+func (e *CalloutListElement) SetLevel(level int) {
+	// does nothing, but needed to ensure `CallOutListElement` implements `ListElement`
+}
+
+// ListKind returns the kind of list to which this element shall be attached
+func (e *CalloutListElement) ListKind() ListKind {
+	return CalloutListKind
+}
+
+// GetAttributes returns the elements of this CalloutListElement
+func (e *CalloutListElement) GetAttributes() Attributes {
+	return e.Attributes
+}
+
+// GetAttributes returns the elements of this CalloutListElement
+func (e *CalloutListElement) SetAttributes(attributes Attributes) {
+	e.Attributes = attributes
+}
+
+// AddElement add an element to this CalloutListElement
+func (e *CalloutListElement) AddElement(element interface{}) error {
+	e.Elements = append(e.Elements, element)
+	return nil
+}
+
+// GetElements returns this CalloutListElement's elements
+func (e *CalloutListElement) GetElements() []interface{} {
+	return e.Elements
+}
+
+// SetElements sets this CalloutListElement's elements
+func (e *CalloutListElement) SetElements(elements []interface{}) error {
+	e.Elements = elements
+	return nil
+}
+
 // CalloutList the structure for the Callout Lists
 type CalloutList struct {
 	Attributes Attributes
-	Items      []CalloutListItem
+	Items      []*CalloutListElement
 }
 
-var _ List = &CalloutList{}
-
 // NewCalloutList initializes a new CalloutList and uses the given item's attributes as the list attributes
-func NewCalloutList(item CalloutListItem) *CalloutList {
+func NewCalloutList(item *CalloutListElement) *CalloutList {
 	attrs := item.Attributes
 	item.Attributes = nil
 	return &CalloutList{
 		Attributes: attrs, // move the item's attributes to the list level
-		Items: []CalloutListItem{
+		Items: []*CalloutListElement{
 			item,
 		},
 	}
 }
 
+// var _ BlockWithElements = &CalloutList{}
+
+// // GetElements returns this QuotedText's elements
+// func (q *CalloutList) GetElements() []interface{} {
+// 	return q.Items
+// }
+
+// // SetElements sets this QuotedText's elements
+// func (q *CalloutList) SetElements(elements []interface{}) {
+// 	q.Items = elements
+// }
+
+// func (q *CalloutList) AddElement(e interface{}) {
+// 	q.Elements = append(q.Elements, e)
+// }
+
+// // GetAttributes returns the attributes of this QuotedText
+// func (q *CalloutList) GetAttributes() Attributes {
+// 	return q.Attributes
+// }
+
+// // ReplaceAttributes replaces the attributes in this QuotedText
+// func (q *CalloutList) SetAttributes(attributes Attributes) {
+// 	q.Attributes = attributes
+// 	return q
+// }
+
 // AddItem adds the given item to the list
-func (l *CalloutList) AddItem(item CalloutListItem) {
-	l.Items = append(l.Items, item)
+func (l *CalloutList) AddElement(item interface{}) error {
+	if item, ok := item.(*CalloutListElement); ok {
+		l.Items = append(l.Items, item)
+		return nil
+	}
+	return fmt.Errorf("unexpected type of item: '%T'", item)
 }
 
-// LastItem returns the last item in the list
-func (l *CalloutList) LastItem() ListItem {
-	return &(l.Items[len(l.Items)-1])
-}
+var _ List = &CalloutList{}
+
+// // LastItem returns the last item in the list
+// func (l *CalloutList) LastElement() ListElement {
+// 	return l.Items[len(l.Items)-1]
+// }
 
 // ------------------------------------------
 // BlankLine
@@ -2848,7 +3185,7 @@ func toRawText(elements []interface{}) (string, error) {
 	return result.String(), nil
 }
 
-var _ BlockWithNestedElements = &QuotedText{}
+var _ WithElements = &QuotedText{}
 
 // GetElements returns this QuotedText's elements
 func (q *QuotedText) GetElements() []interface{} {
@@ -2856,13 +3193,17 @@ func (q *QuotedText) GetElements() []interface{} {
 }
 
 // SetElements sets this QuotedText's elements
-func (q *QuotedText) SetElements(elements []interface{}) {
+func (q *QuotedText) SetElements(elements []interface{}) error {
 	q.Elements = elements
+	return nil
 }
 
-func (q *QuotedText) AddElement(e interface{}) {
+func (q *QuotedText) AddElement(e interface{}) error {
 	q.Elements = append(q.Elements, e)
+	return nil
 }
+
+var _ WithAttributes = &QuotedText{}
 
 // GetAttributes returns the attributes of this QuotedText
 func (q *QuotedText) GetAttributes() Attributes {
@@ -2870,9 +3211,8 @@ func (q *QuotedText) GetAttributes() Attributes {
 }
 
 // ReplaceAttributes replaces the attributes in this QuotedText
-func (q *QuotedText) SetAttributes(attributes Attributes) interface{} {
+func (q *QuotedText) SetAttributes(attributes Attributes) {
 	q.Attributes = attributes
-	return q
 }
 
 // WithAttributes returns a _new_ QuotedText with the given attributes (with some mapping)
@@ -2900,7 +3240,7 @@ func (t *QuotedText) RestoreElements(placeholders map[string]interface{}) interf
 	return t
 }
 
-var _ WithElementsToSubstitute = OrderedListItem{}
+var _ WithElementsToSubstitute = OrderedListElement{}
 
 // ElementsToSubstitute returns this quoted text elements so that substitutions can be applied onto then
 func (t *QuotedText) ElementsToSubstitute() []interface{} {
@@ -3068,17 +3408,18 @@ func NewInlineLink(url *Location, attributes interface{}) (*InlineLink, error) {
 	}, nil
 }
 
-var _ BlockWithLocation = &InlineLink{}
+var _ WithAttributes = &InlineLink{}
 
 // GetAttributes returns this link's attributes
 func (l *InlineLink) GetAttributes() Attributes {
 	return l.Attributes
 }
 
-func (l *InlineLink) SetAttributes(attributes Attributes) interface{} {
+func (l *InlineLink) SetAttributes(attributes Attributes) {
 	l.Attributes = attributes
-	return l
 }
+
+var _ WithLocation = &InlineLink{}
 
 func (l *InlineLink) GetLocation() *Location {
 	return l.Location

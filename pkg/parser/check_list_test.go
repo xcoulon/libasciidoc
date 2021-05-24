@@ -24,7 +24,7 @@ var _ = Describe("checked lists", func() {
 						Attributes: types.Attributes{
 							types.AttrTitle: "Checklist",
 						},
-						Items: []types.UnorderedListItem{
+						Items: []*types.UnorderedListElement{
 							{
 								Level:       1,
 								BulletStyle: types.Dash,
@@ -117,7 +117,7 @@ var _ = Describe("checked lists", func() {
 						Attributes: types.Attributes{
 							types.AttrOptions: []interface{}{types.AttrInteractive},
 						},
-						Items: []types.UnorderedListItem{
+						Items: []*types.UnorderedListElement{
 							{
 								Level:       1,
 								BulletStyle: types.OneAsterisk,
@@ -211,7 +211,7 @@ var _ = Describe("checked lists", func() {
 						Attributes: types.Attributes{
 							types.AttrTitle: "Checklist",
 						},
-						Items: []types.UnorderedListItem{
+						Items: []*types.UnorderedListElement{
 							{
 								Level:       1,
 								BulletStyle: types.OneAsterisk,
@@ -230,7 +230,7 @@ var _ = Describe("checked lists", func() {
 										},
 									},
 									types.UnorderedList{
-										Items: []types.UnorderedListItem{
+										Items: []*types.UnorderedListElement{
 											{
 												Level:       2,
 												BulletStyle: types.TwoAsterisks,
@@ -324,7 +324,7 @@ var _ = Describe("checked lists", func() {
 						Attributes: types.Attributes{
 							types.AttrTitle: "Checklist",
 						},
-						Items: []types.UnorderedListItem{
+						Items: []*types.UnorderedListElement{
 							{
 								Level:       1,
 								BulletStyle: types.OneAsterisk,
@@ -343,7 +343,7 @@ var _ = Describe("checked lists", func() {
 										},
 									},
 									types.UnorderedList{
-										Items: []types.UnorderedListItem{
+										Items: []*types.UnorderedListElement{
 											{
 												Level:       2,
 												BulletStyle: types.TwoAsterisks,

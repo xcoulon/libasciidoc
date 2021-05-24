@@ -941,7 +941,7 @@ var _ = Describe("quoted strings", func() {
 			source := "* a '`curly`' episode"
 			expected := types.Document{
 				Elements: []interface{}{
-					types.UnorderedListItem{
+					types.UnorderedListElement{
 						Level:       1,
 						CheckStyle:  types.NoCheck,
 						BulletStyle: types.OneAsterisk,
@@ -971,7 +971,7 @@ var _ = Describe("quoted strings", func() {
 			source := "'`term`':: something '`quoted`'"
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledListItem{
+					types.LabeledListElement{
 						Level: 1,
 						Term: []interface{}{
 							types.StringElement{Content: "'`term`'"}, // parsed later
@@ -1027,7 +1027,7 @@ var _ = Describe("quoted strings", func() {
 			source := "\"`term`\":: something \"`quoted`\""
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledListItem{
+					types.LabeledListElement{
 						Level: 1,
 						Term: []interface{}{
 							types.StringElement{Content: "\"`term`\""}, // parsed later
@@ -1057,7 +1057,7 @@ var _ = Describe("quoted strings", func() {
 			source := "* a \"`curly`\" episode"
 			expected := types.Document{
 				Elements: []interface{}{
-					types.UnorderedListItem{
+					types.UnorderedListElement{
 						Level:       1,
 						CheckStyle:  types.NoCheck,
 						BulletStyle: types.OneAsterisk,

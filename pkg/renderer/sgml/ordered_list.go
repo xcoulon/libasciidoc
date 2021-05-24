@@ -14,7 +14,7 @@ func (r *sgmlRenderer) renderOrderedList(ctx *renderer.Context, l types.OrderedL
 	content := &strings.Builder{}
 
 	for _, item := range l.Items {
-		if err := r.renderOrderedListItem(ctx, content, item); err != nil {
+		if err := r.renderOrderedListElement(ctx, content, item); err != nil {
 			return "", errors.Wrap(err, "unable to render unordered list")
 		}
 	}
@@ -40,7 +40,7 @@ func (r *sgmlRenderer) renderOrderedList(ctx *renderer.Context, l types.OrderedL
 		Start     string
 		Content   string
 		Reversed  bool
-		Items     []types.OrderedListItem
+		Items     []*types.OrderedListElement
 	}{
 		ID:        r.renderElementID(l.Attributes),
 		Title:     title,
@@ -83,7 +83,7 @@ func (r *sgmlRenderer) numberingType(style string) string {
 	}
 }
 
-func (r *sgmlRenderer) renderOrderedListItem(ctx *renderer.Context, w io.Writer, item types.OrderedListItem) error {
+func (r *sgmlRenderer) renderOrderedListElement(ctx *renderer.Context, w io.Writer, item *types.OrderedListElement) error {
 
 	content, err := r.renderListElements(ctx, item.Elements)
 	if err != nil {

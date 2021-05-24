@@ -25,6 +25,7 @@ DefaultDocumentFragmentElement <-
     / BlockAttributes
     / FileInclusion 
     / BlockDelimiter 
+    / ListItem
     / SingleLineComment
     / AttributeDeclaration
     / AttributeReset
@@ -423,11 +424,11 @@ Callout <-
         return types.NewCallout(ref.(int))
     }
 
-CalloutListItem <- ref:(CalloutListItemPrefix) description:(InlineElements) {
-        return types.NewCalloutListItem(ref.(int), description.(types.InlineElements))
+CalloutListElement <- ref:(CalloutListElementPrefix) description:(InlineElements) {
+        return types.NewCalloutListElement(ref.(int), description.(types.InlineElements))
     }
 
-CalloutListItemPrefix <- "<" ref:([0-9]+ { return strconv.Atoi(string(c.text)) }) ">" Space+ {
+CalloutListElementPrefix <- "<" ref:([0-9]+ { return strconv.Atoi(string(c.text)) }) ">" Space+ {
         return ref, nil
     }
 
@@ -564,7 +565,7 @@ PassthroughBlockDelimiter <- "++++" Space* EOF {
 //         / AttributeDeclaration
 //         / AttributeSubstitution
 //         / BlockDelimiter
-//         / CalloutListItem
+//         / CalloutListElement
 //         / InlineElements
 //     ) {
 //         return line, nil
@@ -996,6 +997,73 @@ ExternalLink <- url:(LocationWithScheme) inlineAttributes:(InlineAttributes)? {
         return types.NewInlineLink(url.(*types.Location), inlineAttributes)
     }
 
+
+// ----------------------------------------------------------------------------
+// List items
+// ----------------------------------------------------------------------------
+ListItem <-
+        OrderedListElement 
+        // / UnorderedListItem 
+        // / LabeledListItem // handled at the RawLine level (with search for `:: `)
+        / CalloutListElement
+
+
+// ----------------------------------------------------------------------------
+// Ordered List Item
+// ----------------------------------------------------------------------------
+OrderedListElement <- prefix:(OrderedListElementPrefix) content:(OrderedListElementContent) {
+    return types.NewOrderedListElement(prefix.(types.OrderedListElementPrefix), content.([]interface{}))
+}
+
+OrderedListElementPrefix <- 
+    Space* prefix:(
+        // implicit numbering: "." to "....."
+        depth:((".")+ {   
+            // `.` is 1, etc.
+            return (len(c.text)), nil 
+        }) 
+        &{  
+            // use a predicate to make sure that only `.` to `.....` are allowed
+            return depth.(int) <= 5, nil 
+        } 
+        {
+            switch depth.(int){
+            case 1:
+                return types.NewOrderedListElementPrefix(types.Arabic, 1)
+            case 2:
+                return types.NewOrderedListElementPrefix(types.LowerAlpha, 2)
+            case 3:
+                return types.NewOrderedListElementPrefix(types.LowerRoman, 3)
+            case 4:
+                return types.NewOrderedListElementPrefix(types.UpperAlpha, 4)
+            default:
+                return types.NewOrderedListElementPrefix(types.UpperRoman, 5)
+            }
+        }
+        // explicit numbering
+        / ([0-9])+ "." {  // numbering style: "1."
+            return types.NewOrderedListElementPrefix(types.Arabic, 1)
+        } / ([a-z]) "." { // numbering style: "a."
+            return types.NewOrderedListElementPrefix(types.LowerAlpha, 1)
+        } / ([A-Z]) "." { // numbering style: "A."
+            return types.NewOrderedListElementPrefix(types.UpperAlpha, 1)
+        } / ([ivxdlcm])+ ")" { // numbering style: "i)"
+            return types.NewOrderedListElementPrefix(types.LowerRoman, 1)
+        } / ([IVXDLCM])+ ")" { // numbering style: "I)"
+            return types.NewOrderedListElementPrefix(types.UpperRoman, 1)
+        }) Space+ {
+    return prefix, nil
+}
+
+OrderedListElementContent <- [^\r\n]* { 
+    return []interface{}{
+        &types.Paragraph{
+            Elements: []interface{}{
+                types.RawLine(string(c.text)),
+            },
+        },
+    }, nil 
+}
 
 // ----------------------------------------------------------------------------
 // Quoted Texts (bold, italic, monospace, marked, superscript and subscript)

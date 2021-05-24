@@ -2,14 +2,14 @@ package testsupport
 
 import (
 	"fmt"
-	"reflect"
 
 	"github.com/bytesparadise/libasciidoc/pkg/types"
 
 	"github.com/davecgh/go-spew/spew"
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	gomegatypes "github.com/onsi/gomega/types"
 	"github.com/pkg/errors"
-	"github.com/sergi/go-diff/diffmatchpatch"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -26,18 +26,20 @@ type documentMatcher struct {
 	diffs    string
 }
 
+var opts = []cmp.Option{cmpopts.IgnoreUnexported(types.GenericList{})}
+
 func (m *documentMatcher) Match(actual interface{}) (success bool, err error) {
 	if _, ok := actual.(types.Document); !ok {
 		return false, errors.Errorf("MatchDocument matcher expects a Document (actual: %T)", actual)
 	}
-	if !reflect.DeepEqual(m.expected, actual) {
+	if diff := cmp.Diff(m.expected, actual, opts...); diff != "" {
 		if log.IsLevelEnabled(log.DebugLevel) {
 			log.Debugf("actual document:\n%s", spew.Sdump(actual))
 			log.Debugf("expected document:\n%s", spew.Sdump(m.expected))
 		}
-		dmp := diffmatchpatch.New()
-		diffs := dmp.DiffMain(spew.Sdump(actual), spew.Sdump(m.expected), true)
-		m.diffs = dmp.DiffPrettyText(diffs)
+		// dmp := diffmatchpatch.New()
+		// diffs := dmp.DiffMain(spew.Sdump(actual), spew.Sdump(m.expected), true)
+		m.diffs = diff // dmp.DiffPrettyText(diffs)
 		return false, nil
 	}
 	return true, nil

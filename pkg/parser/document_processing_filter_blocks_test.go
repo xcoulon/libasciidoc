@@ -212,7 +212,7 @@ var _ = Describe("block filters", func() {
 	It("should remove single line comment in an ordered list item", func() {
 		actual := []interface{}{
 			types.OrderedList{
-				Items: []types.OrderedListItem{
+				Items: []*types.OrderedListElement{
 					{
 						Elements: []interface{}{
 							types.StringElement{},
@@ -224,7 +224,7 @@ var _ = Describe("block filters", func() {
 		}
 		expected := []interface{}{
 			types.OrderedList{
-				Items: []types.OrderedListItem{
+				Items: []*types.OrderedListElement{
 					{
 						Elements: []interface{}{
 							types.StringElement{},
@@ -239,7 +239,7 @@ var _ = Describe("block filters", func() {
 	It("should remove single line comment in an ordered list item", func() {
 		actual := []interface{}{
 			types.UnorderedList{
-				Items: []types.UnorderedListItem{
+				Items: []*types.UnorderedListElement{
 					{
 						Elements: []interface{}{
 							types.StringElement{},
@@ -251,7 +251,7 @@ var _ = Describe("block filters", func() {
 		}
 		expected := []interface{}{
 			types.UnorderedList{
-				Items: []types.UnorderedListItem{
+				Items: []*types.UnorderedListElement{
 					{
 						Elements: []interface{}{
 							types.StringElement{},
@@ -266,7 +266,7 @@ var _ = Describe("block filters", func() {
 	It("should remove single line comment in an labeled list item", func() {
 		actual := []interface{}{
 			types.LabeledList{
-				Items: []types.LabeledListItem{
+				Items: []*types.LabeledListElement{
 					{
 						Elements: []interface{}{
 							types.StringElement{},
@@ -278,7 +278,7 @@ var _ = Describe("block filters", func() {
 		}
 		expected := []interface{}{
 			types.LabeledList{
-				Items: []types.LabeledListItem{
+				Items: []*types.LabeledListElement{
 					{
 						Elements: []interface{}{
 							types.StringElement{},

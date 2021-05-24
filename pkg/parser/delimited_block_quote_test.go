@@ -72,7 +72,7 @@ ____
 							},
 							Elements: []interface{}{
 								types.UnorderedList{
-									Items: []types.UnorderedListItem{
+									Items: []*types.UnorderedListElement{
 										{
 											Level:       1,
 											BulletStyle: types.Dash,
@@ -197,7 +197,7 @@ ____`
 							},
 							Elements: []interface{}{
 								types.UnorderedList{
-									Items: []types.UnorderedListItem{
+									Items: []*types.UnorderedListElement{
 										{
 											Level:       1,
 											BulletStyle: types.OneAsterisk,
@@ -218,13 +218,13 @@ ____`
 								},
 								types.ListingBlock{
 									Elements: []interface{}{
-											types.StringElement{
-												Content: "* quote ",
-											},
+										types.StringElement{
+											Content: "* quote ",
+										},
 									},
 								},
 								types.UnorderedList{
-									Items: []types.UnorderedListItem{
+									Items: []*types.UnorderedListElement{
 										{
 											Level:       1,
 											BulletStyle: types.OneAsterisk,
@@ -269,7 +269,7 @@ ____`
 							},
 							Elements: []interface{}{
 								types.UnorderedList{
-									Items: []types.UnorderedListItem{
+									Items: []*types.UnorderedListElement{
 										{
 											Level:       1,
 											BulletStyle: types.OneAsterisk,

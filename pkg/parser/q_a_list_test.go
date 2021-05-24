@@ -24,7 +24,7 @@ What is the answer to the Ultimate Question?:: 42`
 						types.AttrTitle: "Q&A",
 						types.AttrStyle: "qanda",
 					},
-					Items: []types.LabeledListItem{
+					Items: []*types.LabeledListElement{
 						{
 							Level: 1,
 							Term: []interface{}{
@@ -89,7 +89,7 @@ What is the answer to the Ultimate Question?:: 42`
 						types.AttrID:    "quiz",
 						types.AttrRoles: []interface{}{"role1", "role2"},
 					},
-					Items: []types.LabeledListItem{
+					Items: []*types.LabeledListElement{
 						{
 							Level: 1,
 							Term: []interface{}{

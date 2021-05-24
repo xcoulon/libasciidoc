@@ -42,7 +42,7 @@ func (r *sgmlRenderer) renderUnorderedList(ctx *renderer.Context, l types.Unorde
 		Roles     string
 		Style     string
 		Checklist bool
-		Items     []types.UnorderedListItem
+		Items     []*types.UnorderedListElement
 		Content   string
 	}{
 		Context:   ctx,
@@ -59,7 +59,7 @@ func (r *sgmlRenderer) renderUnorderedList(ctx *renderer.Context, l types.Unorde
 	}
 	return result.String(), nil
 }
-func (r *sgmlRenderer) renderUnorderedListItem(ctx *renderer.Context, w io.Writer, item types.UnorderedListItem) error {
+func (r *sgmlRenderer) renderUnorderedListItem(ctx *renderer.Context, w io.Writer, item *types.UnorderedListElement) error {
 
 	content, err := r.renderListElements(ctx, item.Elements)
 	if err != nil {

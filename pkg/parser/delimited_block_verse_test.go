@@ -375,7 +375,7 @@ ____
 									},
 								},
 								types.BlankLine{},
-								types.CalloutListItem{
+								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
 										types.Paragraph{
@@ -491,7 +491,7 @@ ____
 									},
 								},
 								types.BlankLine{},
-								types.CalloutListItem{
+								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
 										types.Paragraph{
@@ -562,7 +562,7 @@ ____
 									},
 								},
 								types.BlankLine{},
-								types.CalloutListItem{
+								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
 										types.Paragraph{
@@ -638,7 +638,7 @@ ____
 									},
 								},
 								types.BlankLine{},
-								types.CalloutListItem{
+								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
 										types.Paragraph{
@@ -701,7 +701,7 @@ ____
 									},
 								},
 								types.BlankLine{},
-								types.CalloutListItem{
+								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
 										types.Paragraph{
@@ -787,7 +787,7 @@ ____
 									},
 								},
 								types.BlankLine{},
-								types.CalloutListItem{
+								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
 										types.Paragraph{
@@ -871,7 +871,7 @@ ____
 									},
 								},
 								types.BlankLine{},
-								types.CalloutListItem{
+								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
 										types.Paragraph{
@@ -934,7 +934,7 @@ ____
 									},
 								},
 								types.BlankLine{},
-								types.CalloutListItem{
+								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
 										types.Paragraph{
@@ -998,7 +998,7 @@ ____
 									},
 								},
 								types.BlankLine{},
-								types.CalloutListItem{
+								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
 										types.Paragraph{
@@ -1082,7 +1082,7 @@ ____
 									},
 								},
 								types.BlankLine{},
-								types.CalloutListItem{
+								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
 										types.Paragraph{
@@ -1166,7 +1166,7 @@ ____
 									},
 								},
 								types.BlankLine{},
-								types.CalloutListItem{
+								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
 										types.Paragraph{
@@ -1229,7 +1229,7 @@ ____
 									},
 								},
 								types.BlankLine{},
-								types.CalloutListItem{
+								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
 										types.Paragraph{

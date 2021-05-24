@@ -81,7 +81,7 @@ DocumentBlock <-
         / SingleLineComment
         / Table
         / ThematicBreak
-        / OrderedListItem
+        / OrderedListElement
         / UnorderedListItem 
         / CalloutListItem
         / ContinuedListItemElement
@@ -652,7 +652,7 @@ ListParagraph <- comment:(SingleLineComment) {
 ListParagraphLine <- !EOF
     !BlankLine
     !SingleLineComment
-    !OrderedListItemPrefix
+    !OrderedListElementPrefix
     !UnorderedListItemPrefix
     !CalloutListItemPrefix
     !ListItemContinuation
@@ -677,7 +677,7 @@ ContinuedListItemContent <- !EOF
         / Table
         / ImageBlock
         / ThematicBreak
-        / OrderedListItem 
+        / OrderedListElement 
         / UnorderedListItem 
         / LabeledListItem 
         / BlankLine // must be before LiteralBlock
@@ -693,11 +693,11 @@ ContinuedListItemContent <- !EOF
 // ------------------------------------------
 // Ordered List Items
 // ------------------------------------------
-OrderedListItem <- prefix:(OrderedListItemPrefix) content:(OrderedListItemContent) {
-    return types.NewOrderedListItem(prefix.(types.OrderedListItemPrefix), content.([]interface{}), c.globalStore.getAttributes())
+OrderedListElement <- prefix:(OrderedListElementPrefix) content:(OrderedListElementContent) {
+    return types.NewOrderedListElement(prefix.(types.OrderedListElementPrefix), content.([]interface{}), c.globalStore.getAttributes())
 }
 
-OrderedListItemPrefix <- 
+OrderedListElementPrefix <- 
     Space* prefix:(
         // implicit numbering: "." to "....."
         depth:((".")+ {   
@@ -711,33 +711,33 @@ OrderedListItemPrefix <-
         {
             switch depth.(int){
             case 1:
-                return types.NewOrderedListItemPrefix(types.Arabic, 1)
+                return types.NewOrderedListElementPrefix(types.Arabic, 1)
             case 2:
-                return types.NewOrderedListItemPrefix(types.LowerAlpha, 2)
+                return types.NewOrderedListElementPrefix(types.LowerAlpha, 2)
             case 3:
-                return types.NewOrderedListItemPrefix(types.LowerRoman, 3)
+                return types.NewOrderedListElementPrefix(types.LowerRoman, 3)
             case 4:
-                return types.NewOrderedListItemPrefix(types.UpperAlpha, 4)
+                return types.NewOrderedListElementPrefix(types.UpperAlpha, 4)
             default:
-                return types.NewOrderedListItemPrefix(types.UpperRoman, 5)
+                return types.NewOrderedListElementPrefix(types.UpperRoman, 5)
             }
         }
         // explicit numbering
         / ([0-9])+ "." {  // numbering style: "1."
-            return types.NewOrderedListItemPrefix(types.Arabic, 1)
+            return types.NewOrderedListElementPrefix(types.Arabic, 1)
         } / ([a-z]) "." { // numbering style: "a."
-            return types.NewOrderedListItemPrefix(types.LowerAlpha, 1)
+            return types.NewOrderedListElementPrefix(types.LowerAlpha, 1)
         } / ([A-Z]) "." { // numbering style: "A."
-            return types.NewOrderedListItemPrefix(types.UpperAlpha, 1)
+            return types.NewOrderedListElementPrefix(types.UpperAlpha, 1)
         } / ([ivxdlcm])+ ")" { // numbering style: "i)"
-            return types.NewOrderedListItemPrefix(types.LowerRoman, 1)
+            return types.NewOrderedListElementPrefix(types.LowerRoman, 1)
         } / ([IVXDLCM])+ ")" { // numbering style: "I)"
-            return types.NewOrderedListItemPrefix(types.UpperRoman, 1)
+            return types.NewOrderedListElementPrefix(types.UpperRoman, 1)
         }) Space+ {
     return prefix, nil
 }
 
-OrderedListItemContent <- elements:(ListParagraph+) {
+OrderedListElementContent <- elements:(ListParagraph+) {
     return types.NewListItemContent(elements.([]interface{}))
 } 
 
@@ -1691,7 +1691,7 @@ ExampleBlockRawContent <-
             / BlankLine
             / ImageBlock
             / ThematicBreak
-            / OrderedListItem 
+            / OrderedListElement 
             / UnorderedListItem 
             / ContinuedListItemElement
             / FencedBlock 
@@ -1752,7 +1752,7 @@ QuoteBlockRawContent <-
             / BlankLine
             / ImageBlock
             / ThematicBreak
-            / OrderedListItem 
+            / OrderedListElement 
             / UnorderedListItem 
             / ContinuedListItemElement
             / FencedBlock 
@@ -1804,7 +1804,7 @@ SidebarBlockRawContent <-
             / BlankLine
             / ImageBlock
             / ThematicBreak
-            / OrderedListItem 
+            / OrderedListElement 
             / UnorderedListItem 
             / ContinuedListItemElement
             / FencedBlock 

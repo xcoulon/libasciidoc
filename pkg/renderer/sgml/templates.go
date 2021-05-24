@@ -45,7 +45,7 @@ type Templates struct {
 	MarkedText                string
 	MonospaceText             string
 	OrderedList               string
-	OrderedListItem           string
+	OrderedListElement        string
 	Paragraph                 string
 	PassthroughBlock          string
 	Preamble                  string

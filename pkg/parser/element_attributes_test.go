@@ -248,7 +248,7 @@ a list item!`
 					expected := types.Document{
 						Elements: []interface{}{
 							types.OrderedList{
-								Items: []types.OrderedListItem{
+								Items: []*types.OrderedListElement{
 									{
 										Level: 1,
 										Style: types.Arabic,

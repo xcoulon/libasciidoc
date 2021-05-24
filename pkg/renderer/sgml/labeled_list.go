@@ -38,7 +38,7 @@ func (r *sgmlRenderer) renderLabeledList(ctx *renderer.Context, l types.LabeledL
 		Title   string
 		Roles   string
 		Content string
-		Items   []types.LabeledListItem
+		Items   []*types.LabeledListElement
 	}{
 		Context: ctx,
 		ID:      r.renderElementID(l.Attributes),
@@ -67,7 +67,7 @@ func (r *sgmlRenderer) getLabeledListTmpl(l types.LabeledList) (*textTemplate, *
 	return r.labeledList, r.labeledListItem, nil
 }
 
-func (r *sgmlRenderer) renderLabeledListItem(ctx *renderer.Context, tmpl *textTemplate, w io.Writer, continuation bool, item types.LabeledListItem) (bool, error) {
+func (r *sgmlRenderer) renderLabeledListItem(ctx *renderer.Context, tmpl *textTemplate, w io.Writer, continuation bool, item *types.LabeledListElement) (bool, error) {
 
 	term, err := r.renderInlineElements(ctx, item.Term)
 	if err != nil {

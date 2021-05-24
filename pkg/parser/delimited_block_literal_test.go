@@ -323,7 +323,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -446,7 +446,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -538,7 +538,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -623,7 +623,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -706,7 +706,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{

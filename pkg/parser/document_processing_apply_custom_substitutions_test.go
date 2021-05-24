@@ -122,7 +122,7 @@ and <more text> on the +
 									},
 								},
 								types.BlankLine{},
-								types.UnorderedListItem{
+								types.UnorderedListElement{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -141,7 +141,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -247,7 +247,7 @@ and <more text> on the +
 									},
 								},
 								types.BlankLine{},
-								types.UnorderedListItem{
+								types.UnorderedListElement{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -266,7 +266,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -327,7 +327,7 @@ and <more text> on the +
 									},
 								},
 								types.BlankLine{},
-								types.UnorderedListItem{
+								types.UnorderedListElement{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -346,7 +346,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -412,7 +412,7 @@ and <more text> on the +
 									},
 								},
 								types.BlankLine{},
-								types.UnorderedListItem{
+								types.UnorderedListElement{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -431,7 +431,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -484,7 +484,7 @@ and <more text> on the +
 									},
 								},
 								types.BlankLine{},
-								types.UnorderedListItem{
+								types.UnorderedListElement{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -503,7 +503,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -579,7 +579,7 @@ and <more text> on the +
 									},
 								},
 								types.BlankLine{},
-								types.UnorderedListItem{
+								types.UnorderedListElement{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -598,7 +598,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -672,7 +672,7 @@ and <more text> on the +
 									},
 								},
 								types.BlankLine{},
-								types.UnorderedListItem{
+								types.UnorderedListElement{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -691,7 +691,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -744,7 +744,7 @@ and <more text> on the +
 									},
 								},
 								types.BlankLine{},
-								types.UnorderedListItem{
+								types.UnorderedListElement{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -763,7 +763,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -817,7 +817,7 @@ and <more text> on the +
 									},
 								},
 								types.BlankLine{},
-								types.UnorderedListItem{
+								types.UnorderedListElement{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -836,7 +836,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -910,7 +910,7 @@ and <more text> on the +
 									},
 								},
 								types.BlankLine{},
-								types.UnorderedListItem{
+								types.UnorderedListElement{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -929,7 +929,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -1003,7 +1003,7 @@ and <more text> on the +
 									},
 								},
 								types.BlankLine{},
-								types.UnorderedListItem{
+								types.UnorderedListElement{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -1022,7 +1022,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -1075,7 +1075,7 @@ and <more text> on the +
 									},
 								},
 								types.BlankLine{},
-								types.UnorderedListItem{
+								types.UnorderedListElement{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -1094,7 +1094,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -1177,7 +1177,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -1278,7 +1278,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -1334,7 +1334,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -1395,7 +1395,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -1443,7 +1443,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -1514,7 +1514,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -1583,7 +1583,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -1631,7 +1631,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -1680,7 +1680,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -1749,7 +1749,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -1818,7 +1818,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -1866,7 +1866,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -1982,7 +1982,7 @@ _foo_
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -2053,7 +2053,7 @@ _foo_
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -2124,7 +2124,7 @@ _foo_
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -2195,7 +2195,7 @@ _foo_
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -2258,7 +2258,7 @@ _foo_
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -2343,7 +2343,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -2403,7 +2403,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -2478,7 +2478,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{
@@ -2543,7 +2543,7 @@ and <more text> on the +
 							},
 						},
 						types.BlankLine{},
-						types.CalloutListItem{
+						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
 								types.Paragraph{

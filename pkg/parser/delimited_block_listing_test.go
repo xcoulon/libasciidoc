@@ -191,7 +191,7 @@ import <1>
 							},
 						},
 						types.CalloutList{
-							Items: []types.CalloutListItem{
+							Items: []*types.CalloutListElement{
 								{
 									Ref: 1,
 									Elements: []interface{}{
@@ -239,7 +239,7 @@ func foo() {} <2>
 							},
 						},
 						types.CalloutList{
-							Items: []types.CalloutListItem{
+							Items: []*types.CalloutListElement{
 								{
 									Ref: 1,
 									Elements: []interface{}{
@@ -307,7 +307,7 @@ func foo() {} <4>
 							},
 						},
 						types.CalloutList{
-							Items: []types.CalloutListItem{
+							Items: []*types.CalloutListElement{
 								{
 									Ref: 1,
 									Elements: []interface{}{

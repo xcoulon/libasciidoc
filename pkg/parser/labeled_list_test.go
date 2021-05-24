@@ -19,7 +19,7 @@ on 2 lines`
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -53,7 +53,7 @@ on 2 lines`
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Term: []interface{}{
 									types.StringElement{
@@ -77,7 +77,7 @@ on 2 lines`
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Term: []interface{}{
 									&types.QuotedText{
@@ -125,7 +125,7 @@ on 2 lines`
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Term: []interface{}{
 									types.IndexTerm{
@@ -178,7 +178,7 @@ on 2 lines`
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Term: []interface{}{
 									types.ConcealedIndexTerm{
@@ -226,7 +226,7 @@ Item1:: foo`
 						Attributes: types.Attributes{
 							"style": "horizontal",
 						},
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -258,7 +258,7 @@ Item1:: foo`
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -286,7 +286,7 @@ Item 3 description`
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -358,7 +358,7 @@ Item 3 description`
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -376,7 +376,7 @@ Item 3 description`
 										},
 									},
 									types.LabeledList{
-										Items: []types.LabeledListItem{
+										Items: []*types.LabeledListElement{
 											{
 												Level: 2,
 												Term: []interface{}{
@@ -394,7 +394,7 @@ Item 3 description`
 														},
 													},
 													types.LabeledList{
-														Items: []types.LabeledListItem{
+														Items: []*types.LabeledListElement{
 															{
 																Level: 3,
 																Term: []interface{}{
@@ -436,7 +436,7 @@ Item with description:: something simple`
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -447,7 +447,7 @@ Item with description:: something simple`
 
 								Elements: []interface{}{
 									types.UnorderedList{
-										Items: []types.UnorderedListItem{
+										Items: []*types.UnorderedListElement{
 											{
 												Level:       1,
 												BulletStyle: types.OneAsterisk,
@@ -514,7 +514,7 @@ a normal paragraph.`
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -564,7 +564,7 @@ another fenced block
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -628,7 +628,7 @@ another fenced block
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -649,7 +649,7 @@ another fenced block
 						},
 					},
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -688,7 +688,7 @@ another fenced block
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -698,7 +698,7 @@ another fenced block
 								},
 								Elements: []interface{}{
 									types.UnorderedList{
-										Items: []types.UnorderedListItem{
+										Items: []*types.UnorderedListElement{
 											{
 												Level:       1,
 												BulletStyle: types.Dash,
@@ -734,7 +734,7 @@ second term:: definition of the second term`
 						Attributes: types.Attributes{
 							types.AttrTitle: "Labeled, single-line",
 						},
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -794,7 +794,7 @@ level 1:: description 1`
 						Attributes: types.Attributes{
 							types.AttrTitle: "Labeled, max nesting",
 						},
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -813,7 +813,7 @@ level 1:: description 1`
 										},
 									},
 									types.LabeledList{
-										Items: []types.LabeledListItem{
+										Items: []*types.LabeledListElement{
 											{
 												Level: 2,
 												Term: []interface{}{
@@ -832,7 +832,7 @@ level 1:: description 1`
 														},
 													},
 													types.LabeledList{
-														Items: []types.LabeledListItem{
+														Items: []*types.LabeledListElement{
 															{
 																Level: 3,
 																Term: []interface{}{
@@ -898,7 +898,7 @@ level 2::: description 2`
 						Attributes: types.Attributes{
 							types.AttrTitle: "Labeled, max nesting",
 						},
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -917,7 +917,7 @@ level 2::: description 2`
 										},
 									},
 									types.LabeledList{
-										Items: []types.LabeledListItem{
+										Items: []*types.LabeledListElement{
 											{
 												Level: 2,
 												Term: []interface{}{
@@ -936,7 +936,7 @@ level 2::: description 2`
 														},
 													},
 													types.LabeledList{
-														Items: []types.LabeledListItem{
+														Items: []*types.LabeledListElement{
 															{
 																Level: 3,
 																Term: []interface{}{
@@ -995,7 +995,7 @@ level 2::: description 2`
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -1025,7 +1025,7 @@ level 2::: description 2`
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -1067,7 +1067,7 @@ TIP: tip`
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{
@@ -1161,7 +1161,7 @@ TIP: We can embed admonitions too!
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledList{
-						Items: []types.LabeledListItem{
+						Items: []*types.LabeledListElement{
 							{
 								Level: 1,
 								Term: []interface{}{

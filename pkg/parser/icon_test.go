@@ -258,7 +258,7 @@ item 2:: two`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.LabeledList{
-							Items: []types.LabeledListItem{
+							Items: []*types.LabeledListElement{
 
 								{
 									Level: 1,

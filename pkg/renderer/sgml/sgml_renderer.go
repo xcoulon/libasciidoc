@@ -133,7 +133,7 @@ func (r *sgmlRenderer) prepareTemplates() error {
 		r.markedText, err = r.newTemplate("marked-text", tmpls.MarkedText, err)
 		r.monospaceText, err = r.newTemplate("monospace-text", tmpls.MonospaceText, err)
 		r.orderedList, err = r.newTemplate("ordered-list", tmpls.OrderedList, err)
-		r.orderedListItem, err = r.newTemplate("ordered-list-item", tmpls.OrderedListItem, err)
+		r.orderedListItem, err = r.newTemplate("ordered-list-item", tmpls.OrderedListElement, err)
 		r.paragraph, err = r.newTemplate("paragraph", tmpls.Paragraph, err)
 		r.passthroughBlock, err = r.newTemplate("passthrough", tmpls.PassthroughBlock, err)
 		r.preamble, err = r.newTemplate("preamble", tmpls.Preamble, err)

@@ -506,7 +506,7 @@ package parser
 // 		It("should replace with new StringElement in ordered list item", func() {
 // 			// given
 // 			elements := []interface{}{
-// 				types.OrderedListItem{
+// 				types.OrderedListElement{
 // 					Elements: []interface{}{
 // 						types.Paragraph{
 // 							Lines: [][]interface{}{
@@ -537,7 +537,7 @@ package parser
 // 			// then
 // 			Expect(err).To(Not(HaveOccurred()))
 // 			Expect(result).To(Equal([]interface{}{
-// 				types.OrderedListItem{
+// 				types.OrderedListElement{
 // 					Elements: []interface{}{
 // 						types.Paragraph{
 // 							Lines: [][]interface{}{

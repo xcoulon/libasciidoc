@@ -617,7 +617,7 @@ include::hello_world.go.txt[]
 							types.BlockDelimiter{
 								Kind: types.Fenced,
 							},
-							types.CalloutListItem{
+							types.CalloutListElement{
 								Ref: 1,
 								Elements: []interface{}{
 									types.StringElement{

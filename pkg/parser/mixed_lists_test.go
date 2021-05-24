@@ -24,7 +24,7 @@ var _ = Describe("mixed lists", func() {
 				expected := types.Document{
 					Elements: []interface{}{
 						types.OrderedList{
-							Items: []types.OrderedListItem{
+							Items: []*types.OrderedListElement{
 								{
 									Level: 1,
 									Style: types.Arabic,
@@ -37,7 +37,7 @@ var _ = Describe("mixed lists", func() {
 											},
 										},
 										types.UnorderedList{
-											Items: []types.UnorderedListItem{
+											Items: []*types.UnorderedListElement{
 												{
 													Level:       1,
 													BulletStyle: types.OneAsterisk,
@@ -82,7 +82,7 @@ var _ = Describe("mixed lists", func() {
 											},
 										},
 										types.UnorderedList{
-											Items: []types.UnorderedListItem{
+											Items: []*types.UnorderedListElement{
 												{
 													Level:       1,
 													BulletStyle: types.OneAsterisk,
@@ -128,7 +128,7 @@ var _ = Describe("mixed lists", func() {
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.Dash,
@@ -144,7 +144,7 @@ var _ = Describe("mixed lists", func() {
 											},
 										},
 										types.OrderedList{
-											Items: []types.OrderedListItem{
+											Items: []*types.OrderedListElement{
 												{
 													Level: 1,
 													Style: types.UpperRoman,
@@ -190,7 +190,7 @@ var _ = Describe("mixed lists", func() {
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.Dash,
@@ -204,7 +204,7 @@ var _ = Describe("mixed lists", func() {
 											},
 										},
 										types.OrderedList{
-											Items: []types.OrderedListItem{
+											Items: []*types.OrderedListElement{
 												{
 													Level: 1,
 													Style: types.Arabic,
@@ -217,7 +217,7 @@ var _ = Describe("mixed lists", func() {
 															},
 														},
 														types.OrderedList{
-															Items: []types.OrderedListItem{
+															Items: []*types.OrderedListElement{
 																{
 																	Level: 2,
 																	Style: types.LowerAlpha,
@@ -273,7 +273,7 @@ var _ = Describe("mixed lists", func() {
 															},
 														},
 														types.OrderedList{
-															Items: []types.OrderedListItem{
+															Items: []*types.OrderedListElement{
 																{
 																	Level: 2,
 																	Style: types.LowerRoman,
@@ -347,7 +347,7 @@ var _ = Describe("mixed lists", func() {
 											},
 										},
 										types.UnorderedList{
-											Items: []types.UnorderedListItem{
+											Items: []*types.UnorderedListElement{
 												{
 													Level:       2,
 													BulletStyle: types.OneAsterisk,
@@ -401,7 +401,7 @@ ii) ordered 1.2.ii
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.Dash,
@@ -415,7 +415,7 @@ ii) ordered 1.2.ii
 											},
 										},
 										types.OrderedList{
-											Items: []types.OrderedListItem{
+											Items: []*types.OrderedListElement{
 												{
 													Level: 1,
 													Style: types.Arabic,
@@ -428,7 +428,7 @@ ii) ordered 1.2.ii
 															},
 														},
 														types.OrderedList{
-															Items: []types.OrderedListItem{
+															Items: []*types.OrderedListElement{
 																{
 																	Level: 2,
 																	Style: types.LowerAlpha,
@@ -484,7 +484,7 @@ ii) ordered 1.2.ii
 															},
 														},
 														types.OrderedList{
-															Items: []types.OrderedListItem{
+															Items: []*types.OrderedListElement{
 																{
 																	Level: 2,
 																	Style: types.LowerRoman,
@@ -558,7 +558,7 @@ ii) ordered 1.2.ii
 											},
 										},
 										types.UnorderedList{
-											Items: []types.UnorderedListItem{
+											Items: []*types.UnorderedListElement{
 												{
 													Level:       2,
 													BulletStyle: types.OneAsterisk,
@@ -572,7 +572,7 @@ ii) ordered 1.2.ii
 															},
 														},
 														types.UnorderedList{
-															Items: []types.UnorderedListItem{
+															Items: []*types.UnorderedListElement{
 																{
 																	Level:       3,
 																	BulletStyle: types.TwoAsterisks,
@@ -642,7 +642,7 @@ ii) ordered 1.2.ii
 											},
 										},
 										types.OrderedList{
-											Items: []types.OrderedListItem{
+											Items: []*types.OrderedListElement{
 												{
 													Level: 1,
 													Style: types.Arabic,
@@ -671,7 +671,7 @@ ii) ordered 1.2.ii
 															Attributes: types.Attributes{
 																types.AttrStyle: "upperroman",
 															},
-															Items: []types.OrderedListItem{
+															Items: []*types.OrderedListElement{
 																{
 																	Level: 2,
 																	Style: types.LowerAlpha,
@@ -737,7 +737,7 @@ Operating Systems::
 							Attributes: types.Attributes{
 								types.AttrTitle: "Mixed",
 							},
-							Items: []types.LabeledListItem{
+							Items: []*types.LabeledListElement{
 								{
 									Level: 1,
 									Term: []interface{}{
@@ -747,7 +747,7 @@ Operating Systems::
 									},
 									Elements: []interface{}{
 										types.OrderedList{
-											Items: []types.OrderedListItem{
+											Items: []*types.OrderedListElement{
 												{
 													Level: 1,
 													Style: types.Arabic,
@@ -762,7 +762,7 @@ Operating Systems::
 															},
 														},
 														types.UnorderedList{
-															Items: []types.UnorderedListItem{
+															Items: []*types.UnorderedListElement{
 																{
 																	Level:       1,
 																	BulletStyle: types.OneAsterisk,
@@ -823,7 +823,7 @@ a paragraph
 							Attributes: types.Attributes{
 								types.AttrTitle: "Mixed",
 							},
-							Items: []types.LabeledListItem{
+							Items: []*types.LabeledListElement{
 								{
 									Level: 1,
 									Term: []interface{}{
@@ -833,7 +833,7 @@ a paragraph
 									},
 									Elements: []interface{}{
 										types.LabeledList{
-											Items: []types.LabeledListItem{
+											Items: []*types.LabeledListElement{
 												{
 													Level: 2,
 													Term: []interface{}{
@@ -843,7 +843,7 @@ a paragraph
 													},
 													Elements: []interface{}{
 														types.OrderedList{
-															Items: []types.OrderedListItem{
+															Items: []*types.OrderedListElement{
 																{
 																	Level: 1,
 																	Style: types.Arabic,
@@ -858,7 +858,7 @@ a paragraph
 																			},
 																		},
 																		types.UnorderedList{
-																			Items: []types.UnorderedListItem{
+																			Items: []*types.UnorderedListElement{
 																				{
 																					Level:       1,
 																					BulletStyle: types.OneAsterisk,
@@ -893,7 +893,7 @@ a paragraph
 																			},
 																		},
 																		types.UnorderedList{
-																			Items: []types.UnorderedListItem{
+																			Items: []*types.UnorderedListElement{
 																				{
 																					Level:       1,
 																					BulletStyle: types.OneAsterisk,
@@ -943,7 +943,7 @@ a paragraph
 													},
 													Elements: []interface{}{
 														types.OrderedList{
-															Items: []types.OrderedListItem{
+															Items: []*types.OrderedListElement{
 																{
 																	Level: 1,
 																	Style: types.Arabic,
@@ -991,7 +991,7 @@ a paragraph
 									},
 									Elements: []interface{}{
 										types.LabeledList{
-											Items: []types.LabeledListItem{
+											Items: []*types.LabeledListElement{
 												{
 													Level: 2,
 													Term: []interface{}{
@@ -1001,7 +1001,7 @@ a paragraph
 													},
 													Elements: []interface{}{
 														types.OrderedList{
-															Items: []types.OrderedListItem{
+															Items: []*types.OrderedListElement{
 																{
 																	Level: 1,
 																	Style: types.Arabic,
@@ -1045,7 +1045,7 @@ a paragraph
 													},
 													Elements: []interface{}{
 														types.OrderedList{
-															Items: []types.OrderedListItem{
+															Items: []*types.OrderedListElement{
 																{
 																	Level: 1,
 																	Style: types.Arabic,
@@ -1116,7 +1116,7 @@ a paragraph
 								types.AttrStyle: "lowerroman",
 								types.AttrStart: "5",
 							},
-							Items: []types.OrderedListItem{
+							Items: []*types.OrderedListElement{
 								{
 									Level: 1,
 									Style: types.Arabic, // will be overridden during rendering
@@ -1131,7 +1131,7 @@ a paragraph
 											},
 										},
 										types.OrderedList{
-											Items: []types.OrderedListItem{
+											Items: []*types.OrderedListElement{
 												{
 													Level: 2,
 													Style: types.LowerAlpha,
@@ -1188,7 +1188,7 @@ a paragraph
 								types.AttrStyle: "lowerroman",
 								types.AttrStart: "5",
 							},
-							Items: []types.OrderedListItem{
+							Items: []*types.OrderedListElement{
 								{
 									Level: 1,
 									Style: types.Arabic, // will be overridden during rendering
@@ -1206,7 +1206,7 @@ a paragraph
 											Attributes: types.Attributes{
 												types.AttrStyle: "upperalpha",
 											},
-											Items: []types.OrderedListItem{
+											Items: []*types.OrderedListElement{
 												{
 													Level: 2,
 													Style: types.LowerAlpha, // will be overridden during rendering
@@ -1277,7 +1277,7 @@ a paragraph
 								types.AttrStyle: "lowerroman",
 								types.AttrStart: "5",
 							},
-							Items: []types.OrderedListItem{
+							Items: []*types.OrderedListElement{
 								{
 									Level: 1,
 									Style: types.Arabic,
@@ -1299,7 +1299,7 @@ a paragraph
 							Attributes: types.Attributes{
 								types.AttrStyle: "upperalpha",
 							},
-							Items: []types.OrderedListItem{
+							Items: []*types.OrderedListElement{
 								{
 									Level: 1,
 									Style: types.LowerAlpha,
@@ -1314,7 +1314,7 @@ a paragraph
 											},
 										},
 										types.OrderedList{
-											Items: []types.OrderedListItem{
+											Items: []*types.OrderedListElement{
 												{
 													Level: 2,
 													Style: types.Arabic,
@@ -1356,7 +1356,7 @@ a paragraph
 							Attributes: types.Attributes{
 								types.AttrTitle: "Checklist",
 							},
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.Dash,
@@ -1398,7 +1398,7 @@ a paragraph
 							Attributes: types.Attributes{
 								types.AttrTitle: "Ordered, basic",
 							},
-							Items: []types.OrderedListItem{
+							Items: []*types.OrderedListElement{
 								{
 									Level: 1,
 									Style: types.Arabic,
@@ -1443,7 +1443,7 @@ a paragraph
 				expected := types.Document{
 					Elements: []interface{}{
 						types.OrderedList{
-							Items: []types.OrderedListItem{
+							Items: []*types.OrderedListElement{
 								{
 									Level: 1,
 									Style: types.Arabic,
@@ -1490,7 +1490,7 @@ a paragraph
 				expected := types.Document{
 					Elements: []interface{}{
 						types.OrderedList{
-							Items: []types.OrderedListItem{
+							Items: []*types.OrderedListElement{
 								{
 									Level: 1,
 									Style: types.Arabic,
@@ -1536,7 +1536,7 @@ a paragraph
 				expected := types.Document{
 					Elements: []interface{}{
 						types.OrderedList{
-							Items: []types.OrderedListItem{
+							Items: []*types.OrderedListElement{
 								{
 									Level: 1,
 									Style: types.Arabic,
@@ -1555,7 +1555,7 @@ a paragraph
 							},
 						},
 						types.OrderedList{
-							Items: []types.OrderedListItem{
+							Items: []*types.OrderedListElement{
 								{
 									Level: 1,
 									Style: types.Arabic,
@@ -1588,7 +1588,7 @@ a paragraph
 				expected := types.Document{
 					Elements: []interface{}{
 						types.OrderedList{
-							Items: []types.OrderedListItem{
+							Items: []*types.OrderedListElement{
 								{
 									Level: 1,
 									Style: types.Arabic,
@@ -1607,7 +1607,7 @@ a paragraph
 							},
 						},
 						types.OrderedList{
-							Items: []types.OrderedListItem{
+							Items: []*types.OrderedListElement{
 								{
 									Level: 1,
 									Style: types.Arabic,

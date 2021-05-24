@@ -19,7 +19,7 @@ var _ = Describe("unordered lists", func() {
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -54,7 +54,7 @@ var _ = Describe("unordered lists", func() {
 								types.AttrTitle: "mytitle",
 								types.AttrRoles: []interface{}{"myrole"},
 							},
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -84,7 +84,7 @@ var _ = Describe("unordered lists", func() {
 							Attributes: types.Attributes{
 								types.AttrTitle: "a title",
 							},
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -112,7 +112,7 @@ var _ = Describe("unordered lists", func() {
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -170,7 +170,7 @@ var _ = Describe("unordered lists", func() {
 							Attributes: types.Attributes{
 								types.AttrTitle: "Unordered list title",
 							},
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -184,7 +184,7 @@ var _ = Describe("unordered lists", func() {
 											},
 										},
 										types.UnorderedList{
-											Items: []types.UnorderedListItem{
+											Items: []*types.UnorderedListElement{
 												{
 													Level:       2,
 													BulletStyle: types.TwoAsterisks,
@@ -198,7 +198,7 @@ var _ = Describe("unordered lists", func() {
 															},
 														},
 														types.UnorderedList{
-															Items: []types.UnorderedListItem{
+															Items: []*types.UnorderedListElement{
 																{
 																	Level:       3,
 																	BulletStyle: types.ThreeAsterisks,
@@ -244,7 +244,7 @@ var _ = Describe("unordered lists", func() {
 															},
 														},
 														types.UnorderedList{
-															Items: []types.UnorderedListItem{
+															Items: []*types.UnorderedListElement{
 																{
 																	Level:       3,
 																	BulletStyle: types.ThreeAsterisks,
@@ -308,7 +308,7 @@ var _ = Describe("unordered lists", func() {
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.Dash,
@@ -359,7 +359,7 @@ var _ = Describe("unordered lists", func() {
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.Dash,
@@ -373,7 +373,7 @@ var _ = Describe("unordered lists", func() {
 											},
 										},
 										types.UnorderedList{
-											Items: []types.UnorderedListItem{
+											Items: []*types.UnorderedListElement{
 												{
 													Level:       2,
 													BulletStyle: types.OneAsterisk,
@@ -405,7 +405,7 @@ var _ = Describe("unordered lists", func() {
 											},
 										},
 										types.UnorderedList{
-											Items: []types.UnorderedListItem{
+											Items: []*types.UnorderedListElement{
 												{
 													Level:       2,
 													BulletStyle: types.OneAsterisk,
@@ -419,7 +419,7 @@ var _ = Describe("unordered lists", func() {
 															},
 														},
 														types.UnorderedList{
-															Items: []types.UnorderedListItem{
+															Items: []*types.UnorderedListElement{
 																{
 																	Level:       3,
 																	BulletStyle: types.TwoAsterisks,
@@ -457,7 +457,7 @@ var _ = Describe("unordered lists", func() {
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -506,7 +506,7 @@ on 2 lines, too.`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -556,7 +556,7 @@ on 2 lines, too.`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -604,7 +604,7 @@ on 2 lines, too.`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -618,7 +618,7 @@ on 2 lines, too.`
 											},
 										},
 										types.UnorderedList{
-											Items: []types.UnorderedListItem{
+											Items: []*types.UnorderedListElement{
 												{
 													Level:       2,
 													BulletStyle: types.TwoAsterisks,
@@ -646,7 +646,7 @@ on 2 lines, too.`
 															},
 														},
 														types.UnorderedList{
-															Items: []types.UnorderedListItem{
+															Items: []*types.UnorderedListElement{
 																{
 																	Level:       3,
 																	BulletStyle: types.ThreeAsterisks,
@@ -710,7 +710,7 @@ on 2 lines, too.`
 											},
 										},
 										types.UnorderedList{
-											Items: []types.UnorderedListItem{
+											Items: []*types.UnorderedListElement{
 												{
 													Level:       2,
 													BulletStyle: types.TwoAsterisks,
@@ -750,7 +750,7 @@ on 2 lines, too.`
 							Attributes: types.Attributes{
 								types.AttrTitle: "Unordered, max nesting",
 							},
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -766,7 +766,7 @@ on 2 lines, too.`
 											},
 										},
 										types.UnorderedList{
-											Items: []types.UnorderedListItem{
+											Items: []*types.UnorderedListElement{
 												{
 													Level:       2,
 													BulletStyle: types.TwoAsterisks,
@@ -782,7 +782,7 @@ on 2 lines, too.`
 															},
 														},
 														types.UnorderedList{
-															Items: []types.UnorderedListItem{
+															Items: []*types.UnorderedListElement{
 																{
 																	Level:       3,
 																	BulletStyle: types.ThreeAsterisks,
@@ -798,7 +798,7 @@ on 2 lines, too.`
 																			},
 																		},
 																		types.UnorderedList{
-																			Items: []types.UnorderedListItem{
+																			Items: []*types.UnorderedListElement{
 																				{
 																					Level:       4,
 																					BulletStyle: types.FourAsterisks,
@@ -814,7 +814,7 @@ on 2 lines, too.`
 																							},
 																						},
 																						types.UnorderedList{
-																							Items: []types.UnorderedListItem{
+																							Items: []*types.UnorderedListElement{
 																								{
 																									Level:       5,
 																									BulletStyle: types.FiveAsterisks,
@@ -884,7 +884,7 @@ on 2 lines, too.`
 							Attributes: types.Attributes{
 								types.AttrTitle: "Unordered, max nesting",
 							},
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -900,7 +900,7 @@ on 2 lines, too.`
 											},
 										},
 										types.UnorderedList{
-											Items: []types.UnorderedListItem{
+											Items: []*types.UnorderedListElement{
 												{
 													Level:       2,
 													BulletStyle: types.TwoAsterisks,
@@ -916,7 +916,7 @@ on 2 lines, too.`
 															},
 														},
 														types.UnorderedList{
-															Items: []types.UnorderedListItem{
+															Items: []*types.UnorderedListElement{
 																{
 																	Level:       3,
 																	BulletStyle: types.ThreeAsterisks,
@@ -932,7 +932,7 @@ on 2 lines, too.`
 																			},
 																		},
 																		types.UnorderedList{
-																			Items: []types.UnorderedListItem{
+																			Items: []*types.UnorderedListElement{
 																				{
 																					Level:       4,
 																					BulletStyle: types.FourAsterisks,
@@ -948,7 +948,7 @@ on 2 lines, too.`
 																							},
 																						},
 																						types.UnorderedList{
-																							Items: []types.UnorderedListItem{
+																							Items: []*types.UnorderedListElement{
 																								{
 																									Level:       5,
 																									BulletStyle: types.FiveAsterisks,
@@ -1009,7 +1009,7 @@ on 2 lines, too.`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -1044,7 +1044,7 @@ on 2 lines, too.`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -1058,7 +1058,7 @@ on 2 lines, too.`
 											},
 										},
 										types.UnorderedList{
-											Items: []types.UnorderedListItem{
+											Items: []*types.UnorderedListElement{
 												{
 													Level:       2,
 													BulletStyle: types.TwoAsterisks,
@@ -1072,7 +1072,7 @@ on 2 lines, too.`
 															},
 														},
 														types.UnorderedList{
-															Items: []types.UnorderedListItem{
+															Items: []*types.UnorderedListElement{
 																{
 																	Level:       3,
 																	BulletStyle: types.ThreeAsterisks,
@@ -1162,7 +1162,7 @@ another delimited block
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -1232,7 +1232,7 @@ The {plus} symbol is on a new line.
 							Attributes: types.Attributes{
 								types.AttrTitle: "Unordered, complex",
 							},
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -1248,7 +1248,7 @@ The {plus} symbol is on a new line.
 											},
 										},
 										types.UnorderedList{
-											Items: []types.UnorderedListItem{
+											Items: []*types.UnorderedListElement{
 												{
 													Level:       2,
 													BulletStyle: types.TwoAsterisks,
@@ -1264,7 +1264,7 @@ The {plus} symbol is on a new line.
 															},
 														},
 														types.UnorderedList{
-															Items: []types.UnorderedListItem{
+															Items: []*types.UnorderedListElement{
 																{
 																	Level:       3,
 																	BulletStyle: types.ThreeAsterisks,
@@ -1302,7 +1302,7 @@ The {plus} symbol is on a new line.
 																			},
 																		},
 																		types.UnorderedList{
-																			Items: []types.UnorderedListItem{
+																			Items: []*types.UnorderedListElement{
 																				{
 																					Level:       4,
 																					BulletStyle: types.FourAsterisks,
@@ -1335,7 +1335,7 @@ The {plus} symbol is on a new line.
 																						},
 
 																						types.UnorderedList{
-																							Items: []types.UnorderedListItem{
+																							Items: []*types.UnorderedListElement{
 																								{
 																									Level:       5,
 																									BulletStyle: types.FiveAsterisks,
@@ -1387,7 +1387,7 @@ another delimited block
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -1412,7 +1412,7 @@ another delimited block
 							},
 						},
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -1431,9 +1431,9 @@ another delimited block
 						},
 						types.ListingBlock{
 							Elements: []interface{}{
-									types.StringElement{
-										Content: "another delimited block",
-									},
+								types.StringElement{
+									Content: "another delimited block",
+								},
 							},
 						},
 					},
@@ -1455,7 +1455,7 @@ paragraph attached to grandparent list item`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -1469,7 +1469,7 @@ paragraph attached to grandparent list item`
 											},
 										},
 										types.UnorderedList{
-											Items: []types.UnorderedListItem{
+											Items: []*types.UnorderedListElement{
 												{
 													Level:       2,
 													BulletStyle: types.TwoAsterisks,
@@ -1483,7 +1483,7 @@ paragraph attached to grandparent list item`
 															},
 														},
 														types.UnorderedList{
-															Items: []types.UnorderedListItem{
+															Items: []*types.UnorderedListElement{
 																{
 																	Level:       3,
 																	BulletStyle: types.ThreeAsterisks,
@@ -1530,7 +1530,7 @@ paragraph attached to parent list item`
 				expected := types.Document{
 					Elements: []interface{}{
 						types.UnorderedList{
-							Items: []types.UnorderedListItem{
+							Items: []*types.UnorderedListElement{
 								{
 									Level:       1,
 									BulletStyle: types.OneAsterisk,
@@ -1544,7 +1544,7 @@ paragraph attached to parent list item`
 											},
 										},
 										types.UnorderedList{
-											Items: []types.UnorderedListItem{
+											Items: []*types.UnorderedListElement{
 												{
 													Level:       2,
 													BulletStyle: types.TwoAsterisks,
@@ -1558,7 +1558,7 @@ paragraph attached to parent list item`
 															},
 														},
 														types.UnorderedList{
-															Items: []types.UnorderedListItem{
+															Items: []*types.UnorderedListElement{
 																{
 																	Level:       3,
 																	BulletStyle: types.ThreeAsterisks,

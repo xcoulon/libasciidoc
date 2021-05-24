@@ -15,7 +15,7 @@ func AssembleFragments(done <-chan interface{}, fragmentStream <-chan types.Docu
 			for _, fragment := range AssembleFragmentElements(fragments) {
 				select {
 				case <-done:
-					log.WithField("stage", "fragment_assembling").Debug("received 'done' signal")
+					log.WithField("pipeline_stage", "fragment_assembling").Debug("received 'done' signal")
 					return
 				case assembledFragmentStream <- fragment:
 				}
@@ -38,10 +38,10 @@ func AssembleFragmentElements(f types.DocumentFragmentGroup) []types.DocumentFra
 	}
 	result := make([]types.DocumentFragment, 0, len(f.Content))
 	var attributes types.Attributes
-	var block types.BlockWithNestedElements // a delimited block or a paragraph
+	var block types.WithElementAddition // a delimited block, a paragraph or a list
 	for i, e := range f.Content {
 		if log.IsLevelEnabled(log.DebugLevel) {
-			log.WithField("state", "fragment_assembling").Debugf("assembling fragment content of type '%T'", e)
+			log.WithField("pipeline_stage", "fragment_assembling").Debugf("assembling fragment content of type '%T'", e)
 		}
 		switch e := e.(type) {
 		case types.Attributes:
@@ -57,7 +57,6 @@ func AssembleFragmentElements(f types.DocumentFragmentGroup) []types.DocumentFra
 			// send the section block downstream
 			result = append(result, types.NewDocumentFragment(f.LineOffset, e))
 		case types.BlockDelimiter:
-			// TODO: support nested blocks with the help of a Stack object?
 			if block == nil {
 				block = types.NewDelimitedBlock(e.Kind, attributes)
 				attributes = nil // reset
@@ -71,23 +70,54 @@ func AssembleFragmentElements(f types.DocumentFragmentGroup) []types.DocumentFra
 				attributes = nil // reset
 				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
 			}
-			block.AddElement(e)
+			if err := block.AddElement(e); err != nil {
+				fr := types.NewDocumentFragment(f.LineOffset, block)
+				fr.Error = errors.Wrap(err, "unable to assemble fragments")
+				result = append(result, fr)
+				continue
+			}
 		case types.SingleLineComment, *types.ImageBlock:
 			result = append(result, types.NewDocumentFragment(f.LineOffset+i, e))
 		case types.BlankLine:
-			// skip unless we're in a delimited block
-			if b, ok := block.(*types.DelimitedBlock); ok {
+			// skip unless we're in a delimited block or in a list
+			switch b := block.(type) {
+			case *types.DelimitedBlock:
 				b.AddElement(e)
+			case *types.GenericList:
+				b.AddElement(e)
+			}
+		case types.ListElement: // TODO: use common interface for all list item types
+			e.SetAttributes(attributes)
+			attributes = nil // reset
+			// if there is no "root" list yet, create one
+			if block == nil {
+				var err error
+				block, err = types.NewList(e)
+				if err != nil {
+					fr := types.NewDocumentFragment(f.LineOffset, block)
+					fr.Error = errors.Wrap(err, "unable to assemble fragments")
+					result = append(result, fr)
+					continue
+				}
+				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
+				continue
+			}
+			// add the element to the list
+			if err := block.AddElement(e); err != nil {
+				fr := types.NewDocumentFragment(f.LineOffset, block)
+				fr.Error = errors.Wrap(err, "unable to assemble fragments")
+				result = append(result, fr)
+				continue
 			}
 		default:
 			// unknow type fragment element: set an error on the fragment and send it downstream
 			fr := types.NewDocumentFragment(f.LineOffset, block)
-			fr.Error = errors.Errorf("unexpected type of element on line %d: '%T'", f.LineOffset+i, e)
+			fr.Error = errors.Errorf("unable to assemble fragments: unexpected type of element on line %d: '%T'", f.LineOffset+i, e)
 			result = append(result, fr)
 		}
 	}
 	if log.IsLevelEnabled(log.DebugLevel) {
-		log.WithField("state", "fragment_assembling").Debugf("assembled fragments: %s", spew.Sdump(result))
+		log.WithField("pipeline_stage", "fragment_assembling").Debugf("assembled fragments: %s", spew.Sdump(result))
 	}
 
 	return result

@@ -12,28 +12,106 @@ var _ = Describe("ordered lists", func() {
 
 	Context("in final documents", func() {
 
-		Context("ordered list item alone", func() {
-
-			// same single item in the list for each test in this context
-			elements := []interface{}{
-				types.Paragraph{
-					Lines: [][]interface{}{
-						{
-							types.StringElement{Content: "item"},
-						},
+		// same single item in the list for each test in this context
+		elements := []interface{}{
+			&types.Paragraph{
+				Elements: []interface{}{
+					types.StringElement{
+						Content: "item",
 					},
 				},
-			}
+			},
+		}
+
+		Context("ordered list item alone", func() {
+
+			It("ordered list item with implicit numbering style on a single line", func() {
+				source := `. item on a single line`
+				expected := types.Document{
+					Elements: []interface{}{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
+									Level: 1,
+									Style: types.Arabic,
+									Elements: []interface{}{
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "item on a single line",
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
+			})
+
+			It("ordered list item with implicit numbering style on multiple lines", func() {
+				source := `. item 
+on 
+multiple 
+lines
+`
+				expected := types.Document{
+					Elements: []interface{}{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
+									Level: 1,
+									Style: types.Arabic,
+									Elements: []interface{}{
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "item \non \nmultiple \nlines",
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
+			})
 
 			It("ordered list item with implicit numbering style", func() {
+				source := `. item`
+				expected := types.Document{
+					Elements: []interface{}{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
+									Level:    1,
+									Style:    types.Arabic,
+									Elements: elements,
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
+			})
+
+			It("ordered list item with implicit adjusted level and numbering style", func() {
 				source := `.. item`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []types.OrderedListItem{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
 									Level:    1,
-									Style:    types.LowerAlpha,
+									Style:    types.Arabic,
 									Elements: elements,
 								},
 							},
@@ -47,9 +125,10 @@ var _ = Describe("ordered lists", func() {
 				source := `1. item`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []types.OrderedListItem{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
 									Level:    1,
 									Style:    types.Arabic,
 									Elements: elements,
@@ -65,9 +144,10 @@ var _ = Describe("ordered lists", func() {
 				source := `b. item`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []types.OrderedListItem{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
 									Level:    1,
 									Style:    types.LowerAlpha,
 									Elements: elements,
@@ -83,10 +163,10 @@ var _ = Describe("ordered lists", func() {
 				source := `B. item`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []types.OrderedListItem{
-								{
-
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
 									Level:    1,
 									Style:    types.UpperAlpha,
 									Elements: elements,
@@ -102,9 +182,10 @@ var _ = Describe("ordered lists", func() {
 				source := `i) item`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []types.OrderedListItem{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
 									Level:    1,
 									Style:    types.LowerRoman,
 									Elements: elements,
@@ -120,9 +201,10 @@ var _ = Describe("ordered lists", func() {
 				source := `I) item`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []types.OrderedListItem{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
 									Level:    1,
 									Style:    types.UpperRoman,
 									Elements: elements,
@@ -138,17 +220,105 @@ var _ = Describe("ordered lists", func() {
 				source := `. {amp}`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []types.OrderedListItem{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
 									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.PredefinedAttribute{Name: "amp"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.PredefinedAttribute{Name: "amp"},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
+			})
+
+			It("ordered list item with explicit start only", func() {
+				source := `[start=5]
+. item`
+				expected := types.Document{
+					Elements: []interface{}{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Attributes: types.Attributes{
+								"start": "5",
+							},
+							Elements: []interface{}{
+								&types.OrderedListElement{
+									Level:    1,
+									Style:    types.Arabic,
+									Elements: elements,
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
+			})
+
+			It("ordered list item with explicit quoted numbering and start", func() {
+				source := `["lowerroman", start="5"]
+. item`
+				expected := types.Document{
+					Elements: []interface{}{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Attributes: types.Attributes{
+								types.AttrStyle: "lowerroman", // will be used during rendering
+								"start":         "5",
+							},
+							Elements: []interface{}{
+								&types.OrderedListElement{
+									Level:    1,
+									Style:    types.Arabic, // will be overridden during rendering
+									Elements: elements,
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
+			})
+
+		})
+
+		Context("items without numbers", func() {
+
+			It("ordered list with simple unnumbered items", func() {
+				source := `. a
+. b`
+
+				expected := types.Document{
+					Elements: []interface{}{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
+									Level: 1,
+									Style: types.Arabic,
+									Elements: []interface{}{
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "a"},
+											},
+										},
+									},
+								},
+								&types.OrderedListElement{
+									Level: 1,
+									Style: types.Arabic,
+									Elements: []interface{}{
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "b"},
 											},
 										},
 									},
@@ -166,365 +336,21 @@ var _ = Describe("ordered lists", func() {
 . item`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
 							Attributes: types.Attributes{
 								types.AttrStyle: "lowerroman", // will be used during rendering
 							},
-							Items: []types.OrderedListItem{
-								{
+							Elements: []interface{}{
+								&types.OrderedListElement{
 									Level:    1,
 									Style:    types.Arabic, // will be overridden during rendering
 									Elements: elements,
 								},
-								{
+								&types.OrderedListElement{
 									Level:    1,
 									Style:    types.Arabic, // will be overridden during rendering
 									Elements: elements,
-								},
-							},
-						},
-					},
-				}
-				Expect(ParseDocument(source)).To(MatchDocument(expected))
-			})
-
-			It("ordered list item with explicit start only", func() {
-				source := `[start=5]
-. item`
-				expected := types.Document{
-					Elements: []interface{}{
-						types.OrderedList{
-							Attributes: types.Attributes{
-								"start": "5",
-							},
-							Items: []types.OrderedListItem{
-								{
-									Level:    1,
-									Style:    types.Arabic,
-									Elements: elements,
-								},
-							},
-						},
-					},
-				}
-				Expect(ParseDocument(source)).To(MatchDocument(expected))
-			})
-
-			It("ordered list item with explicit quoted numbering and start", func() {
-				source := `["lowerroman", start="5"]
-. item`
-				expected := types.Document{
-					Elements: []interface{}{
-						types.OrderedList{
-							Attributes: types.Attributes{
-								types.AttrStyle: "lowerroman", // will be used during rendering
-								"start":         "5",
-							},
-							Items: []types.OrderedListItem{
-								{
-									Level:    1,
-									Style:    types.Arabic, // will be overridden during rendering
-									Elements: elements,
-								},
-							},
-						},
-					},
-				}
-				Expect(ParseDocument(source)).To(MatchDocument(expected))
-			})
-
-			It("max level of ordered items - case 1", func() {
-				source := `.Ordered, max nesting
-. level 1
-.. level 2
-... level 3
-.... level 4
-..... level 5
-. level 1`
-				expected := types.Document{
-					Elements: []interface{}{
-						types.OrderedList{
-							Attributes: types.Attributes{
-								types.AttrTitle: "Ordered, max nesting",
-							},
-							Items: []types.OrderedListItem{
-								{
-									Level: 1,
-									Style: types.Arabic,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "level 1",
-													},
-												},
-											},
-										},
-										types.OrderedList{
-											Items: []types.OrderedListItem{
-												{
-													Level: 2,
-													Style: types.LowerAlpha,
-													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{
-																		Content: "level 2",
-																	},
-																},
-															},
-														},
-														types.OrderedList{
-															Items: []types.OrderedListItem{
-																{
-																	Level: 3,
-																	Style: types.LowerRoman,
-																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{
-																						Content: "level 3",
-																					},
-																				},
-																			},
-																		},
-																		types.OrderedList{
-																			Items: []types.OrderedListItem{
-																				{
-																					Level: 4,
-																					Style: types.UpperAlpha,
-																					Elements: []interface{}{
-																						types.Paragraph{
-																							Lines: [][]interface{}{
-																								{
-																									types.StringElement{
-																										Content: "level 4",
-																									},
-																								},
-																							},
-																						},
-																						types.OrderedList{
-																							Items: []types.OrderedListItem{
-																								{
-																									Level: 5,
-																									Style: types.UpperRoman,
-																									Elements: []interface{}{
-																										types.Paragraph{
-																											Lines: [][]interface{}{
-																												{
-																													types.StringElement{
-																														Content: "level 5",
-																													},
-																												},
-																											},
-																										},
-																									},
-																								},
-																							},
-																						},
-																					},
-																				},
-																			},
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-								{
-									Level: 1,
-									Style: types.Arabic,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "level 1",
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				}
-				Expect(ParseDocument(source)).To(MatchDocument(expected))
-			})
-
-			It("max level of ordered items - case 2", func() {
-				source := `.Ordered, max nesting
-. level 1
-.. level 2
-... level 3
-.... level 4
-..... level 5
-.. level 2b`
-				expected := types.Document{
-					Elements: []interface{}{
-						types.OrderedList{
-							Attributes: types.Attributes{
-								types.AttrTitle: "Ordered, max nesting",
-							},
-							Items: []types.OrderedListItem{
-								{
-									Level: 1,
-									Style: types.Arabic,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "level 1",
-													},
-												},
-											},
-										},
-										types.OrderedList{
-											Items: []types.OrderedListItem{
-												{
-													Level: 2,
-													Style: types.LowerAlpha,
-													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{
-																		Content: "level 2",
-																	},
-																},
-															},
-														},
-														types.OrderedList{
-															Items: []types.OrderedListItem{
-																{
-																	Level: 3,
-																	Style: types.LowerRoman,
-																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{
-																						Content: "level 3",
-																					},
-																				},
-																			},
-																		},
-																		types.OrderedList{
-																			Items: []types.OrderedListItem{
-																				{
-																					Level: 4,
-																					Style: types.UpperAlpha,
-																					Elements: []interface{}{
-																						types.Paragraph{
-																							Lines: [][]interface{}{
-																								{
-																									types.StringElement{
-																										Content: "level 4",
-																									},
-																								},
-																							},
-																						},
-																						types.OrderedList{
-																							Items: []types.OrderedListItem{
-																								{
-																									Level: 5,
-																									Style: types.UpperRoman,
-																									Elements: []interface{}{
-																										types.Paragraph{
-																											Lines: [][]interface{}{
-																												{
-																													types.StringElement{
-																														Content: "level 5",
-																													},
-																												},
-																											},
-																										},
-																									},
-																								},
-																							},
-																						},
-																					},
-																				},
-																			},
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-												{
-													Level: 2,
-													Style: types.LowerAlpha,
-													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{
-																		Content: "level 2b",
-																	},
-																},
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				}
-				Expect(ParseDocument(source)).To(MatchDocument(expected))
-			})
-		})
-
-		Context("items without numbers", func() {
-
-			It("ordered list with simple unnumbered items", func() {
-				source := `. a
-. b`
-
-				expected := types.Document{
-					Elements: []interface{}{
-						types.OrderedList{
-							Items: []types.OrderedListItem{
-								{
-									Level: 1,
-									Style: types.Arabic,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "a"},
-												},
-											},
-										},
-									},
-								},
-								{
-									Level: 1,
-									Style: types.Arabic,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "b"},
-												},
-											},
-										},
-									},
 								},
 							},
 						},
@@ -539,30 +365,27 @@ var _ = Describe("ordered lists", func() {
 
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []types.OrderedListItem{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
 									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "item 1"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "item 1"},
 											},
 										},
 									},
 								},
-								{
+								&types.OrderedListElement{
 									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "item 2"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "item 2"},
 											},
 										},
 									},
@@ -587,59 +410,54 @@ var _ = Describe("ordered lists", func() {
 
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []types.OrderedListItem{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
 									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "item 1"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "item 1"},
 											},
 										},
-										types.OrderedList{
-											Items: []types.OrderedListItem{
-												{
+										&types.GenericList{
+											Kind: types.OrderedListKind,
+											Elements: []interface{}{
+												&types.OrderedListElement{
 													Level: 2,
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "item 1.1"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "item 1.1"},
 															},
 														},
-														types.OrderedList{
+														&types.GenericList{
+															Kind: types.OrderedListKind,
 															Attributes: types.Attributes{
 																types.AttrStyle: "upperroman",
 															},
-															Items: []types.OrderedListItem{
-																{
+															Elements: []interface{}{
+																&types.OrderedListElement{
 																	Level: 3,
 																	Style: types.LowerRoman, // will be overridden during rendering
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "item 1.1.1"},
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "item 1.1.1"},
 																			},
 																		},
 																	},
 																},
-																{
+																&types.OrderedListElement{
 																	Level: 3,
 																	Style: types.LowerRoman, // will be overridden during rendering
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "item 1.1.2"},
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "item 1.1.2"},
 																			},
 																		},
 																	},
@@ -648,15 +466,13 @@ var _ = Describe("ordered lists", func() {
 														},
 													},
 												},
-												{
+												&types.OrderedListElement{
 													Level: 2,
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "item 1.2"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "item 1.2"},
 															},
 														},
 													},
@@ -665,28 +481,25 @@ var _ = Describe("ordered lists", func() {
 										},
 									},
 								},
-								{
+								&types.OrderedListElement{
 									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "item 2"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "item 2"},
 											},
 										},
-										types.OrderedList{
-											Items: []types.OrderedListItem{
-												{
+										&types.GenericList{
+											Kind: types.OrderedListKind,
+											Elements: []interface{}{
+												&types.OrderedListElement{
 													Level: 2,
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "item 2.1"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "item 2.1"},
 															},
 														},
 													},
@@ -719,69 +532,158 @@ var _ = Describe("ordered lists", func() {
 `
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []types.OrderedListItem{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
 									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "level 1"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "level 1"},
 											},
 										},
-										types.OrderedList{
-											Items: []types.OrderedListItem{
-												{
+										&types.GenericList{
+											Kind: types.OrderedListKind,
+											Elements: []interface{}{
+												&types.OrderedListElement{
 													Level: 2,
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "level 2"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "level 2"},
 															},
 														},
-														types.OrderedList{
-															Items: []types.OrderedListItem{
-																{
+														&types.GenericList{
+															Kind: types.OrderedListKind,
+															Elements: []interface{}{
+																&types.OrderedListElement{
 																	Level: 3,
 																	Style: types.LowerRoman,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "level 3"},
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "level 3"},
 																			},
 																		},
-																		types.OrderedList{
-																			Items: []types.OrderedListItem{
-																				{
+																		&types.GenericList{
+																			Kind: types.OrderedListKind,
+																			Elements: []interface{}{
+																				&types.OrderedListElement{
 																					Level: 4,
 																					Style: types.UpperAlpha,
 																					Elements: []interface{}{
-																						types.Paragraph{
-																							Lines: [][]interface{}{
-																								{
-																									types.StringElement{Content: "level 4"},
+																						&types.Paragraph{
+																							Elements: []interface{}{
+																								types.StringElement{Content: "level 4"},
+																							},
+																						},
+																						&types.GenericList{
+																							Kind: types.OrderedListKind,
+																							Elements: []interface{}{
+																								&types.OrderedListElement{
+																									Level: 5,
+																									Style: types.UpperRoman,
+																									Elements: []interface{}{
+																										&types.Paragraph{
+																											Elements: []interface{}{
+																												types.StringElement{Content: "level 5."},
+																											},
+																										},
+																									},
 																								},
 																							},
 																						},
-																						types.OrderedList{
-																							Items: []types.OrderedListItem{
-																								{
+																					},
+																				},
+																			},
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
+			})
+
+			It("ordered list with all default styles and blank lines", func() {
+				source := `. level 1
+.. level 2
+... level 3
+.... level 4
+..... level 5.
+`
+				expected := types.Document{
+					Elements: []interface{}{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
+									Level: 1,
+									Style: types.Arabic,
+									Elements: []interface{}{
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "level 1"},
+											},
+										},
+										&types.GenericList{
+											Kind: types.OrderedListKind,
+											Elements: []interface{}{
+												&types.OrderedListElement{
+													Level: 2,
+													Style: types.LowerAlpha,
+													Elements: []interface{}{
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "level 2"},
+															},
+														},
+														&types.GenericList{
+															Kind: types.OrderedListKind,
+															Elements: []interface{}{
+																&types.OrderedListElement{
+																	Level: 3,
+																	Style: types.LowerRoman,
+																	Elements: []interface{}{
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "level 3"},
+																			},
+																		},
+																		&types.GenericList{
+																			Kind: types.OrderedListKind,
+																			Elements: []interface{}{
+																				&types.OrderedListElement{
+																					Level: 4,
+																					Style: types.UpperAlpha,
+																					Elements: []interface{}{
+																						&types.Paragraph{
+																							Elements: []interface{}{
+																								types.StringElement{Content: "level 4"},
+																							},
+																						},
+																						&types.GenericList{
+																							Kind: types.OrderedListKind,
+																							Elements: []interface{}{
+																								&types.OrderedListElement{
 																									Level: 5,
 																									Style: types.UpperRoman,
 																									Elements: []interface{}{
 																										types.Paragraph{
-																											Lines: [][]interface{}{
-																												{
-																													types.StringElement{Content: "level 5."},
-																												},
+																											Elements: []interface{}{
+																												types.StringElement{Content: "level 5."},
 																											},
 																										},
 																									},
@@ -817,29 +719,147 @@ var _ = Describe("ordered lists", func() {
 2. b`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []types.OrderedListItem{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
 									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "a"},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "a"},
+											},
+										},
+									},
+								},
+								&types.OrderedListElement{
+									Level: 1,
+									Style: types.Arabic,
+									Elements: []interface{}{
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "b"},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				}
+				Expect(ParseDocument(source)).To(MatchDocument(expected))
+			})
+
+			It("max level of ordered items - case 1", func() {
+				source := `.Ordered, max nesting
+. level 1
+.. level 2
+... level 3
+.... level 4
+..... level 5
+. level 1`
+				expected := types.Document{
+					Elements: []interface{}{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Attributes: types.Attributes{
+								types.AttrTitle: "Ordered, max nesting",
+							},
+							Elements: []interface{}{
+								&types.OrderedListElement{
+									Level: 1,
+									Style: types.Arabic,
+									Elements: []interface{}{
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "level 1",
+												},
+											},
+										},
+										&types.GenericList{
+											Kind: types.OrderedListKind,
+											Elements: []interface{}{
+												&types.OrderedListElement{
+													Level: 2,
+													Style: types.LowerAlpha,
+													Elements: []interface{}{
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{
+																	Content: "level 2",
+																},
+															},
+														},
+														&types.GenericList{
+															Kind: types.OrderedListKind,
+															Elements: []interface{}{
+																&types.OrderedListElement{
+																	Level: 3,
+																	Style: types.LowerRoman,
+																	Elements: []interface{}{
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{
+																					Content: "level 3",
+																				},
+																			},
+																		},
+																		&types.GenericList{
+																			Kind: types.OrderedListKind,
+																			Elements: []interface{}{
+																				&types.OrderedListElement{
+																					Level: 4,
+																					Style: types.UpperAlpha,
+																					Elements: []interface{}{
+																						&types.Paragraph{
+																							Elements: []interface{}{
+																								types.StringElement{
+																									Content: "level 4",
+																								},
+																							},
+																						},
+																						&types.GenericList{
+																							Kind: types.OrderedListKind,
+																							Elements: []interface{}{
+																								&types.OrderedListElement{
+																									Level: 5,
+																									Style: types.UpperRoman,
+																									Elements: []interface{}{
+																										&types.Paragraph{
+																											Elements: []interface{}{
+																												types.StringElement{
+																													Content: "level 5",
+																												},
+																											},
+																										},
+																									},
+																								},
+																							},
+																						},
+																					},
+																				},
+																			},
+																		},
+																	},
+																},
+															},
+														},
+													},
 												},
 											},
 										},
 									},
 								},
-								{
+								&types.OrderedListElement{
 									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "b"},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "level 1",
 												},
 											},
 										},
@@ -859,30 +879,28 @@ a. item 1.a
 b. item 2.a`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []types.OrderedListItem{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
 									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "item 1"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "item 1"},
 											},
 										},
-										types.OrderedList{
-											Items: []types.OrderedListItem{
-												{
+										&types.GenericList{
+											Kind: types.OrderedListKind,
+											Elements: []interface{}{
+												&types.OrderedListElement{
 													Level: 2,
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "item 1.a"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "item 1.a"},
 															},
 														},
 													},
@@ -891,28 +909,25 @@ b. item 2.a`
 										},
 									},
 								},
-								{
+								&types.OrderedListElement{
 									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "item 2"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "item 2"},
 											},
 										},
-										types.OrderedList{
-											Items: []types.OrderedListItem{
-												{
+										&types.GenericList{
+											Kind: types.OrderedListKind,
+											Elements: []interface{}{
+												&types.OrderedListElement{
 													Level: 2,
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "item 2.a"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "item 2.a"},
 															},
 														},
 													},
@@ -945,17 +960,16 @@ another delimited block
 `
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []types.OrderedListItem{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
 									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "foo"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "foo"},
 											},
 										},
 										types.ListingBlock{
@@ -974,15 +988,13 @@ another delimited block
 										},
 									},
 								},
-								{
+								&types.OrderedListElement{
 									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "bar"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "bar"},
 											},
 										},
 									},
@@ -1007,17 +1019,16 @@ print("two")
 ----`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []types.OrderedListItem{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []interface{}{
+								&types.OrderedListElement{
 									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.PredefinedAttribute{Name: "blank"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.PredefinedAttribute{Name: "blank"},
 											},
 										},
 										types.ListingBlock{
@@ -1029,15 +1040,13 @@ print("two")
 										},
 									},
 								},
-								{
+								&types.OrderedListElement{
 									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.PredefinedAttribute{Name: "blank"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.PredefinedAttribute{Name: "blank"},
 											},
 										},
 										types.ListingBlock{

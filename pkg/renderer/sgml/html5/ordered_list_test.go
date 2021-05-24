@@ -9,6 +9,37 @@ import (
 
 var _ = Describe("ordered lists", func() {
 
+	It("ordered list item with implicit numbering style on a single line", func() {
+		source := `. item on a single line`
+		expected := `<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>item on a single line</p>
+</li>
+</ol>
+</div>`
+		Expect(RenderHTML(source)).To(MatchHTML(expected))
+	})
+
+	It("ordered list item with implicit numbering style on multiple lines", func() {
+		source := `. item 
+	on 
+	multiple 
+	lines
+`
+		expected := `<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>item
+on
+multiple
+lines</p>
+</li>
+</ol>
+</div>`
+		Expect(RenderHTML(source)).To(MatchHTML(expected))
+	})
+
 	It("ordered list with title and role", func() {
 		source := `.title
 [#myid]

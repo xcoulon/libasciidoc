@@ -155,7 +155,7 @@ a note
 							},
 						},
 						types.CalloutList{
-							Items: []types.CalloutListItem{
+							Items: []*types.CalloutListElement{
 								{
 									Ref: 1,
 									Elements: []interface{}{

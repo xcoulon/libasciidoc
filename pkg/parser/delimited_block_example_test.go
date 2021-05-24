@@ -125,7 +125,7 @@ with _italic content_
 										},
 									},
 									types.BlankLine{},
-									types.UnorderedListItem{
+									types.UnorderedListElement{
 										Level:       1,
 										BulletStyle: types.OneAsterisk,
 										CheckStyle:  types.NoCheck,
@@ -388,7 +388,7 @@ with *bold content*
 								},
 								types.BlankLine{},
 								types.UnorderedList{
-									Items: []types.UnorderedListItem{
+									Items: []*types.UnorderedListElement{
 										{
 											Level:       1,
 											BulletStyle: types.OneAsterisk,
