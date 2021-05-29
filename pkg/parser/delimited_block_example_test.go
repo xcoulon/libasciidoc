@@ -126,7 +126,6 @@ with _italic content_
 									},
 									types.BlankLine{},
 									types.UnorderedListElement{
-										Level:       1,
 										BulletStyle: types.OneAsterisk,
 										CheckStyle:  types.NoCheck,
 										Elements: []interface{}{
@@ -390,7 +389,6 @@ with *bold content*
 								types.UnorderedList{
 									Items: []*types.UnorderedListElement{
 										{
-											Level:       1,
 											BulletStyle: types.OneAsterisk,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{

@@ -917,8 +917,8 @@ type List interface {
 type ListElement interface { // TODO: convert to struct and use as composant in OrderedListElement, etc.
 	WithElements
 	ListKind() ListKind
-	GetLevel() int
-	SetLevel(int)
+	adjustStyle(ListElement)
+	matchesStyle(ListElement) bool
 }
 
 type ListItemBucket struct {
@@ -928,10 +928,11 @@ type ListItemBucket struct {
 }
 
 type GenericList struct { // TODO: remove `ListItem` interface, `LabeledList`, etc. and rename this type `ListItem`.
-	Kind            ListKind
-	Attributes      Attributes
-	Elements        []interface{}
-	lastListByLevel map[int]*GenericList
+	Kind       ListKind
+	Attributes Attributes
+	Elements   []interface{}
+	// lastListsByKindAndLevel [][]*GenericList // last list for each level and each kind
+	lastListByLevel []*GenericList // last list for each level and each kind
 }
 
 type ListKind string
@@ -939,15 +940,11 @@ type ListKind string
 const (
 	LabeledListKind   ListKind = "labeled_list"
 	OrderedListKind   ListKind = "ordered_list"
-	UnorderedListKind ListKind = "unordereed_list"
+	UnorderedListKind ListKind = "unordered_list"
 	CalloutListKind   ListKind = "callout_list"
 )
 
 func NewList(element ListElement) (*GenericList, error) {
-	if element.GetLevel() != 1 {
-		// adjust
-		element.SetLevel(1)
-	}
 	// also, move the element attributes to the List
 	attrs := element.GetAttributes()
 	element.SetAttributes(nil)
@@ -957,9 +954,11 @@ func NewList(element ListElement) (*GenericList, error) {
 		Elements: []interface{}{
 			element,
 		},
-		lastListByLevel: map[int]*GenericList{},
+		// lastListsByKindAndLevel: make([][]*GenericList, 1),
+		lastListByLevel: make([]*GenericList, 1),
 	}
-	list.lastListByLevel[1] = list // auto-reference this list for the top-level
+	// list.lastListsByKindAndLevel[0] = []*GenericList{list} // auto-reference this list for the top-level
+	list.lastListByLevel[0] = list // auto-reference this list for the top-level
 	return list, nil
 }
 
@@ -984,32 +983,15 @@ func (l *GenericList) AddElement(element interface{}) error {
 	case ListElement:
 		// look-up the list in which the given element should be appended (or create a new one)
 		if e.ListKind() == l.Kind {
-			// TODO: adjust element level if needed
-
 			// look-up the parent element
-			if list, exists := l.lastListByLevel[e.GetLevel()]; exists {
-				list.addElement(e)
-				// also, clear the index for all sublists
-				level := e.GetLevel()
-				for {
-					level++
-					_, exists := l.lastListByLevel[level]
-					if !exists {
-						break
-					}
-					log.Debug("removing entry for level %d", level)
-					delete(l.lastListByLevel, level)
-				}
+			if parentList, exists := l.lookupParentList(e); exists {
+				parentList.addElement(e)
 			} else {
 				// append new list on the last element of the upper list
 				list := newSubList(e)
 				// attach to parent list
-				parentList, exists := l.lastListByLevel[e.GetLevel()-1]
-				if !exists {
-					return fmt.Errorf("invalid level for list item: %d: unable to find a parent list at level %d", e.GetLevel(), (e.GetLevel() - 1))
-				}
 				parentList.lastElement().AddElement(list)
-				l.lastListByLevel[e.GetLevel()] = list
+				l.lastListByLevel = append(l.lastListByLevel, list)
 			}
 		}
 		return nil
@@ -1022,9 +1004,79 @@ func (l *GenericList) AddElement(element interface{}) error {
 	}
 }
 
+// // just adds (appends) the given element
+// func (l *GenericList) depth() int {
+// 	if len(l.Elements) >= 0 {
+// 		if e, ok := l.Elements[0].(ListElement); ok {
+// 			return e.GetLevel()
+// 		}
+// 	}
+// 	return -1
+// }
+
 // just adds (appends) the given element
 func (l *GenericList) addElement(element ListElement) {
 	l.Elements = append(l.Elements, element)
+}
+
+// // looks-up the parent list for the given element, if it exists
+// // ie, same kind and its first element matches the given element
+// // returns the level of the parent list, or the level of the new list to create + `false` to indicate that there was no match
+// func (l *GenericList) lookupParentList(element ListElement) (*GenericList, int, bool) {
+// 	for depth, lists := range l.lastListsByKindAndLevel {
+// 		// skip if there's no list at this level
+// 		if len(lists) == 0 {
+// 			continue // should not happen
+// 		}
+// 		// skip if the list kind is not the same as the element's one
+// 		if kind := lists[0].Kind; kind != element.ListKind() {
+// 			continue
+// 		}
+// 		// find at which level the element will be appended
+// 		for level, list := range lists {
+// 			if len(list.Elements) == 0 {
+// 				continue // should not happen
+// 			}
+// 			if e, ok := list.Elements[0].(ListElement); ok {
+// 				if element.matchesLevel(e) {
+// 					// found it!
+// 					// let's remove all lists under this depth
+// 					l.lastListsByKindAndLevel = l.lastListsByKindAndLevel[:depth+1]
+// 					// let's also remove all lists under this level
+// 					l.lastListsByKindAndLevel[depth] = l.lastListsByKindAndLevel[depth][:level+1]
+// 					return list, level + 1, true
+// 				}
+// 			}
+// 		}
+// 		// no match found for this level: assume that the element is at level=len(lists) or this known kind of list
+// 		// in which case, we can return the "ancestor" (or "grandparent")
+// 		return lists[len(lists)-1], len(lists) + 1, false
+// 	}
+// 	// should not happen
+// 	return nil, 1, false
+// }
+
+// looks-up the parent list for the given element, if it exists
+// ie, same kind and its first element matches the given element
+func (l *GenericList) lookupParentList(element ListElement) (*GenericList, bool) {
+	for level, list := range l.lastListByLevel {
+		if list == nil || len(list.Elements) == 0 {
+			continue // should not happen
+		}
+		if e, ok := list.Elements[0].(ListElement); ok {
+			if element.matchesStyle(e) {
+				// found it!
+				// let's remove all lists under this depth
+				l.lastListByLevel = l.lastListByLevel[:level+1]
+				return list, true
+			}
+		}
+	}
+	// if not found, let's verify if the element number style and level are valid with regards
+	// to the last/deepest known element, and if not, let's adjust it accordingly
+	lastList := l.lastListByLevel[len(l.lastListByLevel)-1]
+	element.adjustStyle(lastList.lastElement())
+	return lastList, false
 }
 
 // returns the last element of the list
@@ -1169,8 +1221,7 @@ func (l *OrderedList) AddElement(element interface{}) error {
 // OrderedListElement the structure for the ordered list items
 type OrderedListElement struct {
 	Attributes Attributes
-	Level      int
-	Style      string        // TODO: rename to `NumberingStyle`?
+	Style      string        // TODO: rename to `OrderedListElementNumberingStyle`?
 	Elements   []interface{} // TODO: rename to `Blocks`?
 }
 
@@ -1182,31 +1233,24 @@ func NewOrderedListElement(prefix OrderedListElementPrefix, elements []interface
 	// log.Debugf("new OrderedListElement")
 	return &OrderedListElement{
 		Style:    prefix.Style,
-		Level:    prefix.Level,
 		Elements: elements,
 	}, nil
 }
 
-// GetLevel returns the level of this element
-func (e *OrderedListElement) GetLevel() int {
-	return e.Level
+// checks if the given list element matches the level of this element
+func (e *OrderedListElement) matchesStyle(other ListElement) bool {
+	if element, ok := other.(*OrderedListElement); ok {
+		return e.Style == element.Style
+	}
+	return false
 }
 
-// SetLevel sets the level of this element
-func (e *OrderedListElement) SetLevel(level int) {
-	e.Level = level
-	switch e.Level {
-	case 1:
-		e.Style = Arabic
-	case 2:
-		e.Style = LowerAlpha
-	case 3:
-		e.Style = LowerRoman
-	case 4:
-		e.Style = UpperAlpha
-	default:
-		e.Style = UpperRoman
-	}
+func (e *OrderedListElement) adjustStyle(other ListElement) {
+	// if other == nil {
+	// 	e.setLevel(1)
+	// 	return
+	// }
+	// e.setLevel(other.GetLevel() + 1)
 }
 
 // ListKind returns the kind of list to which this element shall be attached
@@ -1276,14 +1320,12 @@ func (i *OrderedListElement) SetAttributes(attributes Attributes) {
 // OrderedListElementPrefix the prefix used to construct an OrderedListElement
 type OrderedListElementPrefix struct {
 	Style string
-	Level int
 }
 
 // NewOrderedListElementPrefix initializes a new OrderedListElementPrefix
-func NewOrderedListElementPrefix(s string, l int) (OrderedListElementPrefix, error) {
+func NewOrderedListElementPrefix(s string) (OrderedListElementPrefix, error) {
 	return OrderedListElementPrefix{
 		Style: s,
-		Level: l,
 	}, nil
 }
 
@@ -1334,18 +1376,17 @@ func (l *UnorderedList) AddElement(item interface{}) error {
 
 // UnorderedListElement the structure for the unordered list items
 type UnorderedListElement struct {
-	Level       int
-	BulletStyle BulletStyle
-	CheckStyle  UnorderedListItemCheckStyle
+	BulletStyle UnorderedListElementBulletStyle
+	CheckStyle  UnorderedListElementCheckStyle
 	Attributes  Attributes
 	Elements    []interface{} // TODO: rename to `Blocks`?
 }
 
 var _ ListElement = &UnorderedListElement{}
 
-// NewUnorderedListItem initializes a new `UnorderedListItem` from the given content
-func NewUnorderedListItem(prefix UnorderedListItemPrefix, checkstyle interface{}, elements []interface{}, attributes interface{}) (UnorderedListElement, error) {
-	// log.Debugf("new UnorderedListItem with %d elements", len(elements))
+// NewUnorderedListElement initializes a new `UnorderedListElement` from the given content
+func NewUnorderedListElement(prefix UnorderedListElementPrefix, checkstyle interface{}, elements []interface{}) (*UnorderedListElement, error) {
+	// log.Debugf("new UnorderedListElement with %d elements", len(elements))
 	cs := toCheckStyle(checkstyle)
 	if cs != NoCheck && len(elements) > 0 {
 		if p, ok := elements[0].(Paragraph); ok {
@@ -1356,24 +1397,51 @@ func NewUnorderedListItem(prefix UnorderedListItemPrefix, checkstyle interface{}
 			p.Attributes[AttrCheckStyle] = cs
 		}
 	}
-	return UnorderedListElement{
-		Level:       prefix.Level,
-		Attributes:  toAttributesWithMapping(attributes, map[string]string{AttrPositional1: AttrStyle}),
+	return &UnorderedListElement{
 		BulletStyle: prefix.BulletStyle,
 		CheckStyle:  cs,
 		Elements:    elements,
 	}, nil
 }
 
-// GetLevel returns the level of this element
-func (e *UnorderedListElement) GetLevel() int {
-	return e.Level
+// // GetLevel returns the level of this element
+// func (e *UnorderedListElement) GetLevel() int {
+// 	return e.Level
+// }
+
+// checks if the given list element matches the level of this element
+func (e *UnorderedListElement) matchesStyle(other ListElement) bool {
+	if other, ok := other.(*UnorderedListElement); ok {
+		log.Debugf("checking if list elements match: %v/%v", e.BulletStyle, other.BulletStyle)
+		return e.BulletStyle == other.BulletStyle
+	}
+	return false
 }
 
-// SetLevel sets the level of this element
-func (e *UnorderedListElement) SetLevel(level int) {
-	e.Level = level
+func (e *UnorderedListElement) adjustStyle(other ListElement) {
+	if other, ok := other.(*UnorderedListElement); ok {
+		e.BulletStyle = other.BulletStyle.next()
+	}
 }
+
+// func (e *UnorderedListElement) setLevel(level int) {
+// 	e.Level = level
+// 	switch e.BulletStyle {
+// 	case OneAsterisk, TwoAsterisks, ThreeAsterisks, FourAsterisks, FiveAsterisks:
+// 		switch e.Level {
+// 		case 1:
+// 			e.BulletStyle = OneAsterisk
+// 		case 2:
+// 			e.BulletStyle = TwoAsterisks
+// 		case 3:
+// 			e.BulletStyle = ThreeAsterisks
+// 		case 4:
+// 			e.BulletStyle = FourAsterisks
+// 		case 5:
+// 			e.BulletStyle = FiveAsterisks
+// 		}
+// 	}
+// }
 
 // ListKind returns the kind of list to which this element shall be attached
 func (e *UnorderedListElement) ListKind() ListKind {
@@ -1393,9 +1461,26 @@ func (e *UnorderedListElement) toInteractiveListItem() {
 	}
 }
 
-// AddElement add an element to this UnorderedListItem
+// AddElement add an element to this UnorderedListElement
 func (e *UnorderedListElement) AddElement(element interface{}) error {
-	e.Elements = append(e.Elements, element)
+	switch element := element.(type) {
+	case RawLine:
+		// append to last element of this OrderedListElement if it's a Paragraph,
+		// otherwise, append a new Paragraph with this RawLine
+		if len(e.Elements) > 0 {
+			if p, ok := e.Elements[len(e.Elements)-1].(*Paragraph); ok {
+				p.AddElement(element)
+				return nil
+			}
+		}
+		e.Elements = append(e.Elements, Paragraph{
+			Elements: []interface{}{
+				element,
+			},
+		})
+	default:
+		e.Elements = append(e.Elements, element)
+	}
 	return nil
 }
 
@@ -1410,48 +1495,48 @@ func (e *UnorderedListElement) SetElements(elements []interface{}) error {
 	return nil
 }
 
-var _ WithElementsToSubstitute = UnorderedListElement{}
+var _ WithElementsToSubstitute = &UnorderedListElement{}
 
 // ElementsToSubstitute returns this item's elements so that substitutions can be applied onto them
-func (i UnorderedListElement) ElementsToSubstitute() []interface{} {
-	return i.Elements
+func (e *UnorderedListElement) ElementsToSubstitute() []interface{} {
+	return e.Elements
 }
 
 // ReplaceElements replaces the elements in this example block
-func (i UnorderedListElement) ReplaceElements(elements []interface{}) interface{} {
-	i.Elements = elements
-	return i
+func (e *UnorderedListElement) ReplaceElements(elements []interface{}) interface{} {
+	e.Elements = elements
+	return e
 }
 
-var _ WithAttributes = UnorderedListElement{}
+var _ WithAttributes = &UnorderedListElement{}
 
 // GetAttributes returns this list item's attributes
-func (i UnorderedListElement) GetAttributes() Attributes {
-	return i.Attributes
+func (e *UnorderedListElement) GetAttributes() Attributes {
+	return e.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this list item
-func (i UnorderedListElement) SetAttributes(attributes Attributes) {
-	i.Attributes = attributes
+func (e *UnorderedListElement) SetAttributes(attributes Attributes) {
+	e.Attributes = toAttributesWithMapping(attributes, map[string]string{AttrPositional1: AttrStyle})
 }
 
-// UnorderedListItemCheckStyle the check style that applies on an unordered list item
-type UnorderedListItemCheckStyle string
+// UnorderedListElementCheckStyle the check style that applies on an unordered list item
+type UnorderedListElementCheckStyle string
 
 const (
 	// Checked when the unordered list item is checked
-	Checked UnorderedListItemCheckStyle = "checked"
+	Checked UnorderedListElementCheckStyle = "checked"
 	// CheckedInteractive when the unordered list item is checked (with an interactive checkbox)
-	CheckedInteractive UnorderedListItemCheckStyle = "checked-interactive"
+	CheckedInteractive UnorderedListElementCheckStyle = "checked-interactive"
 	// Unchecked when the unordered list item is not checked
-	Unchecked UnorderedListItemCheckStyle = "unchecked"
+	Unchecked UnorderedListElementCheckStyle = "unchecked"
 	// UncheckedInteractive when the unordered list item is not checked (with an interactive checkbox)
-	UncheckedInteractive UnorderedListItemCheckStyle = "unchecked-interactive"
+	UncheckedInteractive UnorderedListElementCheckStyle = "unchecked-interactive"
 	// NoCheck when the unodered list item has no specific check annotation
-	NoCheck UnorderedListItemCheckStyle = "nocheck"
+	NoCheck UnorderedListElementCheckStyle = "nocheck"
 )
 
-func (s UnorderedListItemCheckStyle) toInteractive() UnorderedListItemCheckStyle {
+func (s UnorderedListElementCheckStyle) toInteractive() UnorderedListElementCheckStyle {
 	switch s {
 	case Checked, CheckedInteractive:
 		return CheckedInteractive
@@ -1462,29 +1547,57 @@ func (s UnorderedListItemCheckStyle) toInteractive() UnorderedListItemCheckStyle
 	}
 }
 
-func toCheckStyle(checkstyle interface{}) UnorderedListItemCheckStyle {
-	if cs, ok := checkstyle.(UnorderedListItemCheckStyle); ok {
+func toCheckStyle(checkstyle interface{}) UnorderedListElementCheckStyle {
+	if cs, ok := checkstyle.(UnorderedListElementCheckStyle); ok {
 		return cs
 	}
 	return NoCheck
 }
 
-// BulletStyle the type of bullet for items in an unordered list
-type BulletStyle string
+// UnorderedListElementBulletStyle the type of bullet for items in an unordered list
+type UnorderedListElementBulletStyle string
+
+func (s UnorderedListElementBulletStyle) next() UnorderedListElementBulletStyle {
+	switch s {
+	case Dash:
+		return OneAsterisk
+	case OneAsterisk:
+		return TwoAsterisks
+	case TwoAsterisks:
+		return ThreeAsterisks
+	case ThreeAsterisks:
+		return FourAsterisks
+	default:
+		return FiveAsterisks
+	}
+}
+
+// sameStyleFamily returns `true` if both BulletStyle are `Dash` or
+// if they are both NOT `Dash`
+func (s UnorderedListElementBulletStyle) sameStyleFamily(other UnorderedListElementBulletStyle) bool {
+	switch s {
+	case Dash:
+		return other == Dash
+	default:
+		return other != Dash
+	}
+}
 
 const (
 	// Dash an unordered item can begin with a single dash
-	Dash BulletStyle = "dash"
+	Dash UnorderedListElementBulletStyle = "dash"
+	// Dash an unordered item can begin with a single dash
+	Asterisk UnorderedListElementBulletStyle = "asterisk"
 	// OneAsterisk an unordered item marked with a single asterisk
-	OneAsterisk BulletStyle = "1asterisk"
+	OneAsterisk UnorderedListElementBulletStyle = "1asterisk"
 	// TwoAsterisks an unordered item marked with two asterisks
-	TwoAsterisks BulletStyle = "2asterisks"
+	TwoAsterisks UnorderedListElementBulletStyle = "2asterisks"
 	// ThreeAsterisks an unordered item marked with three asterisks
-	ThreeAsterisks BulletStyle = "3asterisks"
+	ThreeAsterisks UnorderedListElementBulletStyle = "3asterisks"
 	// FourAsterisks an unordered item marked with four asterisks
-	FourAsterisks BulletStyle = "4asterisks"
+	FourAsterisks UnorderedListElementBulletStyle = "4asterisks"
 	// FiveAsterisks an unordered item marked with five asterisks
-	FiveAsterisks BulletStyle = "5asterisks"
+	FiveAsterisks UnorderedListElementBulletStyle = "5asterisks"
 )
 
 // NextLevel returns the BulletStyle for the next level:
@@ -1494,59 +1607,57 @@ const (
 // `***` -> `****`
 // `****` -> `*****`
 // `*****` -> `-`
-func (b BulletStyle) NextLevel(p BulletStyle) BulletStyle {
-	switch p {
-	case Dash:
-		return OneAsterisk
-	case OneAsterisk:
-		return TwoAsterisks
-	case TwoAsterisks:
-		return ThreeAsterisks
-	case ThreeAsterisks:
-		return FourAsterisks
-	case FourAsterisks:
-		return FiveAsterisks
-	case FiveAsterisks:
-		return Dash
-	}
-	// default, return the level itself
-	return b
+// func (b BulletStyle) NextLevel(p BulletStyle) BulletStyle {
+// 	switch p {
+// 	case Dash:
+// 		return OneAsterisk
+// 	case OneAsterisk:
+// 		return TwoAsterisks
+// 	case TwoAsterisks:
+// 		return ThreeAsterisks
+// 	case ThreeAsterisks:
+// 		return FourAsterisks
+// 	case FourAsterisks:
+// 		return FiveAsterisks
+// 	case FiveAsterisks:
+// 		return Dash
+// 	}
+// 	// default, return the level itself
+// 	return b
+// }
+
+// UnorderedListElementPrefix the prefix used to construct an UnorderedListElement
+type UnorderedListElementPrefix struct {
+	BulletStyle UnorderedListElementBulletStyle
 }
 
-// UnorderedListItemPrefix the prefix used to construct an UnorderedListItem
-type UnorderedListItemPrefix struct {
-	BulletStyle BulletStyle
-	Level       int
-}
-
-// NewUnorderedListItemPrefix initializes a new UnorderedListItemPrefix
-func NewUnorderedListItemPrefix(s BulletStyle, l int) (UnorderedListItemPrefix, error) {
-	return UnorderedListItemPrefix{
+// NewUnorderedListElementPrefix initializes a new UnorderedListElementPrefix
+func NewUnorderedListElementPrefix(s UnorderedListElementBulletStyle) (UnorderedListElementPrefix, error) {
+	return UnorderedListElementPrefix{
 		BulletStyle: s,
-		Level:       l,
 	}, nil
 }
 
-// NewListItemContent initializes a new `UnorderedListItemContent`
-func NewListItemContent(content []interface{}) ([]interface{}, error) {
-	// log.Debugf("new ListItemContent with %d line(s)", len(content))
-	elements := make([]interface{}, 0, len(content))
-	for _, element := range content {
-		// log.Debugf("Processing line element of type %T", element)
-		switch element := element.(type) {
-		case []interface{}:
-			elements = append(elements, element...)
-		case interface{}:
-			elements = append(elements, element)
-		}
-	}
-	// log.Debugf("new ListItemContent with %d elements(s)", len(elements))
-	// no need to return an empty ListItemContent
-	if len(elements) == 0 {
-		return nil, nil
-	}
-	return elements, nil
-}
+// // NewListItemContent initializes a new `UnorderedListElementContent`
+// func NewListItemContent(content []interface{}) ([]interface{}, error) {
+// 	// log.Debugf("new ListItemContent with %d line(s)", len(content))
+// 	elements := make([]interface{}, 0, len(content))
+// 	for _, element := range content {
+// 		// log.Debugf("Processing line element of type %T", element)
+// 		switch element := element.(type) {
+// 		case []interface{}:
+// 			elements = append(elements, element...)
+// 		case interface{}:
+// 			elements = append(elements, element)
+// 		}
+// 	}
+// 	// log.Debugf("new ListItemContent with %d elements(s)", len(elements))
+// 	// no need to return an empty ListItemContent
+// 	if len(elements) == 0 {
+// 		return nil, nil
+// 	}
+// 	return elements, nil
+// }
 
 // ------------------------------------------
 // Labeled List
@@ -1588,11 +1699,18 @@ func (l *LabeledList) AddElement(item interface{}) error {
 // 	return l.Items[len(l.Items)-1]
 // }
 
+type LabeledListElementStyle string
+
+const (
+	DoubleColon LabeledListElementStyle = "::"
+	TripleColon LabeledListElementStyle = ":::"
+)
+
 // LabeledListElement an item in a labeled
 type LabeledListElement struct {
 	Term       []interface{}
-	Level      int
 	Attributes Attributes
+	Style      LabeledListElementStyle
 	Elements   []interface{} // TODO: rename to `Blocks`?
 }
 
@@ -1611,19 +1729,20 @@ func NewLabeledListItem(level int, term []interface{}, description interface{}, 
 	return LabeledListElement{
 		Attributes: toAttributesWithMapping(attributes, map[string]string{AttrPositional1: AttrStyle}),
 		Term:       term,
-		Level:      level,
 		Elements:   elements,
 	}, nil
 }
 
-// GetLevel returns the level of this element
-func (e *LabeledListElement) GetLevel() int {
-	return e.Level
+// checks if the given list element matches the style of this element
+func (e *LabeledListElement) matchesStyle(other ListElement) bool {
+	if element, ok := other.(*LabeledListElement); ok {
+		return e.Style == element.Style
+	}
+	return false
 }
 
-// SetLevel sets the level of this element
-func (e *LabeledListElement) SetLevel(level int) {
-	e.Level = level
+func (e *LabeledListElement) adjustStyle(other ListElement) {
+
 }
 
 // ListKind returns the kind of list to which this element shall be attached
@@ -2916,14 +3035,13 @@ func NewCalloutListElement(ref int, description []interface{}) (*CalloutListElem
 	}, nil
 }
 
-// GetLevel returns the level of this element
-func (e *CalloutListElement) GetLevel() int {
-	return 1 // no nesting in Callout Lists
+// checks if the given list element matches the level of this element
+func (e *CalloutListElement) matchesStyle(other ListElement) bool {
+	return true // no level in Callout lists
 }
 
-// SetLevel sets the level of this element
-func (e *CalloutListElement) SetLevel(level int) {
-	// does nothing, but needed to ensure `CallOutListElement` implements `ListElement`
+func (e *CalloutListElement) adjustStyle(other ListElement) {
+	// do nothing, there's a single level in callout lists
 }
 
 // ListKind returns the kind of list to which this element shall be attached

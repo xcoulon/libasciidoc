@@ -261,7 +261,6 @@ item 2:: two`
 							Items: []*types.LabeledListElement{
 
 								{
-									Level: 1,
 									Term: []interface{}{
 										types.StringElement{Content: "discount"},
 									},
@@ -277,7 +276,6 @@ item 2:: two`
 									},
 								},
 								{
-									Level: 1,
 									Term: []interface{}{
 										types.StringElement{Content: "item 2"},
 									},

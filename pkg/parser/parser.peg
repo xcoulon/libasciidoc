@@ -25,7 +25,7 @@ DefaultDocumentFragmentElement <-
     / BlockAttributes
     / FileInclusion 
     / BlockDelimiter 
-    / ListItem
+    / ListElement
     / SingleLineComment
     / AttributeDeclaration
     / AttributeReset
@@ -999,18 +999,16 @@ ExternalLink <- url:(LocationWithScheme) inlineAttributes:(InlineAttributes)? {
 
 
 // ----------------------------------------------------------------------------
-// List items
+// List elements
 // ----------------------------------------------------------------------------
-ListItem <-
+ListElement <-
         OrderedListElement 
-        // / UnorderedListItem 
+        / UnorderedListElement
         // / LabeledListItem // handled at the RawLine level (with search for `:: `)
         / CalloutListElement
 
 
-// ----------------------------------------------------------------------------
-// Ordered List Item
-// ----------------------------------------------------------------------------
+// Ordered List Elements
 OrderedListElement <- prefix:(OrderedListElementPrefix) content:(OrderedListElementContent) {
     return types.NewOrderedListElement(prefix.(types.OrderedListElementPrefix), content.([]interface{}))
 }
@@ -1029,33 +1027,93 @@ OrderedListElementPrefix <-
         {
             switch depth.(int){
             case 1:
-                return types.NewOrderedListElementPrefix(types.Arabic, 1)
+                return types.NewOrderedListElementPrefix(types.Arabic)
             case 2:
-                return types.NewOrderedListElementPrefix(types.LowerAlpha, 2)
+                return types.NewOrderedListElementPrefix(types.LowerAlpha)
             case 3:
-                return types.NewOrderedListElementPrefix(types.LowerRoman, 3)
+                return types.NewOrderedListElementPrefix(types.LowerRoman)
             case 4:
-                return types.NewOrderedListElementPrefix(types.UpperAlpha, 4)
+                return types.NewOrderedListElementPrefix(types.UpperAlpha)
             default:
-                return types.NewOrderedListElementPrefix(types.UpperRoman, 5)
+                return types.NewOrderedListElementPrefix(types.UpperRoman)
             }
         }
         // explicit numbering
         / ([0-9])+ "." {  // numbering style: "1."
-            return types.NewOrderedListElementPrefix(types.Arabic, 1)
+            return types.NewOrderedListElementPrefix(types.Arabic)
         } / ([a-z]) "." { // numbering style: "a."
-            return types.NewOrderedListElementPrefix(types.LowerAlpha, 1)
+            return types.NewOrderedListElementPrefix(types.LowerAlpha)
         } / ([A-Z]) "." { // numbering style: "A."
-            return types.NewOrderedListElementPrefix(types.UpperAlpha, 1)
+            return types.NewOrderedListElementPrefix(types.UpperAlpha)
         } / ([ivxdlcm])+ ")" { // numbering style: "i)"
-            return types.NewOrderedListElementPrefix(types.LowerRoman, 1)
+            return types.NewOrderedListElementPrefix(types.LowerRoman)
         } / ([IVXDLCM])+ ")" { // numbering style: "I)"
-            return types.NewOrderedListElementPrefix(types.UpperRoman, 1)
+            return types.NewOrderedListElementPrefix(types.UpperRoman)
         }) Space+ {
     return prefix, nil
 }
 
 OrderedListElementContent <- [^\r\n]* { 
+    return []interface{}{
+        &types.Paragraph{
+            Elements: []interface{}{
+                types.RawLine(string(c.text)),
+            },
+        },
+    }, nil 
+}
+
+// Unordered List Elements
+UnorderedListElement <- 
+    prefix:(UnorderedListElementPrefix) 
+    checkstyle:(UnorderedListElementCheckStyle)? 
+    content:(UnorderedListElementContent) {
+        return types.NewUnorderedListElement(prefix.(types.UnorderedListElementPrefix), checkstyle, content.([]interface{}))
+    }
+
+UnorderedListElementPrefix <- 
+    Space* prefix:((
+        // implicit numbering: "*" to "*****" 
+        depth:(("*")+ {   
+            // `*` is 1, etc.
+            return (len(c.text)), nil 
+        }) 
+        &{  
+            // use a predicate to make sure that only `*` to `*****` are allowed
+            return depth.(int) <= 5, nil 
+        } 
+        {
+            switch depth.(int){
+            case 1:
+                return types.NewUnorderedListElementPrefix(types.OneAsterisk)
+            case 2:
+                return types.NewUnorderedListElementPrefix(types.TwoAsterisks)
+            case 3:
+                return types.NewUnorderedListElementPrefix(types.ThreeAsterisks)
+            case 4:
+                return types.NewUnorderedListElementPrefix(types.FourAsterisks)
+            default:
+                return types.NewUnorderedListElementPrefix(types.FiveAsterisks)
+            }
+        }) / depth:(("-") {
+            return types.NewUnorderedListElementPrefix(types.Dash)
+        })) Space+ {
+    return prefix, nil
+} 
+
+UnorderedListElementCheckStyle <- &"[" style:(
+      "[ ]" { return types.Unchecked, nil } 
+    / "[*]" { return types.Checked, nil } 
+    / "[x]" { return types.Checked, nil }
+    ) Space+ {
+        return style, nil
+    }
+
+// UnorderedListElementContent <- elements:(ListParagraph+) { // Another list or a literal paragraph immediately following a list item will be implicitly included in the list item
+//     return types.NewListItemContent(elements.([]interface{}))
+// } 
+
+UnorderedListElementContent <- [^\r\n]* { 
     return []interface{}{
         &types.Paragraph{
             Elements: []interface{}{

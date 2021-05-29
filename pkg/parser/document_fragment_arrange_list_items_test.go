@@ -24,7 +24,6 @@ var _ = Describe("arrange list items", func() {
 		actual := &types.ListItemBucket{
 			Elements: []interface{}{
 				types.UnorderedListElement{
-					Level:       1,
 					BulletStyle: types.Dash,
 					CheckStyle:  types.NoCheck,
 					Elements: []interface{}{
@@ -38,7 +37,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.OrderedListElement{
-					Level: 1,
 					Style: types.Arabic,
 					Elements: []interface{}{
 						types.Paragraph{
@@ -51,7 +49,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.OrderedListElement{
-					Level: 2,
 					Style: types.LowerAlpha,
 					Elements: []interface{}{
 						types.Paragraph{
@@ -64,7 +61,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.OrderedListElement{
-					Level: 2,
 					Style: types.LowerAlpha,
 					Elements: []interface{}{
 						types.Paragraph{
@@ -77,7 +73,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.OrderedListElement{
-					Level: 2,
 					Style: types.LowerAlpha,
 					Elements: []interface{}{
 						types.Paragraph{
@@ -90,7 +85,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.OrderedListElement{
-					Level: 1,
 					Style: types.Arabic,
 					Elements: []interface{}{
 						types.Paragraph{
@@ -103,7 +97,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.OrderedListElement{
-					Level: 2,
 					Style: types.LowerRoman,
 					Elements: []interface{}{
 						types.Paragraph{
@@ -116,7 +109,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.OrderedListElement{
-					Level: 2,
 					Style: types.LowerRoman,
 					Elements: []interface{}{
 						types.Paragraph{
@@ -129,7 +121,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.OrderedListElement{
-					Level: 1,
 					Style: types.Arabic,
 					Elements: []interface{}{
 						types.Paragraph{
@@ -142,7 +133,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.OrderedListElement{
-					Level: 1,
 					Style: types.Arabic,
 					Elements: []interface{}{
 						types.Paragraph{
@@ -155,7 +145,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.UnorderedListElement{
-					Level:       1,
 					BulletStyle: types.Dash,
 					CheckStyle:  types.NoCheck,
 					Elements: []interface{}{
@@ -169,7 +158,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.UnorderedListElement{
-					Level:       2,
 					BulletStyle: types.OneAsterisk,
 					CheckStyle:  types.NoCheck,
 					Elements: []interface{}{
@@ -188,7 +176,6 @@ var _ = Describe("arrange list items", func() {
 			types.UnorderedList{
 				Items: []*types.UnorderedListElement{
 					{
-						Level:       1,
 						BulletStyle: types.Dash,
 						CheckStyle:  types.NoCheck,
 						Elements: []interface{}{
@@ -202,7 +189,6 @@ var _ = Describe("arrange list items", func() {
 							types.OrderedList{
 								Items: []*types.OrderedListElement{
 									{
-										Level: 1,
 										Style: types.Arabic,
 										Elements: []interface{}{
 											types.Paragraph{
@@ -215,7 +201,6 @@ var _ = Describe("arrange list items", func() {
 											types.OrderedList{
 												Items: []*types.OrderedListElement{
 													{
-														Level: 2,
 														Style: types.LowerAlpha,
 														Elements: []interface{}{
 															types.Paragraph{
@@ -228,7 +213,6 @@ var _ = Describe("arrange list items", func() {
 														},
 													},
 													{
-														Level: 2,
 														Style: types.LowerAlpha,
 														Elements: []interface{}{
 															types.Paragraph{
@@ -241,7 +225,6 @@ var _ = Describe("arrange list items", func() {
 														},
 													},
 													{
-														Level: 2,
 														Style: types.LowerAlpha,
 														Elements: []interface{}{
 															types.Paragraph{
@@ -258,7 +241,6 @@ var _ = Describe("arrange list items", func() {
 										},
 									},
 									{
-										Level: 1,
 										Style: types.Arabic,
 										Elements: []interface{}{
 											types.Paragraph{
@@ -271,7 +253,6 @@ var _ = Describe("arrange list items", func() {
 											types.OrderedList{
 												Items: []*types.OrderedListElement{
 													{
-														Level: 2,
 														Style: types.LowerRoman,
 														Elements: []interface{}{
 															types.Paragraph{
@@ -284,7 +265,6 @@ var _ = Describe("arrange list items", func() {
 														},
 													},
 													{
-														Level: 2,
 														Style: types.LowerRoman,
 														Elements: []interface{}{
 															types.Paragraph{
@@ -301,7 +281,6 @@ var _ = Describe("arrange list items", func() {
 										},
 									},
 									{
-										Level: 1,
 										Style: types.Arabic,
 										Elements: []interface{}{
 											types.Paragraph{
@@ -314,7 +293,6 @@ var _ = Describe("arrange list items", func() {
 										},
 									},
 									{
-										Level: 1,
 										Style: types.Arabic,
 										Elements: []interface{}{
 											types.Paragraph{
@@ -331,7 +309,6 @@ var _ = Describe("arrange list items", func() {
 						},
 					},
 					{
-						Level:       1,
 						BulletStyle: types.Dash,
 						CheckStyle:  types.NoCheck,
 						Elements: []interface{}{
@@ -345,7 +322,6 @@ var _ = Describe("arrange list items", func() {
 							types.UnorderedList{
 								Items: []*types.UnorderedListElement{
 									{
-										Level:       2,
 										BulletStyle: types.OneAsterisk,
 										CheckStyle:  types.NoCheck,
 										Elements: []interface{}{
@@ -372,7 +348,6 @@ var _ = Describe("arrange list items", func() {
 		actual := &types.ListItemBucket{
 			Elements: []interface{}{
 				types.LabeledListElement{
-					Level: 1,
 					Term: []interface{}{
 						types.StringElement{
 							Content: "`foo` term",
@@ -389,7 +364,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.LabeledListElement{
-					Level: 2,
 					Term: []interface{}{
 						types.StringElement{
 							Content: "`bar` term",
@@ -406,7 +380,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.LabeledListElement{
-					Level: 2,
 					Term: []interface{}{
 						types.StringElement{
 							Content: "icon:caution[]",
@@ -428,7 +401,6 @@ var _ = Describe("arrange list items", func() {
 			types.LabeledList{
 				Items: []*types.LabeledListElement{
 					{
-						Level: 1,
 						Term: []interface{}{
 							&types.QuotedText{
 								Kind: types.SingleQuoteMonospace,
@@ -453,7 +425,6 @@ var _ = Describe("arrange list items", func() {
 							types.LabeledList{
 								Items: []*types.LabeledListElement{
 									{
-										Level: 2,
 										Term: []interface{}{
 											&types.QuotedText{
 												Kind: types.SingleQuoteMonospace,
@@ -478,7 +449,6 @@ var _ = Describe("arrange list items", func() {
 										},
 									},
 									{
-										Level: 2,
 										Term: []interface{}{
 											types.Icon{
 												Class: "caution",
@@ -600,7 +570,6 @@ var _ = Describe("arrange list items", func() {
 		actual := &types.ListItemBucket{
 			Elements: []interface{}{
 				types.UnorderedListElement{
-					Level:       1,
 					BulletStyle: types.OneAsterisk,
 					CheckStyle:  types.NoCheck,
 					Elements: []interface{}{
@@ -614,7 +583,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.UnorderedListElement{
-					Level:       2,
 					BulletStyle: types.TwoAsterisks,
 					CheckStyle:  types.NoCheck,
 					Elements: []interface{}{
@@ -628,7 +596,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.UnorderedListElement{
-					Level:       3,
 					BulletStyle: types.ThreeAsterisks,
 					CheckStyle:  types.NoCheck,
 					Elements: []interface{}{
@@ -658,7 +625,6 @@ var _ = Describe("arrange list items", func() {
 			types.UnorderedList{
 				Items: []*types.UnorderedListElement{
 					{
-						Level:       1,
 						BulletStyle: types.OneAsterisk,
 						CheckStyle:  types.NoCheck,
 						Elements: []interface{}{
@@ -672,7 +638,6 @@ var _ = Describe("arrange list items", func() {
 							types.UnorderedList{
 								Items: []*types.UnorderedListElement{
 									{
-										Level:       2,
 										BulletStyle: types.TwoAsterisks,
 										CheckStyle:  types.NoCheck,
 										Elements: []interface{}{
@@ -686,7 +651,6 @@ var _ = Describe("arrange list items", func() {
 											types.UnorderedList{
 												Items: []*types.UnorderedListElement{
 													{
-														Level:       3,
 														BulletStyle: types.ThreeAsterisks,
 														CheckStyle:  types.NoCheck,
 														Elements: []interface{}{
@@ -731,7 +695,6 @@ var _ = Describe("arrange list items", func() {
 		actual := &types.ListItemBucket{
 			Elements: []interface{}{
 				types.UnorderedListElement{
-					Level:       1,
 					BulletStyle: types.OneAsterisk,
 					CheckStyle:  types.NoCheck,
 					Elements: []interface{}{
@@ -745,7 +708,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.UnorderedListElement{
-					Level:       2,
 					BulletStyle: types.TwoAsterisks,
 					CheckStyle:  types.NoCheck,
 					Elements: []interface{}{
@@ -759,7 +721,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.UnorderedListElement{
-					Level:       3,
 					BulletStyle: types.ThreeAsterisks,
 					CheckStyle:  types.NoCheck,
 					Elements: []interface{}{
@@ -788,7 +749,6 @@ var _ = Describe("arrange list items", func() {
 			types.UnorderedList{
 				Items: []*types.UnorderedListElement{
 					{
-						Level:       1,
 						BulletStyle: types.OneAsterisk,
 						CheckStyle:  types.NoCheck,
 						Elements: []interface{}{
@@ -802,7 +762,6 @@ var _ = Describe("arrange list items", func() {
 							types.UnorderedList{
 								Items: []*types.UnorderedListElement{
 									{
-										Level:       2,
 										BulletStyle: types.TwoAsterisks,
 										CheckStyle:  types.NoCheck,
 										Elements: []interface{}{
@@ -816,7 +775,6 @@ var _ = Describe("arrange list items", func() {
 											types.UnorderedList{
 												Items: []*types.UnorderedListElement{
 													{
-														Level:       3,
 														BulletStyle: types.ThreeAsterisks,
 														CheckStyle:  types.NoCheck,
 														Elements: []interface{}{
@@ -861,7 +819,6 @@ var _ = Describe("arrange list items", func() {
 		actual := &types.ListItemBucket{
 			Elements: []interface{}{
 				types.UnorderedListElement{
-					Level:       1,
 					BulletStyle: types.OneAsterisk,
 					CheckStyle:  types.NoCheck,
 					Elements: []interface{}{
@@ -875,7 +832,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.UnorderedListElement{
-					Level:       2,
 					BulletStyle: types.TwoAsterisks,
 					CheckStyle:  types.NoCheck,
 					Elements: []interface{}{
@@ -889,7 +845,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.UnorderedListElement{
-					Level:       3,
 					BulletStyle: types.ThreeAsterisks,
 					CheckStyle:  types.NoCheck,
 					Elements: []interface{}{
@@ -918,7 +873,6 @@ var _ = Describe("arrange list items", func() {
 			types.UnorderedList{
 				Items: []*types.UnorderedListElement{
 					{
-						Level:       1,
 						BulletStyle: types.OneAsterisk,
 						CheckStyle:  types.NoCheck,
 						Elements: []interface{}{
@@ -932,7 +886,6 @@ var _ = Describe("arrange list items", func() {
 							types.UnorderedList{
 								Items: []*types.UnorderedListElement{
 									{
-										Level:       2,
 										BulletStyle: types.TwoAsterisks,
 										CheckStyle:  types.NoCheck,
 										Elements: []interface{}{
@@ -946,7 +899,6 @@ var _ = Describe("arrange list items", func() {
 											types.UnorderedList{
 												Items: []*types.UnorderedListElement{
 													{
-														Level:       3,
 														BulletStyle: types.ThreeAsterisks,
 														CheckStyle:  types.NoCheck,
 														Elements: []interface{}{
@@ -994,7 +946,6 @@ var _ = Describe("arrange list items", func() {
 		actual := &types.ListItemBucket{
 			Elements: []interface{}{
 				types.UnorderedListElement{
-					Level:       1,
 					BulletStyle: types.OneAsterisk,
 					CheckStyle:  types.NoCheck,
 					Elements: []interface{}{
@@ -1008,7 +959,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.UnorderedListElement{
-					Level:       2,
 					BulletStyle: types.TwoAsterisks,
 					CheckStyle:  types.NoCheck,
 					Elements: []interface{}{
@@ -1022,7 +972,6 @@ var _ = Describe("arrange list items", func() {
 					},
 				},
 				types.UnorderedListElement{
-					Level:       3,
 					BulletStyle: types.ThreeAsterisks,
 					CheckStyle:  types.NoCheck,
 					Elements: []interface{}{
@@ -1061,7 +1010,6 @@ var _ = Describe("arrange list items", func() {
 			types.UnorderedList{
 				Items: []*types.UnorderedListElement{
 					{
-						Level:       1,
 						BulletStyle: types.OneAsterisk,
 						CheckStyle:  types.NoCheck,
 						Elements: []interface{}{
@@ -1075,7 +1023,6 @@ var _ = Describe("arrange list items", func() {
 							types.UnorderedList{
 								Items: []*types.UnorderedListElement{
 									{
-										Level:       2,
 										BulletStyle: types.TwoAsterisks,
 										CheckStyle:  types.NoCheck,
 										Elements: []interface{}{
@@ -1089,7 +1036,6 @@ var _ = Describe("arrange list items", func() {
 											types.UnorderedList{
 												Items: []*types.UnorderedListElement{
 													{
-														Level:       3,
 														BulletStyle: types.ThreeAsterisks,
 														CheckStyle:  types.NoCheck,
 														Elements: []interface{}{

@@ -212,7 +212,6 @@ on
 				Content: &types.ListItemBucket{
 					Elements: []interface{}{
 						&types.OrderedListElement{
-							Level: 1,
 							Style: types.Arabic,
 							Elements: []interface{}{
 								types.StringElement{
@@ -221,7 +220,6 @@ on
 							},
 						},
 						&types.OrderedListElement{
-							Level: 1,
 							Style: types.Arabic,
 							Elements: []interface{}{
 								types.StringElement{
@@ -248,7 +246,6 @@ on
 				Content: &types.ListItemBucket{
 					Elements: []interface{}{
 						&types.OrderedListElement{
-							Level: 1,
 							Style: types.Arabic,
 							Elements: []interface{}{
 								&types.Paragraph{
@@ -263,7 +260,6 @@ on
 						types.BlankLine{},
 						types.BlankLine{},
 						&types.OrderedListElement{
-							Level: 1,
 							Style: types.Arabic,
 							Elements: []interface{}{
 								&types.Paragraph{

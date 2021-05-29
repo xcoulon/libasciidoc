@@ -26,7 +26,6 @@ var _ = Describe("checked lists", func() {
 						},
 						Items: []*types.UnorderedListElement{
 							{
-								Level:       1,
 								BulletStyle: types.Dash,
 								CheckStyle:  types.Checked,
 								Elements: []interface{}{
@@ -45,7 +44,6 @@ var _ = Describe("checked lists", func() {
 								},
 							},
 							{
-								Level:       1,
 								BulletStyle: types.Dash,
 								CheckStyle:  types.Checked,
 								Elements: []interface{}{
@@ -64,7 +62,6 @@ var _ = Describe("checked lists", func() {
 								},
 							},
 							{
-								Level:       1,
 								BulletStyle: types.Dash,
 								CheckStyle:  types.Unchecked,
 								Elements: []interface{}{
@@ -83,7 +80,6 @@ var _ = Describe("checked lists", func() {
 								},
 							},
 							{
-								Level:       1,
 								BulletStyle: types.Dash,
 								CheckStyle:  types.NoCheck,
 								Elements: []interface{}{
@@ -119,7 +115,6 @@ var _ = Describe("checked lists", func() {
 						},
 						Items: []*types.UnorderedListElement{
 							{
-								Level:       1,
 								BulletStyle: types.OneAsterisk,
 								CheckStyle:  types.CheckedInteractive,
 								Elements: []interface{}{
@@ -138,7 +133,6 @@ var _ = Describe("checked lists", func() {
 								},
 							},
 							{
-								Level:       1,
 								BulletStyle: types.OneAsterisk,
 								CheckStyle:  types.CheckedInteractive,
 								Elements: []interface{}{
@@ -157,7 +151,6 @@ var _ = Describe("checked lists", func() {
 								},
 							},
 							{
-								Level:       1,
 								BulletStyle: types.OneAsterisk,
 								CheckStyle:  types.UncheckedInteractive,
 								Elements: []interface{}{
@@ -176,7 +169,6 @@ var _ = Describe("checked lists", func() {
 								},
 							},
 							{
-								Level:       1,
 								BulletStyle: types.OneAsterisk,
 								CheckStyle:  types.NoCheck,
 								Elements: []interface{}{
@@ -213,7 +205,6 @@ var _ = Describe("checked lists", func() {
 						},
 						Items: []*types.UnorderedListElement{
 							{
-								Level:       1,
 								BulletStyle: types.OneAsterisk,
 								CheckStyle:  types.Unchecked,
 								Elements: []interface{}{
@@ -232,7 +223,6 @@ var _ = Describe("checked lists", func() {
 									types.UnorderedList{
 										Items: []*types.UnorderedListElement{
 											{
-												Level:       2,
 												BulletStyle: types.TwoAsterisks,
 												CheckStyle:  types.Checked,
 												Elements: []interface{}{
@@ -250,7 +240,6 @@ var _ = Describe("checked lists", func() {
 												},
 											},
 											{
-												Level:       2,
 												BulletStyle: types.TwoAsterisks,
 												CheckStyle:  types.Checked,
 												Elements: []interface{}{
@@ -268,7 +257,6 @@ var _ = Describe("checked lists", func() {
 												},
 											},
 											{
-												Level:       2,
 												BulletStyle: types.TwoAsterisks,
 												CheckStyle:  types.Unchecked,
 												Elements: []interface{}{
@@ -290,7 +278,6 @@ var _ = Describe("checked lists", func() {
 								},
 							},
 							{
-								Level:       1,
 								BulletStyle: types.OneAsterisk,
 								CheckStyle:  types.NoCheck,
 								Elements: []interface{}{
@@ -326,7 +313,6 @@ var _ = Describe("checked lists", func() {
 						},
 						Items: []*types.UnorderedListElement{
 							{
-								Level:       1,
 								BulletStyle: types.OneAsterisk,
 								CheckStyle:  types.Unchecked,
 								Elements: []interface{}{
@@ -345,7 +331,6 @@ var _ = Describe("checked lists", func() {
 									types.UnorderedList{
 										Items: []*types.UnorderedListElement{
 											{
-												Level:       2,
 												BulletStyle: types.TwoAsterisks,
 												CheckStyle:  types.NoCheck,
 												Elements: []interface{}{
@@ -361,7 +346,6 @@ var _ = Describe("checked lists", func() {
 												},
 											},
 											{
-												Level:       2,
 												BulletStyle: types.TwoAsterisks,
 												CheckStyle:  types.NoCheck,
 												Elements: []interface{}{
@@ -381,7 +365,6 @@ var _ = Describe("checked lists", func() {
 								},
 							},
 							{
-								Level:       1,
 								BulletStyle: types.OneAsterisk,
 								CheckStyle:  types.NoCheck,
 								Elements: []interface{}{

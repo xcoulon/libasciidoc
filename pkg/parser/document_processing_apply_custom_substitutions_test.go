@@ -123,7 +123,6 @@ and <more text> on the +
 								},
 								types.BlankLine{},
 								types.UnorderedListElement{
-									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
@@ -248,7 +247,6 @@ and <more text> on the +
 								},
 								types.BlankLine{},
 								types.UnorderedListElement{
-									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
@@ -328,7 +326,6 @@ and <more text> on the +
 								},
 								types.BlankLine{},
 								types.UnorderedListElement{
-									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
@@ -413,7 +410,6 @@ and <more text> on the +
 								},
 								types.BlankLine{},
 								types.UnorderedListElement{
-									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
@@ -485,7 +481,6 @@ and <more text> on the +
 								},
 								types.BlankLine{},
 								types.UnorderedListElement{
-									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
@@ -580,7 +575,6 @@ and <more text> on the +
 								},
 								types.BlankLine{},
 								types.UnorderedListElement{
-									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
@@ -673,7 +667,6 @@ and <more text> on the +
 								},
 								types.BlankLine{},
 								types.UnorderedListElement{
-									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
@@ -745,7 +738,6 @@ and <more text> on the +
 								},
 								types.BlankLine{},
 								types.UnorderedListElement{
-									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
@@ -818,7 +810,6 @@ and <more text> on the +
 								},
 								types.BlankLine{},
 								types.UnorderedListElement{
-									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
@@ -911,7 +902,6 @@ and <more text> on the +
 								},
 								types.BlankLine{},
 								types.UnorderedListElement{
-									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
@@ -1004,7 +994,6 @@ and <more text> on the +
 								},
 								types.BlankLine{},
 								types.UnorderedListElement{
-									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
@@ -1076,7 +1065,6 @@ and <more text> on the +
 								},
 								types.BlankLine{},
 								types.UnorderedListElement{
-									Level:       1,
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{

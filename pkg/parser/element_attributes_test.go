@@ -250,7 +250,6 @@ a list item!`
 							types.OrderedList{
 								Items: []*types.OrderedListElement{
 									{
-										Level: 1,
 										Style: types.Arabic,
 										Elements: []interface{}{
 											types.Paragraph{

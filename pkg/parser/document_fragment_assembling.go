@@ -100,6 +100,7 @@ func AssembleFragmentElements(f types.DocumentFragmentGroup) []types.DocumentFra
 					continue
 				}
 				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
+
 				continue
 			}
 			// add the element to the list

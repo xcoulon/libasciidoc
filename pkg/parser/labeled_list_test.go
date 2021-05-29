@@ -21,7 +21,6 @@ on 2 lines`
 					types.LabeledList{
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item1",
@@ -60,8 +59,6 @@ on 2 lines`
 										Content: "Item1",
 									},
 								},
-
-								Level:    1,
 								Elements: []interface{}{},
 							},
 						},
@@ -89,7 +86,6 @@ on 2 lines`
 										},
 									},
 								},
-								Level: 1,
 								Elements: []interface{}{
 									types.Paragraph{
 										Lines: [][]interface{}{
@@ -141,7 +137,6 @@ on 2 lines`
 										},
 									},
 								},
-								Level: 1,
 								Elements: []interface{}{
 									types.Paragraph{
 										Lines: [][]interface{}{
@@ -186,7 +181,6 @@ on 2 lines`
 										Term2: "bar",
 									},
 								},
-								Level: 1,
 								Elements: []interface{}{
 									types.Paragraph{
 										Lines: [][]interface{}{
@@ -228,7 +222,6 @@ Item1:: foo`
 						},
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item1",
@@ -260,7 +253,6 @@ Item1:: foo`
 					types.LabeledList{
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item1",
@@ -288,7 +280,6 @@ Item 3 description`
 					types.LabeledList{
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 1",
@@ -306,7 +297,6 @@ Item 3 description`
 								},
 							},
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 2",
@@ -324,7 +314,6 @@ Item 3 description`
 								},
 							},
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 3",
@@ -360,7 +349,6 @@ Item 3 description`
 					types.LabeledList{
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 1",
@@ -378,7 +366,6 @@ Item 3 description`
 									types.LabeledList{
 										Items: []*types.LabeledListElement{
 											{
-												Level: 2,
 												Term: []interface{}{
 													types.StringElement{
 														Content: "Item 2",
@@ -396,7 +383,6 @@ Item 3 description`
 													types.LabeledList{
 														Items: []*types.LabeledListElement{
 															{
-																Level: 3,
 																Term: []interface{}{
 																	types.StringElement{
 																		Content: "Item 3",
@@ -438,7 +424,6 @@ Item with description:: something simple`
 					types.LabeledList{
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Empty item",
@@ -449,7 +434,6 @@ Item with description:: something simple`
 									types.UnorderedList{
 										Items: []*types.UnorderedListElement{
 											{
-												Level:       1,
 												BulletStyle: types.OneAsterisk,
 												CheckStyle:  types.NoCheck,
 												Elements: []interface{}{
@@ -463,7 +447,6 @@ Item with description:: something simple`
 												},
 											},
 											{
-												Level:       1,
 												BulletStyle: types.OneAsterisk,
 												CheckStyle:  types.NoCheck,
 												Elements: []interface{}{
@@ -481,7 +464,6 @@ Item with description:: something simple`
 								},
 							},
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item with description",
@@ -516,7 +498,6 @@ a normal paragraph.`
 					types.LabeledList{
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 1",
@@ -566,7 +547,6 @@ another fenced block
 					types.LabeledList{
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 1",
@@ -584,7 +564,6 @@ another fenced block
 								},
 							},
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 2",
@@ -630,7 +609,6 @@ another fenced block
 					types.LabeledList{
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 1",
@@ -651,7 +629,6 @@ another fenced block
 					types.LabeledList{
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 2",
@@ -690,7 +667,6 @@ another fenced block
 					types.LabeledList{
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Labeled item",
@@ -700,7 +676,6 @@ another fenced block
 									types.UnorderedList{
 										Items: []*types.UnorderedListElement{
 											{
-												Level:       1,
 												BulletStyle: types.Dash,
 												CheckStyle:  types.NoCheck,
 												Elements: []interface{}{
@@ -736,7 +711,6 @@ second term:: definition of the second term`
 						},
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "first term",
@@ -755,7 +729,6 @@ second term:: definition of the second term`
 								},
 							},
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "second term",
@@ -796,7 +769,6 @@ level 1:: description 1`
 						},
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "level 1",
@@ -815,7 +787,6 @@ level 1:: description 1`
 									types.LabeledList{
 										Items: []*types.LabeledListElement{
 											{
-												Level: 2,
 												Term: []interface{}{
 													types.StringElement{
 														Content: "level 2",
@@ -834,7 +805,6 @@ level 1:: description 1`
 													types.LabeledList{
 														Items: []*types.LabeledListElement{
 															{
-																Level: 3,
 																Term: []interface{}{
 																	types.StringElement{
 																		Content: "level 3",
@@ -861,7 +831,6 @@ level 1:: description 1`
 								},
 							},
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "level 1",
@@ -900,7 +869,6 @@ level 2::: description 2`
 						},
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "level 1",
@@ -919,7 +887,6 @@ level 2::: description 2`
 									types.LabeledList{
 										Items: []*types.LabeledListElement{
 											{
-												Level: 2,
 												Term: []interface{}{
 													types.StringElement{
 														Content: "level 2",
@@ -938,7 +905,6 @@ level 2::: description 2`
 													types.LabeledList{
 														Items: []*types.LabeledListElement{
 															{
-																Level: 3,
 																Term: []interface{}{
 																	types.StringElement{
 																		Content: "level 3",
@@ -961,7 +927,6 @@ level 2::: description 2`
 												},
 											},
 											{
-												Level: 2,
 												Term: []interface{}{
 													types.StringElement{
 														Content: "level 2",
@@ -997,7 +962,6 @@ level 2::: description 2`
 					types.LabeledList{
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "level 1",
@@ -1027,7 +991,6 @@ level 2::: description 2`
 					types.LabeledList{
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "what: ever",
@@ -1069,7 +1032,6 @@ TIP: tip`
 					types.LabeledList{
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 1",
@@ -1096,7 +1058,6 @@ TIP: tip`
 								},
 							},
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 2",
@@ -1163,7 +1124,6 @@ TIP: We can embed admonitions too!
 					types.LabeledList{
 						Items: []*types.LabeledListElement{
 							{
-								Level: 1,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "item",

@@ -919,7 +919,6 @@ var _ = Describe("quoted strings", func() {
 						Attributes: types.Attributes{
 							types.AttrID: "_a_episode",
 						},
-						Level: 1,
 						Title: []interface{}{
 							types.StringElement{Content: "a "},
 							types.QuotedString{
@@ -942,7 +941,6 @@ var _ = Describe("quoted strings", func() {
 			expected := types.Document{
 				Elements: []interface{}{
 					types.UnorderedListElement{
-						Level:       1,
 						CheckStyle:  types.NoCheck,
 						BulletStyle: types.OneAsterisk,
 						Elements: []interface{}{
@@ -972,7 +970,6 @@ var _ = Describe("quoted strings", func() {
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledListElement{
-						Level: 1,
 						Term: []interface{}{
 							types.StringElement{Content: "'`term`'"}, // parsed later
 						},
@@ -1005,7 +1002,6 @@ var _ = Describe("quoted strings", func() {
 						Attributes: types.Attributes{
 							types.AttrID: "_a_episode",
 						},
-						Level: 1,
 						Title: []interface{}{
 							types.StringElement{Content: "a "},
 							types.QuotedString{
@@ -1028,7 +1024,6 @@ var _ = Describe("quoted strings", func() {
 			expected := types.Document{
 				Elements: []interface{}{
 					types.LabeledListElement{
-						Level: 1,
 						Term: []interface{}{
 							types.StringElement{Content: "\"`term`\""}, // parsed later
 						},
@@ -1058,7 +1053,6 @@ var _ = Describe("quoted strings", func() {
 			expected := types.Document{
 				Elements: []interface{}{
 					types.UnorderedListElement{
-						Level:       1,
 						CheckStyle:  types.NoCheck,
 						BulletStyle: types.OneAsterisk,
 						Elements: []interface{}{

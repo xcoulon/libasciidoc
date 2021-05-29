@@ -26,7 +26,6 @@ What is the answer to the Ultimate Question?:: 42`
 					},
 					Items: []*types.LabeledListElement{
 						{
-							Level: 1,
 							Term: []interface{}{
 								types.StringElement{
 									Content: "What is libasciidoc?",
@@ -45,7 +44,6 @@ What is the answer to the Ultimate Question?:: 42`
 							},
 						},
 						{
-							Level: 1,
 							Term: []interface{}{
 								types.StringElement{
 									Content: "What is the answer to the Ultimate Question?",
@@ -91,7 +89,6 @@ What is the answer to the Ultimate Question?:: 42`
 					},
 					Items: []*types.LabeledListElement{
 						{
-							Level: 1,
 							Term: []interface{}{
 								types.StringElement{Content: "What is libasciidoc?"},
 							},
@@ -108,7 +105,6 @@ What is the answer to the Ultimate Question?:: 42`
 							},
 						},
 						{
-							Level: 1,
 							Term: []interface{}{
 								types.StringElement{
 									Content: "What is the answer to the Ultimate Question?",

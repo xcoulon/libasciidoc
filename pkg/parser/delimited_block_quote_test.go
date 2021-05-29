@@ -74,7 +74,6 @@ ____
 								types.UnorderedList{
 									Items: []*types.UnorderedListElement{
 										{
-											Level:       1,
 											BulletStyle: types.Dash,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{
@@ -90,7 +89,6 @@ ____
 											},
 										},
 										{
-											Level:       1,
 											BulletStyle: types.Dash,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{
@@ -106,7 +104,6 @@ ____
 											},
 										},
 										{
-											Level:       1,
 											BulletStyle: types.Dash,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{
@@ -199,7 +196,6 @@ ____`
 								types.UnorderedList{
 									Items: []*types.UnorderedListElement{
 										{
-											Level:       1,
 											BulletStyle: types.OneAsterisk,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{
@@ -226,7 +222,6 @@ ____`
 								types.UnorderedList{
 									Items: []*types.UnorderedListElement{
 										{
-											Level:       1,
 											BulletStyle: types.OneAsterisk,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{
@@ -271,7 +266,6 @@ ____`
 								types.UnorderedList{
 									Items: []*types.UnorderedListElement{
 										{
-											Level:       1,
 											BulletStyle: types.OneAsterisk,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{
@@ -287,7 +281,6 @@ ____`
 											},
 										},
 										{
-											Level:       1,
 											BulletStyle: types.OneAsterisk,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{
@@ -303,7 +296,6 @@ ____`
 											},
 										},
 										{
-											Level:       1,
 											BulletStyle: types.OneAsterisk,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{

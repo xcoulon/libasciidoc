@@ -33,7 +33,6 @@ var _ = Describe("ordered lists", func() {
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -64,7 +63,6 @@ lines
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -91,7 +89,6 @@ lines
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level:    1,
 									Style:    types.Arabic,
 									Elements: elements,
 								},
@@ -102,7 +99,7 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list item with implicit adjusted level and numbering style", func() {
+			It("ordered list item with unnecessary level and numbering style adjustments", func() {
 				source := `.. item`
 				expected := types.Document{
 					Elements: []interface{}{
@@ -110,8 +107,7 @@ lines
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level:    1,
-									Style:    types.Arabic,
+									Style:    types.LowerAlpha,
 									Elements: elements,
 								},
 							},
@@ -129,7 +125,6 @@ lines
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level:    1,
 									Style:    types.Arabic,
 									Elements: elements,
 								},
@@ -148,7 +143,6 @@ lines
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level:    1,
 									Style:    types.LowerAlpha,
 									Elements: elements,
 								},
@@ -167,7 +161,6 @@ lines
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level:    1,
 									Style:    types.UpperAlpha,
 									Elements: elements,
 								},
@@ -186,7 +179,6 @@ lines
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level:    1,
 									Style:    types.LowerRoman,
 									Elements: elements,
 								},
@@ -205,7 +197,6 @@ lines
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level:    1,
 									Style:    types.UpperRoman,
 									Elements: elements,
 								},
@@ -224,7 +215,6 @@ lines
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -253,7 +243,6 @@ lines
 							},
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level:    1,
 									Style:    types.Arabic,
 									Elements: elements,
 								},
@@ -277,7 +266,6 @@ lines
 							},
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level:    1,
 									Style:    types.Arabic, // will be overridden during rendering
 									Elements: elements,
 								},
@@ -302,7 +290,6 @@ lines
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -313,7 +300,6 @@ lines
 									},
 								},
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -343,12 +329,10 @@ lines
 							},
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level:    1,
 									Style:    types.Arabic, // will be overridden during rendering
 									Elements: elements,
 								},
 								&types.OrderedListElement{
-									Level:    1,
 									Style:    types.Arabic, // will be overridden during rendering
 									Elements: elements,
 								},
@@ -369,7 +353,6 @@ lines
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -380,7 +363,6 @@ lines
 									},
 								},
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -414,7 +396,6 @@ lines
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -426,7 +407,6 @@ lines
 											Kind: types.OrderedListKind,
 											Elements: []interface{}{
 												&types.OrderedListElement{
-													Level: 2,
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
 														&types.Paragraph{
@@ -441,7 +421,6 @@ lines
 															},
 															Elements: []interface{}{
 																&types.OrderedListElement{
-																	Level: 3,
 																	Style: types.LowerRoman, // will be overridden during rendering
 																	Elements: []interface{}{
 																		&types.Paragraph{
@@ -452,7 +431,6 @@ lines
 																	},
 																},
 																&types.OrderedListElement{
-																	Level: 3,
 																	Style: types.LowerRoman, // will be overridden during rendering
 																	Elements: []interface{}{
 																		&types.Paragraph{
@@ -467,7 +445,6 @@ lines
 													},
 												},
 												&types.OrderedListElement{
-													Level: 2,
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
 														&types.Paragraph{
@@ -482,7 +459,6 @@ lines
 									},
 								},
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -494,7 +470,6 @@ lines
 											Kind: types.OrderedListKind,
 											Elements: []interface{}{
 												&types.OrderedListElement{
-													Level: 2,
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
 														&types.Paragraph{
@@ -536,7 +511,6 @@ lines
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -548,7 +522,6 @@ lines
 											Kind: types.OrderedListKind,
 											Elements: []interface{}{
 												&types.OrderedListElement{
-													Level: 2,
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
 														&types.Paragraph{
@@ -560,7 +533,6 @@ lines
 															Kind: types.OrderedListKind,
 															Elements: []interface{}{
 																&types.OrderedListElement{
-																	Level: 3,
 																	Style: types.LowerRoman,
 																	Elements: []interface{}{
 																		&types.Paragraph{
@@ -572,7 +544,6 @@ lines
 																			Kind: types.OrderedListKind,
 																			Elements: []interface{}{
 																				&types.OrderedListElement{
-																					Level: 4,
 																					Style: types.UpperAlpha,
 																					Elements: []interface{}{
 																						&types.Paragraph{
@@ -584,7 +555,6 @@ lines
 																							Kind: types.OrderedListKind,
 																							Elements: []interface{}{
 																								&types.OrderedListElement{
-																									Level: 5,
 																									Style: types.UpperRoman,
 																									Elements: []interface{}{
 																										&types.Paragraph{
@@ -617,7 +587,7 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list with all default styles and blank lines", func() {
+			It("ordered list with all default styles and no blank line", func() {
 				source := `. level 1
 .. level 2
 ... level 3
@@ -630,7 +600,6 @@ lines
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -642,7 +611,6 @@ lines
 											Kind: types.OrderedListKind,
 											Elements: []interface{}{
 												&types.OrderedListElement{
-													Level: 2,
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
 														&types.Paragraph{
@@ -654,7 +622,6 @@ lines
 															Kind: types.OrderedListKind,
 															Elements: []interface{}{
 																&types.OrderedListElement{
-																	Level: 3,
 																	Style: types.LowerRoman,
 																	Elements: []interface{}{
 																		&types.Paragraph{
@@ -666,7 +633,6 @@ lines
 																			Kind: types.OrderedListKind,
 																			Elements: []interface{}{
 																				&types.OrderedListElement{
-																					Level: 4,
 																					Style: types.UpperAlpha,
 																					Elements: []interface{}{
 																						&types.Paragraph{
@@ -678,10 +644,9 @@ lines
 																							Kind: types.OrderedListKind,
 																							Elements: []interface{}{
 																								&types.OrderedListElement{
-																									Level: 5,
 																									Style: types.UpperRoman,
 																									Elements: []interface{}{
-																										types.Paragraph{
+																										&types.Paragraph{
 																											Elements: []interface{}{
 																												types.StringElement{Content: "level 5."},
 																											},
@@ -723,7 +688,6 @@ lines
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -734,7 +698,6 @@ lines
 									},
 								},
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -768,7 +731,6 @@ lines
 							},
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -782,7 +744,6 @@ lines
 											Kind: types.OrderedListKind,
 											Elements: []interface{}{
 												&types.OrderedListElement{
-													Level: 2,
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
 														&types.Paragraph{
@@ -796,7 +757,6 @@ lines
 															Kind: types.OrderedListKind,
 															Elements: []interface{}{
 																&types.OrderedListElement{
-																	Level: 3,
 																	Style: types.LowerRoman,
 																	Elements: []interface{}{
 																		&types.Paragraph{
@@ -810,7 +770,6 @@ lines
 																			Kind: types.OrderedListKind,
 																			Elements: []interface{}{
 																				&types.OrderedListElement{
-																					Level: 4,
 																					Style: types.UpperAlpha,
 																					Elements: []interface{}{
 																						&types.Paragraph{
@@ -824,7 +783,6 @@ lines
 																							Kind: types.OrderedListKind,
 																							Elements: []interface{}{
 																								&types.OrderedListElement{
-																									Level: 5,
 																									Style: types.UpperRoman,
 																									Elements: []interface{}{
 																										&types.Paragraph{
@@ -853,7 +811,6 @@ lines
 									},
 								},
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -883,7 +840,6 @@ b. item 2.a`
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -895,7 +851,6 @@ b. item 2.a`
 											Kind: types.OrderedListKind,
 											Elements: []interface{}{
 												&types.OrderedListElement{
-													Level: 2,
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
 														&types.Paragraph{
@@ -910,7 +865,6 @@ b. item 2.a`
 									},
 								},
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -922,7 +876,6 @@ b. item 2.a`
 											Kind: types.OrderedListKind,
 											Elements: []interface{}{
 												&types.OrderedListElement{
-													Level: 2,
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
 														&types.Paragraph{
@@ -964,7 +917,6 @@ another delimited block
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -989,7 +941,6 @@ another delimited block
 									},
 								},
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -1023,7 +974,6 @@ print("two")
 							Kind: types.OrderedListKind,
 							Elements: []interface{}{
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -1041,7 +991,6 @@ print("two")
 									},
 								},
 								&types.OrderedListElement{
-									Level: 1,
 									Style: types.Arabic,
 									Elements: []interface{}{
 										&types.Paragraph{
