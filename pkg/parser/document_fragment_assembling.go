@@ -2,17 +2,18 @@ package parser
 
 import (
 	"github.com/bytesparadise/libasciidoc/pkg/types"
+
 	"github.com/davecgh/go-spew/spew"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
-func AssembleFragments(done <-chan interface{}, fragmentStream <-chan types.DocumentFragmentGroup) <-chan types.DocumentFragment {
+func AssembleFragments(done <-chan interface{}, fragmentGroupStream <-chan types.DocumentFragmentGroup) <-chan types.DocumentFragment {
 	assembledFragmentStream := make(chan types.DocumentFragment)
 	go func() {
 		defer close(assembledFragmentStream)
-		for fragments := range fragmentStream {
-			for _, fragment := range AssembleFragmentElements(fragments) {
+		for group := range fragmentGroupStream {
+			for _, fragment := range assembleFragments(group) {
 				select {
 				case <-done:
 					log.WithField("pipeline_stage", "fragment_assembling").Debug("received 'done' signal")
@@ -26,7 +27,7 @@ func AssembleFragments(done <-chan interface{}, fragmentStream <-chan types.Docu
 	return assembledFragmentStream
 }
 
-func AssembleFragmentElements(f types.DocumentFragmentGroup) []types.DocumentFragment {
+func assembleFragments(f types.DocumentFragmentGroup) []types.DocumentFragment {
 	// if the fragment contains an error, then send it as-is downstream
 	if err := f.Error; err != nil {
 		return []types.DocumentFragment{
@@ -71,10 +72,7 @@ func AssembleFragmentElements(f types.DocumentFragmentGroup) []types.DocumentFra
 				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
 			}
 			if err := block.AddElement(e); err != nil {
-				fr := types.NewDocumentFragment(f.LineOffset, block)
-				fr.Error = errors.Wrap(err, "unable to assemble fragments")
-				result = append(result, fr)
-				continue
+				result = append(result, types.NewErrorFragment(f.LineOffset, errors.Wrap(err, "unable to assemble fragments")))
 			}
 		case types.SingleLineComment, *types.ImageBlock:
 			result = append(result, types.NewDocumentFragment(f.LineOffset+i, e))
@@ -82,11 +80,15 @@ func AssembleFragmentElements(f types.DocumentFragmentGroup) []types.DocumentFra
 			// skip unless we're in a delimited block or in a list
 			switch b := block.(type) {
 			case *types.DelimitedBlock:
-				b.AddElement(e)
+				if err := b.AddElement(e); err != nil {
+					result = append(result, types.NewErrorFragment(f.LineOffset, errors.Wrap(err, "unable to assemble fragments")))
+				}
 			case *types.GenericList:
-				b.AddElement(e)
+				if err := b.AddElement(e); err != nil {
+					result = append(result, types.NewErrorFragment(f.LineOffset, errors.Wrap(err, "unable to assemble fragments")))
+				}
 			}
-		case types.ListElement: // TODO: use common interface for all list item types
+		case types.ListElement:
 			e.SetAttributes(attributes)
 			attributes = nil // reset
 			// if there is no "root" list yet, create one
@@ -94,22 +96,19 @@ func AssembleFragmentElements(f types.DocumentFragmentGroup) []types.DocumentFra
 				var err error
 				block, err = types.NewList(e)
 				if err != nil {
-					fr := types.NewDocumentFragment(f.LineOffset, block)
-					fr.Error = errors.Wrap(err, "unable to assemble fragments")
-					result = append(result, fr)
+					result = append(result, types.NewErrorFragment(f.LineOffset, errors.Wrap(err, "unable to assemble fragments")))
 					continue
 				}
 				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
-
 				continue
 			}
 			// add the element to the list
 			if err := block.AddElement(e); err != nil {
-				fr := types.NewDocumentFragment(f.LineOffset, block)
-				fr.Error = errors.Wrap(err, "unable to assemble fragments")
-				result = append(result, fr)
-				continue
+				result = append(result, types.NewErrorFragment(f.LineOffset, errors.Wrap(err, "unable to assemble fragments")))
 			}
+		case *types.ListElementContinuation:
+			// count the number of blanklines before this element
+			result = append(result, types.NewDocumentFragment(f.LineOffset, block))
 		default:
 			// unknow type fragment element: set an error on the fragment and send it downstream
 			fr := types.NewDocumentFragment(f.LineOffset, block)

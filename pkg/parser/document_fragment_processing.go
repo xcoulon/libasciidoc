@@ -679,9 +679,9 @@ func parseElementAttributes(element types.WithAttributes, group substitutionGrou
 			return fmt.Errorf("unexpected type of attribute value: '%T'", value)
 		}
 	}
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("parsed attributes for group '%s': %s", group, spew.Sdump(element.GetAttributes()))
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debugf("parsed attributes for group '%s': %s", group, spew.Sdump(element.GetAttributes()))
+	// }
 	return nil
 }
 
@@ -875,9 +875,9 @@ func (p *placeholders) restoreElements(elements []interface{}) []interface{} {
 			elements[i] = e.RestoreLocation(p.elements)
 		}
 	}
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("restored elements:\n%v", spew.Sdump(elements))
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debugf("restored elements:\n%v", spew.Sdump(elements))
+	// }
 	return elements
 }
 

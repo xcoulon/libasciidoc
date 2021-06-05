@@ -19,10 +19,10 @@ func ParseDocumentFragmentGroups(r io.Reader, done <-chan interface{}, opts ...O
 // parseDocumentFragments reads the given reader's content line by line, then parses each line using the appropriate
 // grammar rule (depending on the context)
 func parseDocumentFragments(source io.Reader, done <-chan interface{}, opts ...Option) <-chan types.DocumentFragmentGroup {
-	fragmentStream := make(chan types.DocumentFragmentGroup)
+	fragmentGroupStream := make(chan types.DocumentFragmentGroup)
 	// errStream := make(chan error)
 	go func() {
-		defer close(fragmentStream)
+		defer close(fragmentGroupStream)
 		// defer close(errStream)
 		scanner := NewDocumentFragmentScanner(source, opts...)
 		for scanner.Scan() {
@@ -30,12 +30,12 @@ func parseDocumentFragments(source io.Reader, done <-chan interface{}, opts ...O
 			case <-done:
 				log.Info("exiting the document parsing routine")
 				return // stops/exits the go routine
-			case fragmentStream <- scanner.Fragments():
+			case fragmentGroupStream <- scanner.Fragments():
 			}
 		}
 		log.WithField("pipeline_stage", "fragment_parsing").Debug("end of fragment parsing")
 	}()
-	return fragmentStream
+	return fragmentGroupStream
 }
 
 type DocumentFragmentScanner struct {
@@ -85,15 +85,15 @@ scan:
 			// assume that the content is just a RawLine
 			element = types.RawLine(s.scanner.Text())
 		}
-		if log.IsLevelEnabled(log.DebugLevel) {
-			log.Debugf("parsed '%s':\n%s\nerr=%v", s.scanner.Text(), spew.Sdump(element), err)
-		}
+		// if log.IsLevelEnabled(log.DebugLevel) {
+		// 	log.Debugf("parsed '%s':\n%s\nerr=%v", s.scanner.Text(), spew.Sdump(element), err)
+		// }
 		switch element := element.(type) {
 		case types.BlankLine:
 			elements = append(elements, element)
 			// blanklines outside of a delimited block causes the scanner to stop (for this call)
 			if s.scope == defaultScope || s.scope == withinParagraph {
-				break scan
+				break scan // end of fragment group
 			}
 		case *types.OrderedListElement, *types.UnorderedListElement, *types.LabeledListElement, *types.CalloutListElement:
 			s.scope = withinList
@@ -106,10 +106,11 @@ scan:
 					s.scope = withinListingBlock
 				} else {
 					s.scope = defaultScope
+					// TODO: end of fragment group here?
 				}
 			default:
 				s.err = fmt.Errorf("unsupported kind of block delimiter: %v", element.Kind)
-				break scan
+				break scan // end of fragment group
 			}
 			elements = append(elements, element)
 		case types.RawLine:
@@ -180,6 +181,7 @@ func (s *DocumentFragmentScanner) entrypoint() []Option {
 // Fragments returns document fragments that were read by the last call to `Next`.
 // Multiple calls will return the same value, until `Next` is called again
 func (s *DocumentFragmentScanner) Fragments() types.DocumentFragmentGroup {
+	log.Debugf("returning group with %d fragments", len(s.currentGroup.Content))
 	return s.currentGroup
 }
 

@@ -26,6 +26,7 @@ DefaultDocumentFragmentElement <-
     / FileInclusion 
     / BlockDelimiter 
     / ListElement
+    / ListElementContinuation
     / SingleLineComment
     / AttributeDeclaration
     / AttributeReset
@@ -1121,6 +1122,10 @@ UnorderedListElementContent <- [^\r\n]* {
             },
         },
     }, nil 
+}
+
+ListElementContinuation <- "+" Space* {
+    return types.NewListElementContinuation()
 }
 
 // ----------------------------------------------------------------------------

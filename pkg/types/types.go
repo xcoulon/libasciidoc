@@ -271,6 +271,13 @@ func NewDocumentFragment(lineOffset int, element interface{}) DocumentFragment {
 	}
 }
 
+func NewErrorFragment(lineOffset int, err error) DocumentFragment {
+	return DocumentFragment{
+		LineOffset: lineOffset,
+		Error:      err,
+	}
+}
+
 // type RawBlock interface {
 // 	AddLine(l RawLine)
 // }
@@ -932,7 +939,8 @@ type GenericList struct { // TODO: remove `ListItem` interface, `LabeledList`, e
 	Attributes Attributes
 	Elements   []interface{}
 	// lastListsByKindAndLevel [][]*GenericList // last list for each level and each kind
-	lastListByLevel []*GenericList // last list for each level and each kind
+	lastListByLevel []*GenericList `pretty:"-"` // last list for each level and each kind
+	blanklineCount  int            `pretty:"-"` // keeps track of the blanklines between elements, in case we have to deal with a list continuation
 }
 
 type ListKind string
@@ -981,6 +989,7 @@ var _ WithElements = &GenericList{}
 func (l *GenericList) AddElement(element interface{}) error {
 	switch e := element.(type) {
 	case ListElement:
+		l.blanklineCount = 0
 		// look-up the list in which the given element should be appended (or create a new one)
 		if e.ListKind() == l.Kind {
 			// look-up the parent element
@@ -998,6 +1007,9 @@ func (l *GenericList) AddElement(element interface{}) error {
 	case RawLine:
 		// look-up the list element to which this rawline shall be appended
 		l.lastElement().AddElement(e)
+		return nil
+	case BlankLine:
+		l.blanklineCount++
 		return nil
 	default:
 		return errors.Errorf("unexpected type of element to add to the list: '%T'", element)
@@ -1121,6 +1133,14 @@ func (l *GenericList) SetAttributes(attributes Attributes) {
 			f.SetAttributes(attributes)
 		}
 	}
+}
+
+type ListElementContinuation struct {
+	Level int
+}
+
+func NewListElementContinuation() (*ListElementContinuation, error) {
+	return &ListElementContinuation{}, nil
 }
 
 // ContinuedListItemElement a wrapper for an element which should be attached to a list item (same level or an ancestor)
