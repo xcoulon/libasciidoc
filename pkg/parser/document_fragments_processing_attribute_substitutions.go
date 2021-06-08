@@ -1,10 +1,5 @@
 package parser
 
-import (
-	"github.com/bytesparadise/libasciidoc/pkg/types"
-	log "github.com/sirupsen/logrus"
-)
-
 // TODO: rename this func
 // func onInlineElements(ctx *substitutionContext, elements types.InlineElements) (types.InlineElements, error) {
 // 	if log.IsLevelEnabled(log.DebugLevel) {
@@ -32,33 +27,33 @@ import (
 // 	return result, nil
 // }
 
-func substituteAttributes(content interface{}, attributes map[string]string) interface{} {
-	switch element := content.(type) {
-	case types.InlineElements:
-		for i, elmt := range element {
-			element[i] = substituteAttributes(elmt, attributes)
-		}
-		return types.Merge(element...)
-	case []interface{}:
-		for i, elmt := range element {
-			element[i] = substituteAttributes(elmt, attributes)
-		}
-		return types.Merge(element...)
-	case types.AttributeSubstitution:
-		if value, found := attributes[element.Name]; found {
-			return types.StringElement{
-				Content: value,
-			}
-		}
-		log.Debugf("unable to substitute attribute '%s': no match found", element.Name)
-		return types.StringElement{
-			Content: "{" + element.Name + "}",
-		}
-	default:
-		// do nothing, return as-is
-		return content
-	}
-}
+// func substituteAttributes(content interface{}, attributes map[string]string) interface{} {
+// 	switch element := content.(type) {
+// 	case types.InlineElements:
+// 		for i, elmt := range element {
+// 			element[i] = substituteAttributes(elmt, attributes)
+// 		}
+// 		return types.Merge(element...)
+// 	case []interface{}:
+// 		for i, elmt := range element {
+// 			element[i] = substituteAttributes(elmt, attributes)
+// 		}
+// 		return types.Merge(element...)
+// 	case types.AttributeSubstitution:
+// 		if value, found := attributes[element.Name]; found {
+// 			return types.StringElement{
+// 				Content: value,
+// 			}
+// 		}
+// 		log.Debugf("unable to substitute attribute '%s': no match found", element.Name)
+// 		return types.StringElement{
+// 			Content: "{" + element.Name + "}",
+// 		}
+// 	default:
+// 		// do nothing, return as-is
+// 		return content
+// 	}
+// }
 
 // type placeholders struct {
 // 	seq      int

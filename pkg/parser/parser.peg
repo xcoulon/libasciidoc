@@ -1777,6 +1777,7 @@ NormalGroup <- elements:(NormalGroupElement)+ EOF {
 NormalGroupElement <- !EOF
     element:(
         InlineWord
+        / LineBreak // must appear before space :/
         / Space
         / Newline
         / InlinePassthrough

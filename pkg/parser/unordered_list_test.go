@@ -1008,25 +1008,32 @@ another delimited block
 `
 				expected := types.Document{
 					Elements: []interface{}{
-						types.UnorderedList{
-							Items: []*types.UnorderedListElement{
-								{
+						&types.GenericList{
+							Kind: types.UnorderedListKind,
+							Elements: []interface{}{
+								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "foo"},
+												types.StringElement{
+													Content: "foo",
+												},
 											},
 										},
-										types.ListingBlock{
+										&types.ListElementContinuation{},
+										&types.DelimitedBlock{
+											Kind: types.Listing,
 											Elements: []interface{}{
 												types.StringElement{
 													Content: "a delimited block",
 												},
 											},
 										},
-										types.ListingBlock{
+										&types.ListElementContinuation{},
+										&types.DelimitedBlock{
+											Kind: types.Listing,
 											Elements: []interface{}{
 												types.StringElement{
 													Content: "another delimited block",
@@ -1035,13 +1042,15 @@ another delimited block
 										},
 									},
 								},
-								{
+								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "bar"},
+												types.StringElement{
+													Content: "bar",
+												},
 											},
 										},
 									},
@@ -1069,12 +1078,13 @@ The {plus} symbol is on a new line.
 `
 				expected := types.Document{
 					Elements: []interface{}{
-						types.UnorderedList{
+						&types.GenericList{
+							Kind: types.UnorderedListKind,
 							Attributes: types.Attributes{
 								types.AttrTitle: "Unordered, complex",
 							},
-							Items: []*types.UnorderedListElement{
-								{
+							Elements: []interface{}{
+								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
@@ -1083,56 +1093,60 @@ The {plus} symbol is on a new line.
 												types.StringElement{Content: "level 1"},
 											},
 										},
-										types.UnorderedList{
-											Items: []*types.UnorderedListElement{
-												{
+										&types.GenericList{
+											Kind: types.UnorderedListKind,
+											Elements: []interface{}{
+												&types.UnorderedListElement{
 													BulletStyle: types.TwoAsterisks,
 													CheckStyle:  types.NoCheck,
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "level 2"},
+																types.StringElement{
+																	Content: "level 2",
+																},
 															},
 														},
-														types.UnorderedList{
-															Items: []*types.UnorderedListElement{
-																{
+														&types.GenericList{
+															Kind: types.UnorderedListKind,
+															Elements: []interface{}{
+																&types.UnorderedListElement{
 																	BulletStyle: types.ThreeAsterisks,
 																	CheckStyle:  types.NoCheck,
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "level 3"},
 																				types.StringElement{
-																					Content: "This is a new line inside an unordered list using ",
+																					Content: "level 3\nThis is a new line inside an unordered list using ",
 																				},
 																				types.PredefinedAttribute{
 																					Name: "plus",
 																				},
 																				types.StringElement{
-																					Content: " symbol.",
-																				},
-																				types.StringElement{
-																					Content: "We can even force content to start on a separate line\u2026\u200b",
+																					Content: " symbol.\nWe can even force content to start on a separate line\u2026\u200b",
 																				},
 																				types.LineBreak{},
 																				types.StringElement{
-																					Content: "Amazing, isn\u2019t it?",
+																					Content: "\nAmazing, isn\u2019t it?",
 																				},
 																			},
 																		},
-																		types.UnorderedList{
-																			Items: []*types.UnorderedListElement{
-																				{
+																		&types.GenericList{
+																			Kind: types.UnorderedListKind,
+																			Elements: []interface{}{
+																				&types.UnorderedListElement{
 																					BulletStyle: types.FourAsterisks,
 																					CheckStyle:  types.NoCheck,
 																					Elements: []interface{}{
 																						&types.Paragraph{
 																							Elements: []interface{}{
-																								types.StringElement{Content: "level 4"},
+																								types.StringElement{
+																									Content: "level 4",
+																								},
 																							},
 																						},
 																						// the `+` continuation produces the second paragrap below
+																						&types.ListElementContinuation{},
 																						&types.Paragraph{
 																							Elements: []interface{}{
 																								types.StringElement{
@@ -1146,10 +1160,10 @@ The {plus} symbol is on a new line.
 																								},
 																							},
 																						},
-
-																						types.UnorderedList{
-																							Items: []*types.UnorderedListElement{
-																								{
+																						&types.GenericList{
+																							Kind: types.UnorderedListKind,
+																							Elements: []interface{}{
+																								&types.UnorderedListElement{
 																									BulletStyle: types.FiveAsterisks,
 																									CheckStyle:  types.NoCheck,
 																									Elements: []interface{}{
@@ -1187,18 +1201,22 @@ The {plus} symbol is on a new line.
 
 			It("without item continuation", func() {
 				source := `* foo
+
 ----
 a delimited block
 ----
+
 * bar
+
 ----
 another delimited block
 ----`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.UnorderedList{
-							Items: []*types.UnorderedListElement{
-								{
+						&types.GenericList{
+							Kind: types.UnorderedListKind,
+							Elements: []interface{}{
+								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
@@ -1211,16 +1229,18 @@ another delimited block
 								},
 							},
 						},
-						types.ListingBlock{
+						&types.DelimitedBlock{
+							Kind: types.Listing,
 							Elements: []interface{}{
 								types.StringElement{
 									Content: "a delimited block",
 								},
 							},
 						},
-						types.UnorderedList{
-							Items: []*types.UnorderedListElement{
-								{
+						&types.GenericList{
+							Kind: types.UnorderedListKind,
+							Elements: []interface{}{
+								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
@@ -1233,7 +1253,8 @@ another delimited block
 								},
 							},
 						},
-						types.ListingBlock{
+						&types.DelimitedBlock{
+							Kind: types.Listing,
 							Elements: []interface{}{
 								types.StringElement{
 									Content: "another delimited block",
@@ -1258,9 +1279,10 @@ another delimited block
 paragraph attached to grandparent list item`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.UnorderedList{
-							Items: []*types.UnorderedListElement{
-								{
+						&types.GenericList{
+							Kind: types.UnorderedListKind,
+							Elements: []interface{}{
+								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
@@ -1269,9 +1291,10 @@ paragraph attached to grandparent list item`
 												types.StringElement{Content: "grandparent list item"},
 											},
 										},
-										types.UnorderedList{
-											Items: []*types.UnorderedListElement{
-												{
+										&types.GenericList{
+											Kind: types.UnorderedListKind,
+											Elements: []interface{}{
+												&types.UnorderedListElement{
 													BulletStyle: types.TwoAsterisks,
 													CheckStyle:  types.NoCheck,
 													Elements: []interface{}{
@@ -1280,9 +1303,10 @@ paragraph attached to grandparent list item`
 																types.StringElement{Content: "parent list item"},
 															},
 														},
-														types.UnorderedList{
-															Items: []*types.UnorderedListElement{
-																{
+														&types.GenericList{
+															Kind: types.UnorderedListKind,
+															Elements: []interface{}{
+																&types.UnorderedListElement{
 																	BulletStyle: types.ThreeAsterisks,
 																	CheckStyle:  types.NoCheck,
 																	Elements: []interface{}{
@@ -1299,6 +1323,7 @@ paragraph attached to grandparent list item`
 												},
 											},
 										},
+										&types.ListElementContinuation{},
 										&types.Paragraph{
 											Elements: []interface{}{
 												types.StringElement{Content: "paragraph attached to grandparent list item"},
@@ -1322,46 +1347,58 @@ paragraph attached to grandparent list item`
 paragraph attached to parent list item`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.UnorderedList{
-							Items: []*types.UnorderedListElement{
-								{
+						&types.GenericList{
+							Kind: types.UnorderedListKind,
+							Elements: []interface{}{
+								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "grandparent list item"},
+												types.StringElement{
+													Content: "grandparent list item",
+												},
 											},
 										},
-										types.UnorderedList{
-											Items: []*types.UnorderedListElement{
-												{
+										&types.GenericList{
+											Kind: types.UnorderedListKind,
+											Elements: []interface{}{
+												&types.UnorderedListElement{
 													BulletStyle: types.TwoAsterisks,
 													CheckStyle:  types.NoCheck,
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "parent list item"},
+																types.StringElement{
+																	Content: "parent list item",
+																},
 															},
 														},
-														types.UnorderedList{
-															Items: []*types.UnorderedListElement{
-																{
+														&types.GenericList{
+															Kind: types.UnorderedListKind,
+															Elements: []interface{}{
+																&types.UnorderedListElement{
 																	BulletStyle: types.ThreeAsterisks,
 																	CheckStyle:  types.NoCheck,
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "child list item"},
+																				types.StringElement{
+																					Content: "child list item",
+																				},
 																			},
 																		},
 																	},
 																},
 															},
 														},
+														&types.ListElementContinuation{},
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "paragraph attached to parent list item"},
+																types.StringElement{
+																	Content: "paragraph attached to parent list item",
+																},
 															},
 														},
 													},

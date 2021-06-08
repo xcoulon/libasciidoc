@@ -29,6 +29,12 @@ func Merge(elements ...interface{}) []interface{} {
 				result, buf = appendBuffer(result, buf)
 				result = Merge(append(result, f...)...)
 			}
+		case Elements:
+			if len(element) > 0 {
+				f := Merge(element...)
+				result, buf = appendBuffer(result, buf)
+				result = Merge(append(result, f...)...)
+			}
 		default:
 			// log.Debugf("Merging with 'default' case an element of type %[1]T", element)
 			result, buf = appendBuffer(result, buf)

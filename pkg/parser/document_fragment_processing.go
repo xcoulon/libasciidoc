@@ -238,9 +238,9 @@ func processFragment(ctx *processContext, f types.DocumentFragment) types.Docume
 // replaces the AttributeSubstitution elements by their actual values.
 // TODO: returns `true` if at least one AttributeSubstitution was found (whatever its replacement)?
 func applyAttributeSubstitutionsOnAttributes(ctx *processContext, b types.WithAttributes) error {
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("applying attribute substitutions on attributes\n%s", spew.Sdump(b.GetAttributes()))
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debugf("applying attribute substitutions on attributes\n%s", spew.Sdump(b.GetAttributes()))
+	// }
 	for key, value := range b.GetAttributes() {
 		switch value := value.(type) {
 		case []interface{}: // multi-value attributes
@@ -263,9 +263,9 @@ func applyAttributeSubstitutionsOnAttributes(ctx *processContext, b types.WithAt
 			b.GetAttributes()[key] = types.Reduce(value)
 		}
 	}
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("applied attribute substitutions:\n%s", spew.Sdump(b.GetAttributes()))
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debugf("applied attribute substitutions:\n%s", spew.Sdump(b.GetAttributes()))
+	// }
 	return nil
 }
 
@@ -362,10 +362,10 @@ func processLocation(ctx *processContext, b types.WithLocation) error {
 	imagesdir := ctx.attributes.GetAsStringWithDefault("imagesdir", "")
 	b.GetLocation().SetPathPrefix(imagesdir)
 
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debug("applied substitutions on block with location")
-		spew.Fdump(log.StandardLogger().Out, b)
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debug("applied substitutions on block with location")
+	// 	spew.Fdump(log.StandardLogger().Out, b)
+	// }
 	return nil
 }
 
@@ -397,7 +397,7 @@ func newSubstitutionPlan(b types.WithAttributes) (*substitutionPlan, error) {
 		for i, p := range plan.steps {
 			steps[i] = p.group
 		}
-		log.Debugf("applying steps: '%s'", steps)
+		// log.Debugf("applying steps: '%s'", steps)
 	}
 	return plan, nil
 }
@@ -532,9 +532,9 @@ func (s *substitutionStep) reduce() bool { // TODO: rename this func
 			delete(s.enablements, sub)
 		}
 	}
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("new enablements for '%s': %s", s.group, spew.Sdump(s.enablements))
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debugf("new enablements for '%s': %s", s.group, spew.Sdump(s.enablements))
+	// }
 	return len(s.enablements) > 0
 }
 
@@ -656,7 +656,7 @@ func parseElements(elements []interface{}, group substitutionGroup, opts ...Opti
 
 func parseElementAttributes(element types.WithAttributes, group substitutionGroup, opts ...Option) error {
 	if !(group == AttributesGroup || group == QuotesGroup) { // TODO: include special_characters?
-		log.Debugf("no need to parse attributes for group '%s'", group)
+		// log.Debugf("no need to parse attributes for group '%s'", group)
 		return nil
 	}
 	for name, value := range element.GetAttributes() {
@@ -767,9 +767,9 @@ func applyAttributeSubstitutionsOnLocation(ctx *processContext, b types.WithLoca
 }
 
 func applyAttributeSubstitutionsOnElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("applying attribute substitutions on elements:\n%s", spew.Sdump(elements))
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debugf("applying attribute substitutions on elements:\n%s", spew.Sdump(elements))
+	// }
 	result := make([]interface{}, len(elements)) // maximum capacity should exceed initial input
 	for i, element := range elements {
 		element, err := applyAttributeSubstitutionsOnElement(ctx, element)
@@ -778,9 +778,9 @@ func applyAttributeSubstitutionsOnElements(ctx *processContext, elements []inter
 		}
 		result[i] = element
 	}
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("applied attribute substitutions on elements:\n%s", spew.Sdump(result))
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debugf("applied attribute substitutions on elements:\n%s", spew.Sdump(result))
+	// }
 	return result, nil
 }
 
@@ -911,8 +911,8 @@ func serialize(content interface{}) ([]byte, *placeholders) {
 			}
 		}
 	}
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("serialized lines:\n%s\nplaceholders:\n%v", result.Bytes(), spew.Sdump(placeholders))
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debugf("serialized lines:\n%s\nplaceholders:\n%v", result.Bytes(), spew.Sdump(placeholders))
+	// }
 	return result.Bytes(), placeholders
 }
