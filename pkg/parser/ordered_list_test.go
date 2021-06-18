@@ -924,14 +924,18 @@ another delimited block
 												types.StringElement{Content: "foo"},
 											},
 										},
-										types.ListingBlock{
+										&types.ListElementContinuation{},
+										&types.DelimitedBlock{
+											Kind: types.Listing,
 											Elements: []interface{}{
 												types.StringElement{
 													Content: "a delimited block",
 												},
 											},
 										},
-										types.ListingBlock{
+										&types.ListElementContinuation{},
+										&types.DelimitedBlock{
+											Kind: types.Listing,
 											Elements: []interface{}{
 												types.StringElement{
 													Content: "another delimited block",
@@ -981,7 +985,9 @@ print("two")
 												types.PredefinedAttribute{Name: "blank"},
 											},
 										},
-										types.ListingBlock{
+										&types.ListElementContinuation{},
+										&types.DelimitedBlock{
+											Kind: types.Listing,
 											Elements: []interface{}{
 												types.StringElement{
 													Content: "print(\"one\")",
@@ -998,7 +1004,9 @@ print("two")
 												types.PredefinedAttribute{Name: "blank"},
 											},
 										},
-										types.ListingBlock{
+										&types.ListElementContinuation{},
+										&types.DelimitedBlock{
+											Kind: types.Listing,
 											Elements: []interface{}{
 												types.StringElement{
 													Content: "print(\"two\")",

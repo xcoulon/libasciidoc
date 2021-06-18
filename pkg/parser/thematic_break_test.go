@@ -14,75 +14,73 @@ var _ = Describe("paragraphs", func() {
 
 		Context("thematic breaks", func() {
 
-			It("thematic break form1 by itself", func() {
+			It("form1 by itself", func() {
 				source := "***"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.ThematicBreak{},
+						&types.ThematicBreak{},
 					},
 				}
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("thematic break form2 by itself", func() {
+			It("form2 by itself", func() {
 				source := "* * *"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.ThematicBreak{},
+						&types.ThematicBreak{},
 					},
 				}
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("thematic break form3 by itself", func() {
+			It("form3 by itself", func() {
 				source := "---"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.ThematicBreak{},
+						&types.ThematicBreak{},
 					},
 				}
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("thematic break form4 by itself", func() {
+			It("form4 by itself", func() {
 				source := "- - -"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.ThematicBreak{},
+						&types.ThematicBreak{},
 					},
 				}
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("thematic break form5 by itself", func() {
+			It("form5 by itself", func() {
 				source := "___"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.ThematicBreak{},
+						&types.ThematicBreak{},
 					},
 				}
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("thematic break form4 by itself", func() {
+			It("form4 by itself", func() {
 				source := "_ _ _"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.ThematicBreak{},
+						&types.ThematicBreak{},
 					},
 				}
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("thematic break with leading text", func() {
+			It("with leading text", func() {
 				source := "text ***"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "text ***"},
-								},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.StringElement{Content: "text ***"},
 							},
 						},
 					},
@@ -91,14 +89,23 @@ var _ = Describe("paragraphs", func() {
 			})
 
 			// NB: three asterisks gets confused with bullets if with trailing text
-			It("thematic break with trailing text", func() {
+			It("with trailing text", func() {
 				source := "* * * text"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "* * * text"},
+						&types.GenericList{
+							Kind: types.UnorderedListKind,
+							Elements: []interface{}{
+								&types.UnorderedListElement{
+									BulletStyle: types.OneAsterisk,
+									CheckStyle:  types.NoCheck,
+									Elements: []interface{}{
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "* * text"},
+											},
+										},
+									},
 								},
 							},
 						},

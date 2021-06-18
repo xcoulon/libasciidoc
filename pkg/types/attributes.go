@@ -441,6 +441,7 @@ func NewIDAttribute(id interface{}) (Attribute, error) {
 
 // Set adds the given attribute to the current ones
 // with some `key` replacements/grouping (Role->Roles and Option->Options)
+// returns the new `Attributes` if the current instance was `nil`
 func (a Attributes) Set(key string, value interface{}) Attributes {
 	// log.Debugf("setting attribute %s=%v", key, value)
 	if a == nil {

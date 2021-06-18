@@ -10,21 +10,15 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// ParseDocumentFragmentGroups parses a document's content and applies the preprocessing directives (file inclusions)
+// ScanDocument scans a document's content and applies the preprocessing directives (file inclusions)
 // Returns the document fragments (to be assembled) or an error
-func ParseDocumentFragmentGroups(r io.Reader, done <-chan interface{}, opts ...Option) <-chan types.DocumentFragmentGroup {
-	return parseDocumentFragments(r, done, opts...)
-}
-
-// parseDocumentFragments reads the given reader's content line by line, then parses each line using the appropriate
-// grammar rule (depending on the context)
-func parseDocumentFragments(source io.Reader, done <-chan interface{}, opts ...Option) <-chan types.DocumentFragmentGroup {
+func ScanDocument(source io.Reader, done <-chan interface{}, opts ...Option) <-chan types.DocumentFragmentGroup {
 	fragmentGroupStream := make(chan types.DocumentFragmentGroup)
 	// errStream := make(chan error)
 	go func() {
 		defer close(fragmentGroupStream)
 		// defer close(errStream)
-		scanner := NewDocumentFragmentScanner(source, opts...)
+		scanner := NewDocumentScanner(source, opts...)
 		for scanner.Scan() {
 			select {
 			case <-done:
@@ -50,14 +44,14 @@ type DocumentFragmentScanner struct {
 type scanningScope string
 
 const (
-	unknownScope       scanningScope = "unknown"
+	unknownScope       scanningScope = "unknown" // TODO: remove and use 'default' instead?
 	defaultScope       scanningScope = "default"
 	withinParagraph    scanningScope = "within_paragraph"
 	withinList         scanningScope = "within_list"
 	withinListingBlock scanningScope = "within_listing_block"
 )
 
-func NewDocumentFragmentScanner(source io.Reader, opts ...Option) *DocumentFragmentScanner {
+func NewDocumentScanner(source io.Reader, opts ...Option) *DocumentFragmentScanner {
 	return &DocumentFragmentScanner{
 		scanner: bufio.NewScanner(source),
 		opts:    opts,
@@ -87,13 +81,17 @@ scan:
 			element = types.RawLine(s.scanner.Text())
 		}
 		// if log.IsLevelEnabled(log.DebugLevel) {
-		// 	log.Debugf("parsed '%s':\n%s\nerr=%v", s.scanner.Text(), spew.Sdump(element), err)
+		// 	log.Debugf("parsed '%s':\n%s", s.scanner.Text(), spew.Sdump(element))
+		// 	if err != nil {
+		// 		log.Debugf("err=%v", err)
+		// 	}
 		// }
 		switch element := element.(type) {
 		case types.BlankLine:
 			elements = append(elements, element)
 			// blanklines outside of a delimited block causes the scanner to stop (for this call)
 			if s.scopes.get() == defaultScope || s.scopes.get() == withinParagraph {
+				s.scopes.pop()
 				break scan // end of fragment group
 			}
 		case *types.OrderedListElement, *types.UnorderedListElement, *types.LabeledListElement, *types.CalloutListElement:
@@ -113,10 +111,10 @@ scan:
 				s.err = fmt.Errorf("unsupported kind of block delimiter: %v", element.Kind)
 				break scan // end of fragment group
 			}
-			log.Debugf("updated scanner scope: %s", s.scopes.get())
+			// log.Debugf("updated scanner scope: %s", s.scopes.get())
 			elements = append(elements, element)
 		case types.RawLine:
-			if s.scopes.get() == defaultScope {
+			if s.scopes.get() == defaultScope || s.scopes.get() == unknownScope {
 				// we're now within a paragraph
 				s.scopes.push(withinParagraph)
 			}
@@ -148,7 +146,7 @@ scan:
 }
 
 func (c *current) isValidBlockDelimiter(d types.BlockDelimiter) (bool, error) {
-	if k, ok := c.globalStore[validDelimitedBlockKind].(types.DelimitedBlockKind); ok {
+	if k, ok := c.globalStore[validDelimitedBlockKind].(string); ok {
 		// if log.IsLevelEnabled(log.DebugLevel) {
 		// 	log.Debugf("checking if delimiter matches kind '%v': %s", k, spew.Sdump(d))
 		// }
@@ -163,23 +161,23 @@ const validDelimitedBlockKind = "valid_delimited_block_kind"
 // returns the EntryPoint and GlobalStore if within a delimited block,
 // so we know which delimiter can be accepted
 func (s *DocumentFragmentScanner) entrypoint() []Option {
-	// if log.IsLevelEnabled(log.DebugLevel) {
-	// 	log.Debugf("current parsing scope: %v", s.scope)
-	// }
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("current parsing scope: %v", s.scopes.get())
+	}
 	switch s.scopes.get() {
 	case withinParagraph:
-		// log.Debugf("using '%s' entrypoint", "DocumentFragmentElementWithinParagraph")
+		log.Debugf("using '%s' entrypoint", "DocumentFragmentElementWithinParagraph")
 		return []Option{
 			Entrypoint("DocumentFragmentElementWithinParagraph"),
 		}
 	case withinListingBlock:
-		// log.Debugf("using '%s' entrypoint", "DocumentFragmentElementWithinDelimitedBlock")
+		log.Debugf("using '%s' entrypoint", "DocumentFragmentElementWithinDelimitedBlock")
 		return []Option{
 			Entrypoint("DocumentFragmentElementWithinDelimitedBlock"),
 			GlobalStore(validDelimitedBlockKind, types.Listing),
 		}
 	default:
-		// log.Debugf("using '%s' entrypoint", "DefaultDocumentFragmentElement")
+		log.Debugf("using '%s' entrypoint", "DefaultDocumentFragmentElement")
 		return []Option{
 			Entrypoint("DefaultDocumentFragmentElement"),
 		}
@@ -194,16 +192,14 @@ func (s *DocumentFragmentScanner) Fragments() types.DocumentFragmentGroup {
 }
 
 type scanningScopeStack struct {
-	index int
-	stack []scanningScope
+	scopes []scanningScope
 }
 
 func newScanningScopeStack() *scanningScopeStack {
-	stack := make([]scanningScope, 10)
-	stack = append(stack, defaultScope)
+	scopes := make([]scanningScope, 0, 10)
+	scopes = append(scopes, defaultScope)
 	return &scanningScopeStack{
-		stack: stack,
-		index: -1,
+		scopes: scopes,
 	}
 }
 
@@ -216,24 +212,23 @@ func newScanningScopeStack() *scanningScopeStack {
 // }
 
 func (s *scanningScopeStack) push(a scanningScope) {
-	s.index++
-	s.stack[s.index] = a
+	s.scopes = append(s.scopes, a)
 }
 
 func (s *scanningScopeStack) pop() scanningScope {
-	if s.index < 0 {
+	if len(s.scopes) < 0 {
 		return unknownScope
 	}
-	a := s.stack[s.index]
-	s.index--
+	a := s.scopes[len(s.scopes)-1]
+	s.scopes = s.scopes[:len(s.scopes)-1]
 	return a
 }
 
 func (s *scanningScopeStack) get() scanningScope {
-	if s.index < 0 {
+	if len(s.scopes) < 0 {
 		return unknownScope
 	}
-	return s.stack[s.index]
+	return s.scopes[len(s.scopes)-1]
 }
 
 // // parseDocumentFrontMatter attempts to read the front-matter if it exists.

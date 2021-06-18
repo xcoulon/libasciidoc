@@ -197,7 +197,7 @@ on
 		done := make(chan interface{})
 		r := MockReader{}
 		// when
-		fragmentStream := parser.ParseDocumentFragmentGroups(r, done)
+		fragmentStream := parser.ScanDocument(r, done)
 		// then
 		// simplified example: expect a single fragment with an error
 		fragment := <-fragmentStream

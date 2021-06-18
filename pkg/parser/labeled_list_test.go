@@ -18,23 +18,21 @@ Item 1 description
 on 2 lines`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item1",
 									},
 								},
-
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "Item 1 description"},
-											},
-											{
-												types.StringElement{Content: "on 2 lines"},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "Item 1 description\non 2 lines",
 											},
 										},
 									},
@@ -51,15 +49,16 @@ on 2 lines`
 			source := `Item1::`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item1",
 									},
 								},
-								Elements: []interface{}{},
 							},
 						},
 					},
@@ -73,9 +72,11 @@ on 2 lines`
 				`This function is _untyped_.`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									&types.QuotedText{
 										Kind: types.SingleQuoteMonospace,
@@ -87,23 +88,21 @@ on 2 lines`
 									},
 								},
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "This function is ",
-												},
-												&types.QuotedText{
-													Kind: types.SingleQuoteItalic,
-													Elements: []interface{}{
-														types.StringElement{
-															Content: "untyped",
-														},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "This function is ",
+											},
+											&types.QuotedText{
+												Kind: types.SingleQuoteItalic,
+												Elements: []interface{}{
+													types.StringElement{
+														Content: "untyped",
 													},
 												},
-												types.StringElement{
-													Content: ".",
-												},
+											},
+											types.StringElement{
+												Content: ".",
 											},
 										},
 									},
@@ -120,9 +119,11 @@ on 2 lines`
 				`This function is _untyped_.`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.IndexTerm{
 										Term: []interface{}{
@@ -138,23 +139,21 @@ on 2 lines`
 									},
 								},
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "This function is ",
-												},
-												&types.QuotedText{
-													Kind: types.SingleQuoteItalic,
-													Elements: []interface{}{
-														types.StringElement{
-															Content: "untyped",
-														},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "This function is ",
+											},
+											&types.QuotedText{
+												Kind: types.SingleQuoteItalic,
+												Elements: []interface{}{
+													types.StringElement{
+														Content: "untyped",
 													},
 												},
-												types.StringElement{
-													Content: ".",
-												},
+											},
+											types.StringElement{
+												Content: ".",
 											},
 										},
 									},
@@ -172,9 +171,11 @@ on 2 lines`
 				`This function is _untyped_.`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.ConcealedIndexTerm{
 										Term1: "foo",
@@ -182,23 +183,21 @@ on 2 lines`
 									},
 								},
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "This function is ",
-												},
-												&types.QuotedText{
-													Kind: types.SingleQuoteItalic,
-													Elements: []interface{}{
-														types.StringElement{
-															Content: "untyped",
-														},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "This function is ",
+											},
+											&types.QuotedText{
+												Kind: types.SingleQuoteItalic,
+												Elements: []interface{}{
+													types.StringElement{
+														Content: "untyped",
 													},
 												},
-												types.StringElement{
-													Content: ".",
-												},
+											},
+											types.StringElement{
+												Content: ".",
 											},
 										},
 									},
@@ -216,24 +215,23 @@ on 2 lines`
 Item1:: foo`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
 						Attributes: types.Attributes{
 							"style": "horizontal",
 						},
-						Items: []*types.LabeledListElement{
-							{
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item1",
 									},
 								},
-
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "foo"},
-											},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{Content: "foo"},
 										},
 									},
 								},
@@ -250,16 +248,16 @@ Item1:: foo`
 			`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item1",
 									},
 								},
-
-								Elements: []interface{}{},
 							},
 						},
 					},
@@ -277,55 +275,50 @@ Item 3::
 Item 3 description`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 1",
 									},
 								},
-
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "Item 1 description"},
-											},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{Content: "Item 1 description"},
 										},
 									},
 								},
 							},
-							{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 2",
 									},
 								},
-
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "Item 2 description"},
-											},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{Content: "Item 2 description"},
 										},
 									},
 								},
 							},
-							{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 3",
 									},
 								},
-
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "Item 3 description"},
-											},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{Content: "Item 3 description"},
 										},
 									},
 								},
@@ -346,55 +339,52 @@ Item 3::::
 Item 3 description`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 1",
 									},
 								},
-
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "Item 1 description"},
-											},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{Content: "Item 1 description"},
 										},
 									},
-									types.LabeledList{
-										Items: []*types.LabeledListElement{
-											{
+									&types.GenericList{
+										Kind: types.LabeledListKind,
+										Elements: []interface{}{
+											&types.LabeledListElement{
+												Style: types.TripleColons,
 												Term: []interface{}{
 													types.StringElement{
 														Content: "Item 2",
 													},
 												},
-
 												Elements: []interface{}{
-													types.Paragraph{
-														Lines: [][]interface{}{
-															{
-																types.StringElement{Content: "Item 2 description"},
-															},
+													&types.Paragraph{
+														Elements: []interface{}{
+															types.StringElement{Content: "Item 2 description"},
 														},
 													},
-													types.LabeledList{
-														Items: []*types.LabeledListElement{
-															{
+													&types.GenericList{
+														Kind: types.LabeledListKind,
+														Elements: []interface{}{
+															&types.LabeledListElement{
+																Style: types.QuadrupleColons,
 																Term: []interface{}{
 																	types.StringElement{
 																		Content: "Item 3",
 																	},
 																},
-
 																Elements: []interface{}{
-																	types.Paragraph{
-																		Lines: [][]interface{}{
-																			{
-																				types.StringElement{Content: "Item 3 description"},
-																			},
+																	&types.Paragraph{
+																		Elements: []interface{}{
+																			types.StringElement{Content: "Item 3 description"},
 																		},
 																	},
 																},
@@ -421,40 +411,38 @@ Item 3 description`
 Item with description:: something simple`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Empty item",
 									},
 								},
-
 								Elements: []interface{}{
-									types.UnorderedList{
-										Items: []*types.UnorderedListElement{
-											{
+									&types.GenericList{
+										Kind: types.UnorderedListKind,
+										Elements: []interface{}{
+											&types.UnorderedListElement{
 												BulletStyle: types.OneAsterisk,
 												CheckStyle:  types.NoCheck,
 												Elements: []interface{}{
-													types.Paragraph{
-														Lines: [][]interface{}{
-															{
-																types.StringElement{Content: "foo"},
-															},
+													&types.Paragraph{
+														Elements: []interface{}{
+															types.StringElement{Content: "foo"},
 														},
 													},
 												},
 											},
-											{
+											&types.UnorderedListElement{
 												BulletStyle: types.OneAsterisk,
 												CheckStyle:  types.NoCheck,
 												Elements: []interface{}{
-													types.Paragraph{
-														Lines: [][]interface{}{
-															{
-																types.StringElement{Content: "bar"},
-															},
+													&types.Paragraph{
+														Elements: []interface{}{
+															types.StringElement{Content: "bar"},
 														},
 													},
 												},
@@ -463,18 +451,17 @@ Item with description:: something simple`
 									},
 								},
 							},
-							{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item with description",
 									},
 								},
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "something simple"},
-											},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{Content: "something simple"},
 										},
 									},
 								},
@@ -483,7 +470,6 @@ Item with description:: something simple`
 					},
 				},
 			}
-
 			Expect(ParseDocument(source)).To(MatchDocument(expected))
 		})
 
@@ -495,35 +481,30 @@ bar
 a normal paragraph.`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 1",
 									},
 								},
-
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "foo"},
-											},
-											{
-												types.StringElement{Content: "bar"},
-											},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{Content: "foo\nbar"},
 										},
 									},
 								},
 							},
 						},
 					},
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "a normal paragraph."},
-							},
+
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.StringElement{Content: "a normal paragraph."},
 						},
 					},
 				},
@@ -544,17 +525,20 @@ another fenced block
 ----`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 1",
 									},
 								},
-
 								Elements: []interface{}{
-									types.ListingBlock{
+									&types.ListElementContinuation{},
+									&types.DelimitedBlock{
+										Kind: types.Listing,
 										Elements: []interface{}{
 											types.StringElement{
 												Content: "a fenced block",
@@ -563,22 +547,22 @@ another fenced block
 									},
 								},
 							},
-							{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 2",
 									},
 								},
-
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "something simple"},
-											},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{Content: "something simple"},
 										},
 									},
-									types.ListingBlock{
+									&types.ListElementContinuation{},
+									&types.DelimitedBlock{
+										Kind: types.Listing,
 										Elements: []interface{}{
 											types.StringElement{
 												Content: "another fenced block",
@@ -606,48 +590,49 @@ another fenced block
 ----`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 1",
 									},
 								},
-
-								Elements: []interface{}{},
 							},
 						},
 					},
-					types.ListingBlock{
+					&types.DelimitedBlock{
+						Kind: types.Listing,
 						Elements: []interface{}{
 							types.StringElement{
 								Content: "a fenced block",
 							},
 						},
 					},
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 2",
 									},
 								},
-
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "something simple"},
-											},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{Content: "something simple"},
 										},
 									},
 								},
 							},
 						},
 					},
-					types.ListingBlock{
+					&types.DelimitedBlock{
+						Kind: types.Listing,
 						Elements: []interface{}{
 							types.StringElement{
 								Content: "another fenced block",
@@ -664,26 +649,27 @@ another fenced block
 - unordered item`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Labeled item",
 									},
 								},
 								Elements: []interface{}{
-									types.UnorderedList{
-										Items: []*types.UnorderedListElement{
-											{
+									&types.GenericList{
+										Kind: types.UnorderedListKind,
+										Elements: []interface{}{
+											&types.UnorderedListElement{
 												BulletStyle: types.Dash,
 												CheckStyle:  types.NoCheck,
 												Elements: []interface{}{
-													types.Paragraph{
-														Lines: [][]interface{}{
-															{
-																types.StringElement{Content: "unordered item"},
-															},
+													&types.Paragraph{
+														Elements: []interface{}{
+															types.StringElement{Content: "unordered item"},
 														},
 													},
 												},
@@ -705,42 +691,41 @@ first term:: definition of the first term
 second term:: definition of the second term`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
 						Attributes: types.Attributes{
 							types.AttrTitle: "Labeled, single-line",
 						},
-						Items: []*types.LabeledListElement{
-							{
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "first term",
 									},
 								},
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "definition of the first term",
-												},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "definition of the first term",
 											},
 										},
 									},
 								},
 							},
-							{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "second term",
 									},
 								},
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "definition of the second term",
-												},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "definition of the second term",
 											},
 										},
 									},
@@ -763,60 +748,60 @@ level 3:::: description 3
 level 1:: description 1`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
 						Attributes: types.Attributes{
 							types.AttrTitle: "Labeled, max nesting",
 						},
-						Items: []*types.LabeledListElement{
-							{
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "level 1",
 									},
 								},
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "description 1",
-												},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "description 1",
 											},
 										},
 									},
-									types.LabeledList{
-										Items: []*types.LabeledListElement{
-											{
+									&types.GenericList{
+										Kind: types.LabeledListKind,
+										Elements: []interface{}{
+											&types.LabeledListElement{
+												Style: types.TripleColons,
 												Term: []interface{}{
 													types.StringElement{
 														Content: "level 2",
 													},
 												},
 												Elements: []interface{}{
-													types.Paragraph{
-														Lines: [][]interface{}{
-															{
-																types.StringElement{
-																	Content: "description 2",
-																},
+													&types.Paragraph{
+														Elements: []interface{}{
+															types.StringElement{
+																Content: "description 2",
 															},
 														},
 													},
-													types.LabeledList{
-														Items: []*types.LabeledListElement{
-															{
+													&types.GenericList{
+														Kind: types.LabeledListKind,
+														Elements: []interface{}{
+															&types.LabeledListElement{
+																Style: types.QuadrupleColons,
 																Term: []interface{}{
 																	types.StringElement{
 																		Content: "level 3",
 																	},
 																},
 																Elements: []interface{}{
-																	types.Paragraph{
-																		Lines: [][]interface{}{
-																			{
-																				types.StringElement{
-																					Content: "description 3",
-																				},
+																	&types.Paragraph{
+																		Elements: []interface{}{
+																			types.StringElement{
+																				Content: "description 3",
 																			},
 																		},
 																	},
@@ -830,19 +815,18 @@ level 1:: description 1`
 									},
 								},
 							},
-							{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "level 1",
 									},
 								},
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "description 1",
-												},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "description 1",
 											},
 										},
 									},
@@ -863,60 +847,60 @@ level 3:::: description 3
 level 2::: description 2`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
 						Attributes: types.Attributes{
 							types.AttrTitle: "Labeled, max nesting",
 						},
-						Items: []*types.LabeledListElement{
-							{
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "level 1",
 									},
 								},
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "description 1",
-												},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "description 1",
 											},
 										},
 									},
-									types.LabeledList{
-										Items: []*types.LabeledListElement{
-											{
+									&types.GenericList{
+										Kind: types.LabeledListKind,
+										Elements: []interface{}{
+											&types.LabeledListElement{
+												Style: types.TripleColons,
 												Term: []interface{}{
 													types.StringElement{
 														Content: "level 2",
 													},
 												},
 												Elements: []interface{}{
-													types.Paragraph{
-														Lines: [][]interface{}{
-															{
-																types.StringElement{
-																	Content: "description 2",
-																},
+													&types.Paragraph{
+														Elements: []interface{}{
+															types.StringElement{
+																Content: "description 2",
 															},
 														},
 													},
-													types.LabeledList{
-														Items: []*types.LabeledListElement{
-															{
+													&types.GenericList{
+														Kind: types.LabeledListKind,
+														Elements: []interface{}{
+															&types.LabeledListElement{
+																Style: types.QuadrupleColons,
 																Term: []interface{}{
 																	types.StringElement{
 																		Content: "level 3",
 																	},
 																},
 																Elements: []interface{}{
-																	types.Paragraph{
-																		Lines: [][]interface{}{
-																			{
-																				types.StringElement{
-																					Content: "description 3",
-																				},
+																	&types.Paragraph{
+																		Elements: []interface{}{
+																			types.StringElement{
+																				Content: "description 3",
 																			},
 																		},
 																	},
@@ -926,19 +910,18 @@ level 2::: description 2`
 													},
 												},
 											},
-											{
+											&types.LabeledListElement{
+												Style: types.TripleColons,
 												Term: []interface{}{
 													types.StringElement{
 														Content: "level 2",
 													},
 												},
 												Elements: []interface{}{
-													types.Paragraph{
-														Lines: [][]interface{}{
-															{
-																types.StringElement{
-																	Content: "description 2",
-																},
+													&types.Paragraph{
+														Elements: []interface{}{
+															types.StringElement{
+																Content: "description 2",
 															},
 														},
 													},
@@ -959,20 +942,20 @@ level 2::: description 2`
 			source := `level 1:: {amp}`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "level 1",
 									},
 								},
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.PredefinedAttribute{Name: "amp"},
-											},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.PredefinedAttribute{Name: "amp"},
 										},
 									},
 								},
@@ -988,20 +971,20 @@ level 2::: description 2`
 			source := `what: ever:: text`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "what: ever",
 									},
 								},
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "text"},
-											},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{Content: "text"},
 										},
 									},
 								},
@@ -1029,73 +1012,68 @@ IMPORTANT: important
 TIP: tip`
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 1",
 									},
 								},
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "content 1"},
-											},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{Content: "content 1"},
 										},
 									},
-									types.Paragraph{
+									&types.ListElementContinuation{},
+									&types.Paragraph{
 										Attributes: types.Attributes{
 											types.AttrStyle: types.Note,
 										},
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "note"},
-											},
+										Elements: []interface{}{
+											types.StringElement{Content: "note"},
 										},
 									},
 								},
 							},
-							{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "Item 2",
 									},
 								},
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "content 2"},
-											},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{Content: "content 2"},
 										},
 									},
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "addition"},
-											},
+									&types.ListElementContinuation{},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{Content: "addition"},
 										},
 									},
-									types.Paragraph{
+									&types.ListElementContinuation{},
+									&types.Paragraph{
 										Attributes: types.Attributes{
 											types.AttrStyle: types.Important,
 										},
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "important"},
-											},
+										Elements: []interface{}{
+											types.StringElement{Content: "important"},
 										},
 									},
-									types.Paragraph{
+									&types.ListElementContinuation{},
+									&types.Paragraph{
 										Attributes: types.Attributes{
 											types.AttrStyle: types.Tip,
 										},
-										Lines: [][]interface{}{
-											{
-												types.StringElement{Content: "tip"},
-											},
+										Elements: []interface{}{
+											types.StringElement{Content: "tip"},
 										},
 									},
 								},
@@ -1121,61 +1099,48 @@ TIP: We can embed admonitions too!
 `
 			expected := types.Document{
 				Elements: []interface{}{
-					types.LabeledList{
-						Items: []*types.LabeledListElement{
-							{
+					&types.GenericList{
+						Kind: types.LabeledListKind,
+						Elements: []interface{}{
+							&types.LabeledListElement{
+								Style: types.DoubleColons,
 								Term: []interface{}{
 									types.StringElement{
 										Content: "item",
 									},
 								},
 								Elements: []interface{}{
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "This is the first line of the first paragraph.",
-												},
-											},
-											{
-												types.StringElement{
-													Content: "This is the second line of the first paragraph.",
-												},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "This is the first line of the first paragraph.\nThis is the second line of the first paragraph.",
 											},
 										},
 									},
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "This is the first line of the continuation paragraph.",
-												},
-											},
-											{
-												types.StringElement{
-													Content: "This is the second line of the continuation paragraph.",
-												},
+									&types.ListElementContinuation{},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "This is the first line of the continuation paragraph.\nThis is the second line of the continuation paragraph.",
 											},
 										},
 									},
-									types.Paragraph{
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "This is the next continuation paragraph.",
-												},
+									&types.ListElementContinuation{},
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "This is the next continuation paragraph.",
 											},
 										},
 									},
-									types.Paragraph{
+									&types.ListElementContinuation{},
+									&types.Paragraph{
 										Attributes: types.Attributes{
 											types.AttrStyle: types.Tip,
 										},
-										Lines: [][]interface{}{
-											{
-												types.StringElement{
-													Content: "We can embed admonitions too!",
-												},
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "We can embed admonitions too!",
 											},
 										},
 									},

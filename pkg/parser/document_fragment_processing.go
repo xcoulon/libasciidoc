@@ -23,9 +23,11 @@ func ParseDocument(r io.Reader, config configuration.Configuration, opts ...Opti
 	blocks := []interface{}{}
 	inHeader := true
 	ctx := newProcessContext()
-	pipeline := processFragments(ctx, done,
-		AssembleFragments(done,
-			ParseDocumentFragmentGroups(r, done, opts...)))
+	pipeline :=
+		// TODO: AggregateSections(...) ?
+		ProcessSubstitutions(ctx, done,
+			AssembleFragments(done,
+				ScanDocument(r, done, opts...)))
 	for f := range pipeline {
 		if log.IsLevelEnabled(log.DebugLevel) {
 			log.WithField("_state", "document_parsing").Debugf("received document fragment: %s", spew.Sdump(f))
@@ -122,8 +124,8 @@ type ContextKey string
 // LevelOffset the key for the level offset of the file to include
 const LevelOffset ContextKey = "leveloffset"
 
-func processFragments(ctx *processContext, done <-chan interface{}, fragmentStream <-chan types.DocumentFragment) chan types.DocumentFragment {
-	// TODO: convert `ctx *processContext` as a local variable instead of a func param
+// TODO: convert `ctx *processContext` as a local variable instead of a func param
+func ProcessSubstitutions(ctx *processContext, done <-chan interface{}, fragmentStream <-chan types.DocumentFragment) chan types.DocumentFragment {
 	processedFragmentStream := make(chan types.DocumentFragment)
 	go func() {
 		defer close(processedFragmentStream)
@@ -132,7 +134,7 @@ func processFragments(ctx *processContext, done <-chan interface{}, fragmentStre
 			case <-done:
 				log.WithField("pipeline_stage", "fragment_processing").Debug("received 'done' signal")
 				return
-			case processedFragmentStream <- processFragment(ctx, f):
+			case processedFragmentStream <- processSubstitutions(ctx, f):
 			}
 		}
 		log.Debug("end of fragment processing")
@@ -140,11 +142,11 @@ func processFragments(ctx *processContext, done <-chan interface{}, fragmentStre
 	return processedFragmentStream
 }
 
-func processFragment(ctx *processContext, f types.DocumentFragment) types.DocumentFragment {
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.WithField("pipeline_stage", "fragment_processing").Debugf("incoming fragment:\n%s", spew.Sdump(f))
-	}
-	// if the fragment contains an error, then send it as-is downstream
+func processSubstitutions(ctx *processContext, f types.DocumentFragment) types.DocumentFragment {
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.WithField("pipeline_stage", "fragment_processing").Debugf("incoming fragment:\n%s", spew.Sdump(f))
+	// }
+	// if the fragment already contains an error, then send it as-is downstream
 	if err := f.Error; err != nil {
 		return f
 	}
@@ -155,56 +157,16 @@ func processFragment(ctx *processContext, f types.DocumentFragment) types.Docume
 	case types.AttributeReset:
 		delete(ctx.attributes, e.Name)
 		return types.NewDocumentFragment(f.LineOffset, e)
-	case types.WithElements: // TODO: use `types.BlockWithSubstitution`?
-		log.Debugf("processing block with attributes and nested elements")
-		if err := applyAttributeSubstitutionsOnAttributes(ctx, e); err != nil {
-			return types.DocumentFragment{
-				LineOffset: f.LineOffset,
-				Error:      err,
-			}
-		}
-		// TODO: only parse element attributes if an attribute substitution occurred?
-		if err := parseElementAttributes(e, ElementAttributesGroup); err != nil {
-			return types.DocumentFragment{
-				LineOffset: f.LineOffset,
-				Error:      err,
-			}
-		}
+	case types.WithElements:
 		if err := processElements(ctx, e); err != nil {
-			return types.DocumentFragment{
-				LineOffset: f.LineOffset,
-				Error:      err,
-			}
+			return types.NewErrorFragment(f.LineOffset, err)
 		}
-		return types.DocumentFragment{
-			LineOffset: f.LineOffset,
-			Content:    e,
-		}
+		return types.NewDocumentFragment(f.LineOffset, e)
 	case types.WithLocation:
-		log.Debugf("processing block with attributes and location")
-		if err := applyAttributeSubstitutionsOnAttributes(ctx, e); err != nil {
-			return types.DocumentFragment{
-				LineOffset: f.LineOffset,
-				Error:      err,
-			}
-		}
-		// TODO: only parse element attributes if an attribute substitution occurred?
-		if err := parseElementAttributes(e, ElementAttributesGroup); err != nil {
-			return types.DocumentFragment{
-				LineOffset: f.LineOffset,
-				Error:      err,
-			}
-		}
 		if err := processLocation(ctx, e); err != nil {
-			return types.DocumentFragment{
-				LineOffset: f.LineOffset,
-				Error:      err,
-			}
+			return types.NewErrorFragment(f.LineOffset, err)
 		}
-		return types.DocumentFragment{
-			LineOffset: f.LineOffset,
-			Content:    e,
-		}
+		return types.NewDocumentFragment(f.LineOffset, e)
 	// case *types.GenericList:
 	// 	if err := applyAttributeSubstitutionsOnAttributes(ctx, e); err != nil {
 	// 		return types.DocumentFragment{
@@ -269,25 +231,33 @@ func applyAttributeSubstitutionsOnAttributes(ctx *processContext, b types.WithAt
 	return nil
 }
 
-func processElements(ctx *processContext, b types.WithElements) error {
-	log.Debugf("applying substitutions on elements of block of type '%T'", b)
-	plan, err := newSubstitutionPlan(b)
+func processElements(ctx *processContext, block types.WithElements) error {
+	log.Debugf("processing block with attributes and nested elements")
+	if err := applyAttributeSubstitutionsOnAttributes(ctx, block); err != nil {
+		return err
+	}
+	// TODO: only parse element attributes if an attribute substitution occurred?
+	if err := parseElementAttributes(block, ElementAttributesGroup); err != nil {
+		return err
+	}
+	// log.Debugf("applying substitutions on elements of block of type '%T'", block)
+	plan, err := newSubstitutionPlan(block)
 	if err != nil {
 		return err
 	}
 
-	elements := b.GetElements()
+	elements := block.GetElements()
 	// skip if there's nothing to do
 	if len(elements) == 0 {
 		return nil
 	}
 	for _, step := range plan.steps {
-		log.Debugf("applying step '%s'", step.group)
+		// log.Debugf("applying step '%s'", step.group)
 		if elements, err = parseElements(elements, step.group, GlobalStore(substitutionPhaseKey, step)); err != nil {
 			return err
 		}
 		if step.hasAttributeSubstitutions {
-			log.Debugf("attribute substitutions detected during parsing of group '%s'", step.group)
+			// log.WithField("group", step.group).Debug("attribute substitutions detected during parsing")
 			// apply substitutions on elements
 			elements, err = applyAttributeSubstitutionsOnElements(ctx, elements)
 			if err != nil {
@@ -302,12 +272,12 @@ func processElements(ctx *processContext, b types.WithElements) error {
 			}
 		}
 	}
-	if err := b.SetElements(elements); err != nil {
-		return errors.Wrapf(err, "failed to process substitutions on block of type '%T'", b)
+	if err := block.SetElements(elements); err != nil {
+		return errors.Wrapf(err, "failed to process substitutions on block of type '%T'", block)
 	}
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("applied substitutions on block elements:\n%s", spew.Sdump(b.GetElements()...))
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debugf("applied substitutions on block elements:\n%s", spew.Sdump(block.GetElements()...))
+	// }
 	return nil
 }
 
@@ -351,21 +321,24 @@ func processElements(ctx *processContext, b types.WithElements) error {
 // 	return nil
 // }
 
-func processLocation(ctx *processContext, b types.WithLocation) error {
-	log.Debugf("applying substitutions on `location` of block of type '%T'", b)
-	elements := b.GetLocation().Path
+func processLocation(ctx *processContext, block types.WithLocation) error {
+	log.Debugf("processing block with attributes and location")
+	if err := applyAttributeSubstitutionsOnAttributes(ctx, block); err != nil {
+		return err
+	}
+	// TODO: only (re)parse element attributes if an attribute substitution occurred? (or simplify initial parsing and process here in anycase?)
+	if err := parseElementAttributes(block, ElementAttributesGroup); err != nil {
+		return err
+	}
+	log.Debugf("applying substitutions on `location` of block of type '%T'", block)
+	elements := block.GetLocation().Path
 	elements, err := applyAttributeSubstitutionsOnElements(ctx, elements)
 	if err != nil {
 		return err
 	}
-	b.GetLocation().SetPath(elements)
+	block.GetLocation().SetPath(elements)
 	imagesdir := ctx.attributes.GetAsStringWithDefault("imagesdir", "")
-	b.GetLocation().SetPathPrefix(imagesdir)
-
-	// if log.IsLevelEnabled(log.DebugLevel) {
-	// 	log.Debug("applied substitutions on block with location")
-	// 	spew.Fdump(log.StandardLogger().Out, b)
-	// }
+	block.GetLocation().SetPathPrefix(imagesdir)
 	return nil
 }
 
@@ -411,7 +384,7 @@ func defaultSubstitution(b interface{}) (string, error) {
 		default:
 			return "", fmt.Errorf("unsupported kind of delimited block: '%v'", b.Kind)
 		}
-	case *types.Paragraph, *types.GenericList:
+	case *types.Paragraph, *types.GenericList, *types.Section:
 		return "normal", nil
 	default:
 		return "", fmt.Errorf("unsupported kind of element: '%T'", b)
@@ -619,17 +592,20 @@ const (
 )
 
 func parseElements(elements []interface{}, group substitutionGroup, opts ...Option) ([]interface{}, error) {
-	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("parsing elements with group '%v'", group)
-	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.WithField("group", group).Debug("parsing elements")
+	// }
 	serialized, placeholders := serialize(elements)
+	if len(serialized) == 0 {
+		return nil, nil
+	}
 	opts = append(opts)
 	result, err := parseContent(serialized, append(opts, Entrypoint(string(group)))...)
 	if err != nil {
 		return nil, err
 	}
 	// also, apply the same substitution group on the placeholders, case by case
-	for _, element := range placeholders.elements {
+	for key, element := range placeholders.elements {
 		if e, ok := element.(types.WithAttributes); ok {
 			if err := parseElementAttributes(e, group, opts...); err != nil {
 				return nil, err
@@ -643,6 +619,13 @@ func parseElements(elements []interface{}, group substitutionGroup, opts ...Opti
 			if err := e.SetElements(elements); err != nil {
 				return nil, errors.Wrapf(err, "failed to parse elements of block of type '%T'", e)
 			}
+		}
+		if e, ok := element.([]interface{}); ok {
+			elements, err := parseElements(e, group, opts...)
+			if err != nil {
+				return nil, err
+			}
+			placeholders.elements[key] = elements
 		}
 		// if e, ok := element.(types.WithLocation); ok {
 		// 	if err := parseElementWithLocation(e, group, opts...); err != nil {
@@ -663,6 +646,9 @@ func parseElementAttributes(element types.WithAttributes, group substitutionGrou
 		switch value := value.(type) {
 		case []interface{}:
 			serialized, placeholders := serialize(value)
+			if len(serialized) == 0 {
+				return nil
+			}
 			elements, err := parseContent(serialized, append(opts, Entrypoint(string(group)))...)
 			if err != nil {
 				return err
@@ -712,6 +698,9 @@ func parseContent(content []byte, opts ...Option) ([]interface{}, error) {
 // replaces the AttributeSubstitution or Counter substitution with its actual value, recursively if the given `element`
 // is a slice
 func applyAttributeSubstitutionsOnElement(ctx *processContext, element interface{}) (interface{}, error) {
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("applying attribute substitution on element of type '%T'", element)
+	}
 	switch e := element.(type) {
 	case []interface{}:
 		return applyAttributeSubstitutionsOnElements(ctx, e)
@@ -731,7 +720,7 @@ func applyAttributeSubstitutionsOnElement(ctx *processContext, element interface
 		if err != nil {
 			return nil, err
 		}
-		elements = types.Merge(elements)
+		// elements = types.Merge(elements)
 		if err := e.SetElements(elements); err != nil {
 			return nil, errors.Wrapf(err, "failed to apply attribute substitutions on block of type '%T'", e)
 		}
@@ -767,9 +756,9 @@ func applyAttributeSubstitutionsOnLocation(ctx *processContext, b types.WithLoca
 }
 
 func applyAttributeSubstitutionsOnElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
-	// if log.IsLevelEnabled(log.DebugLevel) {
-	// 	log.Debugf("applying attribute substitutions on elements:\n%s", spew.Sdump(elements))
-	// }
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("applying attribute substitutions on elements:\n%s", spew.Sdump(elements))
+	}
 	result := make([]interface{}, len(elements)) // maximum capacity should exceed initial input
 	for i, element := range elements {
 		element, err := applyAttributeSubstitutionsOnElement(ctx, element)
@@ -778,9 +767,9 @@ func applyAttributeSubstitutionsOnElements(ctx *processContext, elements []inter
 		}
 		result[i] = element
 	}
-	// if log.IsLevelEnabled(log.DebugLevel) {
-	// 	log.Debugf("applied attribute substitutions on elements:\n%s", spew.Sdump(result))
-	// }
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("applied attribute substitutions on elements:\n%s", spew.Sdump(result))
+	}
 	return result, nil
 }
 
@@ -900,10 +889,10 @@ func serialize(content interface{}) ([]byte, *placeholders) {
 				}
 			case types.StringElement:
 				result.WriteString(element.Content)
-			case types.SingleLineComment:
-				// replace with placeholder
-				p := placeholders.add(element)
-				result.WriteString(p.String())
+			// case types.SingleLineComment:
+			// 	// replace with placeholder
+			// 	p := placeholders.add(element)
+			// 	result.WriteString(p.String())
 			default:
 				// replace with placeholder
 				p := placeholders.add(element)
@@ -912,7 +901,7 @@ func serialize(content interface{}) ([]byte, *placeholders) {
 		}
 	}
 	// if log.IsLevelEnabled(log.DebugLevel) {
-	// 	log.Debugf("serialized lines:\n%s\nplaceholders:\n%v", result.Bytes(), spew.Sdump(placeholders))
+	// 	log.Debugf("serialized lines: '%s'\nplaceholders: %v", result.Bytes(), spew.Sdump(placeholders.elements))
 	// }
 	return result.Bytes(), placeholders
 }

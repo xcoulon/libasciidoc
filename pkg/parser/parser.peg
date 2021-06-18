@@ -25,11 +25,14 @@ DefaultDocumentFragmentElement <-
     / BlockAttributes
     / FileInclusion 
     / BlockDelimiter 
+    / ThematicBreak // must appear before ListElement :/
     / ListElement
     / ListElementContinuation
     / SingleLineComment
     / AttributeDeclaration
     / AttributeReset
+    / Admonition
+
     // if nothing match, will return an error and content will be store in a RawLine
 
 // when parsing rawlines within a delimited block, there are less
@@ -53,6 +56,27 @@ DocumentFragmentElementWithinDelimitedBlock <-
             return delimiter, nil
         })
     // if nothing match, will return an error and content will be store in a RawLine
+
+// ------------------------------------------
+// Admonitions
+// ------------------------------------------
+AdmonitionKind <- "TIP" {
+    return types.Tip, nil
+} / "NOTE" {
+    return types.Note, nil
+} / "IMPORTANT" {
+    return types.Important, nil
+} / "WARNING" {
+    return types.Warning, nil
+} / "CAUTION" {
+    return types.Caution, nil
+}
+
+Admonition <-  kind:(AdmonitionKind) ": " content:([^\r\n]* {
+        return string(c.text), nil
+    }) { 
+        return types.NewAdmonitionLine(kind.(string), content.(string))
+    }
 
 // ------------------------------------------
 // Attribute Declarations and Resets
@@ -882,7 +906,7 @@ InlineElementID <- "[[" id:(Id) "]]" Space* { // no EOL here since there can be 
 // Index Terms
 // ------------------------------------------
 IndexTerm <- "((" term:(IndexTermContent) "))" {
-       return types.NewIndexTerm(term.([]interface{}))
+       return types.NewIndexTerm(term.(types.InlineElements))
 }
 
 IndexTermContent <- elements:(Word / QuotedString / QuotedText / Space / SpecialCharacter / ElementPlaceHolder / (!"))" .) {
@@ -1005,7 +1029,7 @@ ExternalLink <- url:(LocationWithScheme) inlineAttributes:(InlineAttributes)? {
 ListElement <-
         OrderedListElement 
         / UnorderedListElement
-        // / LabeledListItem // handled at the RawLine level (with search for `:: `)
+        / LabeledListItem // handled at the RawLine level (with search for `:: `)
         / CalloutListElement
 
 
@@ -1120,6 +1144,38 @@ UnorderedListElementContent <- [^\r\n]* {
             Elements: []interface{}{
                 types.RawLine(string(c.text)),
             },
+        },
+    }, nil 
+}
+
+LabeledListItem <- term:(LabeledListItemTerm) separator:(LabeledListItemSeparator) description:(LabeledListItemDescription)? {
+    return types.NewLabeledListElement(len(separator.(string)) - 1, term.([]interface{}), description)
+}
+
+LabeledListItemTerm <- (!LabeledListItemSeparator .)* {
+    return []interface{}{
+        types.StringElement{Content: string(c.text)},
+    }, nil 
+}
+
+LabeledListItemSeparator <- 
+    separator:((":")+ {   
+        return string(c.text), nil
+    }) 
+    &{  
+        // use a predicate to make sure that only `::` to `::::` are allowed
+        return len(separator.(string)) >= 2 && len(separator.(string)) <= 4, nil 
+    } 
+    ((Space / Newline)+ / EOL) {
+    return separator, nil
+}
+
+LabeledListItemDescription <- [^\r\n]+ { 
+    return []interface{}{
+        &types.Paragraph{
+            Elements: []interface{}{
+                types.RawLine(string(c.text)),
+            },        
         },
     }, nil 
 }
@@ -1950,7 +2006,7 @@ ImpliedApostrophe <- Alphanum "'" &[\pL] {
 // -------------------------------------------------------------------------------------
 // Thematic break
 // -------------------------------------------------------------------------------------
-ThematicBreak <- ("***" / "* * *" / "---" / "- - -" / "___" / "_ _ _") EOL {
+ThematicBreak <- ("***" / "* * *" / "---" / "- - -" / "___" / "_ _ _") EOF {
         return types.NewThematicBreak()
     }
 

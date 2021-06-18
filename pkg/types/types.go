@@ -128,14 +128,11 @@ type WithAttributes interface {
 	GetAttributes() Attributes
 	SetAttributes(Attributes)
 }
-type WithElementAddition interface {
-	AddElement(interface{}) error
-}
 type WithElements interface {
 	WithAttributes
-	WithElementAddition
-	GetElements() Elements
+	GetElements() []interface{}
 	SetElements([]interface{}) error
+	AddElement(interface{}) error
 }
 
 type WithLocation interface {
@@ -301,25 +298,25 @@ func NewErrorFragment(lineOffset int, err error) DocumentFragment {
 // 	p.Lines = append(p.Lines, l)
 // }
 
-type RawDelimitedBlock struct {
-	Attributes Attributes
-	Kind       DelimitedBlockKind
-	Lines      []RawLine
-}
+// type RawDelimitedBlock struct {
+// 	Attributes Attributes
+// 	Kind       string
+// 	Lines      []RawLine
+// }
 
-func NewRawDelimitedBlock(kind DelimitedBlockKind, attributes Attributes) *RawDelimitedBlock {
-	return &RawDelimitedBlock{
-		Attributes: attributes,
-		Kind:       kind,
-		Lines:      []RawLine{},
-	}
-}
+// func NewRawDelimitedBlock(kind string, attributes Attributes) *RawDelimitedBlock {
+// 	return &RawDelimitedBlock{
+// 		Attributes: attributes,
+// 		Kind:       kind,
+// 		Lines:      []RawLine{},
+// 	}
+// }
 
-// var _ RawBlock = &RawDelimitedBlock{}
+// // var _ RawBlock = &RawDelimitedBlock{}
 
-func (b *RawDelimitedBlock) AddLine(l RawLine) {
-	b.Lines = append(b.Lines, l)
-}
+// func (b *RawDelimitedBlock) AddLine(l RawLine) {
+// 	b.Lines = append(b.Lines, l)
+// }
 
 // ------------------------------------------
 // Draft Document: document in which
@@ -399,15 +396,6 @@ type ToCSection struct {
 // DocumentElement a document element can have attributes
 type DocumentElement interface {
 	GetAttributes() Attributes
-}
-
-type Elements []interface{}
-
-func (e Elements) Last() interface{} {
-	if len(e) == 0 {
-		return nil
-	}
-	return e[len(e)-1]
 }
 
 // ------------------------------------------
@@ -686,11 +674,12 @@ type ListItemBucket struct {
 type GenericList struct { // TODO: remove `ListItem` interface, `LabeledList`, etc. and rename this type `ListItem`.
 	Kind       ListKind
 	Attributes Attributes
-	Elements   Elements
+	Elements   []interface{}
 	// lastListsByKindAndLevel [][]*GenericList // last list for each level and each kind
-	lastListByLevel []*GenericList // last list for each level and each kind
-	blanklineCount  int            // keeps track of the blanklines between elements, in case we have to deal with a list continuation
-	lastElement     ListElement    // the last added element, or the "target" element in case of list continuation
+	// lastListByLevel []*GenericList // last list for each level and each kind
+	lastLists      []*GenericList // last list for each level whatever their kind
+	blanklineCount int            // keeps track of the blanklines between elements, in case we have to deal with a list continuation
+	lastElement    ListElement    // the last added element, or the "target" element in case of list continuation
 }
 
 type ListKind string
@@ -712,12 +701,10 @@ func NewList(element ListElement) (*GenericList, error) {
 		Elements: []interface{}{
 			element,
 		},
-		// lastListsByKindAndLevel: make([][]*GenericList, 1),
-		lastListByLevel: make([]*GenericList, 1),
-		lastElement:     element,
+		lastLists:   make([]*GenericList, 1),
+		lastElement: element,
 	}
-	// list.lastListsByKindAndLevel[0] = []*GenericList{list} // auto-reference this list for the top-level
-	list.lastListByLevel[0] = list // auto-reference this list for the top-level
+	list.lastLists[0] = list // auto-reference this list for the top-level
 	return list, nil
 }
 
@@ -737,33 +724,54 @@ func newSubList(element ListElement) *GenericList {
 
 var _ WithElements = &GenericList{}
 
+// returns `true` if the given element can be added to the list
+func (l *GenericList) CanAddElement() bool {
+	log.Debugf("list can add element: %t", l.blanklineCount == 0)
+	return l.blanklineCount == 0
+}
+
+// // returns `true` if the given element can be added to the list
+// func (l *GenericList) CanAddElement(element interface{}) bool {
+// 	switch element.(type) {
+// 	case ListElement, *ListElementContinuation, BlankLine:
+// 		// always accepted
+// 		return true
+// 	case *DelimitedBlock, RawLine:
+// 		// only accepted if the `blanklineCount` is `0`
+// 		return l.blanklineCount == 0
+// 	default:
+// 		// anything else is not accepted
+// 		return false
+// 	}
+// }
+
 // AddElement adds the given element `e` in the target list or sublist (depending on its type)
 func (l *GenericList) AddElement(element interface{}) error {
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("adding element of type '%T' to list of kind '%s'", element, l.Kind)
+	}
 	switch e := element.(type) {
 	case ListElement:
 		// reset blank line counter
 		l.blanklineCount = 0
-		// look-up the list in which the given element should be appended (or create a new one)
-		if e.ListKind() == l.Kind {
-			// look-up the parent element
-			if ancestorList, exists := l.lookupParentList(e); exists {
-				ancestorList.addElement(e)
-			} else {
-				// append new list to the last element of the ancestor list
-				list := newSubList(e)
-				// attach to parent list
-				if err := ancestorList.lastElement.AddElement(list); err != nil {
-					return err
-				}
-				l.lastListByLevel = append(l.lastListByLevel, list)
+		// look-up the parent element
+		if ancestorList, exists := l.lookupParentList(e); exists {
+			ancestorList.addListElement(e)
+		} else {
+			// append new list to the last element of the ancestor list
+			list := newSubList(e)
+			// attach to parent list
+			if err := ancestorList.lastElement.AddElement(list); err != nil {
+				return err
 			}
+			l.lastLists = append(l.lastLists, list)
 		}
 		return nil
-	case RawLine, *DelimitedBlock:
+	case RawLine, *DelimitedBlock, *Paragraph:
 		// reset blank line counter
 		l.blanklineCount = 0
 		// look-up the list element to which this rawline shall be appended
-		list := l.lastListByLevel[len(l.lastListByLevel)-1]
+		list := l.lastLists[len(l.lastLists)-1]
 		if err := list.lastElement.AddElement(e); err != nil {
 			return err
 		}
@@ -773,18 +781,18 @@ func (l *GenericList) AddElement(element interface{}) error {
 		return nil
 	case *ListElementContinuation:
 		// clean-up to the target ancestor list, based on the number of blanklines
-		level := len(l.lastListByLevel) - l.blanklineCount
-		l.lastListByLevel = l.lastListByLevel[:level]
-		// also, force a new paragraph
-		// l.lastListByLevel[len(l.lastListByLevel)-1].lastElement.AddElement(&Paragraph{})
-		// if log.IsLevelEnabled(log.DebugLevel) {
-		// 	log.Debugf("adjusted lastListByLevel size to %d", len(l.lastListByLevel))
-		// }
-		// look-up the list element to which this rawline shall be appended
-		list := l.lastListByLevel[len(l.lastListByLevel)-1]
+		level := len(l.lastLists) - l.blanklineCount
+		if level < 0 {
+			level = 0
+		}
+		l.lastLists = l.lastLists[:level]
+		// look-up the list element to which the ListElementContinuation will be appended
+		log.Debugf("adding ListElementContinuation to last element of list at index %d", len(l.lastLists)-1)
+		list := l.lastLists[len(l.lastLists)-1]
 		if err := list.lastElement.AddElement(e); err != nil {
 			return err
 		}
+		l.blanklineCount = 0
 		return nil
 	default:
 		return errors.Errorf("unexpected type of element to add to the list: '%T'", element)
@@ -792,11 +800,20 @@ func (l *GenericList) AddElement(element interface{}) error {
 }
 
 func (l *GenericList) ListElementContinuation() bool {
-	// check if the last element of the last element is a `*ListElementContinuation`
-	if _, ok := l.lastElement.GetElements().Last().(*ListElementContinuation); ok {
+	// check if the last element of the last list is a `*ListElementContinuation`
+	lastList := l.lastLists[len(l.lastLists)-1]
+	log.Debugf("last element of last list: %T", last(lastList.lastElement.GetElements()))
+	if _, ok := last(lastList.lastElement.GetElements()).(*ListElementContinuation); ok {
 		return true
 	}
 	return false
+}
+
+func last(elements []interface{}) interface{} {
+	if len(elements) == 0 {
+		return nil
+	}
+	return elements[len(elements)-1]
 }
 
 // // just adds (appends) the given element
@@ -810,7 +827,7 @@ func (l *GenericList) ListElementContinuation() bool {
 // }
 
 // just adds (appends) the given element
-func (l *GenericList) addElement(element ListElement) {
+func (l *GenericList) addListElement(element ListElement) {
 	l.Elements = append(l.Elements, element)
 	l.lastElement = element
 }
@@ -855,7 +872,7 @@ func (l *GenericList) addElement(element ListElement) {
 // looks-up the parent list for the given element, if it exists
 // ie, same kind and its first element matches the given element
 func (l *GenericList) lookupParentList(element ListElement) (*GenericList, bool) {
-	for level, list := range l.lastListByLevel {
+	for level, list := range l.lastLists {
 		if list == nil || len(list.Elements) == 0 {
 			continue // should not happen
 		}
@@ -863,20 +880,23 @@ func (l *GenericList) lookupParentList(element ListElement) (*GenericList, bool)
 			if element.matchesStyle(e) {
 				// found it!
 				// let's remove all lists under this depth
-				l.lastListByLevel = l.lastListByLevel[:level+1]
+				l.lastLists = l.lastLists[:level+1]
 				return list, true
 			}
 		}
 	}
 	// if not found, let's verify if the element number style and level are valid with regards
 	// to the last/deepest known element, and if not, let's adjust it accordingly
-	lastList := l.lastListByLevel[len(l.lastListByLevel)-1]
-	element.adjustStyle(lastList.lastElement)
+	lastList := l.lastLists[len(l.lastLists)-1]
+	// if the last list is compatible with the given element
+	if lastList.Kind == element.ListKind() {
+		element.adjustStyle(lastList.lastElement)
+	}
 	return lastList, false
 }
 
 // GetElements returns this paragraph's elements (or lines)
-func (l *GenericList) GetElements() Elements {
+func (l *GenericList) GetElements() []interface{} {
 	return l.Elements
 }
 
@@ -956,7 +976,7 @@ func NewCallout(ref int) (Callout, error) {
 type CalloutListElement struct {
 	Attributes Attributes
 	Ref        int
-	Elements   Elements
+	Elements   []interface{}
 }
 
 var _ ListElement = &CalloutListElement{}
@@ -1003,7 +1023,7 @@ func (e *CalloutListElement) AddElement(element interface{}) error {
 }
 
 // GetElements returns this CalloutListElement's elements
-func (e *CalloutListElement) GetElements() Elements {
+func (e *CalloutListElement) GetElements() []interface{} {
 	return e.Elements
 }
 
@@ -1034,7 +1054,7 @@ func NewCalloutList(item *CalloutListElement) *CalloutList {
 // var _ BlockWithElements = &CalloutList{}
 
 // // GetElements returns this QuotedText's elements
-// func (q *CalloutList) GetElements() Elements {
+// func (q *CalloutList) GetElements() []interface{} {
 // 	return q.Items
 // }
 
@@ -1157,8 +1177,8 @@ func (l *OrderedList) AddElement(element interface{}) error {
 // OrderedListElement the structure for the ordered list items
 type OrderedListElement struct {
 	Attributes Attributes
-	Style      string   // TODO: rename to `OrderedListElementNumberingStyle`?
-	Elements   Elements // TODO: rename to `Blocks`?
+	Style      string        // TODO: rename to `OrderedListElementNumberingStyle`?
+	Elements   []interface{} // TODO: rename to `Blocks`?
 }
 
 // making sure that the `ListItem` interface is implemented by `OrderedListElement`
@@ -1195,7 +1215,7 @@ func (e *OrderedListElement) ListKind() ListKind {
 }
 
 // GetElements returns this item's elements
-func (e *OrderedListElement) GetElements() Elements {
+func (e *OrderedListElement) GetElements() []interface{} {
 	return e.Elements
 }
 
@@ -1348,7 +1368,7 @@ func NewUnorderedListElement(prefix UnorderedListElementPrefix, checkstyle inter
 // checks if the given list element matches the level of this element
 func (e *UnorderedListElement) matchesStyle(other ListElement) bool {
 	if other, ok := other.(*UnorderedListElement); ok {
-		log.Debugf("checking if list elements match: %v/%v", e.BulletStyle, other.BulletStyle)
+		// log.Debugf("checking if list elements match: %v/%v", e.BulletStyle, other.BulletStyle)
 		return e.BulletStyle == other.BulletStyle
 	}
 	return false
@@ -1399,7 +1419,7 @@ func (e *UnorderedListElement) toInteractiveListItem() {
 
 // AddElement add an element to this UnorderedListElement
 func (e *UnorderedListElement) AddElement(element interface{}) error {
-	log.Debugf("adding element of type '%T' to UnorderedListElement", element)
+	// log.Debugf("adding element of type '%T' to UnorderedListElement", element)
 	switch element := element.(type) {
 	case RawLine:
 		// append to last element of this OrderedListElement if it's a Paragraph,
@@ -1422,7 +1442,7 @@ func (e *UnorderedListElement) AddElement(element interface{}) error {
 }
 
 // GetElements returns this UnorderedListElement's elements
-func (e *UnorderedListElement) GetElements() Elements {
+func (e *UnorderedListElement) GetElements() []interface{} {
 	return e.Elements
 }
 
@@ -1639,23 +1659,37 @@ func (l *LabeledList) AddElement(item interface{}) error {
 type LabeledListElementStyle string
 
 const (
-	DoubleColon LabeledListElementStyle = "::"
-	TripleColon LabeledListElementStyle = ":::"
+	DoubleColons    LabeledListElementStyle = "::"
+	TripleColons    LabeledListElementStyle = ":::"
+	QuadrupleColons LabeledListElementStyle = "::::"
 )
+
+func toLabeledListElementStyle(level int) (LabeledListElementStyle, error) {
+	switch level {
+	case 1:
+		return DoubleColons, nil
+	case 2:
+		return TripleColons, nil
+	case 3:
+		return QuadrupleColons, nil
+	default:
+		return LabeledListElementStyle(""), fmt.Errorf("unsupported level of labeled list element: %d", level)
+	}
+}
 
 // LabeledListElement an item in a labeled
 type LabeledListElement struct {
 	Term       []interface{}
 	Attributes Attributes
 	Style      LabeledListElementStyle
-	Elements   Elements // TODO: rename to `Blocks`?
+	Elements   []interface{} // TODO: rename to `Blocks`?
 }
 
 // making sure that the `ListItem` interface is implemented by `LabeledListItem`
 var _ ListElement = &LabeledListElement{}
 
-// NewLabeledListItem initializes a new LabeledListItem
-func NewLabeledListItem(level int, term []interface{}, description interface{}, attributes interface{}) (LabeledListElement, error) {
+// NewLabeledListElement initializes a new LabeledListItem
+func NewLabeledListElement(level int, term []interface{}, description interface{}) (*LabeledListElement, error) {
 	// log.Debugf("new LabeledListItem")
 	var elements []interface{}
 	if description, ok := description.([]interface{}); ok {
@@ -1663,10 +1697,14 @@ func NewLabeledListItem(level int, term []interface{}, description interface{}, 
 	} else {
 		elements = []interface{}{}
 	}
-	return LabeledListElement{
-		Attributes: toAttributesWithMapping(attributes, map[string]string{AttrPositional1: AttrStyle}),
-		Term:       term,
-		Elements:   elements,
+	style, err := toLabeledListElementStyle(level)
+	if err != nil {
+		return nil, err
+	}
+	return &LabeledListElement{
+		Style:    style,
+		Term:     term,
+		Elements: elements,
 	}, nil
 }
 
@@ -1689,17 +1727,49 @@ func (e *LabeledListElement) ListKind() ListKind {
 
 // AddElement add an element to this LabeledListElement
 func (e *LabeledListElement) AddElement(element interface{}) error {
-	e.Elements = append(e.Elements, element)
+	log.Debugf("adding element of type '%T' to LabeledListElement", element)
+	switch element := element.(type) {
+	case RawLine:
+		// append to last element of this OrderedListElement if it's a Paragraph,
+		// otherwise, append a new Paragraph with this RawLine
+		if len(e.Elements) > 0 {
+			if p, ok := e.Elements[len(e.Elements)-1].(*Paragraph); ok {
+				p.AddElement(element)
+				return nil
+			}
+		}
+		e.Elements = append(e.Elements, &Paragraph{
+			Elements: []interface{}{
+				element,
+			},
+		})
+	default:
+		e.Elements = append(e.Elements, element)
+	}
 	return nil
 }
 
 // GetElements returns this LabeledListElement's elements
-func (e *LabeledListElement) GetElements() Elements {
+func (e *LabeledListElement) GetElements() []interface{} {
 	return e.Elements
 }
 
 // SetElements sets this LabeledListElement's elements
 func (i *LabeledListElement) SetElements(elements []interface{}) error {
+	// if len(elements) != 2 {
+	// 	return fmt.Errorf("unexpected elements to set in the labeled list element")
+	// }
+	// term, ok := elements[0].([]interface{})
+	// if !ok {
+	// 	return fmt.Errorf("unexpected kind of term for the labeled list element: '%T'", elements[0])
+	// }
+	// i.Term = term
+	// content, ok := elements[1].([]interface{})
+	// if !ok {
+	// 	return fmt.Errorf("unexpected kind of content for the labeled list element: '%T'", elements[1])
+	// }
+	// i.Elements = content
+	// // log.Debugf("done setting term and description on Labeled List Element")
 	i.Elements = elements
 	return nil
 }
@@ -1717,16 +1787,16 @@ func (i LabeledListElement) ReplaceElements(elements []interface{}) interface{} 
 	return i
 }
 
-var _ WithAttributes = LabeledListElement{}
+var _ WithAttributes = &LabeledListElement{}
 
 // GetAttributes returns this list item's attributes
-func (i LabeledListElement) GetAttributes() Attributes {
+func (i *LabeledListElement) GetAttributes() Attributes {
 	return i.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this list item
-func (i LabeledListElement) SetAttributes(attributes Attributes) {
-	i.Attributes = attributes
+func (i *LabeledListElement) SetAttributes(attributes Attributes) {
+	i.Attributes = toAttributesWithMapping(attributes, map[string]string{AttrPositional1: AttrStyle})
 }
 
 // ------------------------------------------
@@ -1737,7 +1807,7 @@ func (i LabeledListElement) SetAttributes(attributes Attributes) {
 type Paragraph struct {
 	Attributes Attributes
 	Lines      [][]interface{} // DEPRECATED, use 'Elements' instead
-	Elements   Elements
+	Elements   []interface{}
 }
 
 // AttrHardBreaks the attribute to set on a paragraph to render with hard breaks on each line
@@ -1778,7 +1848,7 @@ func NewParagraph(elements []interface{}, attributes interface{}) (*Paragraph, e
 var _ WithElements = &Paragraph{}
 
 // GetElements returns this paragraph's elements (or lines)
-func (p *Paragraph) GetElements() Elements {
+func (p *Paragraph) GetElements() []interface{} {
 	return p.Elements
 }
 
@@ -1906,29 +1976,32 @@ const (
 	Unknown = ""
 )
 
-// NewAdmonitionParagraph returns a new Paragraph with an extra admonition attribute
-func NewAdmonitionParagraph(lines []interface{}, admonitionKind string, attributes interface{}) (*Paragraph, error) {
-	// log.Debugf("new admonition paragraph")
-	p, err := NewParagraph(lines, attributes)
-	if err != nil {
-		return nil, err
-	}
-	p.Attributes = p.Attributes.Set(AttrStyle, admonitionKind)
-	return p, nil
+type AdmonitionLine struct {
+	Kind    string
+	Content RawLine
+}
+
+// NewAdmonitionLine returns a new AdmonitionLine with the given kind and content
+func NewAdmonitionLine(kind string, content string) (*AdmonitionLine, error) {
+	log.Debugf("new admonition paragraph")
+	return &AdmonitionLine{
+		Kind:    kind,
+		Content: RawLine(content),
+	}, nil
 }
 
 // ------------------------------------------
 // Inline Elements
 // ------------------------------------------
 
-type InlineElements []interface{}
+type InlineElements []interface{} // TODO: unnecessary alias?
 
 // NewInlineElements initializes a new `InlineElements` from the given values
 func NewInlineElements(elements ...interface{}) (InlineElements, error) {
 	return Merge(elements...), nil
 }
 
-// HasAttributeSubstitutions returns `true` if at least one of the element is an `AttributeSubstitution`
+// // HasAttributeSubstitutions returns `true` if at least one of the element is an `AttributeSubstitution`
 func (e InlineElements) HasAttributeSubstitutions() bool {
 	for _, elmt := range e {
 		if _, match := elmt.(AttributeSubstitution); match {
@@ -2284,7 +2357,7 @@ func (s *sequence) nextVal() int {
 // ExampleBlock the structure for the example blocks
 type ExampleBlock struct {
 	Attributes Attributes
-	Elements   Elements
+	Elements   []interface{}
 }
 
 // NewExampleBlock initializes a new `ExampleBlock` with the given elements
@@ -2342,7 +2415,7 @@ func (b ExampleBlock) SetAttributes(attributes Attributes) {
 // QuoteBlock the structure for the quote blocks
 type QuoteBlock struct {
 	Attributes Attributes
-	Elements   Elements
+	Elements   []interface{}
 }
 
 // NewQuoteBlock initializes a new `QuoteBlock` with the given elements
@@ -2402,7 +2475,7 @@ func (b QuoteBlock) SetAttributes(attributes Attributes) {
 // SidebarBlock the structure for the example blocks
 type SidebarBlock struct {
 	Attributes Attributes
-	Elements   Elements
+	Elements   []interface{}
 }
 
 // NewSidebarBlock initializes a new `SidebarBlock` with the given elements
@@ -2521,42 +2594,40 @@ func (b FencedBlock) SetAttributes(attributes Attributes) {
 
 // ListingBlockDelimiter an empty type that is returned by the parser when a listing block is starting or ending
 type BlockDelimiter struct {
-	Kind DelimitedBlockKind
+	Kind string
 }
 
-func NewBlockDelimiter(kind DelimitedBlockKind) (BlockDelimiter, error) {
+func NewBlockDelimiter(kind string) (BlockDelimiter, error) {
 	return BlockDelimiter{
 		Kind: kind,
 	}, nil
 }
 
-type DelimitedBlockKind string
-
 const (
 	// FrontMatter a front-matter block
-	FrontMatter DelimitedBlockKind = "front-matter"
+	FrontMatter string = "front-matter"
 	// Fenced a fenced block
-	Fenced DelimitedBlockKind = "fenced"
+	Fenced string = "fenced"
 	// Listing a listing block
-	Listing DelimitedBlockKind = "listing"
+	Listing string = "listing"
 	// Example an example block
-	Example DelimitedBlockKind = "example"
+	Example string = "example"
 	// Comment a comment block
-	Comment DelimitedBlockKind = "comment"
+	Comment string = "comment"
 	// Quote a quote block
-	Quote DelimitedBlockKind = "quote"
+	Quote string = "quote"
 	// MarkdownQuote a quote block in the Markdown style
-	MarkdownQuote DelimitedBlockKind = "markdown-quote"
+	MarkdownQuote string = "markdown-quote"
 	// Verse a verse block
-	Verse DelimitedBlockKind = "verse"
+	Verse string = "verse"
 	// Sidebar a sidebar block
-	Sidebar DelimitedBlockKind = "sidebar"
+	Sidebar string = "sidebar"
 	// Literal a literal block
-	Literal DelimitedBlockKind = "literal"
+	Literal string = "literal"
 	// Source a source block
-	Source DelimitedBlockKind = "source"
+	Source string = "source"
 	// Passthrough a passthrough block
-	Passthrough DelimitedBlockKind = "pass"
+	Passthrough string = "pass"
 
 	// AttrSourceBlockOption the option set on a source block, using the `source%<option>` attribute
 	AttrSourceBlockOption = "source-option" // DEPRECATED
@@ -2564,12 +2635,12 @@ const (
 
 // DelinmitedBlock the structure for the Listing blocks
 type DelimitedBlock struct {
-	Kind       DelimitedBlockKind
+	Kind       string
 	Attributes Attributes
-	Elements   Elements
+	Elements   []interface{}
 }
 
-func NewDelimitedBlock(kind DelimitedBlockKind, attributes Attributes) *DelimitedBlock {
+func NewDelimitedBlock(kind string, attributes Attributes) *DelimitedBlock {
 	return &DelimitedBlock{
 		Kind:       kind,
 		Attributes: attributes,
@@ -2579,7 +2650,7 @@ func NewDelimitedBlock(kind DelimitedBlockKind, attributes Attributes) *Delimite
 var _ WithElements = &DelimitedBlock{}
 
 // GetElements returns this paragraph's elements (or lines)
-func (b *DelimitedBlock) GetElements() Elements {
+func (b *DelimitedBlock) GetElements() []interface{} {
 	return b.Elements
 }
 
@@ -2609,7 +2680,7 @@ func (b *DelimitedBlock) SetAttributes(attributes Attributes) {
 // ListingBlock the structure for the Listing blocks
 type ListingBlock struct {
 	Attributes Attributes
-	Elements   Elements
+	Elements   []interface{}
 }
 
 // NewListingBlock initializes a new `ListingBlock` with the given lines
@@ -2933,7 +3004,7 @@ type Section struct {
 	Level      int
 	Attributes Attributes
 	Title      []interface{}
-	Elements   Elements
+	Elements   []interface{}
 }
 
 // NewSection initializes a new `Section` from the given section title and elements
@@ -2956,7 +3027,7 @@ func NewSection(level int, title []interface{}, ids []interface{}) (*Section, er
 var _ WithElements = &Section{}
 
 // GetElements returns this section's title
-func (s *Section) GetElements() Elements {
+func (s *Section) GetElements() []interface{} {
 	return s.Title
 }
 
@@ -3148,8 +3219,8 @@ type TableOfContentsPlaceHolder struct {
 type ThematicBreak struct{}
 
 // NewThematicBreak returns a new ThematicBreak
-func NewThematicBreak() (ThematicBreak, error) {
-	return ThematicBreak{}, nil
+func NewThematicBreak() (*ThematicBreak, error) {
+	return &ThematicBreak{}, nil
 }
 
 // ------------------------------------------
@@ -3294,7 +3365,7 @@ func NewLineBreak() (LineBreak, error) {
 // QuotedText the structure for quoted text
 type QuotedText struct {
 	Kind       QuotedTextKind
-	Elements   Elements
+	Elements   []interface{}
 	Attributes Attributes
 }
 
@@ -3366,7 +3437,7 @@ func toRawText(elements []interface{}) (string, error) {
 var _ WithElements = &QuotedText{}
 
 // GetElements returns this QuotedText's elements
-func (q *QuotedText) GetElements() Elements {
+func (q *QuotedText) GetElements() []interface{} {
 	return q.Elements
 }
 
@@ -3994,7 +4065,7 @@ func NewLocation(scheme interface{}, path []interface{}) (*Location, error) {
 // var _ WithElements = &Location{}
 
 // // GetElements returns this section's title
-// func (l *Location) GetElements() Elements {
+// func (l *Location) GetElements() []interface{} {
 // 	return l.Path
 // }
 

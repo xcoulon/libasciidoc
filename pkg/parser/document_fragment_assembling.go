@@ -51,17 +51,20 @@ func assembleFragments(f types.DocumentFragmentGroup) []types.DocumentFragment {
 			}
 			attributes.SetAll(e)
 		case types.AttributeDeclaration, types.AttributeReset:
+			log.Debug("adding a new fragment with an attribute declaration/reset")
 			result = append(result, types.NewDocumentFragment(f.LineOffset, e))
 		case *types.Section:
 			e.Attributes = attributes
 			attributes = types.Attributes{} // reset
 			// send the section block downstream
+			log.Debug("adding a new fragment with a section")
 			result = append(result, types.NewDocumentFragment(f.LineOffset, e))
 		case types.BlockDelimiter:
 			switch existing := blocks.get().(type) {
 			case nil:
 				delimitedBlock := types.NewDelimitedBlock(e.Kind, attributes)
-				attributes = nil                                                                 // reset
+				attributes = nil // reset
+				log.Debug("adding a new fragment with a delimitedBlock (no parent block)")
 				result = append(result, types.NewDocumentFragment(f.LineOffset, delimitedBlock)) // TODO: move this into the `push()` method?
 				blocks.push(delimitedBlock)
 			case *types.DelimitedBlock:
@@ -79,6 +82,7 @@ func assembleFragments(f types.DocumentFragmentGroup) []types.DocumentFragment {
 						result = append(result, types.NewErrorFragment(f.LineOffset, errors.Wrap(err, "unable to assemble fragments")))
 					}
 				} else {
+					log.Debug("adding a new fragment with a delimitedBlock (no list element continuation)")
 					result = append(result, types.NewDocumentFragment(f.LineOffset, delimitedBlock)) // TODO: move this into the `push()` method?
 					// also, remove existing from stack
 					blocks.pop()
@@ -93,17 +97,42 @@ func assembleFragments(f types.DocumentFragmentGroup) []types.DocumentFragment {
 			if block == nil {
 				// by default, append to a paragraph
 				block, _ = types.NewParagraph([]interface{}{}, attributes)
+				blocks.push(block)
 				attributes = nil // reset
+				log.Debug("adding a new fragment with a paragraph")
+				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
+			} else if l, ok := block.(*types.GenericList); ok && !l.CanAddElement() {
+				block, _ = types.NewParagraph([]interface{}{}, attributes)
+				attributes = nil // reset
+				blocks.push(block)
+				log.Debug("adding a new fragment with a paragraph")
 				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
 			}
 			if err := block.AddElement(e); err != nil {
 				result = append(result, types.NewErrorFragment(f.LineOffset, errors.Wrap(err, "unable to assemble fragments")))
 			}
 			log.Debugf("added rawline into parent block of type '%T'", block)
-		case types.SingleLineComment, *types.ImageBlock:
-			result = append(result, types.NewDocumentFragment(f.LineOffset+i, e))
+		case *types.AdmonitionLine:
+			attributes = attributes.Set(types.AttrStyle, e.Kind)
+			p, _ := types.NewParagraph([]interface{}{e.Content}, attributes)
+			attributes = nil // reset
+
+			block := blocks.get()
+			if block == nil {
+				blocks.push(p)
+				log.Debug("adding a new fragment with an admonition paragraph")
+				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
+			} else if l, ok := block.(*types.GenericList); ok && !l.CanAddElement() {
+				blocks.push(p)
+				log.Debug("adding a new fragment with an admonition paragraph")
+				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
+			}
+			if err := block.AddElement(p); err != nil {
+				result = append(result, types.NewErrorFragment(f.LineOffset, errors.Wrap(err, "unable to assemble fragments")))
+			}
+			log.Debugf("added adminition line into parent block of type '%T'", block)
 		case types.BlankLine:
-			// skip unless we're in a delimited block or in a list
+			// behaviour depends on the current block which is being processed
 			switch b := blocks.get().(type) {
 			case *types.DelimitedBlock:
 				if err := b.AddElement(e); err != nil {
@@ -113,6 +142,9 @@ func assembleFragments(f types.DocumentFragmentGroup) []types.DocumentFragment {
 				if err := b.AddElement(e); err != nil {
 					result = append(result, types.NewErrorFragment(f.LineOffset, errors.Wrap(err, "unable to assemble fragments")))
 				}
+			case *types.Paragraph:
+				blocks.pop() // end of paragraph
+			default:
 			}
 		case types.ListElement:
 			e.SetAttributes(attributes)
@@ -126,6 +158,7 @@ func assembleFragments(f types.DocumentFragmentGroup) []types.DocumentFragment {
 					result = append(result, types.NewErrorFragment(f.LineOffset, errors.Wrap(err, "unable to assemble fragments")))
 					continue
 				}
+				log.Debug("adding a new fragment with a list")
 				result = append(result, types.NewDocumentFragment(f.LineOffset, list))
 				blocks.push(list)
 			case *types.GenericList:
@@ -145,6 +178,9 @@ func assembleFragments(f types.DocumentFragmentGroup) []types.DocumentFragment {
 			if err := list.AddElement(e); err != nil {
 				result = append(result, types.NewErrorFragment(f.LineOffset, errors.Wrap(err, "unable to assemble fragments")))
 			}
+		case types.SingleLineComment, *types.ImageBlock, *types.ThematicBreak:
+			log.Debug("adding a new fragment with a singleline comment or an imageblock")
+			result = append(result, types.NewDocumentFragment(f.LineOffset+i, e))
 		default:
 			// unknow type fragment element: set an error on the fragment and send it downstream
 			result = append(result, types.NewErrorFragment(f.LineOffset, errors.Errorf("unable to assemble fragments: unexpected type of element on line %d: '%T'", f.LineOffset+i, e)))
@@ -159,12 +195,12 @@ func assembleFragments(f types.DocumentFragmentGroup) []types.DocumentFragment {
 
 type blockStack struct {
 	index int
-	stack []types.WithElementAddition
+	stack []types.WithElements
 }
 
 func newBlockStack() *blockStack {
 	return &blockStack{
-		stack: make([]types.WithElementAddition, 10),
+		stack: make([]types.WithElements, 10),
 		index: -1,
 	}
 }
@@ -177,12 +213,12 @@ func newBlockStack() *blockStack {
 // 	return s.index == -1
 // }
 
-func (s *blockStack) push(a types.WithElementAddition) {
+func (s *blockStack) push(a types.WithElements) {
 	s.index++
 	s.stack[s.index] = a
 }
 
-func (s *blockStack) pop() types.WithElementAddition {
+func (s *blockStack) pop() types.WithElements {
 	if s.index < 0 {
 		return nil
 	}
@@ -191,7 +227,7 @@ func (s *blockStack) pop() types.WithElementAddition {
 	return a
 }
 
-func (s *blockStack) get() types.WithElementAddition {
+func (s *blockStack) get() types.WithElements {
 	if s.index < 0 {
 		return nil
 	}

@@ -24,7 +24,7 @@ func ParseDocumentFragmentGroups(actual string, options ...interface{}) ([]types
 	}
 	done := make(chan interface{})
 	defer close(done)
-	fragmentStream := parser.ParseDocumentFragmentGroups(r, done, parserOptions...)
+	fragmentStream := parser.ScanDocument(r, done, parserOptions...)
 	result := []types.DocumentFragmentGroup{}
 	for f := range fragmentStream {
 		result = append(result, f)
