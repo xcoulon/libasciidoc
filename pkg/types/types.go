@@ -767,7 +767,7 @@ func (l *GenericList) AddElement(element interface{}) error {
 			l.lastLists = append(l.lastLists, list)
 		}
 		return nil
-	case RawLine, *DelimitedBlock, *Paragraph:
+	case RawLine, *DelimitedBlock, *AdmonitionLine:
 		// reset blank line counter
 		l.blanklineCount = 0
 		// look-up the list element to which this rawline shall be appended
@@ -1018,6 +1018,7 @@ func (e *CalloutListElement) SetAttributes(attributes Attributes) {
 
 // AddElement add an element to this CalloutListElement
 func (e *CalloutListElement) AddElement(element interface{}) error {
+	// TODO: reuse same code as in LabeledList.AddElement() ?
 	e.Elements = append(e.Elements, element)
 	return nil
 }
@@ -1242,6 +1243,23 @@ func (e *OrderedListElement) AddElement(element interface{}) error {
 				element,
 			},
 		})
+	case *AdmonitionLine:
+		// append to last element of this OrderedListElement if it's a Paragraph,
+		// otherwise, append a new Paragraph with this RawLine
+		if len(e.Elements) > 0 {
+			if p, ok := e.Elements[len(e.Elements)-1].(*Paragraph); ok {
+				p.AddElement(element)
+				return nil
+			}
+		}
+		e.Elements = append(e.Elements, &Paragraph{
+			Attributes: Attributes{
+				AttrStyle: element.Kind,
+			},
+			Elements: []interface{}{
+				element.Content,
+			},
+		})
 	default:
 		e.Elements = append(e.Elements, element)
 	}
@@ -1419,6 +1437,7 @@ func (e *UnorderedListElement) toInteractiveListItem() {
 
 // AddElement add an element to this UnorderedListElement
 func (e *UnorderedListElement) AddElement(element interface{}) error {
+	// TODO: same code as for UnorderedListElement and LabeledListElement
 	// log.Debugf("adding element of type '%T' to UnorderedListElement", element)
 	switch element := element.(type) {
 	case RawLine:
@@ -1433,6 +1452,23 @@ func (e *UnorderedListElement) AddElement(element interface{}) error {
 		e.Elements = append(e.Elements, &Paragraph{
 			Elements: []interface{}{
 				element,
+			},
+		})
+	case *AdmonitionLine:
+		// append to last element of this OrderedListElement if it's a Paragraph,
+		// otherwise, append a new Paragraph with this RawLine
+		if len(e.Elements) > 0 {
+			if p, ok := e.Elements[len(e.Elements)-1].(*Paragraph); ok {
+				p.AddElement(element)
+				return nil
+			}
+		}
+		e.Elements = append(e.Elements, &Paragraph{
+			Attributes: Attributes{
+				AttrStyle: element.Kind,
+			},
+			Elements: []interface{}{
+				element.Content,
 			},
 		})
 	default:
@@ -1743,6 +1779,23 @@ func (e *LabeledListElement) AddElement(element interface{}) error {
 				element,
 			},
 		})
+	case *AdmonitionLine:
+		// append to last element of this OrderedListElement if it's a Paragraph,
+		// otherwise, append a new Paragraph with this RawLine
+		if len(e.Elements) > 0 {
+			if p, ok := e.Elements[len(e.Elements)-1].(*Paragraph); ok {
+				p.AddElement(element)
+				return nil
+			}
+		}
+		e.Elements = append(e.Elements, &Paragraph{
+			Attributes: Attributes{
+				AttrStyle: element.Kind,
+			},
+			Elements: []interface{}{
+				element.Content,
+			},
+		})
 	default:
 		e.Elements = append(e.Elements, element)
 	}
@@ -1756,20 +1809,6 @@ func (e *LabeledListElement) GetElements() []interface{} {
 
 // SetElements sets this LabeledListElement's elements
 func (i *LabeledListElement) SetElements(elements []interface{}) error {
-	// if len(elements) != 2 {
-	// 	return fmt.Errorf("unexpected elements to set in the labeled list element")
-	// }
-	// term, ok := elements[0].([]interface{})
-	// if !ok {
-	// 	return fmt.Errorf("unexpected kind of term for the labeled list element: '%T'", elements[0])
-	// }
-	// i.Term = term
-	// content, ok := elements[1].([]interface{})
-	// if !ok {
-	// 	return fmt.Errorf("unexpected kind of content for the labeled list element: '%T'", elements[1])
-	// }
-	// i.Elements = content
-	// // log.Debugf("done setting term and description on Labeled List Element")
 	i.Elements = elements
 	return nil
 }

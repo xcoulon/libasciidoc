@@ -113,23 +113,24 @@ func assembleFragments(f types.DocumentFragmentGroup) []types.DocumentFragment {
 			}
 			log.Debugf("added rawline into parent block of type '%T'", block)
 		case *types.AdmonitionLine:
-			attributes = attributes.Set(types.AttrStyle, e.Kind)
 			block := blocks.get()
 			if block == nil {
 				// by default, append to a paragraph
+				attributes = attributes.Set(types.AttrStyle, e.Kind)
 				block, _ = types.NewParagraph([]interface{}{}, attributes)
 				blocks.push(block)
 				attributes = nil // reset
 				log.Debug("adding a new fragment with a paragraph")
 				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
 			} else if l, ok := block.(*types.GenericList); ok && !l.CanAddElement() {
+				attributes = attributes.Set(types.AttrStyle, e.Kind)
 				block, _ = types.NewParagraph([]interface{}{}, attributes)
 				attributes = nil // reset
 				blocks.push(block)
 				log.Debug("adding a new fragment with a paragraph")
 				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
 			}
-			if err := block.AddElement(e.Content); err != nil {
+			if err := block.AddElement(e); err != nil {
 				result = append(result, types.NewErrorFragment(f.LineOffset, errors.Wrap(err, "unable to assemble fragments")))
 			}
 			log.Debugf("added admonition line into parent block of type '%T'", block)

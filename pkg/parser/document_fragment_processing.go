@@ -150,50 +150,35 @@ func processSubstitutions(ctx *processContext, f types.DocumentFragment) types.D
 	if err := f.Error; err != nil {
 		return f
 	}
-	switch e := f.Content.(type) {
+	element, err := processSubstitutionsOnElement(ctx, f.Content)
+	if err != nil {
+		return types.NewErrorFragment(f.LineOffset, err)
+	}
+	f.Content = element
+	return f
+}
+
+func processSubstitutionsOnElement(ctx *processContext, element interface{}) (interface{}, error) {
+	switch e := element.(type) {
 	case types.AttributeDeclaration:
 		ctx.addAttribute(e.Name, e.Value)
-		return types.NewDocumentFragment(f.LineOffset, e)
+		return e, nil
 	case types.AttributeReset:
 		delete(ctx.attributes, e.Name)
-		return types.NewDocumentFragment(f.LineOffset, e)
+		return e, nil
 	case types.WithElements:
 		if err := processBlockWithElements(ctx, e); err != nil {
-			return types.NewErrorFragment(f.LineOffset, err)
+			return nil, err
 		}
-		return types.NewDocumentFragment(f.LineOffset, e)
+		return e, nil
 	case types.WithLocation:
 		if err := processBlockWithLocation(ctx, e); err != nil {
-			return types.NewErrorFragment(f.LineOffset, err)
+			return nil, err
 		}
-		return types.NewDocumentFragment(f.LineOffset, e)
-	// case *types.GenericList:
-	// 	if err := applyAttributeSubstitutionsOnAttributes(ctx, e); err != nil {
-	// 		return types.DocumentFragment{
-	// 			LineOffset: f.LineOffset,
-	// 			Error:      err,
-	// 		}
-	// 	}
-	// 	// TODO: only parse element attributes if an attribute substitution occurred?
-	// 	if err := parseElementAttributes(e, ElementAttributesGroup); err != nil {
-	// 		return types.DocumentFragment{
-	// 			LineOffset: f.LineOffset,
-	// 			Error:      err,
-	// 		}
-	// 	}
-	// 	if err := processListElements(ctx, e); err != nil {
-	// 		return types.DocumentFragment{
-	// 			LineOffset: f.LineOffset,
-	// 			Error:      err,
-	// 		}
-	// 	}
-	// 	return types.DocumentFragment{
-	// 		LineOffset: f.LineOffset,
-	// 		Content:    e,
-	// 	}
+		return e, nil
 	default:
 		log.WithField("pipeline_stage", "fragment_processing").Debugf("forwarding fragment content of type '%T' as-is", e)
-		return types.NewDocumentFragment(f.LineOffset, e)
+		return element, nil
 	}
 }
 
@@ -232,7 +217,7 @@ func replaceAttributeSubstitutionsInAttributes(ctx *processContext, b types.With
 }
 
 func processBlockWithElements(ctx *processContext, block types.WithElements) error {
-	log.Debugf("processing block with attributes and nested elements")
+	log.Debugf("processing block of type '%T' with attributes and nested elements", block)
 	if err := processAttributes(ctx, block); err != nil {
 		return err
 	}
@@ -241,6 +226,31 @@ func processBlockWithElements(ctx *processContext, block types.WithElements) err
 	if err != nil {
 		return err
 	}
+	elements, err := processElements(ctx, block.GetElements(), plan)
+	if err != nil {
+		return err
+	}
+	if err := block.SetElements(elements); err != nil {
+		return errors.Wrapf(err, "failed to process substitutions on block of type '%T'", block)
+	}
+	return nil
+}
+
+func processLabeledListElement(ctx *processContext, block *types.LabeledListElement) error {
+	log.Debugf("processing LabeledListElement")
+	if err := processAttributes(ctx, block); err != nil {
+		return err
+	}
+	// log.Debugf("applying substitutions on elements of block of type '%T'", block)
+	plan, err := newSubstitutionPlan(block)
+	if err != nil {
+		return err
+	}
+	term, err := processElements(ctx, block.Term, plan)
+	if err != nil {
+		return err
+	}
+	block.Term = term
 	elements, err := processElements(ctx, block.GetElements(), plan)
 	if err != nil {
 		return err
@@ -311,46 +321,6 @@ func processAttributes(ctx *processContext, block types.WithAttributes) error {
 	block.SetAttributes(attrs)
 	return nil
 }
-
-// func processListElements(ctx *processContext, l *types.GenericList) error {
-// 	plan, err := newSubstitutionPlan(l)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	// TODO: will have to be recursive to handle nested lists
-// 	for _, listElement := range l.Elements {
-// 		var elements []interface{}
-// 		for _, step := range plan.steps {
-// 			// TODO: clone the step before "consuming" it with the parser
-// 			log.Debugf("applying step '%s'", step.group)
-// 			var err error
-// 			if elements, err = parseElements(listElement.GetElements(), step.group, GlobalStore(substitutionPhaseKey, step)); err != nil {
-// 				return err
-// 			}
-// 			if step.hasAttributeSubstitutions {
-// 				log.Debugf("attribute substitutions detected during parsing of group '%s'", step.group)
-// 				// apply substitutions on elements
-// 				elements, err = applyAttributeSubstitutionsOnElements(ctx, elements)
-// 				if err != nil {
-// 					return err
-// 				}
-// 				elements = types.Merge(elements)
-// 				// re-run the Parser, skipping attribute substitutions and earlier rules this time
-// 				if step.reduce() {
-// 					if elements, err = parseElements(elements, step.group, GlobalStore(substitutionPhaseKey, step)); err != nil {
-// 						return err
-// 					}
-// 				}
-// 			}
-// 		}
-// 		listElement.SetElements(elements)
-// 	}
-// 	if log.IsLevelEnabled(log.DebugLevel) {
-// 		log.Debugf("applied substitutions on list elements:\n%s", spew.Sdump(l.GetElements()))
-// 	}
-// 	return nil
-// }
 
 type substitutionPlan struct {
 	steps []*substitutionStep
@@ -616,12 +586,20 @@ func parseElements(elements []interface{}, group substitutionGroup, opts ...Opti
 	}
 	// also, apply the same substitution group on the placeholders, case by case
 	for key, element := range placeholders.elements {
+		log.Debugf("processing placeholder of type '%T'", element)
 		if e, ok := element.(types.WithAttributes); ok {
 			attrs, err := parseAttributes(e.GetAttributes(), group, opts...)
 			if err != nil {
 				return nil, err
 			}
 			e.SetAttributes(attrs)
+		}
+		if e, ok := element.(*types.LabeledListElement); ok {
+			term, err := parseElements(e.Term, group, opts...)
+			if err != nil {
+				return nil, err
+			}
+			e.Term = term
 		}
 		if e, ok := element.(types.WithElements); ok {
 			elements, err := parseElements(e.GetElements(), group, opts...)
