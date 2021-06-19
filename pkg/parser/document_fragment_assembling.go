@@ -114,23 +114,25 @@ func assembleFragments(f types.DocumentFragmentGroup) []types.DocumentFragment {
 			log.Debugf("added rawline into parent block of type '%T'", block)
 		case *types.AdmonitionLine:
 			attributes = attributes.Set(types.AttrStyle, e.Kind)
-			p, _ := types.NewParagraph([]interface{}{e.Content}, attributes)
-			attributes = nil // reset
-
 			block := blocks.get()
 			if block == nil {
-				blocks.push(p)
-				log.Debug("adding a new fragment with an admonition paragraph")
+				// by default, append to a paragraph
+				block, _ = types.NewParagraph([]interface{}{}, attributes)
+				blocks.push(block)
+				attributes = nil // reset
+				log.Debug("adding a new fragment with a paragraph")
 				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
 			} else if l, ok := block.(*types.GenericList); ok && !l.CanAddElement() {
-				blocks.push(p)
-				log.Debug("adding a new fragment with an admonition paragraph")
+				block, _ = types.NewParagraph([]interface{}{}, attributes)
+				attributes = nil // reset
+				blocks.push(block)
+				log.Debug("adding a new fragment with a paragraph")
 				result = append(result, types.NewDocumentFragment(f.LineOffset, block))
 			}
-			if err := block.AddElement(p); err != nil {
+			if err := block.AddElement(e.Content); err != nil {
 				result = append(result, types.NewErrorFragment(f.LineOffset, errors.Wrap(err, "unable to assemble fragments")))
 			}
-			log.Debugf("added adminition line into parent block of type '%T'", block)
+			log.Debugf("added admonition line into parent block of type '%T'", block)
 		case types.BlankLine:
 			// behaviour depends on the current block which is being processed
 			switch b := blocks.get().(type) {

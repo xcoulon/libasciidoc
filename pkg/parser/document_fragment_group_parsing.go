@@ -44,7 +44,6 @@ type DocumentFragmentScanner struct {
 type scanningScope string
 
 const (
-	unknownScope       scanningScope = "unknown" // TODO: remove and use 'default' instead?
 	defaultScope       scanningScope = "default"
 	withinParagraph    scanningScope = "within_paragraph"
 	withinList         scanningScope = "within_list"
@@ -90,7 +89,7 @@ scan:
 		case types.BlankLine:
 			elements = append(elements, element)
 			// blanklines outside of a delimited block causes the scanner to stop (for this call)
-			if s.scopes.get() == defaultScope || s.scopes.get() == withinParagraph {
+			if s.scopes.get() == withinParagraph {
 				s.scopes.pop()
 				break scan // end of fragment group
 			}
@@ -114,7 +113,7 @@ scan:
 			// log.Debugf("updated scanner scope: %s", s.scopes.get())
 			elements = append(elements, element)
 		case types.RawLine:
-			if s.scopes.get() == defaultScope || s.scopes.get() == unknownScope {
+			if s.scopes.get() == defaultScope {
 				// we're now within a paragraph
 				s.scopes.push(withinParagraph)
 			}
@@ -216,17 +215,17 @@ func (s *scanningScopeStack) push(a scanningScope) {
 }
 
 func (s *scanningScopeStack) pop() scanningScope {
-	if len(s.scopes) < 0 {
-		return unknownScope
+	if len(s.scopes) <= 0 {
+		return defaultScope
 	}
-	a := s.scopes[len(s.scopes)-1]
-	s.scopes = s.scopes[:len(s.scopes)-1]
-	return a
+	scope := s.scopes[len(s.scopes)-1]
+	s.scopes = s.scopes[:len(s.scopes)-1] // shrink
+	return scope
 }
 
 func (s *scanningScopeStack) get() scanningScope {
-	if len(s.scopes) < 0 {
-		return unknownScope
+	if len(s.scopes) <= 0 {
+		return defaultScope
 	}
 	return s.scopes[len(s.scopes)-1]
 }
