@@ -77,7 +77,7 @@ and a paragraph`
 								Level: 0,
 								Title: doctitle,
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Lines: [][]interface{}{
 									{
@@ -115,7 +115,7 @@ and a paragraph`
 								Level: 0,
 								Title: doctitle,
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Section{
 								Attributes: types.Attributes{
 									types.AttrID: "_a_second_header",
@@ -166,7 +166,7 @@ and a paragraph`
 								Name:  types.AttrIDSeparator,
 								Value: "-",
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Section{
 								Attributes: types.Attributes{
 									types.AttrID: "_section-1",
@@ -228,7 +228,7 @@ and a paragraph`
 								Level: 0,
 								Title: doctitle,
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Section{
 								Attributes: types.Attributes{
 									types.AttrID: "_section_1",
@@ -263,7 +263,7 @@ and a paragraph`
 								Level: 0,
 								Title: doctitle,
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Section{
 								Attributes: types.Attributes{
 									types.AttrID: "_section_2",
@@ -325,7 +325,7 @@ and a paragraph`
 								Level: 1,
 								Title: section1Title,
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Lines: [][]interface{}{
 									{
@@ -355,7 +355,7 @@ and a paragraph`
 								Level: 1,
 								Title: section1Title,
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Lines: [][]interface{}{
 									{
@@ -393,7 +393,7 @@ a paragraph`
 									types.StringElement{Content: "a header"},
 								},
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Section{
 								Attributes: types.Attributes{
 									types.AttrID: "_section_a",
@@ -410,7 +410,7 @@ a paragraph`
 									},
 								},
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Section{
 								Attributes: types.Attributes{
 									types.AttrID: "_section_a_a",
@@ -427,7 +427,7 @@ a paragraph`
 									},
 								},
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Section{
 								Attributes: types.Attributes{
 									types.AttrID: "_section_b",
@@ -504,7 +504,7 @@ a paragraph`
 								Level: 0,
 								Title: doctitle,
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Section{
 								Attributes: types.Attributes{
 									types.AttrID:       "foo",
@@ -513,7 +513,7 @@ a paragraph`
 								Level: 1,
 								Title: fooTitle,
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Section{
 								Attributes: types.Attributes{
 									types.AttrID:       "bar",
@@ -556,7 +556,7 @@ a paragraph`
 								Level: 1,
 								Title: section1aTitle,
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Section{
 								Attributes: types.Attributes{
 									types.AttrID: "_section_1",
@@ -676,7 +676,7 @@ a short preamble
 									types.StringElement{Content: "a title"},
 								},
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Lines: [][]interface{}{
 									{
@@ -684,7 +684,7 @@ a short preamble
 									},
 								},
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Section{
 								Attributes: types.Attributes{
 									types.AttrID: "_section_1",
@@ -723,7 +723,7 @@ a short preamble
 							types.AttributeDeclaration{
 								Name: "toc",
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Lines: [][]interface{}{
 									{
@@ -731,7 +731,7 @@ a short preamble
 									},
 								},
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Section{
 								Attributes: types.Attributes{
 									types.AttrID: "_section_1",
@@ -762,7 +762,7 @@ a short preamble
 									types.StringElement{Content: "a title"},
 								},
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Lines: [][]interface{}{
 									{
@@ -770,7 +770,7 @@ a short preamble
 									},
 								},
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Lines: [][]interface{}{
 									{
@@ -849,7 +849,7 @@ a short preamble
 								Level: 0,
 								Title: title,
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							types.LiteralBlock{
 								Attributes: types.Attributes{
 									types.AttrStyle:            types.Literal,

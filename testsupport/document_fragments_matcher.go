@@ -12,7 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// MatchDocumentFragmentGroups a custom matcher to verify that a document matches the given expectation
+// MatchDocumentFragments a custom matcher to verify that a document matches the given expectation
 // Similar to the standard `Equal` matcher, but display a diff when the values don't match
 func MatchDocumentFragments(expected []types.DocumentFragment) gomegatypes.GomegaMatcher {
 	return &documentFragmentsMatcher{

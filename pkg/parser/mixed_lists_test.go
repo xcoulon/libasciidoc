@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("mixed lists", func() {
 
-	Context("final documents", func() {
+	Context("in final documents", func() {
 
 		Context("valid mixed lists", func() {
 
@@ -23,42 +23,38 @@ var _ = Describe("mixed lists", func() {
 * Item D`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []*types.OrderedListElement{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []types.ListElement{
+								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "Item 1"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "Item 1"},
 											},
 										},
-										types.UnorderedList{
-											Items: []*types.UnorderedListElement{
-												{
+										&types.GenericList{
+											Kind: types.UnorderedListKind,
+											Elements: []types.ListElement{
+												&types.UnorderedListElement{
 													BulletStyle: types.OneAsterisk,
 													CheckStyle:  types.NoCheck,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "Item A"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "Item A"},
 															},
 														},
 													},
 												},
-												{
+												&types.UnorderedListElement{
 													BulletStyle: types.OneAsterisk,
 													CheckStyle:  types.NoCheck,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "Item B"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "Item B"},
 															},
 														},
 													},
@@ -67,40 +63,35 @@ var _ = Describe("mixed lists", func() {
 										},
 									},
 								},
-								{
+								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "Item 2"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "Item 2"},
 											},
 										},
-										types.UnorderedList{
-											Items: []*types.UnorderedListElement{
-												{
+										&types.GenericList{
+											Kind: types.UnorderedListKind,
+											Elements: []types.ListElement{
+												&types.UnorderedListElement{
 													BulletStyle: types.OneAsterisk,
 													CheckStyle:  types.NoCheck,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "Item C"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "Item C"},
 															},
 														},
 													},
 												},
-												{
+												&types.UnorderedListElement{
 													BulletStyle: types.OneAsterisk,
 													CheckStyle:  types.NoCheck,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "Item D"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "Item D"},
 															},
 														},
 													},
@@ -121,32 +112,30 @@ var _ = Describe("mixed lists", func() {
  II) ordered list item`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.UnorderedList{
-							Items: []*types.UnorderedListElement{
-								{
+						&types.GenericList{
+							Kind: types.UnorderedListKind,
+							Elements: []types.ListElement{
+								&types.UnorderedListElement{
 									BulletStyle: types.Dash,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "unordered list item",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "unordered list item",
 												},
 											},
 										},
-										types.OrderedList{
-											Items: []*types.OrderedListElement{
-												{
+										&types.GenericList{
+											Kind: types.OrderedListKind,
+											Elements: []types.ListElement{
+												&types.OrderedListElement{
 													Style: types.UpperRoman,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{
-																		Content: "ordered list item",
-																	},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{
+																	Content: "ordered list item",
 																},
 															},
 														},
@@ -181,65 +170,58 @@ var _ = Describe("mixed lists", func() {
 	* unordered 2.1`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.UnorderedList{
-							Items: []*types.UnorderedListElement{
-								{
+						&types.GenericList{
+							Kind: types.UnorderedListKind,
+							Elements: []types.ListElement{
+								&types.UnorderedListElement{
 									BulletStyle: types.Dash,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "unordered 1"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "unordered 1"},
 											},
 										},
-										types.OrderedList{
-											Items: []*types.OrderedListElement{
-												{
+										&types.GenericList{
+											Kind: types.OrderedListKind,
+											Elements: []types.ListElement{
+												&types.OrderedListElement{
 													Style: types.Arabic,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "ordered 1.1"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "ordered 1.1"},
 															},
 														},
-														types.OrderedList{
-															Items: []*types.OrderedListElement{
-																{
+														&types.GenericList{
+															Kind: types.OrderedListKind,
+															Elements: []types.ListElement{
+																&types.OrderedListElement{
 																	Style: types.LowerAlpha,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "ordered 1.1.a"},
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "ordered 1.1.a"},
 																			},
 																		},
 																	},
 																},
-																{
+																&types.OrderedListElement{
 																	Style: types.LowerAlpha,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "ordered 1.1.b"},
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "ordered 1.1.b"},
 																			},
 																		},
 																	},
 																},
-																{
+																&types.OrderedListElement{
 																	Style: types.LowerAlpha,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "ordered 1.1.c"},
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "ordered 1.1.c"},
 																			},
 																		},
 																	},
@@ -248,38 +230,33 @@ var _ = Describe("mixed lists", func() {
 														},
 													},
 												},
-												{
+												&types.OrderedListElement{
 													Style: types.Arabic,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "ordered 1.2"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "ordered 1.2"},
 															},
 														},
-														types.OrderedList{
-															Items: []*types.OrderedListElement{
-																{
+														&types.GenericList{
+															Kind: types.OrderedListKind,
+															Elements: []types.ListElement{
+																&types.OrderedListElement{
 																	Style: types.LowerRoman,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "ordered 1.2.i"},
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "ordered 1.2.i"},
 																			},
 																		},
 																	},
 																},
-																{
+																&types.OrderedListElement{
 																	Style: types.LowerRoman,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "ordered 1.2.ii"},
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "ordered 1.2.ii"},
 																			},
 																		},
 																	},
@@ -288,26 +265,22 @@ var _ = Describe("mixed lists", func() {
 														},
 													},
 												},
-												{
+												&types.OrderedListElement{
 													Style: types.Arabic,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "ordered 1.3"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "ordered 1.3"},
 															},
 														},
 													},
 												},
-												{
+												&types.OrderedListElement{
 													Style: types.Arabic,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "ordered 1.4"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "ordered 1.4"},
 															},
 														},
 													},
@@ -316,28 +289,25 @@ var _ = Describe("mixed lists", func() {
 										},
 									},
 								},
-								{
+								&types.UnorderedListElement{
 									BulletStyle: types.Dash,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "unordered 2"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "unordered 2"},
 											},
 										},
-										types.UnorderedList{
-											Items: []*types.UnorderedListElement{
-												{
+										&types.GenericList{
+											Kind: types.UnorderedListKind,
+											Elements: []types.ListElement{
+												&types.UnorderedListElement{
 													BulletStyle: types.OneAsterisk,
 													CheckStyle:  types.NoCheck,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "unordered 2.1"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "unordered 2.1"},
 															},
 														},
 													},
@@ -380,65 +350,58 @@ ii) ordered 1.2.ii
 . ordered 3.3`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.UnorderedList{
-							Items: []*types.UnorderedListElement{
-								{
+						&types.GenericList{
+							Kind: types.UnorderedListKind,
+							Elements: []types.ListElement{
+								&types.UnorderedListElement{
 									BulletStyle: types.Dash,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "unordered 1"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "unordered 1"},
 											},
 										},
-										types.OrderedList{
-											Items: []*types.OrderedListElement{
-												{
+										&types.GenericList{
+											Kind: types.OrderedListKind,
+											Elements: []types.ListElement{
+												&types.OrderedListElement{
 													Style: types.Arabic,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "ordered 1.1"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "ordered 1.1"},
 															},
 														},
-														types.OrderedList{
-															Items: []*types.OrderedListElement{
-																{
+														&types.GenericList{
+															Kind: types.OrderedListKind,
+															Elements: []types.ListElement{
+																&types.OrderedListElement{
 																	Style: types.LowerAlpha,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "ordered 1.1.a"},
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "ordered 1.1.a"},
 																			},
 																		},
 																	},
 																},
-																{
+																&types.OrderedListElement{
 																	Style: types.LowerAlpha,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "ordered 1.1.b"},
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "ordered 1.1.b"},
 																			},
 																		},
 																	},
 																},
-																{
+																&types.OrderedListElement{
 																	Style: types.LowerAlpha,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "ordered 1.1.c"},
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "ordered 1.1.c"},
 																			},
 																		},
 																	},
@@ -447,38 +410,33 @@ ii) ordered 1.2.ii
 														},
 													},
 												},
-												{
+												&types.OrderedListElement{
 													Style: types.Arabic,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "ordered 1.2"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "ordered 1.2"},
 															},
 														},
-														types.OrderedList{
-															Items: []*types.OrderedListElement{
-																{
+														&types.GenericList{
+															Kind: types.OrderedListKind,
+															Elements: []types.ListElement{
+																&types.OrderedListElement{
 																	Style: types.LowerRoman,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "ordered 1.2.i"},
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "ordered 1.2.i"},
 																			},
 																		},
 																	},
 																},
-																{
+																&types.OrderedListElement{
 																	Style: types.LowerRoman,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "ordered 1.2.ii"},
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "ordered 1.2.ii"},
 																			},
 																		},
 																	},
@@ -487,26 +445,22 @@ ii) ordered 1.2.ii
 														},
 													},
 												},
-												{
+												&types.OrderedListElement{
 													Style: types.Arabic,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "ordered 1.3"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "ordered 1.3"},
 															},
 														},
 													},
 												},
-												{
+												&types.OrderedListElement{
 													Style: types.Arabic,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "ordered 1.4"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "ordered 1.4"},
 															},
 														},
 													},
@@ -515,60 +469,48 @@ ii) ordered 1.2.ii
 										},
 									},
 								},
-								{
+								&types.UnorderedListElement{
 									BulletStyle: types.Dash,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "unordered 2"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "unordered 2"},
 											},
 										},
-										types.UnorderedList{
-											Items: []*types.UnorderedListElement{
-												{
+										&types.GenericList{
+											Kind: types.UnorderedListKind,
+											Elements: []types.ListElement{
+												&types.UnorderedListElement{
 													BulletStyle: types.OneAsterisk,
 													CheckStyle:  types.NoCheck,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "unordered 2.1"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "unordered 2.1"},
 															},
 														},
-														types.UnorderedList{
-															Items: []*types.UnorderedListElement{
-																{
+														&types.GenericList{
+															Kind: types.UnorderedListKind,
+															Elements: []types.ListElement{
+																&types.UnorderedListElement{
 																	BulletStyle: types.TwoAsterisks,
 																	CheckStyle:  types.NoCheck,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "unordered 2.1.1"},
-																				},
-																				{
-																					types.StringElement{Content: "with some"}, // heading tabs are trimmed
-																				},
-																				{
-																					types.StringElement{Content: "extra lines."}, // heading tabs are trimmed
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "unordered 2.1.1\n\twith some\n\textra lines."}, // heading tabs are not trimmed
 																			},
 																		},
 																	},
 																},
-																{
+																&types.UnorderedListElement{
 																	BulletStyle: types.TwoAsterisks,
 																	CheckStyle:  types.NoCheck,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "unordered 2.1.2"},
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "unordered 2.1.2"},
 																			},
 																		},
 																	},
@@ -577,15 +519,13 @@ ii) ordered 1.2.ii
 														},
 													},
 												},
-												{
+												&types.UnorderedListElement{
 													BulletStyle: types.OneAsterisk,
 													CheckStyle:  types.NoCheck,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "unordered 2.2"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "unordered 2.2"},
 															},
 														},
 													},
@@ -594,66 +534,58 @@ ii) ordered 1.2.ii
 										},
 									},
 								},
-								{
+								&types.UnorderedListElement{
 									BulletStyle: types.Dash,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "unordered 3"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "unordered 3"},
 											},
 										},
-										types.OrderedList{
-											Items: []*types.OrderedListElement{
-												{
+										&types.GenericList{
+											Kind: types.OrderedListKind,
+											Elements: []types.ListElement{
+												&types.OrderedListElement{
 													Style: types.Arabic,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "ordered 3.1"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "ordered 3.1"},
 															},
 														},
 													},
 												},
-												{
+												&types.OrderedListElement{
 													Style: types.Arabic,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "ordered 3.2"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "ordered 3.2"},
 															},
 														},
-														types.OrderedList{
+														&types.GenericList{
+															Kind: types.OrderedListKind,
 															Attributes: types.Attributes{
 																types.AttrStyle: "upperroman",
 															},
-															Items: []*types.OrderedListElement{
-																{
+															Elements: []types.ListElement{
+																&types.OrderedListElement{
 																	Style: types.LowerAlpha,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "ordered 3.2.I"},
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "ordered 3.2.I"},
 																			},
 																		},
 																	},
 																},
-																{
+																&types.OrderedListElement{
 																	Style: types.LowerAlpha,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{Content: "ordered 3.2.II"},
-																				},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{Content: "ordered 3.2.II"},
 																			},
 																		},
 																	},
@@ -662,14 +594,12 @@ ii) ordered 1.2.ii
 														},
 													},
 												},
-												{
+												&types.OrderedListElement{
 													Style: types.Arabic,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{Content: "ordered 3.3"},
-																},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{Content: "ordered 3.3"},
 															},
 														},
 													},
@@ -692,44 +622,44 @@ Operating Systems::
     * Desktop`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.LabeledList{
+						&types.GenericList{
+							Kind: types.LabeledListKind,
 							Attributes: types.Attributes{
 								types.AttrTitle: "Mixed",
 							},
-							Items: []*types.LabeledListElement{
-								{
+							Elements: []types.ListElement{
+								&types.LabeledListElement{
+									Style: "::",
 									Term: []interface{}{
 										types.StringElement{
 											Content: "Operating Systems",
 										},
 									},
 									Elements: []interface{}{
-										types.OrderedList{
-											Items: []*types.OrderedListElement{
-												{
+										&types.GenericList{
+											Kind: types.OrderedListKind,
+											Elements: []types.ListElement{
+												&types.OrderedListElement{
 													Style: types.Arabic,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{
-																		Content: "Fedora",
-																	},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{
+																	Content: "Fedora",
 																},
 															},
 														},
-														types.UnorderedList{
-															Items: []*types.UnorderedListElement{
-																{
+														&types.GenericList{
+															Kind: types.UnorderedListKind,
+															Elements: []types.ListElement{
+																&types.UnorderedListElement{
 																	BulletStyle: types.OneAsterisk,
 																	CheckStyle:  types.NoCheck,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{
-																						Content: "Desktop",
-																					},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{
+																					Content: "Desktop",
 																				},
 																			},
 																		},
@@ -775,53 +705,55 @@ a paragraph
 `
 				expected := types.Document{
 					Elements: []interface{}{
-						types.LabeledList{
+						&types.GenericList{
+							Kind: types.LabeledListKind,
 							Attributes: types.Attributes{
 								types.AttrTitle: "Mixed",
 							},
-							Items: []*types.LabeledListElement{
-								{
+							Elements: []types.ListElement{
+								&types.LabeledListElement{
+									Style: "::",
 									Term: []interface{}{
 										types.StringElement{
 											Content: "Operating Systems",
 										},
 									},
 									Elements: []interface{}{
-										types.LabeledList{
-											Items: []*types.LabeledListElement{
-												{
+										&types.GenericList{
+											Kind: types.LabeledListKind,
+											Elements: []types.ListElement{
+												&types.LabeledListElement{
+													Style: ":::",
 													Term: []interface{}{
 														types.StringElement{
 															Content: "Linux",
 														},
 													},
 													Elements: []interface{}{
-														types.OrderedList{
-															Items: []*types.OrderedListElement{
-																{
+														&types.GenericList{
+															Kind: types.OrderedListKind,
+															Elements: []types.ListElement{
+																&types.OrderedListElement{
 																	Style: types.Arabic,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{
-																						Content: "Fedora",
-																					},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{
+																					Content: "Fedora",
 																				},
 																			},
 																		},
-																		types.UnorderedList{
-																			Items: []*types.UnorderedListElement{
-																				{
+																		&types.GenericList{
+																			Kind: types.UnorderedListKind,
+																			Elements: []types.ListElement{
+																				&types.UnorderedListElement{
 																					BulletStyle: types.OneAsterisk,
 																					CheckStyle:  types.NoCheck,
 																					Elements: []interface{}{
-																						types.Paragraph{
-																							Lines: [][]interface{}{
-																								{
-																									types.StringElement{
-																										Content: "Desktop",
-																									},
+																						&types.Paragraph{
+																							Elements: []interface{}{
+																								types.StringElement{
+																									Content: "Desktop",
 																								},
 																							},
 																						},
@@ -831,45 +763,40 @@ a paragraph
 																		},
 																	},
 																},
-																{
+																&types.OrderedListElement{
 																	Style: types.Arabic,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{
-																						Content: "Ubuntu",
-																					},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{
+																					Content: "Ubuntu",
 																				},
 																			},
 																		},
-																		types.UnorderedList{
-																			Items: []*types.UnorderedListElement{
-																				{
+																		&types.GenericList{
+																			Kind: types.UnorderedListKind,
+																			Elements: []types.ListElement{
+																				&types.UnorderedListElement{
 																					BulletStyle: types.OneAsterisk,
 																					CheckStyle:  types.NoCheck,
 																					Elements: []interface{}{
-																						types.Paragraph{
-																							Lines: [][]interface{}{
-																								{
-																									types.StringElement{
-																										Content: "Desktop",
-																									},
+																						&types.Paragraph{
+																							Elements: []interface{}{
+																								types.StringElement{
+																									Content: "Desktop",
 																								},
 																							},
 																						},
 																					},
 																				},
-																				{
+																				&types.UnorderedListElement{
 																					BulletStyle: types.OneAsterisk,
 																					CheckStyle:  types.NoCheck,
 																					Elements: []interface{}{
-																						types.Paragraph{
-																							Lines: [][]interface{}{
-																								{
-																									types.StringElement{
-																										Content: "Server",
-																									},
+																						&types.Paragraph{
+																							Elements: []interface{}{
+																								types.StringElement{
+																									Content: "Server",
 																								},
 																							},
 																						},
@@ -883,38 +810,36 @@ a paragraph
 														},
 													},
 												},
-												{
+												&types.LabeledListElement{
+													Style: ":::",
 													Term: []interface{}{
 														types.StringElement{
 															Content: "BSD",
 														},
 													},
 													Elements: []interface{}{
-														types.OrderedList{
-															Items: []*types.OrderedListElement{
-																{
+														&types.GenericList{
+															Kind: types.OrderedListKind,
+															Elements: []types.ListElement{
+																&types.OrderedListElement{
 																	Style: types.Arabic,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{
-																						Content: "FreeBSD",
-																					},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{
+																					Content: "FreeBSD",
 																				},
 																			},
 																		},
 																	},
 																},
-																{
+																&types.OrderedListElement{
 																	Style: types.Arabic,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{
-																						Content: "NetBSD",
-																					},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{
+																					Content: "NetBSD",
 																				},
 																			},
 																		},
@@ -928,47 +853,47 @@ a paragraph
 										},
 									},
 								},
-								{
+								&types.LabeledListElement{
+									Style: "::",
 									Term: []interface{}{
 										types.StringElement{
 											Content: "Cloud Providers",
 										},
 									},
 									Elements: []interface{}{
-										types.LabeledList{
-											Items: []*types.LabeledListElement{
-												{
+										&types.GenericList{
+											Kind: types.LabeledListKind,
+											Elements: []types.ListElement{
+												&types.LabeledListElement{
+													Style: ":::",
 													Term: []interface{}{
 														types.StringElement{
 															Content: "PaaS",
 														},
 													},
 													Elements: []interface{}{
-														types.OrderedList{
-															Items: []*types.OrderedListElement{
-																{
+														&types.GenericList{
+															Kind: types.OrderedListKind,
+															Elements: []types.ListElement{
+																&types.OrderedListElement{
 																	Style: types.Arabic,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{
-																						Content: "OpenShift",
-																					},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{
+																					Content: "OpenShift",
 																				},
 																			},
 																		},
 																	},
 																},
-																{
+																&types.OrderedListElement{
 																	Style: types.Arabic,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{
-																						Content: "CloudBees",
-																					},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{
+																					Content: "CloudBees",
 																				},
 																			},
 																		},
@@ -978,38 +903,36 @@ a paragraph
 														},
 													},
 												},
-												{
+												&types.LabeledListElement{
+													Style: ":::",
 													Term: []interface{}{
 														types.StringElement{
 															Content: "IaaS",
 														},
 													},
 													Elements: []interface{}{
-														types.OrderedList{
-															Items: []*types.OrderedListElement{
-																{
+														&types.GenericList{
+															Kind: types.OrderedListKind,
+															Elements: []types.ListElement{
+																&types.OrderedListElement{
 																	Style: types.Arabic,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{
-																						Content: "Amazon EC2",
-																					},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{
+																					Content: "Amazon EC2",
 																				},
 																			},
 																		},
 																	},
 																},
-																{
+																&types.OrderedListElement{
 																	Style: types.Arabic,
 																	Elements: []interface{}{
-																		types.Paragraph{
-																			Lines: [][]interface{}{
-																				{
-																					types.StringElement{
-																						Content: "Rackspace",
-																					},
+																		&types.Paragraph{
+																			Elements: []interface{}{
+																				types.StringElement{
+																					Content: "Rackspace",
 																				},
 																			},
 																		},
@@ -1025,13 +948,11 @@ a paragraph
 								},
 							},
 						},
-						// types.BlankLine{},
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "a paragraph",
-									},
+						// &types.BlankLine{},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "a paragraph",
 								},
 							},
 						},
@@ -1050,35 +971,33 @@ a paragraph
 	. Six`
 				expected := types.Document{
 					Elements: []interface{}{ // a single ordered list
-						types.OrderedList{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
 							Attributes: types.Attributes{
 								types.AttrStyle: "lowerroman",
 								types.AttrStart: "5",
 							},
-							Items: []*types.OrderedListElement{
-								{
+							Elements: []types.ListElement{
+								&types.OrderedListElement{
 									Style: types.Arabic, // will be overridden during rendering
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "Five",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "Five",
 												},
 											},
 										},
-										types.OrderedList{
-											Items: []*types.OrderedListElement{
-												{
+										&types.GenericList{
+											Kind: types.OrderedListKind,
+											Elements: []types.ListElement{
+												&types.OrderedListElement{
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{
-																		Content: "a",
-																	},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{
+																	Content: "a",
 																},
 															},
 														},
@@ -1088,15 +1007,13 @@ a paragraph
 										},
 									},
 								},
-								{
+								&types.OrderedListElement{
 									Style: types.Arabic, // will be overridden during rendering
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "Six",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "Six",
 												},
 											},
 										},
@@ -1119,52 +1036,48 @@ a paragraph
 . Six`
 				expected := types.Document{
 					Elements: []interface{}{ // a single ordered list
-						types.OrderedList{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
 							Attributes: types.Attributes{
 								types.AttrStyle: "lowerroman",
 								types.AttrStart: "5",
 							},
-							Items: []*types.OrderedListElement{
-								{
+							Elements: []types.ListElement{
+								&types.OrderedListElement{
 									Style: types.Arabic, // will be overridden during rendering
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "Five",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "Five",
 												},
 											},
 										},
-										types.OrderedList{
+										&types.GenericList{
+											Kind: types.OrderedListKind,
 											Attributes: types.Attributes{
 												types.AttrStyle: "upperalpha",
 											},
-											Items: []*types.OrderedListElement{
-												{
+											Elements: []types.ListElement{
+												&types.OrderedListElement{
 													Style: types.LowerAlpha, // will be overridden during rendering
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{
-																		Content: "a",
-																	},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{
+																	Content: "a",
 																},
 															},
 														},
 													},
 												},
-												{
+												&types.OrderedListElement{
 													Style: types.LowerAlpha, // will be overridden during rendering
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{
-																		Content: "b",
-																	},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{
+																	Content: "b",
 																},
 															},
 														},
@@ -1174,15 +1087,13 @@ a paragraph
 										},
 									},
 								},
-								{
+								&types.OrderedListElement{
 									Style: types.Arabic, // will be overridden during rendering
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "Six",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "Six",
 												},
 											},
 										},
@@ -1204,21 +1115,20 @@ a paragraph
 . Six`
 				expected := types.Document{
 					Elements: []interface{}{ // a single ordered list
-						types.OrderedList{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
 							Attributes: types.Attributes{
 								types.AttrStyle: "lowerroman",
 								types.AttrStart: "5",
 							},
-							Items: []*types.OrderedListElement{
-								{
+							Elements: []types.ListElement{
+								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "Five",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "Five",
 												},
 											},
 										},
@@ -1226,34 +1136,32 @@ a paragraph
 								},
 							},
 						},
-						types.OrderedList{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
 							Attributes: types.Attributes{
 								types.AttrStyle: "upperalpha",
 							},
-							Items: []*types.OrderedListElement{
-								{
+							Elements: []types.ListElement{
+								&types.OrderedListElement{
 									Style: types.LowerAlpha,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "a",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "a",
 												},
 											},
 										},
-										types.OrderedList{
-											Items: []*types.OrderedListElement{
-												{
+										&types.GenericList{
+											Kind: types.OrderedListKind,
+											Elements: []types.ListElement{
+												&types.OrderedListElement{
 													Style: types.Arabic,
 													Elements: []interface{}{
-														types.Paragraph{
-															Lines: [][]interface{}{
-																{
-																	types.StringElement{
-																		Content: "Six",
-																	},
+														&types.Paragraph{
+															Elements: []interface{}{
+																types.StringElement{
+																	Content: "Six",
 																},
 															},
 														},
@@ -1281,39 +1189,33 @@ a paragraph
 . Step 2`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.UnorderedList{
+						&types.GenericList{
+							Kind: types.UnorderedListKind,
 							Attributes: types.Attributes{
 								types.AttrTitle: "Checklist",
 							},
-							Items: []*types.UnorderedListElement{
-								{
+							Elements: []types.ListElement{
+								&types.UnorderedListElement{
 									BulletStyle: types.Dash,
 									CheckStyle:  types.Checked,
 									Elements: []interface{}{
-										types.Paragraph{
-											Attributes: types.Attributes{
-												types.AttrCheckStyle: types.Checked,
-											},
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "checked",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "checked",
 												},
 											},
 										},
 									},
 								},
-								{
+								&types.UnorderedListElement{
 									BulletStyle: types.Dash,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "normal list item",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "normal list item",
 												},
 											},
 										},
@@ -1321,34 +1223,31 @@ a paragraph
 								},
 							},
 						},
-						types.OrderedList{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
 							Attributes: types.Attributes{
 								types.AttrTitle: "Ordered, basic",
 							},
-							Items: []*types.OrderedListElement{
-								{
+							Elements: []types.ListElement{
+								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "Step 1",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "Step 1",
 												},
 											},
 										},
 									},
 								},
-								{
+								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "Step 2",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "Step 2",
 												},
 											},
 										},
@@ -1367,31 +1266,31 @@ a paragraph
 . b`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []*types.OrderedListElement{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []types.ListElement{
+								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "a",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "a",
 												},
 											},
 										},
+										&types.SingleLineComment{
+											Content: " -",
+										},
 									},
 								},
-								{
+								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "b",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "b",
 												},
 											},
 										},
@@ -1412,31 +1311,37 @@ a paragraph
 . b`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []*types.OrderedListElement{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []types.ListElement{
+								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "a",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "a",
 												},
 											},
 										},
+										&types.SingleLineComment{
+											Content: " -",
+										},
+										&types.SingleLineComment{
+											Content: " -",
+										},
+										&types.SingleLineComment{
+											Content: " -",
+										},
 									},
 								},
-								{
+								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "b",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "b",
 												},
 											},
 										},
@@ -1456,17 +1361,16 @@ a paragraph
 . b`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []*types.OrderedListElement{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []types.ListElement{
+								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "a",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "a",
 												},
 											},
 										},
@@ -1474,17 +1378,19 @@ a paragraph
 								},
 							},
 						},
-						types.OrderedList{
-							Items: []*types.OrderedListElement{
-								{
+						&types.SingleLineComment{
+							Content: " -",
+						},
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []types.ListElement{
+								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "b",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "b",
 												},
 											},
 										},
@@ -1506,17 +1412,16 @@ a paragraph
 . b`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.OrderedList{
-							Items: []*types.OrderedListElement{
-								{
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []types.ListElement{
+								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "a",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "a",
 												},
 											},
 										},
@@ -1524,17 +1429,25 @@ a paragraph
 								},
 							},
 						},
-						types.OrderedList{
-							Items: []*types.OrderedListElement{
-								{
+						&types.SingleLineComment{
+							Content: " -",
+						},
+						&types.SingleLineComment{
+							Content: " -",
+						},
+						&types.SingleLineComment{
+							Content: " -",
+						},
+						&types.GenericList{
+							Kind: types.OrderedListKind,
+							Elements: []types.ListElement{
+								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{
-														Content: "b",
-													},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "b",
 												},
 											},
 										},

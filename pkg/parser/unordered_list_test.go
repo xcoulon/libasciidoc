@@ -15,19 +15,19 @@ var _ = Describe("unordered lists", func() {
 		Context("valid content", func() {
 
 			It("with a basic single item", func() {
-				source := `* a list item`
+				source := `* a list element`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "a list item"},
+												types.StringElement{Content: "a list element"},
 											},
 										},
 									},
@@ -43,7 +43,7 @@ var _ = Describe("unordered lists", func() {
 				source := `.mytitle
 [#listID]
 [.myrole]
-* a list item`
+* a list element`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
@@ -53,14 +53,14 @@ var _ = Describe("unordered lists", func() {
 								types.AttrTitle: "mytitle",
 								types.AttrRoles: []interface{}{"myrole"},
 							},
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "a list item"},
+												types.StringElement{Content: "a list element"},
 											},
 										},
 									},
@@ -74,7 +74,7 @@ var _ = Describe("unordered lists", func() {
 
 			It("with a title and a single item", func() {
 				source := `.a title
-	* a list item`
+	* a list element`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
@@ -82,14 +82,14 @@ var _ = Describe("unordered lists", func() {
 							Attributes: types.Attributes{
 								types.AttrTitle: "a title",
 							},
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "a list item"},
+												types.StringElement{Content: "a list element"},
 											},
 										},
 									},
@@ -108,7 +108,7 @@ var _ = Describe("unordered lists", func() {
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -146,14 +146,14 @@ var _ = Describe("unordered lists", func() {
 
 			It("with multiple levels", func() {
 				source := `.Unordered list title
-		* list item 1
-		** nested list item A
-		*** nested nested list item A.1
-		*** nested nested list item A.2
-		** nested list item B
-		*** nested nested list item B.1
-		*** nested nested list item B.2
-		* list item 2`
+		* list element 1
+		** nested list element A
+		*** nested nested list element A.1
+		*** nested nested list element A.2
+		** nested list element B
+		*** nested nested list element B.1
+		*** nested nested list element B.2
+		* list element 2`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
@@ -161,38 +161,38 @@ var _ = Describe("unordered lists", func() {
 							Attributes: types.Attributes{
 								types.AttrTitle: "Unordered list title",
 							},
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "list item 1"},
+												types.StringElement{Content: "list element 1"},
 											},
 										},
 										&types.GenericList{
 											Kind: types.UnorderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.UnorderedListElement{
 													BulletStyle: types.TwoAsterisks,
 													CheckStyle:  types.NoCheck,
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "nested list item A"},
+																types.StringElement{Content: "nested list element A"},
 															},
 														},
 														&types.GenericList{
 															Kind: types.UnorderedListKind,
-															Elements: []interface{}{
+															Elements: []types.ListElement{
 																&types.UnorderedListElement{
 																	BulletStyle: types.ThreeAsterisks,
 																	CheckStyle:  types.NoCheck,
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "nested nested list item A.1"},
+																				types.StringElement{Content: "nested nested list element A.1"},
 																			},
 																		},
 																	},
@@ -203,7 +203,7 @@ var _ = Describe("unordered lists", func() {
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "nested nested list item A.2"},
+																				types.StringElement{Content: "nested nested list element A.2"},
 																			},
 																		},
 																	},
@@ -218,19 +218,19 @@ var _ = Describe("unordered lists", func() {
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "nested list item B"},
+																types.StringElement{Content: "nested list element B"},
 															},
 														},
 														&types.GenericList{
 															Kind: types.UnorderedListKind,
-															Elements: []interface{}{
+															Elements: []types.ListElement{
 																&types.UnorderedListElement{
 																	BulletStyle: types.ThreeAsterisks,
 																	CheckStyle:  types.NoCheck,
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "nested nested list item B.1"},
+																				types.StringElement{Content: "nested nested list element B.1"},
 																			},
 																		},
 																	},
@@ -241,7 +241,7 @@ var _ = Describe("unordered lists", func() {
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "nested nested list item B.2"},
+																				types.StringElement{Content: "nested nested list element B.2"},
 																			},
 																		},
 																	},
@@ -260,7 +260,7 @@ var _ = Describe("unordered lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "list item 2"},
+												types.StringElement{Content: "list element 2"},
 											},
 										},
 									},
@@ -279,7 +279,7 @@ var _ = Describe("unordered lists", func() {
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.Dash,
 									CheckStyle:  types.NoCheck,
@@ -325,7 +325,7 @@ var _ = Describe("unordered lists", func() {
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.Dash,
 									CheckStyle:  types.NoCheck,
@@ -337,7 +337,7 @@ var _ = Describe("unordered lists", func() {
 										},
 										&types.GenericList{
 											Kind: types.UnorderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.UnorderedListElement{
 													BulletStyle: types.OneAsterisk,
 													CheckStyle:  types.NoCheck,
@@ -364,7 +364,7 @@ var _ = Describe("unordered lists", func() {
 										},
 										&types.GenericList{
 											Kind: types.UnorderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.UnorderedListElement{
 													BulletStyle: types.OneAsterisk,
 													CheckStyle:  types.NoCheck,
@@ -376,7 +376,7 @@ var _ = Describe("unordered lists", func() {
 														},
 														&types.GenericList{
 															Kind: types.UnorderedListKind,
-															Elements: []interface{}{
+															Elements: []types.ListElement{
 																&types.UnorderedListElement{
 																	BulletStyle: types.TwoAsterisks,
 																	CheckStyle:  types.NoCheck,
@@ -404,7 +404,7 @@ var _ = Describe("unordered lists", func() {
 			})
 
 			It("with 2 items with empty line in-between", func() {
-				// fist line after list item is swallowed
+				// fist line after list element is swallowed
 				source := "* a first item\n" +
 					"\n" +
 					"* a second item with *bold content*"
@@ -412,7 +412,7 @@ var _ = Describe("unordered lists", func() {
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -456,7 +456,7 @@ on 2 lines, too.`
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -486,7 +486,7 @@ on 2 lines, too.`
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 			It("unordered lists with 2 empty lines in-between", func() {
-				// the first blank lines after the first list is swallowed (for the list item)
+				// the first blank lines after the first list is swallowed (for the list element)
 				source := "* an item in the first list\n" +
 					"\n" +
 					"\n" +
@@ -495,7 +495,7 @@ on 2 lines, too.`
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -538,7 +538,7 @@ on 2 lines, too.`
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -550,7 +550,7 @@ on 2 lines, too.`
 										},
 										&types.GenericList{
 											Kind: types.UnorderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.UnorderedListElement{
 													BulletStyle: types.TwoAsterisks,
 													CheckStyle:  types.NoCheck,
@@ -573,7 +573,7 @@ on 2 lines, too.`
 														},
 														&types.GenericList{
 															Kind: types.UnorderedListKind,
-															Elements: []interface{}{
+															Elements: []types.ListElement{
 																&types.UnorderedListElement{
 																	BulletStyle: types.ThreeAsterisks,
 																	CheckStyle:  types.NoCheck,
@@ -626,7 +626,7 @@ on 2 lines, too.`
 										},
 										&types.GenericList{
 											Kind: types.UnorderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.UnorderedListElement{
 													BulletStyle: types.TwoAsterisks,
 													CheckStyle:  types.NoCheck,
@@ -664,7 +664,7 @@ on 2 lines, too.`
 							Attributes: types.Attributes{
 								types.AttrTitle: "Unordered, max nesting",
 							},
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -676,7 +676,7 @@ on 2 lines, too.`
 										},
 										&types.GenericList{
 											Kind: types.UnorderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.UnorderedListElement{
 													BulletStyle: types.TwoAsterisks,
 													CheckStyle:  types.NoCheck,
@@ -688,7 +688,7 @@ on 2 lines, too.`
 														},
 														&types.GenericList{
 															Kind: types.UnorderedListKind,
-															Elements: []interface{}{
+															Elements: []types.ListElement{
 																&types.UnorderedListElement{
 																	BulletStyle: types.ThreeAsterisks,
 																	CheckStyle:  types.NoCheck,
@@ -700,7 +700,7 @@ on 2 lines, too.`
 																		},
 																		&types.GenericList{
 																			Kind: types.UnorderedListKind,
-																			Elements: []interface{}{
+																			Elements: []types.ListElement{
 																				&types.UnorderedListElement{
 																					BulletStyle: types.FourAsterisks,
 																					CheckStyle:  types.NoCheck,
@@ -712,7 +712,7 @@ on 2 lines, too.`
 																						},
 																						&types.GenericList{
 																							Kind: types.UnorderedListKind,
-																							Elements: []interface{}{
+																							Elements: []types.ListElement{
 																								&types.UnorderedListElement{
 																									BulletStyle: types.FiveAsterisks,
 																									CheckStyle:  types.NoCheck,
@@ -773,7 +773,7 @@ on 2 lines, too.`
 							Attributes: types.Attributes{
 								types.AttrTitle: "Unordered, max nesting",
 							},
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -785,7 +785,7 @@ on 2 lines, too.`
 										},
 										&types.GenericList{
 											Kind: types.UnorderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.UnorderedListElement{
 													BulletStyle: types.TwoAsterisks,
 													CheckStyle:  types.NoCheck,
@@ -797,7 +797,7 @@ on 2 lines, too.`
 														},
 														&types.GenericList{
 															Kind: types.UnorderedListKind,
-															Elements: []interface{}{
+															Elements: []types.ListElement{
 																&types.UnorderedListElement{
 																	BulletStyle: types.ThreeAsterisks,
 																	CheckStyle:  types.NoCheck,
@@ -809,7 +809,7 @@ on 2 lines, too.`
 																		},
 																		&types.GenericList{
 																			Kind: types.UnorderedListKind,
-																			Elements: []interface{}{
+																			Elements: []types.ListElement{
 																				&types.UnorderedListElement{
 																					BulletStyle: types.FourAsterisks,
 																					CheckStyle:  types.NoCheck,
@@ -821,7 +821,7 @@ on 2 lines, too.`
 																						},
 																						&types.GenericList{
 																							Kind: types.UnorderedListKind,
-																							Elements: []interface{}{
+																							Elements: []types.ListElement{
 																								&types.UnorderedListElement{
 																									BulletStyle: types.FiveAsterisks,
 																									CheckStyle:  types.NoCheck,
@@ -867,13 +867,13 @@ on 2 lines, too.`
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("unordered list item with predefined attribute", func() {
+			It("unordered list element with predefined attribute", func() {
 				source := `* {amp}`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -904,7 +904,7 @@ on 2 lines, too.`
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -916,7 +916,7 @@ on 2 lines, too.`
 										},
 										&types.GenericList{
 											Kind: types.UnorderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.UnorderedListElement{
 													BulletStyle: types.TwoAsterisks,
 													CheckStyle:  types.NoCheck,
@@ -928,7 +928,7 @@ on 2 lines, too.`
 														},
 														&types.GenericList{
 															Kind: types.UnorderedListKind,
-															Elements: []interface{}{
+															Elements: []types.ListElement{
 																&types.UnorderedListElement{
 																	BulletStyle: types.ThreeAsterisks,
 																	CheckStyle:  types.NoCheck,
@@ -977,13 +977,13 @@ on 2 lines, too.`
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("invalid list item", func() {
-				source := "*an invalid list item"
+			It("invalid list element", func() {
+				source := "*an invalid list element"
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "*an invalid list item"},
+								types.StringElement{Content: "*an invalid list element"},
 							},
 						},
 					},
@@ -992,7 +992,7 @@ on 2 lines, too.`
 			})
 		})
 
-		Context("list item continuation", func() {
+		Context("list element continuation", func() {
 
 			It("with item continuation - case 1", func() {
 				source := `* foo
@@ -1010,7 +1010,7 @@ another delimited block
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -1083,7 +1083,7 @@ The {plus} symbol is on a new line.
 							Attributes: types.Attributes{
 								types.AttrTitle: "Unordered, complex",
 							},
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -1095,7 +1095,7 @@ The {plus} symbol is on a new line.
 										},
 										&types.GenericList{
 											Kind: types.UnorderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.UnorderedListElement{
 													BulletStyle: types.TwoAsterisks,
 													CheckStyle:  types.NoCheck,
@@ -1109,7 +1109,7 @@ The {plus} symbol is on a new line.
 														},
 														&types.GenericList{
 															Kind: types.UnorderedListKind,
-															Elements: []interface{}{
+															Elements: []types.ListElement{
 																&types.UnorderedListElement{
 																	BulletStyle: types.ThreeAsterisks,
 																	CheckStyle:  types.NoCheck,
@@ -1133,7 +1133,7 @@ The {plus} symbol is on a new line.
 																		},
 																		&types.GenericList{
 																			Kind: types.UnorderedListKind,
-																			Elements: []interface{}{
+																			Elements: []types.ListElement{
 																				&types.UnorderedListElement{
 																					BulletStyle: types.FourAsterisks,
 																					CheckStyle:  types.NoCheck,
@@ -1162,7 +1162,7 @@ The {plus} symbol is on a new line.
 																						},
 																						&types.GenericList{
 																							Kind: types.UnorderedListKind,
-																							Elements: []interface{}{
+																							Elements: []types.ListElement{
 																								&types.UnorderedListElement{
 																									BulletStyle: types.FiveAsterisks,
 																									CheckStyle:  types.NoCheck,
@@ -1215,7 +1215,7 @@ another delimited block
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -1237,9 +1237,10 @@ another delimited block
 								},
 							},
 						},
+						&types.BlankLine{}, // blankline after delimited block is preserved
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -1270,49 +1271,49 @@ another delimited block
 		Context("attach to ancestor", func() {
 
 			It("attach to grandparent item", func() {
-				source := `* grandparent list item
-** parent list item
-*** child list item
+				source := `* grandparent list element
+** parent list element
+*** child list element
 
 
 +
-paragraph attached to grandparent list item`
+paragraph attached to grandparent list element`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "grandparent list item"},
+												types.StringElement{Content: "grandparent list element"},
 											},
 										},
 										&types.GenericList{
 											Kind: types.UnorderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.UnorderedListElement{
 													BulletStyle: types.TwoAsterisks,
 													CheckStyle:  types.NoCheck,
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "parent list item"},
+																types.StringElement{Content: "parent list element"},
 															},
 														},
 														&types.GenericList{
 															Kind: types.UnorderedListKind,
-															Elements: []interface{}{
+															Elements: []types.ListElement{
 																&types.UnorderedListElement{
 																	BulletStyle: types.ThreeAsterisks,
 																	CheckStyle:  types.NoCheck,
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "child list item"},
+																				types.StringElement{Content: "child list element"},
 																			},
 																		},
 																	},
@@ -1326,7 +1327,7 @@ paragraph attached to grandparent list item`
 										&types.ListElementContinuation{},
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "paragraph attached to grandparent list item"},
+												types.StringElement{Content: "paragraph attached to grandparent list element"},
 											},
 										},
 									},
@@ -1339,17 +1340,17 @@ paragraph attached to grandparent list item`
 			})
 
 			It("attach to parent item", func() {
-				source := `* grandparent list item
-** parent list item
-*** child list item
+				source := `* grandparent list element
+** parent list element
+*** child list element
 
 +
-paragraph attached to parent list item`
+paragraph attached to parent list element`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -1357,13 +1358,13 @@ paragraph attached to parent list item`
 										&types.Paragraph{
 											Elements: []interface{}{
 												types.StringElement{
-													Content: "grandparent list item",
+													Content: "grandparent list element",
 												},
 											},
 										},
 										&types.GenericList{
 											Kind: types.UnorderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.UnorderedListElement{
 													BulletStyle: types.TwoAsterisks,
 													CheckStyle:  types.NoCheck,
@@ -1371,13 +1372,13 @@ paragraph attached to parent list item`
 														&types.Paragraph{
 															Elements: []interface{}{
 																types.StringElement{
-																	Content: "parent list item",
+																	Content: "parent list element",
 																},
 															},
 														},
 														&types.GenericList{
 															Kind: types.UnorderedListKind,
-															Elements: []interface{}{
+															Elements: []types.ListElement{
 																&types.UnorderedListElement{
 																	BulletStyle: types.ThreeAsterisks,
 																	CheckStyle:  types.NoCheck,
@@ -1385,7 +1386,7 @@ paragraph attached to parent list item`
 																		&types.Paragraph{
 																			Elements: []interface{}{
 																				types.StringElement{
-																					Content: "child list item",
+																					Content: "child list element",
 																				},
 																			},
 																		},
@@ -1397,7 +1398,7 @@ paragraph attached to parent list item`
 														&types.Paragraph{
 															Elements: []interface{}{
 																types.StringElement{
-																	Content: "paragraph attached to parent list item",
+																	Content: "paragraph attached to parent list element",
 																},
 															},
 														},

@@ -61,7 +61,7 @@ in the middle
 								types.StringElement{
 									Content: "some listing code\nwith an empty line\n",
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.StringElement{
 									Content: "in the middle",
 								},
@@ -109,7 +109,7 @@ then a normal paragraph.`
 								types.StringElement{
 									Content: "some listing code\nwith an empty line\n",
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.StringElement{
 									Content: "in the middle",
 								},

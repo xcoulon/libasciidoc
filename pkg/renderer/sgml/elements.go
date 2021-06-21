@@ -70,7 +70,7 @@ func (r *sgmlRenderer) renderElement(ctx *renderer.Context, element interface{})
 		return r.renderSection(ctx, e)
 	case types.Preamble:
 		return r.renderPreamble(ctx, e)
-	case types.BlankLine:
+	case *types.BlankLine:
 		return r.renderBlankLine(ctx, e)
 	case types.LabeledList:
 		return r.renderLabeledList(ctx, e)
@@ -164,7 +164,7 @@ func (r *sgmlRenderer) renderPlainText(ctx *renderer.Context, element interface{
 			return r.renderPlainText(ctx, alt)
 		}
 		return element.Location.Stringify(), nil
-	case types.BlankLine, types.ThematicBreak:
+	case *types.BlankLine, types.ThematicBreak:
 		return "\n\n", nil
 	case types.StringElement:
 		return element.Content, nil

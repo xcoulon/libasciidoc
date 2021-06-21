@@ -16,7 +16,7 @@ var _ = Describe("document fragment group parsing", func() {
 
 	It("should collect 1 fragment with single line", func() {
 		source := `a line`
-		expected := []types.DocumentFragmentGroup{
+		expected := []types.DocumentFragment{
 			{
 				LineOffset: 1,
 				Content: []interface{}{
@@ -24,13 +24,13 @@ var _ = Describe("document fragment group parsing", func() {
 				},
 			},
 		}
-		Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+		Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragments(expected))
 	})
 
 	It("should collect 1 fragment with multiple lines", func() {
 		source := `a line
 another line`
-		expected := []types.DocumentFragmentGroup{
+		expected := []types.DocumentFragment{
 			{
 				LineOffset: 1,
 				Content: []interface{}{
@@ -39,19 +39,19 @@ another line`
 				},
 			},
 		}
-		Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+		Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragments(expected))
 	})
 
 	It("should collect 2 fragments with non-empty first line", func() {
 		source := `a line
 		
 another line`
-		expected := []types.DocumentFragmentGroup{
+		expected := []types.DocumentFragment{
 			{
 				LineOffset: 1,
 				Content: []interface{}{
 					types.RawLine("a line"),
-					types.BlankLine{},
+					&types.BlankLine{},
 				},
 			},
 			{
@@ -61,7 +61,7 @@ another line`
 				},
 			},
 		}
-		Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+		Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragments(expected))
 	})
 
 	It("should collect 2 fragments with empty first line", func() {
@@ -69,18 +69,18 @@ another line`
 a line
 		
 another line`
-		expected := []types.DocumentFragmentGroup{
+		expected := []types.DocumentFragment{
 			{
 				LineOffset: 1,
 				Content: []interface{}{
-					types.BlankLine{},
+					&types.BlankLine{},
 				},
 			},
 			{
 				LineOffset: 2,
 				Content: []interface{}{
 					types.RawLine("a line"),
-					types.BlankLine{},
+					&types.BlankLine{},
 				},
 			},
 			{
@@ -90,14 +90,14 @@ another line`
 				},
 			},
 		}
-		Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+		Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragments(expected))
 	})
 
 	It("should collect 1 delimited block with single line", func() {
 		source := `----
 a line
 ----`
-		expected := []types.DocumentFragmentGroup{
+		expected := []types.DocumentFragment{
 			{
 				LineOffset: 1,
 				Content: []interface{}{
@@ -111,7 +111,7 @@ a line
 				},
 			},
 		}
-		Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+		Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragments(expected))
 	})
 
 	It("should collect 1 delimited block with multiple rawlines only", func() {
@@ -123,7 +123,7 @@ not a sidebar block
 ****
 ----
 `
-		expected := []types.DocumentFragmentGroup{
+		expected := []types.DocumentFragment{
 			{
 				LineOffset: 1,
 				Content: []interface{}{
@@ -131,7 +131,7 @@ not a sidebar block
 						Kind: types.Listing,
 					},
 					types.RawLine("a line"),
-					types.BlankLine{},
+					&types.BlankLine{},
 					types.RawLine("****"),
 					types.RawLine("not a sidebar block"),
 					types.RawLine("****"),
@@ -141,7 +141,7 @@ not a sidebar block
 				},
 			},
 		}
-		Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+		Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragments(expected))
 	})
 
 	It("should collect 1 delimited block with multiple lines and content afterwards", func() {
@@ -157,7 +157,7 @@ on
 3 lines.
 
 `
-		expected := []types.DocumentFragmentGroup{
+		expected := []types.DocumentFragment{
 			{
 				LineOffset: 1,
 				Content: []interface{}{
@@ -165,18 +165,18 @@ on
 						Kind: types.Listing,
 					},
 					types.RawLine("a line"),
-					types.BlankLine{},
+					&types.BlankLine{},
 					types.RawLine("another line"),
 					types.BlockDelimiter{
 						Kind: types.Listing,
 					},
-					types.BlankLine{},
+					&types.BlankLine{},
 				},
 			},
 			{
 				LineOffset: 7,
 				Content: []interface{}{
-					types.BlankLine{},
+					&types.BlankLine{},
 				},
 			},
 			{
@@ -185,11 +185,11 @@ on
 					types.RawLine("a paragraph"),
 					types.RawLine("on"),
 					types.RawLine("3 lines."),
-					types.BlankLine{},
+					&types.BlankLine{},
 				},
 			},
 		}
-		Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+		Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragments(expected))
 	})
 
 	It("should not get an error when reading failed", func() {

@@ -15,7 +15,7 @@ var _ = Describe("include table of contents", func() {
 	}
 	preamble := types.Preamble{
 		Elements: []interface{}{
-			types.BlankLine{},
+			&types.BlankLine{},
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
@@ -23,7 +23,7 @@ var _ = Describe("include table of contents", func() {
 					},
 				},
 			},
-			types.BlankLine{},
+			&types.BlankLine{},
 		},
 	}
 	section := types.Section{

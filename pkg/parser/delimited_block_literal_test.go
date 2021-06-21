@@ -94,7 +94,7 @@ a normal paragraph.`
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
@@ -196,7 +196,7 @@ a normal paragraph.`
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
@@ -240,7 +240,7 @@ a normal paragraph.`
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
@@ -277,7 +277,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.LiteralBlock{
 							Attributes: types.Attributes{
 								types.AttrStyle:            types.Literal,
@@ -322,7 +322,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -361,7 +361,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.LiteralBlock{
 							Attributes: types.Attributes{
 								types.AttrStyle:            types.Literal,
@@ -445,7 +445,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -485,7 +485,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.LiteralBlock{
 							Attributes: types.Attributes{
 								types.AttrStyle:            types.Literal,
@@ -537,7 +537,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -573,7 +573,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.LiteralBlock{
 							Attributes: types.Attributes{
 								types.AttrStyle:            types.Literal,
@@ -622,7 +622,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -659,7 +659,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.LiteralBlock{
 							Attributes: types.Attributes{
 								types.AttrStyle:            types.Literal,
@@ -705,7 +705,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{

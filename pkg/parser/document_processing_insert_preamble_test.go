@@ -34,7 +34,7 @@ var _ = Describe("preambles", func() {
 						},
 					},
 				},
-				types.BlankLine{},
+				&types.BlankLine{},
 				types.Paragraph{
 					Lines: [][]interface{}{
 						{
@@ -60,7 +60,7 @@ var _ = Describe("preambles", func() {
 						},
 					},
 				},
-				types.BlankLine{},
+				&types.BlankLine{},
 				types.Paragraph{
 					Lines: [][]interface{}{
 						{
@@ -90,7 +90,7 @@ var _ = Describe("preambles", func() {
 						},
 					},
 				},
-				types.BlankLine{},
+				&types.BlankLine{},
 				types.Section{
 					Level: 1,
 					Title: sectionATitle,
@@ -126,7 +126,7 @@ var _ = Describe("preambles", func() {
 								{types.StringElement{Content: "a short paragraph"}},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 					},
 				},
 				types.Section{
@@ -168,7 +168,7 @@ var _ = Describe("preambles", func() {
 						},
 					},
 				},
-				types.BlankLine{},
+				&types.BlankLine{},
 				types.Paragraph{
 					Lines: [][]interface{}{
 						{
@@ -176,7 +176,7 @@ var _ = Describe("preambles", func() {
 						},
 					},
 				},
-				types.BlankLine{},
+				&types.BlankLine{},
 				types.Section{
 					Level: 1,
 					Title: sectionATitle,
@@ -212,13 +212,13 @@ var _ = Describe("preambles", func() {
 								{types.StringElement{Content: "a short paragraph"}},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{types.StringElement{Content: "another short paragraph"}},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 					},
 				},
 				types.Section{

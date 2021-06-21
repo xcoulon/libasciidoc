@@ -20,7 +20,7 @@ on 2 lines`
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -51,7 +51,7 @@ on 2 lines`
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -74,7 +74,7 @@ on 2 lines`
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -121,7 +121,7 @@ on 2 lines`
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -173,7 +173,7 @@ on 2 lines`
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -220,7 +220,7 @@ Item1:: foo`
 						Attributes: types.Attributes{
 							"style": "horizontal",
 						},
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -250,7 +250,7 @@ Item1:: foo`
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -277,7 +277,7 @@ Item 3 description`
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -341,7 +341,7 @@ Item 3 description`
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -357,7 +357,7 @@ Item 3 description`
 									},
 									&types.GenericList{
 										Kind: types.LabeledListKind,
-										Elements: []interface{}{
+										Elements: []types.ListElement{
 											&types.LabeledListElement{
 												Style: types.TripleColons,
 												Term: []interface{}{
@@ -373,7 +373,7 @@ Item 3 description`
 													},
 													&types.GenericList{
 														Kind: types.LabeledListKind,
-														Elements: []interface{}{
+														Elements: []types.ListElement{
 															&types.LabeledListElement{
 																Style: types.QuadrupleColons,
 																Term: []interface{}{
@@ -413,7 +413,7 @@ Item with description:: something simple`
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -424,7 +424,7 @@ Item with description:: something simple`
 								Elements: []interface{}{
 									&types.GenericList{
 										Kind: types.UnorderedListKind,
-										Elements: []interface{}{
+										Elements: []types.ListElement{
 											&types.UnorderedListElement{
 												BulletStyle: types.OneAsterisk,
 												CheckStyle:  types.NoCheck,
@@ -483,7 +483,7 @@ a normal paragraph.`
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -501,7 +501,6 @@ a normal paragraph.`
 							},
 						},
 					},
-
 					&types.Paragraph{
 						Elements: []interface{}{
 							types.StringElement{Content: "a normal paragraph."},
@@ -527,7 +526,7 @@ another fenced block
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -592,7 +591,7 @@ another fenced block
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -613,7 +612,7 @@ another fenced block
 					},
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -651,7 +650,7 @@ another fenced block
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -662,7 +661,7 @@ another fenced block
 								Elements: []interface{}{
 									&types.GenericList{
 										Kind: types.UnorderedListKind,
-										Elements: []interface{}{
+										Elements: []types.ListElement{
 											&types.UnorderedListElement{
 												BulletStyle: types.Dash,
 												CheckStyle:  types.NoCheck,
@@ -696,7 +695,7 @@ second term:: definition of the second term`
 						Attributes: types.Attributes{
 							types.AttrTitle: "Labeled, single-line",
 						},
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -753,7 +752,7 @@ level 1:: description 1`
 						Attributes: types.Attributes{
 							types.AttrTitle: "Labeled, max nesting",
 						},
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -771,7 +770,7 @@ level 1:: description 1`
 									},
 									&types.GenericList{
 										Kind: types.LabeledListKind,
-										Elements: []interface{}{
+										Elements: []types.ListElement{
 											&types.LabeledListElement{
 												Style: types.TripleColons,
 												Term: []interface{}{
@@ -789,7 +788,7 @@ level 1:: description 1`
 													},
 													&types.GenericList{
 														Kind: types.LabeledListKind,
-														Elements: []interface{}{
+														Elements: []types.ListElement{
 															&types.LabeledListElement{
 																Style: types.QuadrupleColons,
 																Term: []interface{}{
@@ -852,7 +851,7 @@ level 2::: description 2`
 						Attributes: types.Attributes{
 							types.AttrTitle: "Labeled, max nesting",
 						},
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -870,7 +869,7 @@ level 2::: description 2`
 									},
 									&types.GenericList{
 										Kind: types.LabeledListKind,
-										Elements: []interface{}{
+										Elements: []types.ListElement{
 											&types.LabeledListElement{
 												Style: types.TripleColons,
 												Term: []interface{}{
@@ -888,7 +887,7 @@ level 2::: description 2`
 													},
 													&types.GenericList{
 														Kind: types.LabeledListKind,
-														Elements: []interface{}{
+														Elements: []types.ListElement{
 															&types.LabeledListElement{
 																Style: types.QuadrupleColons,
 																Term: []interface{}{
@@ -944,7 +943,7 @@ level 2::: description 2`
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -973,7 +972,7 @@ level 2::: description 2`
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -1014,7 +1013,7 @@ TIP: tip`
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
@@ -1101,7 +1100,7 @@ TIP: We can embed admonitions too!
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
-						Elements: []interface{}{
+						Elements: []types.ListElement{
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{

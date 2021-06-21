@@ -25,7 +25,7 @@ var _ = Describe("document fragment assembling", func() {
 		Expect(AssembleDocumentFragments(source)).To(MatchDocumentFragments(expected))
 	})
 
-	It("should assemble 2 pagragaphs with single line each", func() {
+	It("should assemble 2 paragraphs with single line each", func() {
 		source := `a line
 		
 another line`
@@ -84,7 +84,7 @@ not a sidebar block
 					Kind: types.Listing,
 					Elements: []interface{}{
 						types.RawLine("a line"),
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.RawLine("****"),
 						types.RawLine("not a sidebar block"),
 						types.RawLine("****"),
@@ -115,7 +115,7 @@ on
 					Kind: types.Listing,
 					Elements: []interface{}{
 						types.RawLine("a line"),
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.RawLine("another line"),
 					},
 				},
@@ -185,8 +185,8 @@ on
 								},
 							},
 						},
-						types.BlankLine{},
-						types.BlankLine{},
+						&types.BlankLine{},
+						&types.BlankLine{},
 						&types.CalloutListElement{
 							Ref: 2,
 							Elements: []interface{}{
@@ -257,8 +257,8 @@ on
 								},
 							},
 						},
-						types.BlankLine{},
-						types.BlankLine{},
+						&types.BlankLine{},
+						&types.BlankLine{},
 						&types.OrderedListElement{
 							Style: types.Arabic,
 							Elements: []interface{}{

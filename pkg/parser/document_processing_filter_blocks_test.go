@@ -131,7 +131,7 @@ var _ = Describe("block filters", func() {
 
 	It("should remove single line comment as a block", func() {
 		actual := []interface{}{
-			types.SingleLineComment{},
+			&types.SingleLineComment{},
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
@@ -158,7 +158,7 @@ var _ = Describe("block filters", func() {
 				Lines: [][]interface{}{
 					{
 						types.StringElement{},
-						types.SingleLineComment{},
+						&types.SingleLineComment{},
 					},
 				},
 			},
@@ -180,7 +180,7 @@ var _ = Describe("block filters", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.SingleLineComment{},
+						&types.SingleLineComment{},
 					},
 				},
 			},
@@ -216,7 +216,7 @@ var _ = Describe("block filters", func() {
 					{
 						Elements: []interface{}{
 							types.StringElement{},
-							types.SingleLineComment{},
+							&types.SingleLineComment{},
 						},
 					},
 				},
@@ -243,7 +243,7 @@ var _ = Describe("block filters", func() {
 					{
 						Elements: []interface{}{
 							types.StringElement{},
-							types.SingleLineComment{},
+							&types.SingleLineComment{},
 						},
 					},
 				},
@@ -270,7 +270,7 @@ var _ = Describe("block filters", func() {
 					{
 						Elements: []interface{}{
 							types.StringElement{},
-							types.SingleLineComment{},
+							&types.SingleLineComment{},
 						},
 					},
 				},

@@ -26,7 +26,7 @@ type documentMatcher struct {
 	diffs    string
 }
 
-var opts = []cmp.Option{cmpopts.IgnoreUnexported(types.GenericList{})}
+var opts = []cmp.Option{cmpopts.IgnoreUnexported(types.GenericList{}, types.DelimitedBlock{})}
 
 func (m *documentMatcher) Match(actual interface{}) (success bool, err error) {
 	if _, ok := actual.(types.Document); !ok {

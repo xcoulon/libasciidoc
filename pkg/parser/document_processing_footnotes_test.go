@@ -41,7 +41,7 @@ var _ = Describe("footnotes", func() {
 					},
 				},
 			},
-			types.BlankLine{},
+			&types.BlankLine{},
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
@@ -78,7 +78,7 @@ var _ = Describe("footnotes", func() {
 					},
 				},
 			},
-			types.BlankLine{},
+			&types.BlankLine{},
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{

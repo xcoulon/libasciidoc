@@ -282,7 +282,7 @@ ____
 
 				It("should apply the default substitution", func() {
 					s := strings.ReplaceAll(source, "[subs=\"$SUBS\"]\n", "")
-					expected := []types.DocumentFragmentGroup{
+					expected := []types.DocumentFragment{
 						{
 							Content: []interface{}{
 
@@ -290,7 +290,7 @@ ____
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.VerseBlock{
 									Attributes: types.Attributes{
 										types.AttrStyle:       types.Verse,
@@ -374,7 +374,7 @@ ____
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
@@ -392,12 +392,12 @@ ____
 							},
 						},
 					}
-					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'normal' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "normal")
-					expected := []types.DocumentFragmentGroup{
+					expected := []types.DocumentFragment{
 						{
 							Content: []interface{}{
 
@@ -405,7 +405,7 @@ ____
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.VerseBlock{
 									Attributes: types.Attributes{
 										types.AttrStyle:         types.Verse,
@@ -490,7 +490,7 @@ ____
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
@@ -508,12 +508,12 @@ ____
 							},
 						},
 					}
-					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'quotes' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "quotes")
-					expected := []types.DocumentFragmentGroup{
+					expected := []types.DocumentFragment{
 						{
 							Content: []interface{}{
 
@@ -521,7 +521,7 @@ ____
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.VerseBlock{
 									Attributes: types.Attributes{
 										types.AttrStyle:         types.Verse,
@@ -561,7 +561,7 @@ ____
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
@@ -579,12 +579,12 @@ ____
 							},
 						},
 					}
-					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'macros' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "macros")
-					expected := []types.DocumentFragmentGroup{
+					expected := []types.DocumentFragment{
 						{
 							Content: []interface{}{
 
@@ -592,7 +592,7 @@ ____
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.VerseBlock{
 									Attributes: types.Attributes{
 										types.AttrStyle:         types.Verse,
@@ -637,7 +637,7 @@ ____
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
@@ -655,12 +655,12 @@ ____
 							},
 						},
 					}
-					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'attributes' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "attributes")
-					expected := []types.DocumentFragmentGroup{
+					expected := []types.DocumentFragment{
 						{
 							Content: []interface{}{
 
@@ -668,7 +668,7 @@ ____
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.VerseBlock{
 									Attributes: types.Attributes{
 										types.AttrStyle:         types.Verse,
@@ -700,7 +700,7 @@ ____
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
@@ -718,12 +718,12 @@ ____
 							},
 						},
 					}
-					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'attributes,macros' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "attributes,macros")
-					expected := []types.DocumentFragmentGroup{
+					expected := []types.DocumentFragment{
 						{
 							Content: []interface{}{
 
@@ -731,7 +731,7 @@ ____
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.VerseBlock{
 									Attributes: types.Attributes{
 										types.AttrStyle:         types.Verse,
@@ -786,7 +786,7 @@ ____
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
@@ -804,12 +804,12 @@ ____
 							},
 						},
 					}
-					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'specialchars' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "specialchars")
-					expected := []types.DocumentFragmentGroup{
+					expected := []types.DocumentFragment{
 						{
 							Content: []interface{}{
 
@@ -817,7 +817,7 @@ ____
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.VerseBlock{
 									Attributes: types.Attributes{
 										types.AttrStyle:         types.Verse,
@@ -870,7 +870,7 @@ ____
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
@@ -888,7 +888,7 @@ ____
 							},
 						},
 					}
-					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'replacements' substitution", func() {
@@ -901,7 +901,7 @@ ____
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.VerseBlock{
 									Attributes: types.Attributes{
 										types.AttrStyle:         types.Verse,
@@ -933,7 +933,7 @@ ____
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
@@ -956,7 +956,7 @@ ____
 
 				It("should apply the 'post_replacements' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "post_replacements")
-					expected := []types.DocumentFragmentGroup{
+					expected := []types.DocumentFragment{
 						{
 							Content: []interface{}{
 
@@ -964,7 +964,7 @@ ____
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.VerseBlock{
 									Attributes: types.Attributes{
 										types.AttrStyle:         types.Verse,
@@ -997,7 +997,7 @@ ____
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
@@ -1015,12 +1015,12 @@ ____
 							},
 						},
 					}
-					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'quotes,macros' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "quotes,macros")
-					expected := []types.DocumentFragmentGroup{
+					expected := []types.DocumentFragment{
 						{
 							Content: []interface{}{
 
@@ -1028,7 +1028,7 @@ ____
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.VerseBlock{
 									Attributes: types.Attributes{
 										types.AttrStyle:         types.Verse,
@@ -1081,7 +1081,7 @@ ____
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
@@ -1099,12 +1099,12 @@ ____
 							},
 						},
 					}
-					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'macros,quotes' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "macros,quotes")
-					expected := []types.DocumentFragmentGroup{
+					expected := []types.DocumentFragment{
 						{
 							Content: []interface{}{
 
@@ -1112,7 +1112,7 @@ ____
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.VerseBlock{
 									Attributes: types.Attributes{
 										types.AttrStyle:         types.Verse,
@@ -1165,7 +1165,7 @@ ____
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
@@ -1183,12 +1183,12 @@ ____
 							},
 						},
 					}
-					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragments(expected))
 				})
 
 				It("should apply the 'none' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "none")
-					expected := []types.DocumentFragmentGroup{
+					expected := []types.DocumentFragment{
 						{
 							Content: []interface{}{
 
@@ -1196,7 +1196,7 @@ ____
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.VerseBlock{
 									Attributes: types.Attributes{
 										types.AttrStyle:         types.Verse,
@@ -1228,7 +1228,7 @@ ____
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
@@ -1246,7 +1246,7 @@ ____
 							},
 						},
 					}
-					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragmentGroups(expected))
+					Expect(AssembleDocumentFragments(s)).To(MatchDocumentFragments(expected))
 				})
 			})
 		})

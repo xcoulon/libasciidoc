@@ -27,7 +27,7 @@ func ScanDocument(source io.Reader, done <-chan interface{}, opts ...Option) <-c
 			case fragmentGroupStream <- scanner.Fragments():
 			}
 		}
-		log.WithField("pipeline_stage", "fragment_parsing").Debug("end of fragment parsing")
+		log.WithField("pipeline_task", "fragment_parsing").Debug("end of fragment parsing")
 	}()
 	return fragmentGroupStream
 }
@@ -86,7 +86,7 @@ scan:
 		// 	}
 		// }
 		switch element := element.(type) {
-		case types.BlankLine:
+		case *types.BlankLine:
 			elements = append(elements, element)
 			// blanklines outside of a delimited block causes the scanner to stop (for this call)
 			if s.scopes.get() == withinParagraph {
@@ -234,7 +234,7 @@ func (s *scanningScopeStack) get() scanningScope {
 // // scans line by line, exit after the front-matter delimiter (if applicable)
 // // return the document fragments along with a bool flag to indicate if the scanner reached the end of the document
 // func parseDocumentFrontMatter(ctx *parserContext, scanner *bufio.Scanner, opts ...Option) (types.DocumentFragments, bool) {
-// 	log.WithField("pipeline_stage", "fragment_parsing").Debug("parsing front-matter...")
+// 	log.WithField("pipeline_task", "fragment_parsing").Debug("parsing front-matter...")
 // 	fragments := make([]interface{}, 0)
 // 	opts = append(opts, Entrypoint("FrontMatterFragment"))
 // 	withinBlock := false
@@ -266,7 +266,7 @@ func (s *scanningScopeStack) get() scanningScope {
 // // scans line by line, exit after a blankline is found (if applicable)
 // // return the document fragments along with a bool flag to indicate if the scanner reached the end of the document
 // func parseDocumentHeader(ctx *parserContext, scanner *bufio.Scanner, opts ...Option) (types.DocumentFragments, bool) {
-// 	log.WithField("pipeline_stage", "fragment_parsing").Debug("parsing document header...")
+// 	log.WithField("pipeline_task", "fragment_parsing").Debug("parsing document header...")
 // 	fragments := make([]interface{}, 0)
 // 	// check if there is a title
 // 	opts = append(opts, Entrypoint("DocumentTitle"))
@@ -307,7 +307,7 @@ func (s *scanningScopeStack) get() scanningScope {
 
 // // parseDocumentBody attempts to read the document body if it exists.
 // func parseDocumentBody(ctx *parserContext, scanner *bufio.Scanner, opts ...Option) (types.DocumentFragments, error) {
-// 	log.WithField("pipeline_stage", "fragment_parsing").Debug("parsing document body...")
+// 	log.WithField("pipeline_task", "fragment_parsing").Debug("parsing document body...")
 // 	fragments := make([]interface{}, 0)
 // 	opts = append(opts, Entrypoint("DocumentBodyFragment"))
 // 	fragment, err := doParseDocumentBody(ctx, scanner.Bytes(), opts...)
@@ -359,9 +359,9 @@ func (s *scanningScopeStack) get() scanningScope {
 // 				ctx.levelOffsets = []levelOffset{relativeOffset(fragment.Level - oldLevel)}
 // 			}
 // 		}
-// 		if log.IsLevelEnabled(log.WithField("pipeline_stage", "fragment_parsing").DebugLevel) {
-// 			log.WithField("pipeline_stage", "fragment_parsing").Debugf("applied level offset on section: level %d -> %d", oldLevel, fragment.Level)
-// 			// log.WithField("pipeline_stage", "fragment_parsing").Debug("level offsets:")
+// 		if log.IsLevelEnabled(log.WithField("pipeline_task", "fragment_parsing").DebugLevel) {
+// 			log.WithField("pipeline_task", "fragment_parsing").Debugf("applied level offset on section: level %d -> %d", oldLevel, fragment.Level)
+// 			// log.WithField("pipeline_task", "fragment_parsing").Debug("level offsets:")
 // 			// spew.Fdump(log.StandardLogger().Out, ctx.levelOffsets)
 // 		}
 // 		return fragment, nil
@@ -423,9 +423,9 @@ func (s *scanningScopeStack) get() scanningScope {
 // 					ctx.levelOffsets = []levelOffset{relativeOffset(fragment.Level - oldLevel)}
 // 				}
 // 			}
-// 			if log.IsLevelEnabled(log.WithField("pipeline_stage", "fragment_parsing").DebugLevel) {
-// 				log.WithField("pipeline_stage", "fragment_parsing").Debugf("applied level offset on section: level %d -> %d", oldLevel, fragment.Level)
-// 				// log.WithField("pipeline_stage", "fragment_parsing").Debug("level offsets:")
+// 			if log.IsLevelEnabled(log.WithField("pipeline_task", "fragment_parsing").DebugLevel) {
+// 				log.WithField("pipeline_task", "fragment_parsing").Debugf("applied level offset on section: level %d -> %d", oldLevel, fragment.Level)
+// 				// log.WithField("pipeline_task", "fragment_parsing").Debug("level offsets:")
 // 				// spew.Fdump(log.StandardLogger().Out, ctx.levelOffsets)
 // 			}
 // 			result = append(result, fragment)
@@ -442,8 +442,8 @@ func (s *scanningScopeStack) get() scanningScope {
 // 			result = append(result, fragment)
 // 		}
 // 	}
-// 	// if log.IsLevelEnabled(log.WithField("pipeline_stage", "fragment_parsing").DebugLevel) {
-// 	// 	log.WithField("pipeline_stage", "fragment_parsing").Debug("parsed file to include")
+// 	// if log.IsLevelEnabled(log.WithField("pipeline_task", "fragment_parsing").DebugLevel) {
+// 	// 	log.WithField("pipeline_task", "fragment_parsing").Debug("parsed file to include")
 // 	// 	spew.Fdump(log.StandardLogger().Out, result)
 // 	// }
 // 	return result, nil

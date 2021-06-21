@@ -185,7 +185,7 @@ another paragraph`
 									},
 								},
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{

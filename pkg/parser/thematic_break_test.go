@@ -95,7 +95,7 @@ var _ = Describe("paragraphs", func() {
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,

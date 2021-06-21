@@ -28,23 +28,21 @@ ____`
 								types.AttrQuoteTitle:  "quote title",
 							},
 							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "some ",
-											},
-											&types.QuotedText{
-												Kind: types.SingleQuoteBold,
-												Elements: []interface{}{
-													types.StringElement{
-														Content: "quote",
-													},
+								&types.Paragraph{
+									Elements: []interface{}{
+										types.StringElement{
+											Content: "some ",
+										},
+										&types.QuotedText{
+											Kind: types.SingleQuoteBold,
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "quote",
 												},
 											},
-											types.StringElement{
-												Content: " content",
-											},
+										},
+										types.StringElement{
+											Content: " content",
 										},
 									},
 								},
@@ -71,48 +69,43 @@ ____
 								types.AttrQuoteAuthor: "john doe",
 							},
 							Elements: []interface{}{
-								types.UnorderedList{
-									Items: []*types.UnorderedListElement{
-										{
+								&types.GenericList{
+									Kind: types.UnorderedListKind,
+									Elements: []types.ListElement{
+										&types.UnorderedListElement{
 											BulletStyle: types.Dash,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{
-												types.Paragraph{
-													Lines: [][]interface{}{
-														{
-															types.StringElement{
-																Content: "some ",
-															},
+												&types.Paragraph{
+													Elements: []interface{}{
+														types.StringElement{
+															Content: "some ",
 														},
 													},
 												},
 											},
 										},
-										{
+										&types.UnorderedListElement{
 											BulletStyle: types.Dash,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{
-												types.Paragraph{
-													Lines: [][]interface{}{
-														{
-															types.StringElement{
-																Content: "quote ",
-															},
+												&types.Paragraph{
+													Elements: []interface{}{
+														types.StringElement{
+															Content: "quote ",
 														},
 													},
 												},
 											},
 										},
-										{
+										&types.UnorderedListElement{
 											BulletStyle: types.Dash,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{
-												types.Paragraph{
-													Lines: [][]interface{}{
-														{
-															types.StringElement{
-																Content: "content ",
-															},
+												&types.Paragraph{
+													Elements: []interface{}{
+														types.StringElement{
+															Content: "content ",
 														},
 													},
 												},
@@ -141,12 +134,10 @@ ____
 								types.AttrQuoteTitle: "quote title",
 							},
 							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "some quote content ",
-											},
+								&types.Paragraph{
+									Elements: []interface{}{
+										types.StringElement{
+											Content: "some quote content ",
 										},
 									},
 								},
@@ -193,18 +184,17 @@ ____`
 								types.AttrStyle: types.Quote,
 							},
 							Elements: []interface{}{
-								types.UnorderedList{
-									Items: []*types.UnorderedListElement{
-										{
+								&types.GenericList{
+									Kind: types.UnorderedListKind,
+									Elements: []types.ListElement{
+										&types.UnorderedListElement{
 											BulletStyle: types.OneAsterisk,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{
-												types.Paragraph{
-													Lines: [][]interface{}{
-														{
-															types.StringElement{
-																Content: "some",
-															},
+												&types.Paragraph{
+													Elements: []interface{}{
+														types.StringElement{
+															Content: "some",
 														},
 													},
 												},
@@ -219,18 +209,17 @@ ____`
 										},
 									},
 								},
-								types.UnorderedList{
-									Items: []*types.UnorderedListElement{
-										{
+								&types.GenericList{
+									Kind: types.UnorderedListKind,
+									Elements: []types.ListElement{
+										&types.UnorderedListElement{
 											BulletStyle: types.OneAsterisk,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{
-												types.Paragraph{
-													Lines: [][]interface{}{
-														{
-															types.StringElement{
-																Content: "content",
-															},
+												&types.Paragraph{
+													Elements: []interface{}{
+														types.StringElement{
+															Content: "content",
 														},
 													},
 												},
@@ -263,48 +252,43 @@ ____`
 								types.AttrStyle: types.Quote,
 							},
 							Elements: []interface{}{
-								types.UnorderedList{
-									Items: []*types.UnorderedListElement{
-										{
+								&types.GenericList{
+									Kind: types.UnorderedListKind,
+									Elements: []types.ListElement{
+										&types.UnorderedListElement{
 											BulletStyle: types.OneAsterisk,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{
-												types.Paragraph{
-													Lines: [][]interface{}{
-														{
-															types.StringElement{
-																Content: "some",
-															},
+												&types.Paragraph{
+													Elements: []interface{}{
+														types.StringElement{
+															Content: "some",
 														},
 													},
 												},
 											},
 										},
-										{
+										&types.UnorderedListElement{
 											BulletStyle: types.OneAsterisk,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{
-												types.Paragraph{
-													Lines: [][]interface{}{
-														{
-															types.StringElement{
-																Content: "quote ",
-															},
+												&types.Paragraph{
+													Elements: []interface{}{
+														types.StringElement{
+															Content: "quote ",
 														},
 													},
 												},
 											},
 										},
-										{
+										&types.UnorderedListElement{
 											BulletStyle: types.OneAsterisk,
 											CheckStyle:  types.NoCheck,
 											Elements: []interface{}{
-												types.Paragraph{
-													Lines: [][]interface{}{
-														{
-															types.StringElement{
-																Content: "content",
-															},
+												&types.Paragraph{
+													Elements: []interface{}{
+														types.StringElement{
+															Content: "content",
 														},
 													},
 												},
@@ -348,12 +332,10 @@ foo
 								types.AttrStyle: types.Quote,
 							},
 							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "foo",
-											},
+								&types.Paragraph{
+									Elements: []interface{}{
+										types.StringElement{
+											Content: "foo",
 										},
 									},
 								},

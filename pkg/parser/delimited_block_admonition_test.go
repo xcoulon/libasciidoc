@@ -137,7 +137,7 @@ paragraphs
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{

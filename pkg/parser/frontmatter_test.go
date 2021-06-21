@@ -56,15 +56,15 @@ author: Xavier
 							types.BlockDelimiter{
 								Kind: types.FrontMatter,
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							types.StringElement{
 								Content: "title: a title",
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							types.StringElement{
 								Content: "author: Xavier",
 							},
-							types.BlankLine{},
+							&types.BlankLine{},
 							types.BlockDelimiter{
 								Kind: types.FrontMatter,
 							},

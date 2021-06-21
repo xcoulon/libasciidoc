@@ -31,7 +31,7 @@ var _ = Describe("ordered lists", func() {
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
@@ -61,7 +61,7 @@ lines
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
@@ -87,7 +87,7 @@ lines
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style:    types.Arabic,
 									Elements: elements,
@@ -105,7 +105,7 @@ lines
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style:    types.LowerAlpha,
 									Elements: elements,
@@ -123,7 +123,7 @@ lines
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style:    types.Arabic,
 									Elements: elements,
@@ -141,7 +141,7 @@ lines
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style:    types.LowerAlpha,
 									Elements: elements,
@@ -159,7 +159,7 @@ lines
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style:    types.UpperAlpha,
 									Elements: elements,
@@ -177,7 +177,7 @@ lines
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style:    types.LowerRoman,
 									Elements: elements,
@@ -195,7 +195,7 @@ lines
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style:    types.UpperRoman,
 									Elements: elements,
@@ -213,7 +213,7 @@ lines
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
@@ -241,7 +241,7 @@ lines
 							Attributes: types.Attributes{
 								"start": "5",
 							},
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style:    types.Arabic,
 									Elements: elements,
@@ -264,7 +264,7 @@ lines
 								types.AttrStyle: "lowerroman", // will be used during rendering
 								"start":         "5",
 							},
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style:    types.Arabic, // will be overridden during rendering
 									Elements: elements,
@@ -288,7 +288,7 @@ lines
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
@@ -327,7 +327,7 @@ lines
 							Attributes: types.Attributes{
 								types.AttrStyle: "lowerroman", // will be used during rendering
 							},
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style:    types.Arabic, // will be overridden during rendering
 									Elements: elements,
@@ -351,7 +351,7 @@ lines
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
@@ -394,7 +394,7 @@ lines
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
@@ -405,7 +405,7 @@ lines
 										},
 										&types.GenericList{
 											Kind: types.OrderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.OrderedListElement{
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
@@ -419,7 +419,7 @@ lines
 															Attributes: types.Attributes{
 																types.AttrStyle: "upperroman",
 															},
-															Elements: []interface{}{
+															Elements: []types.ListElement{
 																&types.OrderedListElement{
 																	Style: types.LowerRoman, // will be overridden during rendering
 																	Elements: []interface{}{
@@ -468,7 +468,7 @@ lines
 										},
 										&types.GenericList{
 											Kind: types.OrderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.OrderedListElement{
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
@@ -509,7 +509,7 @@ lines
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
@@ -520,7 +520,7 @@ lines
 										},
 										&types.GenericList{
 											Kind: types.OrderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.OrderedListElement{
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
@@ -531,7 +531,7 @@ lines
 														},
 														&types.GenericList{
 															Kind: types.OrderedListKind,
-															Elements: []interface{}{
+															Elements: []types.ListElement{
 																&types.OrderedListElement{
 																	Style: types.LowerRoman,
 																	Elements: []interface{}{
@@ -542,7 +542,7 @@ lines
 																		},
 																		&types.GenericList{
 																			Kind: types.OrderedListKind,
-																			Elements: []interface{}{
+																			Elements: []types.ListElement{
 																				&types.OrderedListElement{
 																					Style: types.UpperAlpha,
 																					Elements: []interface{}{
@@ -553,7 +553,7 @@ lines
 																						},
 																						&types.GenericList{
 																							Kind: types.OrderedListKind,
-																							Elements: []interface{}{
+																							Elements: []types.ListElement{
 																								&types.OrderedListElement{
 																									Style: types.UpperRoman,
 																									Elements: []interface{}{
@@ -598,7 +598,7 @@ lines
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
@@ -609,7 +609,7 @@ lines
 										},
 										&types.GenericList{
 											Kind: types.OrderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.OrderedListElement{
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
@@ -620,7 +620,7 @@ lines
 														},
 														&types.GenericList{
 															Kind: types.OrderedListKind,
-															Elements: []interface{}{
+															Elements: []types.ListElement{
 																&types.OrderedListElement{
 																	Style: types.LowerRoman,
 																	Elements: []interface{}{
@@ -631,7 +631,7 @@ lines
 																		},
 																		&types.GenericList{
 																			Kind: types.OrderedListKind,
-																			Elements: []interface{}{
+																			Elements: []types.ListElement{
 																				&types.OrderedListElement{
 																					Style: types.UpperAlpha,
 																					Elements: []interface{}{
@@ -642,7 +642,7 @@ lines
 																						},
 																						&types.GenericList{
 																							Kind: types.OrderedListKind,
-																							Elements: []interface{}{
+																							Elements: []types.ListElement{
 																								&types.OrderedListElement{
 																									Style: types.UpperRoman,
 																									Elements: []interface{}{
@@ -686,7 +686,7 @@ lines
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
@@ -729,7 +729,7 @@ lines
 							Attributes: types.Attributes{
 								types.AttrTitle: "Ordered, max nesting",
 							},
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
@@ -742,7 +742,7 @@ lines
 										},
 										&types.GenericList{
 											Kind: types.OrderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.OrderedListElement{
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
@@ -755,7 +755,7 @@ lines
 														},
 														&types.GenericList{
 															Kind: types.OrderedListKind,
-															Elements: []interface{}{
+															Elements: []types.ListElement{
 																&types.OrderedListElement{
 																	Style: types.LowerRoman,
 																	Elements: []interface{}{
@@ -768,7 +768,7 @@ lines
 																		},
 																		&types.GenericList{
 																			Kind: types.OrderedListKind,
-																			Elements: []interface{}{
+																			Elements: []types.ListElement{
 																				&types.OrderedListElement{
 																					Style: types.UpperAlpha,
 																					Elements: []interface{}{
@@ -781,7 +781,7 @@ lines
 																						},
 																						&types.GenericList{
 																							Kind: types.OrderedListKind,
-																							Elements: []interface{}{
+																							Elements: []types.ListElement{
 																								&types.OrderedListElement{
 																									Style: types.UpperRoman,
 																									Elements: []interface{}{
@@ -838,7 +838,7 @@ b. item 2.a`
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
@@ -849,7 +849,7 @@ b. item 2.a`
 										},
 										&types.GenericList{
 											Kind: types.OrderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.OrderedListElement{
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
@@ -874,7 +874,7 @@ b. item 2.a`
 										},
 										&types.GenericList{
 											Kind: types.OrderedListKind,
-											Elements: []interface{}{
+											Elements: []types.ListElement{
 												&types.OrderedListElement{
 													Style: types.LowerAlpha,
 													Elements: []interface{}{
@@ -915,7 +915,7 @@ another delimited block
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{
@@ -976,7 +976,7 @@ print("two")
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
-							Elements: []interface{}{
+							Elements: []types.ListElement{
 								&types.OrderedListElement{
 									Style: types.Arabic,
 									Elements: []interface{}{

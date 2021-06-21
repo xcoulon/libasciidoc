@@ -20,7 +20,7 @@ var _ = Describe("paragraphs", func() {
 				source := `cookie
 chocolate
 pasta`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
 						Content: []interface{}{
@@ -30,7 +30,7 @@ pasta`
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with hardbreaks attribute", func() {
@@ -38,7 +38,7 @@ pasta`
 cookie
 chocolate
 pasta`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
 						Content: []interface{}{
@@ -53,14 +53,14 @@ pasta`
 				}
 				result, err := AssembleDocumentFragments(source)
 				Expect(err).NotTo(HaveOccurred())
-				Expect(result).To(MatchDocumentFragmentGroups(expected))
+				Expect(result).To(MatchDocumentFragments(expected))
 			})
 
 			It("with title attribute", func() {
 				source := `[title=my title]
 cookie
 pasta`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
 						Content: []interface{}{
@@ -72,7 +72,7 @@ pasta`
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with custom title attribute - explicit and unquoted", func() {
@@ -81,7 +81,7 @@ pasta`
 [title=my {title}]
 cookie
 pasta`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
 						Content: []interface{}{
@@ -109,7 +109,7 @@ pasta`
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with multiple attributes and blanklines in-between", func() {
@@ -119,7 +119,7 @@ pasta`
 
 cookie
 pasta`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
 						Content: []interface{}{
@@ -153,7 +153,7 @@ pasta`
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragments(expected))
 			})
 
 			Context("with custom substitutions", func() {
@@ -169,7 +169,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 
 				It("should read multiple lines", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "normal")
-					expected := []types.DocumentFragmentGroup{
+					expected := []types.DocumentFragment{
 						{
 							LineOffset: 1,
 							Content: []interface{}{
@@ -191,7 +191,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 								},
 								types.RawLine("links to {github-title}: https://github.com[{github-title}] and *<https://github.com[{github-title}]>*"),
 								types.RawLine("and another one using attribute substitution: {github-url}[{github-title}]..."),
-								types.SingleLineComment{
+								&types.SingleLineComment{
 									Content: " a single-line comment.",
 								},
 							},
@@ -199,7 +199,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 					}
 					result, err := AssembleDocumentFragments(s)
 					Expect(err).NotTo(HaveOccurred())
-					Expect(result).To(MatchDocumentFragmentGroups(expected))
+					Expect(result).To(MatchDocumentFragments(expected))
 				})
 
 			})
@@ -687,7 +687,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									},
 								},
 							},
-							types.SingleLineComment{
+							&types.SingleLineComment{
 								Content: " a single-line comment.",
 							},
 						},
@@ -790,7 +790,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									},
 								},
 							},
-							types.SingleLineComment{
+							&types.SingleLineComment{
 								Content: " a single-line comment.",
 							},
 						},
@@ -825,7 +825,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									},
 								},
 							},
-							types.SingleLineComment{
+							&types.SingleLineComment{
 								Content: " a single-line comment.",
 							},
 						},
@@ -882,7 +882,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									},
 								},
 							},
-							types.SingleLineComment{
+							&types.SingleLineComment{
 								Content: " a single-line comment.",
 							},
 						},
@@ -949,7 +949,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									},
 								},
 							},
-							types.SingleLineComment{
+							&types.SingleLineComment{
 								Content: " a single-line comment.",
 							},
 						},
@@ -985,7 +985,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									},
 								},
 							},
-							types.SingleLineComment{
+							&types.SingleLineComment{
 								Content: " a single-line comment.",
 							},
 						},
@@ -1033,7 +1033,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									},
 								},
 							},
-							types.SingleLineComment{
+							&types.SingleLineComment{
 								Content: " a single-line comment.",
 							},
 						},
@@ -1069,7 +1069,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									},
 								},
 							},
-							types.SingleLineComment{
+							&types.SingleLineComment{
 								Content: " a single-line comment.",
 							},
 						},
@@ -1159,7 +1159,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									},
 								},
 							},
-							types.SingleLineComment{
+							&types.SingleLineComment{
 								Content: " a single-line comment.",
 							},
 						},
@@ -1247,7 +1247,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									},
 								},
 							},
-							types.SingleLineComment{
+							&types.SingleLineComment{
 								Content: " a single-line comment.",
 							},
 						},
@@ -1330,7 +1330,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									},
 								},
 							},
-							types.SingleLineComment{
+							&types.SingleLineComment{
 								Content: " a single-line comment.",
 							},
 						},
@@ -1398,7 +1398,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									},
 								},
 							},
-							types.SingleLineComment{
+							&types.SingleLineComment{
 								Content: " a single-line comment.",
 							},
 						},

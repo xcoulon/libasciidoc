@@ -1149,13 +1149,11 @@ UnorderedListElementContent <- [^\r\n]* {
 }
 
 LabeledListItem <- term:(LabeledListItemTerm) separator:(LabeledListItemSeparator) description:(LabeledListItemDescription)? {
-    return types.NewLabeledListElement(len(separator.(string)) - 1, term.([]interface{}), description)
+    return types.NewLabeledListElement(len(separator.(string)) - 1, term.(string), description)
 }
 
 LabeledListItemTerm <- (!LabeledListItemSeparator .)* {
-    return []interface{}{
-        types.StringElement{Content: string(c.text)},
-    }, nil 
+    return string(c.text), nil
 }
 
 LabeledListItemSeparator <- 
@@ -1171,13 +1169,7 @@ LabeledListItemSeparator <-
 }
 
 LabeledListItemDescription <- [^\r\n]+ { 
-    return []interface{}{
-        &types.Paragraph{
-            Elements: []interface{}{
-                types.RawLine(string(c.text)),
-            },        
-        },
-    }, nil 
+    return string(c.text), nil
 }
 
 ListElementContinuation <- "+" Space* {

@@ -46,7 +46,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ExampleBlock{
 							Elements: []interface{}{
 								types.Paragraph{
@@ -121,7 +121,7 @@ and <more text> on the +
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -139,7 +139,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -167,7 +167,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ExampleBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "normal",
@@ -245,7 +245,7 @@ and <more text> on the +
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -263,7 +263,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -291,7 +291,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ExampleBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "quotes",
@@ -324,7 +324,7 @@ and <more text> on the +
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -342,7 +342,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -370,7 +370,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ExampleBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "macros",
@@ -408,7 +408,7 @@ and <more text> on the +
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -426,7 +426,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -454,7 +454,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ExampleBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "attributes",
@@ -479,7 +479,7 @@ and <more text> on the +
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -497,7 +497,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -525,7 +525,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ExampleBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "attributes,macros",
@@ -573,7 +573,7 @@ and <more text> on the +
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -591,7 +591,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -619,7 +619,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ExampleBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "specialchars",
@@ -665,7 +665,7 @@ and <more text> on the +
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -683,7 +683,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -711,7 +711,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ExampleBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "replacements",
@@ -736,7 +736,7 @@ and <more text> on the +
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -754,7 +754,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -782,7 +782,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ExampleBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "post_replacements",
@@ -808,7 +808,7 @@ and <more text> on the +
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -826,7 +826,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -854,7 +854,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ExampleBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "quotes,macros",
@@ -900,7 +900,7 @@ and <more text> on the +
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -918,7 +918,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -946,7 +946,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ExampleBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "macros,quotes",
@@ -992,7 +992,7 @@ and <more text> on the +
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -1010,7 +1010,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -1038,7 +1038,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ExampleBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "none",
@@ -1063,7 +1063,7 @@ and <more text> on the +
 										},
 									},
 								},
-								types.BlankLine{},
+								&types.BlankLine{},
 								types.UnorderedListElement{
 									BulletStyle: types.OneAsterisk,
 									CheckStyle:  types.NoCheck,
@@ -1081,7 +1081,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -1132,7 +1132,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Elements: []interface{}{
 								types.StringElement{
@@ -1164,7 +1164,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -1192,7 +1192,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "normal",
@@ -1265,7 +1265,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -1293,7 +1293,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "quotes",
@@ -1321,7 +1321,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -1349,7 +1349,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "macros",
@@ -1382,7 +1382,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -1410,7 +1410,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "attributes",
@@ -1430,7 +1430,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -1458,7 +1458,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "attributes,macros",
@@ -1501,7 +1501,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -1529,7 +1529,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "specialchars",
@@ -1570,7 +1570,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -1598,7 +1598,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "replacements",
@@ -1618,7 +1618,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -1646,7 +1646,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "post_replacements",
@@ -1667,7 +1667,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -1695,7 +1695,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "quotes,macros",
@@ -1736,7 +1736,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -1764,7 +1764,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "macros,quotes",
@@ -1805,7 +1805,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -1833,7 +1833,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "none",
@@ -1853,7 +1853,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -1926,7 +1926,7 @@ _foo_
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "quotes+",
@@ -1969,7 +1969,7 @@ _foo_
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -1997,7 +1997,7 @@ _foo_
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "macros,attributes+",
@@ -2040,7 +2040,7 @@ _foo_
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -2068,7 +2068,7 @@ _foo_
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "attributes,+macros",
@@ -2111,7 +2111,7 @@ _foo_
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -2139,7 +2139,7 @@ _foo_
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "+quotes",
@@ -2182,7 +2182,7 @@ _foo_
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -2210,7 +2210,7 @@ _foo_
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.ListingBlock{
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "-quotes",
@@ -2245,7 +2245,7 @@ _foo_
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -2292,7 +2292,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Listing,
@@ -2330,7 +2330,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -2358,7 +2358,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle:         types.Listing,
@@ -2390,7 +2390,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -2418,7 +2418,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle:         types.Listing,
@@ -2465,7 +2465,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{
@@ -2493,7 +2493,7 @@ and <more text> on the +
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle:         types.Listing,
@@ -2530,7 +2530,7 @@ and <more text> on the +
 								},
 							},
 						},
-						types.BlankLine{},
+						&types.BlankLine{},
 						types.CalloutListElement{
 							Ref: 1,
 							Elements: []interface{}{

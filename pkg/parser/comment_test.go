@@ -20,7 +20,7 @@ var _ = Describe("comments", func() {
 					{
 						LineOffset: 1,
 						Content: []interface{}{
-							types.SingleLineComment{
+							&types.SingleLineComment{
 								Content: " A single-line comment.",
 							},
 						},
@@ -68,7 +68,7 @@ another line // not a comment`
 										},
 									},
 									{
-										types.SingleLineComment{
+										&types.SingleLineComment{
 											Content: " A single-line comment.",
 										},
 									},
@@ -231,7 +231,7 @@ a second paragraph`
 									},
 								},
 							},
-							types.BlankLine{}, // blankline is required between a paragraph and the next block
+							&types.BlankLine{}, // blankline is required between a paragraph and the next block
 							types.CommentBlock{
 								Lines: [][]interface{}{
 									{

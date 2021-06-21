@@ -47,7 +47,7 @@ generate: install-pigeon
 verify-parser: prebuild-checks clean
 ifneq ($(shell git diff --quiet pkg/parser/parser.go; echo $$?), 0)
 	@git diff pkg/parser/parser.go
-	$(error "parser was generated with an older version of 'mna/pigeon' or without the '-optimize-parser' option enabled.")
+	$(error "pkg/parser/parser.go is uncommited or was generated with an older version of 'mna/pigeon' or without the '-optimize-parser' option enabled.")
 else
 	@echo "generated parser is ok"
 endif

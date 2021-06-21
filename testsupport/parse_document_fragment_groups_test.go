@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("parse document fragment groups", func() {
 
-	expected := []types.DocumentFragmentGroup{
+	expected := []types.DocumentFragment{
 		{
 			LineOffset: 1,
 			Content: []interface{}{
