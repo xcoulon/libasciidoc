@@ -59,6 +59,7 @@ var (
 	withinList         = &scanScope{name: "within_list"}
 	withinListingBlock = &scanScope{name: "within_delimited_block", extra: types.Listing}
 	withinFencedBlock  = &scanScope{name: "within_delimited_block", extra: types.Fenced}
+	withinLiteralBlock = &scanScope{name: "within_delimited_block", extra: types.Literal}
 )
 
 func NewDocumentScanner(source io.Reader, opts ...Option) *DocumentFragmentScanner {
@@ -119,6 +120,8 @@ scan:
 					s.scopes.push(withinListingBlock)
 				case types.Fenced:
 					s.scopes.push(withinFencedBlock)
+				case types.Literal:
+					s.scopes.push(withinLiteralBlock)
 				default:
 					s.err = fmt.Errorf("unsupported kind of block delimiter: %v", element.Kind)
 					break scan // end of fragment group
@@ -184,7 +187,7 @@ func (s *DocumentFragmentScanner) entrypoint() []Option {
 		return []Option{
 			Entrypoint("DocumentFragmentElementWithinParagraph"),
 		}
-	case withinListingBlock, withinFencedBlock:
+	case withinListingBlock, withinFencedBlock, withinLiteralBlock:
 		log.Debugf("using '%s' entrypoint", "DocumentFragmentElementWithinDelimitedBlock")
 		return []Option{
 			Entrypoint("DocumentFragmentElementWithinDelimitedBlock"),

@@ -247,7 +247,7 @@ func defaultSubstitution(b interface{}) (string, error) {
 	switch b := b.(type) {
 	case *types.DelimitedBlock:
 		switch b.Kind {
-		case types.Listing, types.Fenced:
+		case types.Listing, types.Fenced, types.Literal:
 			return "verbatim", nil
 		default:
 			return "", fmt.Errorf("unsupported kind of delimited block: '%v'", b.Kind)
