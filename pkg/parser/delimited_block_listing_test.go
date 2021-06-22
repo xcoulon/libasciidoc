@@ -59,11 +59,7 @@ in the middle
 							Kind: types.Listing,
 							Elements: []interface{}{
 								types.StringElement{
-									Content: "some listing code\nwith an empty line\n",
-								},
-								&types.BlankLine{},
-								types.StringElement{
-									Content: "in the middle",
+									Content: "some listing code\nwith an empty line\n\nin the middle",
 								},
 							},
 						},
@@ -107,11 +103,7 @@ then a normal paragraph.`
 							Kind: types.Listing,
 							Elements: []interface{}{
 								types.StringElement{
-									Content: "some listing code\nwith an empty line\n",
-								},
-								&types.BlankLine{},
-								types.StringElement{
-									Content: "in the middle",
+									Content: "some listing code\nwith an empty line\n\nin the middle",
 								},
 							},
 						},
@@ -141,6 +133,7 @@ some listing code
 								},
 							},
 						},
+						&types.BlankLine{},
 						&types.DelimitedBlock{
 							Kind: types.Listing,
 							Elements: []interface{}{
@@ -190,9 +183,10 @@ import <1>
 								},
 							},
 						},
-						types.CalloutList{
-							Items: []*types.CalloutListElement{
-								{
+						&types.GenericList{
+							Kind: types.CalloutListKind,
+							Elements: []types.ListElement{
+								&types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -231,16 +225,17 @@ func foo() {} <2>
 									Ref: 1,
 								},
 								types.StringElement{
-									Content: "func foo() {} ",
+									Content: "\n\nfunc foo() {} ",
 								},
 								types.Callout{
 									Ref: 2,
 								},
 							},
 						},
-						types.CalloutList{
-							Items: []*types.CalloutListElement{
-								{
+						&types.GenericList{
+							Kind: types.CalloutListKind,
+							Elements: []types.ListElement{
+								&types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -252,7 +247,7 @@ func foo() {} <2>
 										},
 									},
 								},
-								{
+								&types.CalloutListElement{
 									Ref: 2,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -299,16 +294,17 @@ func foo() {} <4>
 									Ref: 3,
 								},
 								types.StringElement{
-									Content: "func foo() {} ",
+									Content: "\n\nfunc foo() {} ",
 								},
 								types.Callout{
 									Ref: 4,
 								},
 							},
 						},
-						types.CalloutList{
-							Items: []*types.CalloutListElement{
-								{
+						&types.GenericList{
+							Kind: types.CalloutListKind,
+							Elements: []types.ListElement{
+								&types.CalloutListElement{
 									Ref: 1,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -320,7 +316,7 @@ func foo() {} <4>
 										},
 									},
 								},
-								{
+								&types.CalloutListElement{
 									Ref: 2,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -332,7 +328,7 @@ func foo() {} <4>
 										},
 									},
 								},
-								{
+								&types.CalloutListElement{
 									Ref: 3,
 									Elements: []interface{}{
 										&types.Paragraph{
@@ -344,7 +340,7 @@ func foo() {} <4>
 										},
 									},
 								},
-								{
+								&types.CalloutListElement{
 									Ref: 4,
 									Elements: []interface{}{
 										&types.Paragraph{

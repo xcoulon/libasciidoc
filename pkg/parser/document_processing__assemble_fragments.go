@@ -111,9 +111,7 @@ type attributeStack struct {
 }
 
 func newAttributeStack() *attributeStack {
-	return &attributeStack{
-		attrs: types.Attributes{},
-	}
+	return &attributeStack{}
 }
 
 func (s *attributeStack) push(attrs types.Attributes) {

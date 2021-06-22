@@ -643,11 +643,11 @@ a link to {url}`
 							"url": "https://foo2.bar", // overridden by second declaration
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "url",
 								Value: "https://example.com",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "url",
 								Value: "https://foo2.bar",
 							},
@@ -685,11 +685,11 @@ a link to {scheme}://{path} and https://foo.com`
 							"path":   "example.com",
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "scheme",
 								Value: "https",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "path",
 								Value: "example.com",
 							},
@@ -736,11 +736,11 @@ a link to *{scheme}://{path}[] and https://foo.com[]*`
 							"path":   "example.com",
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "scheme",
 								Value: "https",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "path",
 								Value: "example.com",
 							},
@@ -798,11 +798,11 @@ a link to {scheme}://{path} and https://foo.com`
 							// "path":   "example.com", // TODO: should it be removed?
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "scheme",
 								Value: "https",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "path",
 								Value: "example.com",
 							},
@@ -932,11 +932,11 @@ a link to {scheme}://{path} and https://foo.com`
 							"_a_title_to_httpsexample_com_and_httpsfoo_com": title,
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "scheme",
 								Value: "https",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "path",
 								Value: "example.com",
 							},
@@ -1244,11 +1244,11 @@ a link to {scheme}:{path}[] and https://foo.com`
 						// "path":   "example.com", // should it be removed from the Document attributes?
 					},
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "scheme",
 							Value: "link",
 						},
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "path",
 							Value: "example.com",
 						},

@@ -286,7 +286,7 @@ ____
 						{
 							Content: []interface{}{
 
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
@@ -401,7 +401,7 @@ ____
 						{
 							Content: []interface{}{
 
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
@@ -517,7 +517,7 @@ ____
 						{
 							Content: []interface{}{
 
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
@@ -588,7 +588,7 @@ ____
 						{
 							Content: []interface{}{
 
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
@@ -664,7 +664,7 @@ ____
 						{
 							Content: []interface{}{
 
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
@@ -727,7 +727,7 @@ ____
 						{
 							Content: []interface{}{
 
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
@@ -813,7 +813,7 @@ ____
 						{
 							Content: []interface{}{
 
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
@@ -897,7 +897,7 @@ ____
 						{
 							Content: []interface{}{
 
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
@@ -960,7 +960,7 @@ ____
 						{
 							Content: []interface{}{
 
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
@@ -1024,7 +1024,7 @@ ____
 						{
 							Content: []interface{}{
 
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
@@ -1108,7 +1108,7 @@ ____
 						{
 							Content: []interface{}{
 
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
@@ -1192,7 +1192,7 @@ ____
 						{
 							Content: []interface{}{
 
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
 								},

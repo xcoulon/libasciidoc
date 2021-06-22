@@ -42,7 +42,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "[subs=\"$SUBS\"]\n", "")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -163,7 +163,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "normal")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -287,7 +287,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "quotes")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -366,7 +366,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "macros")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -450,7 +450,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "attributes")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -521,7 +521,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "attributes,macros")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -615,7 +615,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "specialchars")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -707,7 +707,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "replacements")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -778,7 +778,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "post_replacements")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -850,7 +850,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "quotes,macros")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -942,7 +942,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "macros,quotes")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -1034,7 +1034,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "none")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -1128,7 +1128,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "[subs=\"$SUBS\"]\n", "") // remove the 'subs' attribute
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -1188,7 +1188,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "normal")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -1289,7 +1289,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "quotes")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -1345,7 +1345,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "macros")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -1406,7 +1406,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "attributes")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -1454,7 +1454,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "attributes,macros")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -1525,7 +1525,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "specialchars")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -1594,7 +1594,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "replacements")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -1642,7 +1642,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "post_replacements")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -1691,7 +1691,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "quotes,macros")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -1760,7 +1760,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "macros,quotes")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -1829,7 +1829,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "none")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -1922,7 +1922,7 @@ _foo_
 				s := strings.ReplaceAll(source, "$SUBS", "quotes+") // same as `quotes,"default"`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -1993,7 +1993,7 @@ _foo_
 				s := strings.ReplaceAll(source, "$SUBS", "macros,attributes+") // same as `attributes,macros`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -2064,7 +2064,7 @@ _foo_
 				s := strings.ReplaceAll(source, "$SUBS", "attributes,+macros") // same as `attributes,macros`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -2135,7 +2135,7 @@ _foo_
 				s := strings.ReplaceAll(source, "$SUBS", "+quotes") // default + quotes
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -2206,7 +2206,7 @@ _foo_
 				s := strings.ReplaceAll(source, "$SUBS", "-quotes") // default - quotes
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -2288,7 +2288,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "[subs=\"$SUBS\"]\n", "")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -2354,7 +2354,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "quotes")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -2414,7 +2414,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "+quotes") // ie, default + quotes
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -2489,7 +2489,7 @@ and <more text> on the +
 				s := strings.ReplaceAll(source, "$SUBS", "macros,+quotes,-quotes")
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},

@@ -85,7 +85,7 @@ pasta`
 					{
 						LineOffset: 1,
 						Content: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "title",
 								Value: "cookies",
 							},
@@ -173,11 +173,11 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 						{
 							LineOffset: 1,
 							Content: []interface{}{
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
 								},
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "github-title",
 									Value: "GitHub",
 								},
@@ -223,11 +223,13 @@ pasta`
 								types.StringElement{Content: "cookie"},
 							},
 						},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
 								types.StringElement{Content: "chocolate"},
 							},
 						},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
 								types.StringElement{Content: "pasta"},
@@ -272,10 +274,11 @@ pasta`
 						"title": "cookies",
 					},
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "title",
 							Value: "cookies",
 						},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrTitle: "my cookies",
@@ -300,10 +303,11 @@ pasta`
 						"title": "cookies",
 					},
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "title",
 							Value: "cookies",
 						},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrTitle: "my cookies",
@@ -328,10 +332,11 @@ pasta`
 						"title": "cookies",
 					},
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "title",
 							Value: "cookies",
 						},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrTitle: "my cookies",
@@ -356,10 +361,11 @@ pasta`
 						"title": "cookies",
 					},
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "title",
 							Value: "cookies",
 						},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrTitle: "my cookies",
@@ -405,6 +411,8 @@ cookie
 pasta`
 				expected := types.Document{
 					Elements: []interface{}{
+						&types.BlankLine{},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrID:      "anchor",
@@ -533,10 +541,11 @@ a paragraph`
 						types.AttrIDPrefix: "bar_",
 					},
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "idprefix",
 							Value: "bar_",
 						},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrTitle: "a title", // there is no default ID. Only custom IDs
@@ -604,14 +613,15 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 							"github-title": "GitHub",
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-url",
 								Value: "https://github.com",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-title",
 								Value: "GitHub",
 							},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Elements: []interface{}{
 									types.StringElement{
@@ -685,10 +695,10 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: "\u2026\u200b", // symbol for ellipsis, applied by the 'replacements' substitution
 									},
+									&types.SingleLineComment{
+										Content: " a single-line comment.",
+									},
 								},
-							},
-							&types.SingleLineComment{
-								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -704,14 +714,15 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 							"github-title": "GitHub",
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-url",
 								Value: "https://github.com",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-title",
 								Value: "GitHub",
 							},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "normal",
@@ -788,10 +799,10 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: "\u2026\u200b", // symbol for ellipsis, applied by the 'replacements' substitution
 									},
+									&types.SingleLineComment{
+										Content: " a single-line comment.",
+									},
 								},
-							},
-							&types.SingleLineComment{
-								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -806,14 +817,15 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 							"github-title": "GitHub",
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-url",
 								Value: "https://github.com",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-title",
 								Value: "GitHub",
 							},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "none",
@@ -823,10 +835,10 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 										Content: "links to {github-title}: https://github.com[{github-title}] and *<https://github.com[_{github-title}_]>*" +
 											"\nand another one using attribute substitution: {github-url}[{github-title}]...",
 									},
+									&types.SingleLineComment{
+										Content: " a single-line comment.",
+									},
 								},
-							},
-							&types.SingleLineComment{
-								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -842,14 +854,15 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 							"github-title": "GitHub",
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-url",
 								Value: "https://github.com",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-title",
 								Value: "GitHub",
 							},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "quotes",
@@ -880,10 +893,10 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: "\nand another one using attribute substitution: {github-url}[{github-title}]...",
 									},
+									&types.SingleLineComment{
+										Content: " a single-line comment.",
+									},
 								},
-							},
-							&types.SingleLineComment{
-								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -899,14 +912,15 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 							"github-title": "GitHub",
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-url",
 								Value: "https://github.com",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-title",
 								Value: "GitHub",
 							},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "macros",
@@ -947,10 +961,10 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: ">*\nand another one using attribute substitution: {github-url}[{github-title}]...",
 									},
+									&types.SingleLineComment{
+										Content: " a single-line comment.",
+									},
 								},
-							},
-							&types.SingleLineComment{
-								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -966,14 +980,15 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 							"github-title": "GitHub",
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-url",
 								Value: "https://github.com",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-title",
 								Value: "GitHub",
 							},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "attributes",
@@ -983,10 +998,10 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 										Content: "links to GitHub: https://github.com[GitHub] and *<https://github.com[_GitHub_]>*" +
 											"\nand another one using attribute substitution: https://github.com[GitHub]...",
 									},
+									&types.SingleLineComment{
+										Content: " a single-line comment.",
+									},
 								},
-							},
-							&types.SingleLineComment{
-								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -1002,14 +1017,15 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 							"github-title": "GitHub",
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-url",
 								Value: "https://github.com",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-title",
 								Value: "GitHub",
 							},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "specialchars",
@@ -1031,10 +1047,10 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 										Content: "*" +
 											"\nand another one using attribute substitution: {github-url}[{github-title}]...",
 									},
+									&types.SingleLineComment{
+										Content: " a single-line comment.",
+									},
 								},
-							},
-							&types.SingleLineComment{
-								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -1050,14 +1066,15 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 							"github-title": "GitHub",
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-url",
 								Value: "https://github.com",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-title",
 								Value: "GitHub",
 							},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "replacements",
@@ -1067,10 +1084,10 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 										Content: "links to {github-title}: https://github.com[{github-title}] and *<https://github.com[_{github-title}_]>*" +
 											"\nand another one using attribute substitution: {github-url}[{github-title}]\u2026\u200b",
 									},
+									&types.SingleLineComment{
+										Content: " a single-line comment.",
+									},
 								},
-							},
-							&types.SingleLineComment{
-								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -1089,14 +1106,15 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 							"github-title": "GitHub",
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-url",
 								Value: "https://github.com",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-title",
 								Value: "GitHub",
 							},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "quotes,macros",
@@ -1157,10 +1175,10 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: "\nand another one using attribute substitution: {github-url}[{github-title}]...",
 									},
+									&types.SingleLineComment{
+										Content: " a single-line comment.",
+									},
 								},
-							},
-							&types.SingleLineComment{
-								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -1177,14 +1195,15 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 							"github-title": "GitHub",
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-url",
 								Value: "https://github.com",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-title",
 								Value: "GitHub",
 							},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "macros,quotes",
@@ -1245,10 +1264,10 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: "\nand another one using attribute substitution: {github-url}[{github-title}]...",
 									},
+									&types.SingleLineComment{
+										Content: " a single-line comment.",
+									},
 								},
-							},
-							&types.SingleLineComment{
-								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -1264,14 +1283,15 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 							"github-title": "GitHub",
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-url",
 								Value: "https://github.com",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-title",
 								Value: "GitHub",
 							},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "attributes,macros",
@@ -1328,10 +1348,10 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: "...", // left as-is
 									},
+									&types.SingleLineComment{
+										Content: " a single-line comment.",
+									},
 								},
-							},
-							&types.SingleLineComment{
-								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -1348,14 +1368,15 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 							"github-title": "GitHub",
 						},
 						Elements: []interface{}{
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-url",
 								Value: "https://github.com",
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "github-title",
 								Value: "GitHub",
 							},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Attributes: types.Attributes{
 									types.AttrSubstitutions: "macros,attributes",
@@ -1396,10 +1417,10 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									types.StringElement{
 										Content: ">*\nand another one using attribute substitution: https://github.com[GitHub]...",
 									},
+									&types.SingleLineComment{
+										Content: " a single-line comment.",
+									},
 								},
-							},
-							&types.SingleLineComment{
-								Content: " a single-line comment.",
 							},
 						},
 					}
@@ -1534,6 +1555,7 @@ And no space after [CAUTION] either.`
 								types.StringElement{Content: "No space after the [NOTE]!"},
 							},
 						},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Caution,

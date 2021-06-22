@@ -279,6 +279,7 @@ var _ = Describe("quoted texts", func() {
 								types.StringElement{Content: "*some bold"},
 							},
 						},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
 								types.StringElement{Content: "content*"},
@@ -298,6 +299,7 @@ var _ = Describe("quoted texts", func() {
 								types.StringElement{Content: "_some italic"},
 							},
 						},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
 								types.StringElement{Content: "content_"},
@@ -317,6 +319,7 @@ var _ = Describe("quoted texts", func() {
 								types.StringElement{Content: "`some monospace"},
 							},
 						},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
 								types.StringElement{Content: "content`"},
@@ -338,6 +341,7 @@ var _ = Describe("quoted texts", func() {
 								},
 							},
 						},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
 								types.StringElement{
@@ -519,6 +523,7 @@ var _ = Describe("quoted texts", func() {
 								},
 							},
 						},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
 								types.StringElement{Content: "content**"},
@@ -540,6 +545,7 @@ var _ = Describe("quoted texts", func() {
 								},
 							},
 						},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
 								types.StringElement{Content: "content__"},
@@ -582,6 +588,7 @@ var _ = Describe("quoted texts", func() {
 								},
 							},
 						},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
 								types.StringElement{Content: "content##"},

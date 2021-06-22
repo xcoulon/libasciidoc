@@ -39,7 +39,7 @@ var _ = Describe("block filters", func() {
 
 	It("should remove document attribute declaration", func() {
 		actual := []interface{}{
-			types.AttributeDeclaration{},
+			&types.AttributeDeclaration{},
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{

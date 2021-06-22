@@ -781,7 +781,7 @@ package parser
 // 		It("should replace with new StringElement on first position", func() {
 // 			// given
 // 			elements := []interface{}{
-// 				types.AttributeDeclaration{
+// 				&types.AttributeDeclaration{
 // 					Name:  "foo",
 // 					Value: "foo",
 // 				},
@@ -817,7 +817,7 @@ package parser
 // 			// then
 // 			Expect(err).To(Not(HaveOccurred()))
 // 			Expect(result).To(Equal([]interface{}{ // at this stage, AttributeDeclaration and AttributeReset are still present
-// 				types.AttributeDeclaration{
+// 				&types.AttributeDeclaration{
 // 					Name:  "foo",
 // 					Value: "foo",
 // 				},
@@ -926,11 +926,11 @@ package parser
 
 // 		It("should substitute an attribute in another attribute", func() {
 // 			elements := []interface{}{
-// 				types.AttributeDeclaration{
+// 				&types.AttributeDeclaration{
 // 					Name:  "def",
 // 					Value: "foo",
 // 				},
-// 				types.AttributeDeclaration{
+// 				&types.AttributeDeclaration{
 // 					Name: "abc",
 // 					Value: []interface{}{
 // 						types.AttributeSubstitution{
@@ -963,11 +963,11 @@ package parser
 // 			result, err := applySubstitutions(ctx, elements)
 // 			Expect(err).To(Not(HaveOccurred()))
 // 			Expect(result).To(Equal([]interface{}{ // at this stage, AttributeDeclaration and AttributeReset are still present
-// 				types.AttributeDeclaration{
+// 				&types.AttributeDeclaration{
 // 					Name:  "def",
 // 					Value: "foo",
 // 				},
-// 				types.AttributeDeclaration{
+// 				&types.AttributeDeclaration{
 // 					Name:  "abc",
 // 					Value: "foobar",
 // 				},

@@ -162,7 +162,7 @@ and a paragraph`
 					{
 						Content: []interface{}{
 
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  types.AttrIDSeparator,
 								Value: "-",
 							},
@@ -720,7 +720,7 @@ a short preamble
 									types.StringElement{Content: "a title"},
 								},
 							},
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name: "toc",
 							},
 							&types.BlankLine{},

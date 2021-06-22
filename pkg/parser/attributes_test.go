@@ -254,11 +254,11 @@ var _ = Describe("attributes", func() {
 				{
 					LineOffset: 1,
 					Content: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "def",
 							Value: "foo",
 						},
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "abc",
 							Value: "foobar", // resolved
 						},
@@ -290,7 +290,7 @@ var _ = Describe("attributes", func() {
 				{
 					LineOffset: 1,
 					Content: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "abc",
 							Value: "{def}bar", // unresolved
 						},

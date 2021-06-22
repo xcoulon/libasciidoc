@@ -301,19 +301,17 @@ item 2:: two`
 				source := `an _italicized icon:warning[] message_`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "an ",
-									},
-									&types.QuotedText{
-										Kind: types.SingleQuoteItalic,
-										Elements: []interface{}{
-											types.StringElement{Content: "italicized "},
-											types.Icon{Class: "warning"},
-											types.StringElement{Content: " message"},
-										},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "an ",
+								},
+								&types.QuotedText{
+									Kind: types.SingleQuoteItalic,
+									Elements: []interface{}{
+										types.StringElement{Content: "italicized "},
+										types.Icon{Class: "warning"},
+										types.StringElement{Content: " message"},
 									},
 								},
 							},

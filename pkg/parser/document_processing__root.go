@@ -36,7 +36,7 @@ func ParseDocument(r io.Reader, config configuration.Configuration, opts ...Opti
 			if b.Level != 0 && inHeader { // do not even allow 2ndary section with level 0 as headers
 				inHeader = false
 			}
-		case types.AttributeDeclaration:
+		case *types.AttributeDeclaration:
 			if inHeader {
 				attributes.Set(b.Name, b.Value)
 			}

@@ -45,16 +45,14 @@ DocumentFragmentElementWithinParagraph <-
 // when parsing rawlines within a delimited block, there are less
 // type of fragment elements to expect.
 DocumentFragmentElementWithinDelimitedBlock <- 
-    BlankLine
-    / (
-        delimiter:(BlockDelimiter)
-        &{
-            // only accept if the delimiter matches the current delimited block
-            return c.isValidBlockDelimiter(delimiter.(types.BlockDelimiter))
-        }
-        {
-            return delimiter, nil
-        })
+    delimiter:(BlockDelimiter)
+    &{
+        // only accept if the delimiter matches the current delimited block
+        return c.isValidBlockDelimiter(delimiter.(*types.BlockDelimiter))
+    }
+    {
+        return delimiter, nil
+    }
     // if nothing match, will return an error and content will be store in a RawLine
 
 // ------------------------------------------
@@ -435,26 +433,6 @@ CounterStart <- ":" start:([A-Za-z] {
 // ------------------------------------------
 BlankLine <- Space* EOF {
         return types.NewBlankLine()
-    }
-
-// ------------------------------------------------------------------------------------
-// Callouts
-// ------------------------------------------------------------------------------------
-Callout <- 
-    // check if enabled with the current substitution context
-    &{
-        return c.isSubstitutionEnabled(Callouts)
-    }
-    "<" ref:([0-9]+ { return strconv.Atoi(string(c.text)) }) ">" Space* &(EOL / Callout) {
-        return types.NewCallout(ref.(int))
-    }
-
-CalloutListElement <- ref:(CalloutListElementPrefix) description:(InlineElements) {
-        return types.NewCalloutListElement(ref.(int), description.(types.InlineElements))
-    }
-
-CalloutListElementPrefix <- "<" ref:([0-9]+ { return strconv.Atoi(string(c.text)) }) ">" Space+ {
-        return ref, nil
     }
 
 // -------------------------------------------------------------------------------------
@@ -1172,8 +1150,35 @@ LabeledListItemDescription <- [^\r\n]+ {
     return string(c.text), nil
 }
 
+Callout <- 
+    // check if enabled with the current substitution context
+    &{
+        return c.isSubstitutionEnabled(Callouts)
+    }
+    "<" ref:([0-9]+ { return strconv.Atoi(string(c.text)) }) ">" Space* &(EOL / Callout) {
+        return types.NewCallout(ref.(int))
+    }
+
+CalloutListElement <- ref:(CalloutListElementPrefix) description:(CalloutListElementContent) {
+        return types.NewCalloutListElement(ref.(int), description.([]interface{}))
+    }
+
+CalloutListElementPrefix <- "<" ref:([0-9]+ { return strconv.Atoi(string(c.text)) }) ">" Space+ {
+        return ref, nil
+    }
+
+CalloutListElementContent <- [^\r\n]* { 
+    return []interface{}{
+        &types.Paragraph{
+            Elements: []interface{}{
+                types.RawLine(string(c.text)),
+            },
+        },
+    }, nil 
+}
+
 ListElementContinuation <- "+" Space* {
-    return types.NewListElementContinuation()
+    return types.NewListElementContinuation()    
 }
 
 // ----------------------------------------------------------------------------
@@ -1771,7 +1776,6 @@ AttributesGroup <- elements:(
     / InlinePassthrough
     / AttributeSubstitution
     / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
-    / Newline
     / AnyChar)+ EOF { 
         return types.Merge(elements), nil
     }
@@ -1782,7 +1786,6 @@ ElementAttributesGroup <- elements:(
     / AttributeSubstitution
     / Quotes
     / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
-    / Newline
     / AnyChar)+ EOF { 
         return types.Merge(elements), nil
     }
@@ -1805,16 +1808,23 @@ MacrosGroup <- elements:(
     InlineWord
     / InlineMacro
     / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
-    / Newline
     / AnyChar)+ EOF { 
         return types.Merge(elements), nil
     }
 
+// TODO: do we really need a grammar rule? can't we just skip substitutions?
 // The 'none' substitution
-NoneGroup <- content:(.)* EOF {
-        s, _ := types.NewStringElement(string(c.text))
-        return []interface{}{s}, nil
+NoneGroup <- elements:(NormalGroupElement)+ EOF { 
+        return types.Merge(elements), nil
     }
+
+NoneGroupElement <- !EOF
+    element:(
+        InlineWord
+        / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
+        / AnyChar)+ EOF { 
+            return element, nil
+        }
 
 // Default substitutions for Paragrapghs
 // TODO: extract the substitutionContext once and check every rule choice here. Will also avoid setting "fake" context for BlockAttributes, SectionTitle, etc.
@@ -1845,7 +1855,6 @@ QuotesGroup <- elements:(
     InlineWord
     / Quote
     / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
-    / Newline
     / AnyChar)+ EOF { 
         return types.Merge(elements), nil
     }
@@ -1855,7 +1864,6 @@ ReplacementsGroup <- elements:(
     InlineWord
     / Replacement
     / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
-    / Newline
     / AnyChar)+ EOF { 
         return types.Merge(elements), nil
     }
@@ -1865,7 +1873,6 @@ SpecialCharactersGroup <- elements:(
     InlineWord
     / SpecialCharacter
     / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
-    / Newline
     / AnyChar)+ EOF { 
         return types.Merge(elements), nil
     }
@@ -1875,7 +1882,6 @@ VerbatimGroup <- elements:(
     / Callout // must be placed before SpecialCharacter
     / SpecialCharacter
     / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
-    / Newline
     / AnyChar)+ EOF { 
         return types.Merge(elements), nil
     }
@@ -2071,7 +2077,8 @@ InlineWord <-
     } / Word
 
 // this is a fall-back rule in case all preceeding rules failed to match the current content.
-AnyChar <- [^\r\n] { 
+// AnyChar <- [^\r\n] { 
+AnyChar <- . { 
         return types.NewStringElement(string(c.text))
     } 
 

@@ -273,7 +273,7 @@ and <more text> on the +
 `
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -357,7 +357,7 @@ and <more text> on the +
 `
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -481,7 +481,7 @@ and <more text> on the +
 `
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -569,7 +569,7 @@ and <more text> on the +
 `
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},
@@ -655,7 +655,7 @@ and <more text> on the +
 `
 				expected := types.Document{
 					Elements: []interface{}{
-						types.AttributeDeclaration{
+						&types.AttributeDeclaration{
 							Name:  "github-url",
 							Value: "https://github.com",
 						},

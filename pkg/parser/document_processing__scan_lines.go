@@ -37,17 +37,28 @@ type DocumentFragmentScanner struct {
 	scanner      *bufio.Scanner
 	lineNumber   int
 	currentGroup types.DocumentFragmentGroup
-	scopes       *scanningScopeStack
+	scopes       *scanScopeStack
 	err          error // sticky error
 }
 
-type scanningScope string
+type scanScope struct {
+	name  string
+	extra string
+}
 
-const (
-	defaultScope       scanningScope = "default"
-	withinParagraph    scanningScope = "within_paragraph"
-	withinList         scanningScope = "within_list"
-	withinListingBlock scanningScope = "within_listing_block"
+// const (
+// 	defaultScope         scanScopeKind = "default"
+// 	withinParagraph      scanScopeKind = "within_paragraph"
+// 	withinList           scanScopeKind = "within_list"
+// 	withinDelimitedBlock scanScopeKind = "within_delimited_block"
+// )
+
+var (
+	defaultScope       = &scanScope{name: "default"}
+	withinParagraph    = &scanScope{name: "within_paragraph"}
+	withinList         = &scanScope{name: "within_list"}
+	withinListingBlock = &scanScope{name: "within_delimited_block", extra: types.Listing}
+	withinFencedBlock  = &scanScope{name: "within_delimited_block", extra: types.Fenced}
 )
 
 func NewDocumentScanner(source io.Reader, opts ...Option) *DocumentFragmentScanner {
@@ -79,12 +90,12 @@ scan:
 			// assume that the content is just a RawLine
 			element = types.RawLine(s.scanner.Text())
 		}
-		// if log.IsLevelEnabled(log.DebugLevel) {
-		// 	log.Debugf("parsed '%s':\n%s", s.scanner.Text(), spew.Sdump(element))
-		// 	if err != nil {
-		// 		log.Debugf("err=%v", err)
-		// 	}
-		// }
+		if log.IsLevelEnabled(log.DebugLevel) {
+			log.Debugf("parsed '%s':\n%s", s.scanner.Text(), spew.Sdump(element))
+			if err != nil {
+				log.Debugf("err=%v", err)
+			}
+		}
 		switch element := element.(type) {
 		case *types.BlankLine:
 			elements = append(elements, element)
@@ -96,19 +107,22 @@ scan:
 		case *types.OrderedListElement, *types.UnorderedListElement, *types.LabeledListElement, *types.CalloutListElement:
 			s.scopes.push(withinList)
 			elements = append(elements, element)
-		case types.BlockDelimiter:
-			switch element.Kind {
-			case types.Listing:
-				// switching scope
-				if s.scopes.get() == withinListingBlock {
-					s.scopes.pop()
-					// TODO: end of fragment group here, if `scopes` is empty?
-				} else {
+		case *types.BlockDelimiter:
+			currentScope := s.scopes.get()
+			if currentScope.extra == element.Kind {
+				// done with current delimited block
+				s.scopes.pop()
+				// TODO: end of fragment group here, if `scopes` is empty? (maybe not, if there are callout list elements afterward)
+			} else {
+				switch element.Kind {
+				case types.Listing:
 					s.scopes.push(withinListingBlock)
+				case types.Fenced:
+					s.scopes.push(withinFencedBlock)
+				default:
+					s.err = fmt.Errorf("unsupported kind of block delimiter: %v", element.Kind)
+					break scan // end of fragment group
 				}
-			default:
-				s.err = fmt.Errorf("unsupported kind of block delimiter: %v", element.Kind)
-				break scan // end of fragment group
 			}
 			// log.Debugf("updated scanner scope: %s", s.scopes.get())
 			elements = append(elements, element)
@@ -144,11 +158,11 @@ scan:
 	return false // (and will also return the underlying scanner's error if something wrong happened)
 }
 
-func (c *current) isValidBlockDelimiter(d types.BlockDelimiter) (bool, error) {
+func (c *current) isValidBlockDelimiter(d *types.BlockDelimiter) (bool, error) {
 	if k, ok := c.globalStore[validDelimitedBlockKind].(string); ok {
-		// if log.IsLevelEnabled(log.DebugLevel) {
-		// 	log.Debugf("checking if delimiter matches kind '%v': %s", k, spew.Sdump(d))
-		// }
+		if log.IsLevelEnabled(log.DebugLevel) {
+			log.Debugf("checking if delimiter matches kind '%v': %s", k, spew.Sdump(d))
+		}
 		return d.Kind == k, nil
 	}
 	log.Debug("no valid delimiter registered in the GlobalStore")
@@ -163,17 +177,18 @@ func (s *DocumentFragmentScanner) entrypoint() []Option {
 	if log.IsLevelEnabled(log.DebugLevel) {
 		log.Debugf("current parsing scope: %v", s.scopes.get())
 	}
-	switch s.scopes.get() {
+	currentScope := s.scopes.get()
+	switch currentScope {
 	case withinParagraph:
 		log.Debugf("using '%s' entrypoint", "DocumentFragmentElementWithinParagraph")
 		return []Option{
 			Entrypoint("DocumentFragmentElementWithinParagraph"),
 		}
-	case withinListingBlock:
+	case withinListingBlock, withinFencedBlock:
 		log.Debugf("using '%s' entrypoint", "DocumentFragmentElementWithinDelimitedBlock")
 		return []Option{
 			Entrypoint("DocumentFragmentElementWithinDelimitedBlock"),
-			GlobalStore(validDelimitedBlockKind, types.Listing),
+			GlobalStore(validDelimitedBlockKind, currentScope.extra),
 		}
 	default:
 		log.Debugf("using '%s' entrypoint", "DefaultDocumentFragmentElement")
@@ -190,14 +205,14 @@ func (s *DocumentFragmentScanner) Fragments() types.DocumentFragmentGroup {
 	return s.currentGroup
 }
 
-type scanningScopeStack struct {
-	scopes []scanningScope
+type scanScopeStack struct {
+	scopes []*scanScope
 }
 
-func newScanningScopeStack() *scanningScopeStack {
-	scopes := make([]scanningScope, 0, 10)
+func newScanningScopeStack() *scanScopeStack {
+	scopes := make([]*scanScope, 0, 10)
 	scopes = append(scopes, defaultScope)
-	return &scanningScopeStack{
+	return &scanScopeStack{
 		scopes: scopes,
 	}
 }
@@ -210,11 +225,11 @@ func newScanningScopeStack() *scanningScopeStack {
 // 	return s.index == -1
 // }
 
-func (s *scanningScopeStack) push(a scanningScope) {
+func (s *scanScopeStack) push(a *scanScope) {
 	s.scopes = append(s.scopes, a)
 }
 
-func (s *scanningScopeStack) pop() scanningScope {
+func (s *scanScopeStack) pop() *scanScope {
 	if len(s.scopes) <= 0 {
 		return defaultScope
 	}
@@ -223,7 +238,7 @@ func (s *scanningScopeStack) pop() scanningScope {
 	return scope
 }
 
-func (s *scanningScopeStack) get() scanningScope {
+func (s *scanScopeStack) get() *scanScope {
 	if len(s.scopes) <= 0 {
 		return defaultScope
 	}

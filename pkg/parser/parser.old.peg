@@ -1608,22 +1608,6 @@ FootnoteContent <- elements:(!"]" InlineElement)+  { // footnote content may spa
     return types.NewInlineElements(elements.([]interface{}))
 }
 
-// ------------------------------------------------------------------------------------
-// Callouts
-// ------------------------------------------------------------------------------------
-
-Callout <- "<" ref:([0-9]+ { return strconv.Atoi(string(c.text)) }) ">" Space* &(EOL / Callout) {
-    return types.NewCallout(ref.(int))
-}
-
-CalloutListItem <- ref:(CalloutListItemPrefix) description:(ListParagraph+) {
-    return types.NewCalloutListItem(ref.(int), description.([]interface{}))
-}
-
-CalloutListItemPrefix <- "<" ref:([0-9]+ { return strconv.Atoi(string(c.text)) }) ">" Space+ {
-    return ref, nil
-}
-
 // -------------------------------------------------------------------------------------
 // Thematic break
 // -------------------------------------------------------------------------------------

@@ -503,12 +503,12 @@ type AttributeDeclaration struct {
 }
 
 // NewAttributeDeclaration initializes a new AttributeDeclaration with the given name and optional value
-func NewAttributeDeclaration(name string, value interface{}) AttributeDeclaration {
+func NewAttributeDeclaration(name string, value interface{}) *AttributeDeclaration {
 	// if log.IsLevelEnabled(log.DebugLevel) {
 	// 	// log.Debugf("new AttributeDeclaration: '%s'", name)
 	// 	spew.Fdump(log.StandardLogger().Out, value)
 	// }
-	return AttributeDeclaration{
+	return &AttributeDeclaration{
 		Name:  name,
 		Value: value,
 	}

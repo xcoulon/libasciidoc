@@ -20,7 +20,7 @@ func ProcessSubstitutions(ctx *processContext, done <-chan interface{}, fragment
 		for f := range fragmentStream {
 			select {
 			case <-done:
-				log.WithField("pipeline_stage", "fragment_processing").Debug("received 'done' signal")
+				log.WithField("pipeline_stage", "apply_substitutions").Debug("received 'done' signal")
 				return
 			case processedFragmentStream <- processSubstitutions(ctx, f):
 			}
@@ -48,7 +48,7 @@ func processSubstitutions(ctx *processContext, f types.DocumentFragment) types.D
 
 func processSubstitutionsOnElement(ctx *processContext, element interface{}) (interface{}, error) {
 	switch e := element.(type) {
-	case types.AttributeDeclaration:
+	case *types.AttributeDeclaration:
 		ctx.addAttribute(e.Name, e.Value)
 		return e, nil
 	case types.AttributeReset:
@@ -247,7 +247,7 @@ func defaultSubstitution(b interface{}) (string, error) {
 	switch b := b.(type) {
 	case *types.DelimitedBlock:
 		switch b.Kind {
-		case types.Listing:
+		case types.Listing, types.Fenced:
 			return "verbatim", nil
 		default:
 			return "", fmt.Errorf("unsupported kind of delimited block: '%v'", b.Kind)
@@ -762,8 +762,21 @@ func serialize(content interface{}) ([]byte, *placeholders) {
 			switch element := element.(type) {
 			case types.RawLine:
 				result.WriteString(string(element))
+				// add `\n` unless the next element is a single-line comment
 				if i < len(content)-1 {
-					result.WriteString("\n")
+					if _, ok := content[i+1].(*types.SingleLineComment); !ok {
+						result.WriteString("\n")
+					}
+				}
+			case *types.SingleLineComment:
+				// replace with placeholder
+				p := placeholders.add(element)
+				result.WriteString(p.String())
+				// add `\n` unless the next element is a single-line comment
+				if i < len(content)-1 {
+					if _, ok := content[i+1].(*types.SingleLineComment); !ok {
+						result.WriteString("\n")
+					}
 				}
 			case types.StringElement:
 				result.WriteString(element.Content)

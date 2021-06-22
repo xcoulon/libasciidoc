@@ -104,12 +104,9 @@ content:
 			blocks.push(block)
 			log.Debug("adding a new fragment with a paragraph")
 			result = append(result, types.NewDocumentFragment(f.LineOffset, block))
-		case *types.ImageBlock, *types.ThematicBreak, *types.Paragraph:
+		default:
 			log.Debugf("adding a new fragment with an element of type '%T'", e)
 			result = append(result, types.NewDocumentFragment(f.LineOffset+i, e))
-		default:
-			// unknow type fragment element: set an error on the fragment and send it downstream
-			result = append(result, types.NewErrorFragment(f.LineOffset, errors.Errorf("unable to assemble fragments: unexpected type of element on line %d: '%T'", f.LineOffset+i, e)))
 		}
 	}
 	if log.IsLevelEnabled(log.DebugLevel) {

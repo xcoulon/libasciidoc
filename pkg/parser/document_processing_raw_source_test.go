@@ -211,7 +211,7 @@ include::{includedir}/chapter-a.adoc[]`
 					{
 						Content: []interface{}{
 
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "includedir",
 								Value: "../../test/includes",
 							},
@@ -245,7 +245,7 @@ include::{includedir}/include.foo[]`
 					{
 						Content: []interface{}{
 
-							types.AttributeDeclaration{
+							&types.AttributeDeclaration{
 								Name:  "includedir",
 								Value: "../../test/includes",
 							},
@@ -1322,7 +1322,7 @@ include::{includedir}/grandchild-include.adoc[]`
 						{
 							Content: []interface{}{
 
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "includedir",
 									Value: "../../test/includes",
 								},
@@ -1362,7 +1362,7 @@ include::{includedir}/grandchild-include.adoc[]`
 						{
 							Content: []interface{}{
 
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "includedir",
 									Value: "../../../test/includes",
 								},
@@ -1404,7 +1404,7 @@ include::{includedir}/grandchild-include.adoc[]
 						{
 							Content: []interface{}{
 
-								types.AttributeDeclaration{
+								&types.AttributeDeclaration{
 									Name:  "includedir",
 									Value: "../../test/includes",
 								},

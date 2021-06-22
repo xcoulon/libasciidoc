@@ -37,7 +37,7 @@ image::images/foo.png[{alt}]`
 					"alt": "the foo.png image",
 				},
 				Elements: []interface{}{
-					types.AttributeDeclaration{
+					&types.AttributeDeclaration{
 						Name:  "alt",
 						Value: "the foo.png image",
 					},
@@ -66,7 +66,7 @@ image::foo.png[]`
 					"imagesdir": "./path/to/images",
 				},
 				Elements: []interface{}{
-					types.AttributeDeclaration{
+					&types.AttributeDeclaration{
 						Name:  "imagesdir",
 						Value: "./path/to/images",
 					},
@@ -94,7 +94,7 @@ image::{dir}/foo.png[]`
 					"dir": "./path/to/images",
 				},
 				Elements: []interface{}{
-					types.AttributeDeclaration{
+					&types.AttributeDeclaration{
 						Name:  "dir",
 						Value: "./path/to/images",
 					},
@@ -120,7 +120,7 @@ image::foo.png[]`
 					"imagesdir": "./path/to/images",
 				},
 				Elements: []interface{}{
-					types.AttributeDeclaration{
+					&types.AttributeDeclaration{
 						Name:  "imagesdir",
 						Value: "./path/to/images",
 					},
@@ -146,7 +146,7 @@ image::{imagesdir}/foo.png[]`
 					"imagesdir": "./path/to/images",
 				},
 				Elements: []interface{}{
-					types.AttributeDeclaration{
+					&types.AttributeDeclaration{
 						Name:  "imagesdir",
 						Value: "./path/to/images",
 					},
