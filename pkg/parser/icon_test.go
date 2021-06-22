@@ -17,12 +17,10 @@ var _ = Describe("icons", func() {
 				source := "icon:tip[]"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.Icon{
-										Class: "tip",
-									},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.Icon{
+									Class: "tip",
 								},
 							},
 						},
@@ -35,15 +33,13 @@ var _ = Describe("icons", func() {
 				source := "icon:note[]  \t\t  "
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.Icon{
-										Class: "note",
-									},
-									types.StringElement{
-										Content: "  \t\t  ",
-									},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.Icon{
+									Class: "note",
+								},
+								types.StringElement{
+									Content: "  \t\t  ",
 								},
 							},
 						},
@@ -56,18 +52,16 @@ var _ = Describe("icons", func() {
 				source := "beware icon:caution[] of tigers"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "beware ",
-									},
-									types.Icon{
-										Class: "caution",
-									},
-									types.StringElement{
-										Content: " of tigers",
-									},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "beware ",
+								},
+								types.Icon{
+									Class: "caution",
+								},
+								types.StringElement{
+									Content: " of tigers",
 								},
 							},
 						},
@@ -80,13 +74,11 @@ var _ = Describe("icons", func() {
 				source := "icon:caution[2x]"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.Icon{
-										Class:      "caution",
-										Attributes: types.Attributes{types.AttrIconSize: "2x"},
-									},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.Icon{
+									Class:      "caution",
+									Attributes: types.Attributes{types.AttrIconSize: "2x"},
 								},
 							},
 						},
@@ -99,13 +91,11 @@ var _ = Describe("icons", func() {
 				source := "icon:caution[title=\"bogus\"]"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.Icon{
-										Class:      "caution",
-										Attributes: types.Attributes{types.AttrTitle: "bogus"},
-									},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.Icon{
+									Class:      "caution",
+									Attributes: types.Attributes{types.AttrTitle: "bogus"},
 								},
 							},
 						},
@@ -118,14 +108,12 @@ var _ = Describe("icons", func() {
 				source := "icon:caution[id=anchor]"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.Icon{
-										Class: "caution",
-										Attributes: types.Attributes{
-											types.AttrID: "anchor",
-										},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.Icon{
+									Class: "caution",
+									Attributes: types.Attributes{
+										types.AttrID: "anchor",
 									},
 								},
 							},
@@ -139,15 +127,13 @@ var _ = Describe("icons", func() {
 				source := "icon:caution[id=anchor,title=\"White Fang\"]"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.Icon{
-										Class: "caution",
-										Attributes: types.Attributes{
-											types.AttrID:    "anchor",
-											types.AttrTitle: "White Fang",
-										},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.Icon{
+									Class: "caution",
+									Attributes: types.Attributes{
+										types.AttrID:    "anchor",
+										types.AttrTitle: "White Fang",
 									},
 								},
 							},
@@ -161,16 +147,14 @@ var _ = Describe("icons", func() {
 				source := "icon:caution[fw,id=anchor,title=\"White Fang\"]"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.Icon{
-										Class: "caution",
-										Attributes: types.Attributes{
-											types.AttrID:       "anchor",
-											types.AttrTitle:    "White Fang",
-											types.AttrIconSize: "fw",
-										},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.Icon{
+									Class: "caution",
+									Attributes: types.Attributes{
+										types.AttrID:       "anchor",
+										types.AttrTitle:    "White Fang",
+										types.AttrIconSize: "fw",
 									},
 								},
 							},
@@ -184,15 +168,13 @@ var _ = Describe("icons", func() {
 				source := "here is my icon: icon:info[]"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{
-										Content: "here is my icon: ",
-									},
-									types.Icon{
-										Class: "info",
-									},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.StringElement{
+									Content: "here is my icon: ",
+								},
+								types.Icon{
+									Class: "info",
 								},
 							},
 						},
@@ -205,7 +187,7 @@ var _ = Describe("icons", func() {
 				source := `== a icon:note[] from me`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Section{
+						&types.Section{
 							Attributes: types.Attributes{
 								types.AttrID: "_a_note_from_me",
 							},
@@ -221,7 +203,6 @@ var _ = Describe("icons", func() {
 									Content: " from me",
 								},
 							},
-							Elements: []interface{}{},
 						},
 					},
 				}
@@ -232,7 +213,7 @@ var _ = Describe("icons", func() {
 				source := `= icon:warning[] or what icon:note[] to do`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Section{
+						&types.Section{
 							Level: 0,
 							Attributes: types.Attributes{
 								types.AttrID: "_warning_or_what_note_to_do",
@@ -243,7 +224,6 @@ var _ = Describe("icons", func() {
 								types.Icon{Class: "note"},
 								types.StringElement{Content: " to do"},
 							},
-							Elements: []interface{}{},
 						},
 					},
 				}
@@ -257,34 +237,32 @@ var _ = Describe("icons", func() {
 item 2:: two`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.LabeledList{
-							Items: []*types.LabeledListElement{
-
-								{
+						&types.GenericList{
+							Kind: types.LabeledListKind,
+							Elements: []types.ListElement{
+								&types.LabeledListElement{
+									Style: "::",
 									Term: []interface{}{
 										types.StringElement{Content: "discount"},
 									},
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.Icon{Class: "tags", Attributes: types.Attributes{types.AttrImageAlt: "Discount"}},
-													types.StringElement{Content: " Cheap cheap!"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.Icon{Class: "tags", Attributes: types.Attributes{types.AttrImageAlt: "Discount"}},
+												types.StringElement{Content: " Cheap cheap!"},
 											},
 										},
 									},
 								},
-								{
+								&types.LabeledListElement{
+									Style: "::",
 									Term: []interface{}{
 										types.StringElement{Content: "item 2"},
 									},
 									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													types.StringElement{Content: "two"},
-												},
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{Content: "two"},
 											},
 										},
 									},
@@ -324,16 +302,14 @@ item 2:: two`
 				source := `#marked icon:warning[] message#`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									&types.QuotedText{
-										Kind: types.SingleQuoteMarked,
-										Elements: []interface{}{
-											types.StringElement{Content: "marked "},
-											types.Icon{Class: "warning"},
-											types.StringElement{Content: " message"},
-										},
+						&types.Paragraph{
+							Elements: []interface{}{
+								&types.QuotedText{
+									Kind: types.SingleQuoteMarked,
+									Elements: []interface{}{
+										types.StringElement{Content: "marked "},
+										types.Icon{Class: "warning"},
+										types.StringElement{Content: " message"},
 									},
 								},
 							},
@@ -346,17 +322,15 @@ item 2:: two`
 				source := `in *bold icon:warning[] message*`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "in "},
-									&types.QuotedText{
-										Kind: types.SingleQuoteBold,
-										Elements: []interface{}{
-											types.StringElement{Content: "bold "},
-											types.Icon{Class: "warning"},
-											types.StringElement{Content: " message"},
-										},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.StringElement{Content: "in "},
+								&types.QuotedText{
+									Kind: types.SingleQuoteBold,
+									Elements: []interface{}{
+										types.StringElement{Content: "bold "},
+										types.Icon{Class: "warning"},
+										types.StringElement{Content: " message"},
 									},
 								},
 							},
@@ -369,17 +343,15 @@ item 2:: two`
 				source := "in `monospace icon:warning[] message`"
 				expected := types.Document{
 					Elements: []interface{}{
-						types.Paragraph{
-							Lines: [][]interface{}{
-								{
-									types.StringElement{Content: "in "},
-									&types.QuotedText{
-										Kind: types.SingleQuoteMonospace,
-										Elements: []interface{}{
-											types.StringElement{Content: "monospace "},
-											types.Icon{Class: "warning"},
-											types.StringElement{Content: " message"},
-										},
+						&types.Paragraph{
+							Elements: []interface{}{
+								types.StringElement{Content: "in "},
+								&types.QuotedText{
+									Kind: types.SingleQuoteMonospace,
+									Elements: []interface{}{
+										types.StringElement{Content: "monospace "},
+										types.Icon{Class: "warning"},
+										types.StringElement{Content: " message"},
 									},
 								},
 							},

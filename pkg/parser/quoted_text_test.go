@@ -567,6 +567,7 @@ var _ = Describe("quoted texts", func() {
 								},
 							},
 						},
+						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
 								types.StringElement{Content: "content``"},
