@@ -252,6 +252,9 @@ and <more text> on the +
 <1> a callout
 `
 				expected := types.Document{
+					Attributes: types.Attributes{
+						"github-url": "https://github.com",
+					},
 					Elements: []interface{}{
 						&types.AttributeDeclaration{
 							Name:  "github-url",
@@ -260,10 +263,6 @@ and <more text> on the +
 						&types.BlankLine{},
 						&types.DelimitedBlock{
 							Kind: types.Literal,
-							Attributes: types.Attributes{
-								types.AttrStyle:            types.Literal,
-								types.AttrLiteralBlockType: types.LiteralBlockWithDelimiter,
-							},
 							Elements: []interface{}{
 								types.StringElement{
 									Content: "a link to https://example.com[] ",
@@ -272,7 +271,7 @@ and <more text> on the +
 									Ref: 1,
 								},
 								types.StringElement{
-									Content: "and ",
+									Content: "\nand ",
 								},
 								types.SpecialCharacter{
 									Name: "<",
@@ -284,24 +283,23 @@ and <more text> on the +
 									Name: ">",
 								},
 								types.StringElement{
-									Content: " on the +",
-								},
-								types.StringElement{
-									Content: "*next* lines with a link to {github-url}[]",
-								},
-								types.StringElement{
-									Content: "* not a list item",
+									Content: " on the +\n*next* lines with a link to {github-url}[]\n\n* not a list item",
 								},
 							},
 						},
 						&types.BlankLine{},
-						types.CalloutListElement{
-							Ref: 1,
-							Elements: []interface{}{
-								&types.Paragraph{
+						&types.GenericList{
+							Kind: types.CalloutListKind,
+							Elements: []types.ListElement{
+								&types.CalloutListElement{
+									Ref: 1,
 									Elements: []interface{}{
-										types.StringElement{
-											Content: "a callout",
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "a callout",
+												},
+											},
 										},
 									},
 								},
@@ -326,6 +324,9 @@ and <more text> on the +
 <1> a callout
 `
 				expected := types.Document{
+					Attributes: types.Attributes{
+						"github-url": "https://github.com",
+					},
 					Elements: []interface{}{
 						&types.AttributeDeclaration{
 							Name:  "github-url",
@@ -335,15 +336,13 @@ and <more text> on the +
 						&types.DelimitedBlock{
 							Kind: types.Literal,
 							Attributes: types.Attributes{
-								types.AttrStyle:            types.Literal,
-								types.AttrLiteralBlockType: types.LiteralBlockWithDelimiter,
-								types.AttrSubstitutions:    "normal",
+								types.AttrSubstitutions: "normal",
 							},
 							Elements: []interface{}{
 								types.StringElement{
 									Content: "a link to ",
 								},
-								types.InlineLink{
+								&types.InlineLink{
 									Location: &types.Location{
 										Scheme: "https://",
 										Path: []interface{}{
@@ -366,7 +365,7 @@ and <more text> on the +
 									Name: ">",
 								},
 								types.StringElement{
-									Content: "and ",
+									Content: "\nand ",
 								},
 								types.SpecialCharacter{
 									Name: "<",
@@ -381,6 +380,9 @@ and <more text> on the +
 									Content: " on the",
 								},
 								types.LineBreak{},
+								types.StringElement{
+									Content: "\n",
+								},
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
@@ -392,7 +394,7 @@ and <more text> on the +
 								types.StringElement{
 									Content: " lines with a link to ",
 								},
-								types.InlineLink{
+								&types.InlineLink{
 									Location: &types.Location{
 										Scheme: "https://",
 										Path: []interface{}{
@@ -403,19 +405,22 @@ and <more text> on the +
 									},
 								},
 								types.StringElement{
-									Content: "* not a list item",
+									Content: "\n\n* not a list item",
 								},
 							},
 						},
 						&types.BlankLine{},
-						types.CalloutListElement{
-							Ref: 1,
-							Elements: []interface{}{
-								&types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "a callout",
+						&types.GenericList{
+							Kind: types.CalloutListKind,
+							Elements: []types.ListElement{
+								&types.CalloutListElement{
+									Ref: 1,
+									Elements: []interface{}{
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "a callout",
+												},
 											},
 										},
 									},
@@ -442,6 +447,9 @@ and <more text> on the +
 <1> a callout
 `
 				expected := types.Document{
+					Attributes: types.Attributes{
+						"github-url": "https://github.com",
+					},
 					Elements: []interface{}{
 						&types.AttributeDeclaration{
 							Name:  "github-url",
@@ -451,15 +459,13 @@ and <more text> on the +
 						&types.DelimitedBlock{
 							Kind: types.Literal,
 							Attributes: types.Attributes{
-								types.AttrStyle:            types.Literal,
-								types.AttrLiteralBlockType: types.LiteralBlockWithDelimiter,
-								types.AttrSubstitutions:    "quotes,macros",
+								types.AttrSubstitutions: "quotes,macros",
 							},
 							Elements: []interface{}{
 								types.StringElement{
 									Content: "a link to ",
 								},
-								types.InlineLink{
+								&types.InlineLink{
 									Location: &types.Location{
 										Scheme: "https://",
 										Path: []interface{}{
@@ -470,10 +476,7 @@ and <more text> on the +
 									},
 								},
 								types.StringElement{
-									Content: " <1>",
-								},
-								types.StringElement{
-									Content: "and <more text> on the +",
+									Content: " <1>\nand <more text> on the +\n",
 								},
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
@@ -484,22 +487,22 @@ and <more text> on the +
 									},
 								},
 								types.StringElement{
-									Content: " lines with a link to {github-url}[]",
-								},
-								types.StringElement{
-									Content: "* not a list item",
+									Content: " lines with a link to {github-url}[]\n\n* not a list item",
 								},
 							},
 						},
 						&types.BlankLine{},
-						types.CalloutListElement{
-							Ref: 1,
-							Elements: []interface{}{
-								&types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "a callout",
+						&types.GenericList{
+							Kind: types.CalloutListKind,
+							Elements: []types.ListElement{
+								&types.CalloutListElement{
+									Ref: 1,
+									Elements: []interface{}{
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "a callout",
+												},
 											},
 										},
 									},
@@ -522,6 +525,9 @@ and <more text> on the +
 <1> a callout
 `
 				expected := types.Document{
+					Attributes: types.Attributes{
+						"github-url": "https://github.com",
+					},
 					Elements: []interface{}{
 						&types.AttributeDeclaration{
 							Name:  "github-url",
@@ -539,7 +545,7 @@ and <more text> on the +
 								types.StringElement{
 									Content: "  a link to ",
 								},
-								types.InlineLink{
+								&types.InlineLink{
 									Location: &types.Location{
 										Scheme: "https://",
 										Path: []interface{}{
@@ -572,13 +578,18 @@ and <more text> on the +
 							},
 						},
 						&types.BlankLine{},
-						types.CalloutListElement{
-							Ref: 1,
-							Elements: []interface{}{
-								&types.Paragraph{
+						&types.GenericList{
+							Kind: types.CalloutListKind,
+							Elements: []types.ListElement{
+								&types.CalloutListElement{
+									Ref: 1,
 									Elements: []interface{}{
-										types.StringElement{
-											Content: "a callout",
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "a callout",
+												},
+											},
 										},
 									},
 								},
@@ -601,6 +612,9 @@ and <more text> on the +
 <1> a callout
 `
 				expected := types.Document{
+					Attributes: types.Attributes{
+						"github-url": "https://github.com",
+					},
 					Elements: []interface{}{
 						&types.AttributeDeclaration{
 							Name:  "github-url",
@@ -618,7 +632,7 @@ and <more text> on the +
 								types.StringElement{
 									Content: "a link to ",
 								},
-								types.InlineLink{
+								&types.InlineLink{
 									Location: &types.Location{
 										Scheme: "https://",
 										Path: []interface{}{
@@ -648,14 +662,17 @@ and <more text> on the +
 							},
 						},
 						&types.BlankLine{},
-						types.CalloutListElement{
-							Ref: 1,
-							Elements: []interface{}{
-								&types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											types.StringElement{
-												Content: "a callout",
+						&types.GenericList{
+							Kind: types.CalloutListKind,
+							Elements: []types.ListElement{
+								&types.CalloutListElement{
+									Ref: 1,
+									Elements: []interface{}{
+										&types.Paragraph{
+											Elements: []interface{}{
+												types.StringElement{
+													Content: "a callout",
+												},
 											},
 										},
 									},
