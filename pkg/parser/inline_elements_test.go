@@ -16,14 +16,12 @@ var _ = Describe("inline elements", func() {
 			source := "*some bold content*"
 			expected := types.Document{
 				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								&types.QuotedText{
-									Kind: types.SingleQuoteBold,
-									Elements: []interface{}{
-										types.StringElement{Content: "some bold content"},
-									},
+					&types.Paragraph{
+						Elements: []interface{}{
+							&types.QuotedText{
+								Kind: types.SingleQuoteBold,
+								Elements: []interface{}{
+									types.StringElement{Content: "some bold content"},
 								},
 							},
 						},
@@ -37,18 +35,16 @@ var _ = Describe("inline elements", func() {
 			source := "(*some bold content*)"
 			expected := types.Document{
 				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "("},
-								&types.QuotedText{
-									Kind: types.SingleQuoteBold,
-									Elements: []interface{}{
-										types.StringElement{Content: "some bold content"},
-									},
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.StringElement{Content: "("},
+							&types.QuotedText{
+								Kind: types.SingleQuoteBold,
+								Elements: []interface{}{
+									types.StringElement{Content: "some bold content"},
 								},
-								types.StringElement{Content: ")"},
 							},
+							types.StringElement{Content: ")"},
 						},
 					},
 				},
@@ -60,11 +56,9 @@ var _ = Describe("inline elements", func() {
 			source := "some*bold*content"
 			expected := types.Document{
 				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "some*bold*content"},
-							},
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.StringElement{Content: "some*bold*content"},
 						},
 					},
 				},
@@ -76,11 +70,9 @@ var _ = Describe("inline elements", func() {
 			source := "some_italic_content"
 			expected := types.Document{
 				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "some_italic_content"},
-							},
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.StringElement{Content: "some_italic_content"},
 						},
 					},
 				},
@@ -91,11 +83,9 @@ var _ = Describe("inline elements", func() {
 			source := "some`monospace`content"
 			expected := types.Document{
 				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "some`monospace`content"},
-							},
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.StringElement{Content: "some`monospace`content"},
 						},
 					},
 				},
@@ -107,11 +97,9 @@ var _ = Describe("inline elements", func() {
 			source := "*foo*bar"
 			expected := types.Document{
 				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "*foo*bar"},
-							},
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.StringElement{Content: "*foo*bar"},
 						},
 					},
 				},
@@ -123,17 +111,15 @@ var _ = Describe("inline elements", func() {
 			source := "**foo**bar"
 			expected := types.Document{
 				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								&types.QuotedText{
-									Kind: types.DoubleQuoteBold,
-									Elements: []interface{}{
-										types.StringElement{Content: "foo"},
-									},
+					&types.Paragraph{
+						Elements: []interface{}{
+							&types.QuotedText{
+								Kind: types.DoubleQuoteBold,
+								Elements: []interface{}{
+									types.StringElement{Content: "foo"},
 								},
-								types.StringElement{Content: "bar"},
 							},
+							types.StringElement{Content: "bar"},
 						},
 					},
 				},
@@ -145,11 +131,9 @@ var _ = Describe("inline elements", func() {
 			source := "à bientôt"
 			expected := types.Document{
 				Elements: []interface{}{
-					types.Paragraph{
-						Lines: [][]interface{}{
-							{
-								types.StringElement{Content: "à bientôt"},
-							},
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.StringElement{Content: "à bientôt"},
 						},
 					},
 				},
