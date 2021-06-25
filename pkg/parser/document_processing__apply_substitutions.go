@@ -110,11 +110,11 @@ func processBlockWithElements(ctx *processContext, block types.WithElements) err
 		return err
 	}
 	// log.Debugf("applying substitutions on elements of block of type '%T'", block)
-	plan, err := newSubstitutionPlan(block)
+	plan, err := newSubstitutions(block)
 	if err != nil {
 		return err
 	}
-	elements, err := processElements(ctx, block.GetElements(), plan)
+	elements, err := plan.processElements(ctx, block.GetElements())
 	if err != nil {
 		return err
 	}
@@ -130,16 +130,16 @@ func processLabeledListElement(ctx *processContext, block *types.LabeledListElem
 		return err
 	}
 	// log.Debugf("applying substitutions on elements of block of type '%T'", block)
-	plan, err := newSubstitutionPlan(block)
+	plan, err := newSubstitutions(block)
 	if err != nil {
 		return err
 	}
-	term, err := processElements(ctx, block.Term, plan)
+	term, err := plan.processElements(ctx, block.Term)
 	if err != nil {
 		return err
 	}
 	block.Term = term
-	elements, err := processElements(ctx, block.GetElements(), plan)
+	elements, err := plan.processElements(ctx, block.GetElements())
 	if err != nil {
 		return err
 	}
@@ -166,37 +166,6 @@ func processBlockWithLocation(ctx *processContext, block types.WithLocation) err
 	return nil
 }
 
-func processElements(ctx *processContext, elements []interface{}, plan *substitutionPlan) ([]interface{}, error) {
-	// skip if there's nothing to do
-	if len(elements) == 0 {
-		return elements, nil
-	}
-	var err error
-	for _, step := range plan.steps {
-		// log.Debugf("applying step '%s'", step.group)
-		elements, err = parseElements(elements, step.group, GlobalStore(substitutionPhaseKey, step))
-		if err != nil {
-			return nil, err
-		}
-		if step.hasAttributeSubstitutions {
-			// log.WithField("group", step.group).Debug("attribute substitutions detected during parsing")
-			// apply substitutions on elements
-			elements, err = replaceAttributeSubstitutionsInElements(ctx, elements)
-			if err != nil {
-				return nil, err
-			}
-			elements = types.Merge(elements)
-			// re-run the Parser, skipping attribute substitutions and earlier rules this time
-			if step.reduce() {
-				if elements, err = parseElements(elements, step.group, GlobalStore(substitutionPhaseKey, step)); err != nil {
-					return nil, err
-				}
-			}
-		}
-	}
-	return elements, nil
-}
-
 func processAttributes(ctx *processContext, block types.WithAttributes) error {
 	if err := replaceAttributeSubstitutionsInAttributes(ctx, block); err != nil {
 		return err
@@ -210,37 +179,38 @@ func processAttributes(ctx *processContext, block types.WithAttributes) error {
 	return nil
 }
 
-type substitutionPlan struct {
-	steps []*substitutionStep
-}
+type substitutions []*substitution
 
-func newSubstitutionPlan(b types.WithAttributes) (*substitutionPlan, error) {
+func newSubstitutions(b types.WithAttributes) (substitutions, error) {
 	// TODO: introduce a `types.BlockWithSubstitution` interface?
 	// note: would also be helpful for paragraphs with `[listing]` style.
 	s, err := defaultSubstitution(b)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to determine substitution plan")
+		return nil, errors.Wrap(err, "unable to determine substitutions")
 	}
-	subs := b.GetAttributes().GetAsStringWithDefault(types.AttrSubstitutions, s)
-	steps := strings.Split(subs, ",")
-	plan := &substitutionPlan{
-		steps: make([]*substitutionStep, len(steps)),
+	subs := strings.Split(b.GetAttributes().GetAsStringWithDefault(types.AttrSubstitutions, s), ",")
+	result := make([]*substitution, len(subs))
+	for i, sub := range subs {
+		if result[i], err = newSubstitution(sub); err != nil {
+			return nil, err
+		}
 	}
-	for i, step := range steps {
-		s, err := newSubstitutionStep(step)
+	return result, nil
+}
+
+func (s substitutions) processElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
+	// skip if there's nothing to do
+	if len(elements) == 0 {
+		return elements, nil
+	}
+	for _, substitution := range s {
+		var err error
+		elements, err = substitution.processElements(ctx, elements)
 		if err != nil {
 			return nil, err
 		}
-		plan.steps[i] = s
 	}
-	if log.IsLevelEnabled(log.DebugLevel) {
-		steps := make([]substitutionGroup, len(plan.steps))
-		for i, p := range plan.steps {
-			steps[i] = p.group
-		}
-		// log.Debugf("applying steps: '%s'", steps)
-	}
-	return plan, nil
+	return elements, nil
 }
 
 func defaultSubstitution(b interface{}) (string, error) {
@@ -252,17 +222,13 @@ func defaultSubstitution(b interface{}) (string, error) {
 		default:
 			return "", fmt.Errorf("unsupported kind of delimited block: '%v'", b.Kind)
 		}
-	case *types.Paragraph, *types.GenericList, *types.Section:
+	case *types.Paragraph, *types.GenericList:
 		return "normal", nil
+	case *types.Section:
+		return "header", nil
 	default:
 		return "", fmt.Errorf("unsupported kind of element: '%T'", b)
 	}
-}
-
-type substitutionStep struct {
-	group                     substitutionGroup
-	enablements               map[SubstitutionKind]bool
-	hasAttributeSubstitutions bool
 }
 
 type substitutionGroup string
@@ -280,6 +246,12 @@ const (
 	VerbatimGroup          substitutionGroup = "VerbatimGroup"
 )
 
+type substitution struct {
+	group                     substitutionGroup
+	enablements               map[SubstitutionKind]bool
+	hasAttributeSubstitutions bool
+}
+
 //TODO: simplify by using a single grammar rule and turn-off choices?
 var substitutionGroups = map[string]substitutionGroup{
 	"":                  NormalGroup,
@@ -295,19 +267,43 @@ var substitutionGroups = map[string]substitutionGroup{
 	"verbatim":          VerbatimGroup,
 }
 
-func newSubstitutionStep(kind string) (*substitutionStep, error) {
+func newSubstitution(kind string) (*substitution, error) {
 	group, found := substitutionGroups[kind]
 	if !found {
 		return nil, fmt.Errorf("unsupported kind of substitution: '%v'", kind)
 	}
-	s := &substitutionStep{
+	s := &substitution{
 		group: group,
 	}
 	s.reset()
 	return s, nil
 }
 
-func (s *substitutionStep) reset() {
+func (step *substitution) processElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
+	// log.Debugf("applying step '%s'", step.group)
+	elements, err := parseElements(elements, step.group, GlobalStore(substitutionPhaseKey, step))
+	if err != nil {
+		return nil, err
+	}
+	if step.hasAttributeSubstitutions {
+		// log.WithField("group", step.group).Debug("attribute substitutions detected during parsing")
+		// apply substitutions on elements
+		elements, err = replaceAttributeSubstitutionsInElements(ctx, elements)
+		if err != nil {
+			return nil, err
+		}
+		elements = types.Merge(elements)
+		// re-run the Parser, skipping attribute substitutions and earlier rules this time
+		if step.reduce() {
+			if elements, err = parseElements(elements, step.group, GlobalStore(substitutionPhaseKey, step)); err != nil {
+				return nil, err
+			}
+		}
+	}
+	return elements, nil
+}
+
+func (s *substitution) reset() {
 	switch s.group {
 	case AttributesGroup:
 		s.enablements = map[SubstitutionKind]bool{
@@ -365,7 +361,7 @@ func (s *substitutionStep) reset() {
 
 // disables the "inline_passthroughs", "special_characters" and "attributes" substitution
 // return `true` if there are more enablements to apply, `false` otherwise (ie, no substitution would be applied if the content was parsed again)
-func (s *substitutionStep) reduce() bool { // TODO: rename this func
+func (s *substitution) reduce() bool { // TODO: rename this func
 	s.reset()
 	for sub := range s.enablements {
 		switch sub {
@@ -382,8 +378,8 @@ func (s *substitutionStep) reduce() bool { // TODO: rename this func
 // sets the new substitution plan in the golbal store, overriding any exist–ing one
 // NOTE: will override any existing substitution context
 // TODO: is there any case where a stack would be needed, so we don't override an existing context?
-func (c *current) setSubstitutionPhase(kind string) error {
-	p, err := newSubstitutionStep(kind)
+func (c *current) setCurrentSubstitution(kind string) error {
+	p, err := newSubstitution(kind)
 	if err != nil {
 		return err
 	}
@@ -391,12 +387,12 @@ func (c *current) setSubstitutionPhase(kind string) error {
 	return nil
 }
 
-func (c *current) unsetSubstitutionPhase() {
+func (c *current) unsetCurrentSubstitution() {
 	delete(c.globalStore, substitutionPhaseKey)
 }
 
-func (c *current) lookupSubstitutionPhase() (*substitutionStep, error) {
-	ctx, ok := c.globalStore[substitutionPhaseKey].(*substitutionStep)
+func (c *current) lookupCurrentSubstitution() (*substitution, error) {
+	ctx, ok := c.globalStore[substitutionPhaseKey].(*substitution)
 	if !ok {
 		return nil, fmt.Errorf("unable to look-up the substitution context in the parser's global store")
 	}
@@ -406,7 +402,7 @@ func (c *current) lookupSubstitutionPhase() (*substitutionStep, error) {
 // called when an attribute substitution occurred
 // TODO: find a better name for this method
 func (c *current) hasAttributeSubstitutions() error {
-	phase, err := c.lookupSubstitutionPhase()
+	phase, err := c.lookupCurrentSubstitution()
 	if err != nil {
 		return err
 	}
@@ -422,7 +418,7 @@ func (c *current) hasAttributeSubstitutions() error {
 }
 
 func (c *current) isSubstitutionEnabled(k SubstitutionKind) (bool, error) {
-	phase, err := c.lookupSubstitutionPhase()
+	phase, err := c.lookupCurrentSubstitution()
 	if err != nil {
 		return false, err
 	}

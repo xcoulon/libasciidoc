@@ -37422,7 +37422,7 @@ func (p *parser) callonDefaultDocumentFragmentElement321() (interface{}, error) 
 
 func (c *current) onDefaultDocumentFragmentElement353() error {
 	// for attribute declarations, we always enable the 'header' substitutions
-	return c.setSubstitutionPhase("header")
+	return c.setCurrentSubstitution("header")
 
 }
 
@@ -38120,7 +38120,7 @@ func (p *parser) callonDocumentFragmentElementWithinDelimitedBlock1() (interface
 
 func (c *current) onBlockAttributes3() error {
 	// for block attributes, we always enable the 'header' substitutions
-	return c.setSubstitutionPhase("header")
+	return c.setCurrentSubstitution("header")
 
 }
 
@@ -38642,7 +38642,7 @@ func (p *parser) callonBlockAttributes187() (interface{}, error) {
 }
 
 func (c *current) onBlockAttributes1(attributes interface{}) (interface{}, error) {
-	c.unsetSubstitutionPhase()
+	c.unsetCurrentSubstitution()
 	return types.NewAttributes(attributes.([]interface{})...)
 
 }
@@ -43777,7 +43777,7 @@ func (p *parser) callonIndexTermContent1() (interface{}, error) {
 
 func (c *current) onImageBlock3() error {
 	// for images, we always enable the 'normal' substitutions
-	return c.setSubstitutionPhase("normal")
+	return c.setCurrentSubstitution("normal")
 
 }
 
@@ -44303,7 +44303,7 @@ func (p *parser) callonImageBlock200() (interface{}, error) {
 }
 
 func (c *current) onImageBlock1(path, inlineAttributes interface{}) (interface{}, error) {
-	c.unsetSubstitutionPhase()
+	c.unsetCurrentSubstitution()
 	// 'imagesdir' attribute is added after applying the attribute substitutions on the image location
 	return types.NewImageBlock(path.(*types.Location), inlineAttributes.(types.Attributes), c.globalStore.getAttributes())
 

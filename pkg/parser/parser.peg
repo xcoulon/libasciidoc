@@ -82,7 +82,7 @@ Admonition <-  kind:(AdmonitionKind) ": " content:([^\r\n]* {
 AttributeDeclaration <- 
     #{
         // for attribute declarations, we always enable the 'header' substitutions
-        return c.setSubstitutionPhase("header")
+        return c.setCurrentSubstitution("header")
     }
     ":" name:(AttributeName) ":" 
     value:(AttributeDeclarationValue)? 
@@ -128,7 +128,7 @@ AttributeReset <- ":!" name:(AttributeName) ":" Space* EOF {
 BlockAttributes <- 
     #{
         // for block attributes, we always enable the 'header' substitutions
-        return c.setSubstitutionPhase("header")
+        return c.setCurrentSubstitution("header")
     }
     attributes:(
         // shorthand syntax for anchors. Eg: `[[an_id]]`
@@ -144,7 +144,7 @@ BlockAttributes <-
             return attributes, nil
         })
     )+ {
-        c.unsetSubstitutionPhase()
+        c.unsetCurrentSubstitution()
         return types.NewAttributes(attributes.([]interface{})...)
     }  
 
@@ -914,10 +914,10 @@ ImageBlock <-
     // }
     #{
         // for images, we always enable the 'normal' substitutions
-        return c.setSubstitutionPhase("normal")
+        return c.setCurrentSubstitution("normal")
     }
     "image::" path:(Location) inlineAttributes:(InlineAttributes) Space* {
-        c.unsetSubstitutionPhase()
+        c.unsetCurrentSubstitution()
         // 'imagesdir' attribute is added after applying the attribute substitutions on the image location
         return types.NewImageBlock(path.(*types.Location), inlineAttributes.(types.Attributes), c.globalStore.getAttributes())
     }
@@ -1730,10 +1730,10 @@ Section <-
     } 
     // #{
     //     // for section, we always enable the 'normal' substitutions
-    //     return c.setSubstitutionPhase("normal")
+    //     return c.setCurrentSubstitution("normal")
     // }
     // Space+ title:(SectionTitleElements) id:(InlineElementID*) {
-    //     c.unsetSubstitutionPhase()
+    //     c.unsetCurrentSubstitution()
     //     return types.NewSection(level.(int), title.(types.InlineElements), id.([]interface{})) 
     // }
     Space+ title:(RawSectionTitle) EOL {
