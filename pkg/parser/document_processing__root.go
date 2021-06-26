@@ -20,9 +20,14 @@ func ParseDocument(r io.Reader, config configuration.Configuration, opts ...Opti
 	pipeline :=
 		// TODO: AggregateSections(...) ?
 		ProcessSubstitutions(ctx, done,
-			ArrangeLists(done,
-				AssembleFragments(done,
-					ScanDocument(r, done, opts...))))
+			SplitElements(done,
+				ArrangeLists(done,
+					AssembleFragments(done,
+						ScanDocument(r, done, opts...),
+					),
+				),
+			),
+		)
 	for f := range pipeline {
 		// if log.IsLevelEnabled(log.DebugLevel) {
 		// 	log.WithField("_state", "document_parsing").Debugf("received document fragment: %s", spew.Sdump(f))
