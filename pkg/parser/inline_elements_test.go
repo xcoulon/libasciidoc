@@ -21,7 +21,7 @@ var _ = Describe("inline elements", func() {
 							&types.QuotedText{
 								Kind: types.SingleQuoteBold,
 								Elements: []interface{}{
-									types.StringElement{Content: "some bold content"},
+									&types.StringElement{Content: "some bold content"},
 								},
 							},
 						},
@@ -37,14 +37,14 @@ var _ = Describe("inline elements", func() {
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
-							types.StringElement{Content: "("},
+							&types.StringElement{Content: "("},
 							&types.QuotedText{
 								Kind: types.SingleQuoteBold,
 								Elements: []interface{}{
-									types.StringElement{Content: "some bold content"},
+									&types.StringElement{Content: "some bold content"},
 								},
 							},
-							types.StringElement{Content: ")"},
+							&types.StringElement{Content: ")"},
 						},
 					},
 				},
@@ -58,7 +58,7 @@ var _ = Describe("inline elements", func() {
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
-							types.StringElement{Content: "some*bold*content"},
+							&types.StringElement{Content: "some*bold*content"},
 						},
 					},
 				},
@@ -72,7 +72,7 @@ var _ = Describe("inline elements", func() {
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
-							types.StringElement{Content: "some_italic_content"},
+							&types.StringElement{Content: "some_italic_content"},
 						},
 					},
 				},
@@ -85,7 +85,7 @@ var _ = Describe("inline elements", func() {
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
-							types.StringElement{Content: "some`monospace`content"},
+							&types.StringElement{Content: "some`monospace`content"},
 						},
 					},
 				},
@@ -99,7 +99,7 @@ var _ = Describe("inline elements", func() {
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
-							types.StringElement{Content: "*foo*bar"},
+							&types.StringElement{Content: "*foo*bar"},
 						},
 					},
 				},
@@ -116,10 +116,10 @@ var _ = Describe("inline elements", func() {
 							&types.QuotedText{
 								Kind: types.DoubleQuoteBold,
 								Elements: []interface{}{
-									types.StringElement{Content: "foo"},
+									&types.StringElement{Content: "foo"},
 								},
 							},
-							types.StringElement{Content: "bar"},
+							&types.StringElement{Content: "bar"},
 						},
 					},
 				},
@@ -133,7 +133,7 @@ var _ = Describe("inline elements", func() {
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
-							types.StringElement{Content: "à bientôt"},
+							&types.StringElement{Content: "à bientôt"},
 						},
 					},
 				},

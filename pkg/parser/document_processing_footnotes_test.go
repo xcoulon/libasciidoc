@@ -15,25 +15,25 @@ var _ = Describe("footnotes", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "A statement.",
 						},
 						types.Footnote{
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "a regular footnote.",
 								},
 							},
 						},
 					},
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "A bold statement!",
 						},
 						types.Footnote{
 							Ref: "disclaimer",
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "Opinions are my own.",
 								},
 							},
@@ -45,7 +45,7 @@ var _ = Describe("footnotes", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Another outrageous statement.",
 						},
 						types.Footnote{
@@ -60,7 +60,7 @@ var _ = Describe("footnotes", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "A statement.",
 						},
 						types.FootnoteReference{
@@ -68,7 +68,7 @@ var _ = Describe("footnotes", func() {
 						},
 					},
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "A bold statement!",
 						},
 						types.FootnoteReference{
@@ -82,7 +82,7 @@ var _ = Describe("footnotes", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Another outrageous statement.",
 						},
 						types.FootnoteReference{
@@ -98,7 +98,7 @@ var _ = Describe("footnotes", func() {
 			{
 				ID: 1,
 				Elements: []interface{}{
-					types.StringElement{
+					&types.StringElement{
 						Content: "a regular footnote.",
 					},
 				},
@@ -107,7 +107,7 @@ var _ = Describe("footnotes", func() {
 				ID:  2,
 				Ref: "disclaimer",
 				Elements: []interface{}{
-					types.StringElement{
+					&types.StringElement{
 						Content: "Opinions are my own.",
 					},
 				},

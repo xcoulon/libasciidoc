@@ -80,7 +80,7 @@ var _ = Describe("paragraphs", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "text ***"},
+								&types.StringElement{Content: "text ***"},
 							},
 						},
 					},
@@ -102,7 +102,7 @@ var _ = Describe("paragraphs", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "* * text"},
+												&types.StringElement{Content: "* * text"},
 											},
 										},
 									},

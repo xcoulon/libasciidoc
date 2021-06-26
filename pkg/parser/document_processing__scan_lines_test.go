@@ -12,7 +12,7 @@ import (
 	. "github.com/onsi/gomega" //nolint golint
 )
 
-var _ = Describe("document fragment group parsing", func() {
+var _ = Describe("document scanning", func() {
 
 	It("should collect 1 fragment with single line", func() {
 		source := `a line`
@@ -101,11 +101,11 @@ a line
 			{
 				LineOffset: 1,
 				Elements: []interface{}{
-					types.BlockDelimiter{
+					&types.BlockDelimiter{
 						Kind: types.Listing,
 					},
 					types.RawLine("a line"),
-					types.BlockDelimiter{
+					&types.BlockDelimiter{
 						Kind: types.Listing,
 					},
 				},
@@ -127,15 +127,15 @@ not a sidebar block
 			{
 				LineOffset: 1,
 				Elements: []interface{}{
-					types.BlockDelimiter{
+					&types.BlockDelimiter{
 						Kind: types.Listing,
 					},
 					types.RawLine("a line"),
-					&types.BlankLine{},
+					types.RawLine(""),
 					types.RawLine("****"),
 					types.RawLine("not a sidebar block"),
 					types.RawLine("****"),
-					types.BlockDelimiter{
+					&types.BlockDelimiter{
 						Kind: types.Listing,
 					},
 				},
@@ -161,13 +161,13 @@ on
 			{
 				LineOffset: 1,
 				Elements: []interface{}{
-					types.BlockDelimiter{
+					&types.BlockDelimiter{
 						Kind: types.Listing,
 					},
 					types.RawLine("a line"),
-					&types.BlankLine{},
+					types.RawLine(""),
 					types.RawLine("another line"),
-					types.BlockDelimiter{
+					&types.BlockDelimiter{
 						Kind: types.Listing,
 					},
 					&types.BlankLine{},

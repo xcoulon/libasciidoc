@@ -30,18 +30,18 @@ ____`
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "some ",
 										},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "quote",
 												},
 											},
 										},
-										types.StringElement{
+										&types.StringElement{
 											Content: " content",
 										},
 									},
@@ -78,7 +78,7 @@ ____
 											Elements: []interface{}{
 												&types.Paragraph{
 													Elements: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "some ",
 														},
 													},
@@ -91,7 +91,7 @@ ____
 											Elements: []interface{}{
 												&types.Paragraph{
 													Elements: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "quote ",
 														},
 													},
@@ -104,7 +104,7 @@ ____
 											Elements: []interface{}{
 												&types.Paragraph{
 													Elements: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "content ",
 														},
 													},
@@ -136,7 +136,7 @@ ____
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "some quote content ",
 										},
 									},
@@ -193,7 +193,7 @@ ____`
 											Elements: []interface{}{
 												&types.Paragraph{
 													Elements: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "some",
 														},
 													},
@@ -204,7 +204,7 @@ ____`
 								},
 								types.ListingBlock{
 									Elements: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "* quote ",
 										},
 									},
@@ -218,7 +218,7 @@ ____`
 											Elements: []interface{}{
 												&types.Paragraph{
 													Elements: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "content",
 														},
 													},
@@ -261,7 +261,7 @@ ____`
 											Elements: []interface{}{
 												&types.Paragraph{
 													Elements: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "some",
 														},
 													},
@@ -274,7 +274,7 @@ ____`
 											Elements: []interface{}{
 												&types.Paragraph{
 													Elements: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "quote ",
 														},
 													},
@@ -287,7 +287,7 @@ ____`
 											Elements: []interface{}{
 												&types.Paragraph{
 													Elements: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "content",
 														},
 													},
@@ -334,7 +334,7 @@ foo
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "foo",
 										},
 									},

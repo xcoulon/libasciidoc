@@ -27,7 +27,7 @@ var _ = Describe("unordered lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "a list element"},
+												&types.StringElement{Content: "a list element"},
 											},
 										},
 									},
@@ -60,7 +60,7 @@ var _ = Describe("unordered lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "a list element"},
+												&types.StringElement{Content: "a list element"},
 											},
 										},
 									},
@@ -89,7 +89,7 @@ var _ = Describe("unordered lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "a list element"},
+												&types.StringElement{Content: "a list element"},
 											},
 										},
 									},
@@ -115,7 +115,7 @@ var _ = Describe("unordered lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "a first item"},
+												&types.StringElement{Content: "a first item"},
 											},
 										},
 									},
@@ -126,11 +126,11 @@ var _ = Describe("unordered lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "a second item with "},
+												&types.StringElement{Content: "a second item with "},
 												&types.QuotedText{
 													Kind: types.SingleQuoteBold,
 													Elements: []interface{}{
-														types.StringElement{Content: "bold content"},
+														&types.StringElement{Content: "bold content"},
 													},
 												},
 											},
@@ -168,7 +168,7 @@ var _ = Describe("unordered lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "list element 1"},
+												&types.StringElement{Content: "list element 1"},
 											},
 										},
 										&types.GenericList{
@@ -180,7 +180,7 @@ var _ = Describe("unordered lists", func() {
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "nested list element A"},
+																&types.StringElement{Content: "nested list element A"},
 															},
 														},
 														&types.GenericList{
@@ -192,7 +192,7 @@ var _ = Describe("unordered lists", func() {
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "nested nested list element A.1"},
+																				&types.StringElement{Content: "nested nested list element A.1"},
 																			},
 																		},
 																	},
@@ -203,7 +203,7 @@ var _ = Describe("unordered lists", func() {
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "nested nested list element A.2"},
+																				&types.StringElement{Content: "nested nested list element A.2"},
 																			},
 																		},
 																	},
@@ -218,7 +218,7 @@ var _ = Describe("unordered lists", func() {
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "nested list element B"},
+																&types.StringElement{Content: "nested list element B"},
 															},
 														},
 														&types.GenericList{
@@ -230,7 +230,7 @@ var _ = Describe("unordered lists", func() {
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "nested nested list element B.1"},
+																				&types.StringElement{Content: "nested nested list element B.1"},
 																			},
 																		},
 																	},
@@ -241,7 +241,7 @@ var _ = Describe("unordered lists", func() {
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "nested nested list element B.2"},
+																				&types.StringElement{Content: "nested nested list element B.2"},
 																			},
 																		},
 																	},
@@ -260,7 +260,7 @@ var _ = Describe("unordered lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "list element 2"},
+												&types.StringElement{Content: "list element 2"},
 											},
 										},
 									},
@@ -286,7 +286,7 @@ var _ = Describe("unordered lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "a first item"},
+												&types.StringElement{Content: "a first item"},
 											},
 										},
 									},
@@ -297,11 +297,11 @@ var _ = Describe("unordered lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "a second item with "},
+												&types.StringElement{Content: "a second item with "},
 												&types.QuotedText{
 													Kind: types.SingleQuoteBold,
 													Elements: []interface{}{
-														types.StringElement{Content: "bold content"},
+														&types.StringElement{Content: "bold content"},
 													},
 												},
 											},
@@ -332,7 +332,7 @@ var _ = Describe("unordered lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "a parent item"},
+												&types.StringElement{Content: "a parent item"},
 											},
 										},
 										&types.GenericList{
@@ -344,7 +344,7 @@ var _ = Describe("unordered lists", func() {
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "a child item"},
+																&types.StringElement{Content: "a child item"},
 															},
 														},
 													},
@@ -359,7 +359,7 @@ var _ = Describe("unordered lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "another parent item"},
+												&types.StringElement{Content: "another parent item"},
 											},
 										},
 										&types.GenericList{
@@ -371,7 +371,7 @@ var _ = Describe("unordered lists", func() {
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "another child item"},
+																&types.StringElement{Content: "another child item"},
 															},
 														},
 														&types.GenericList{
@@ -383,7 +383,7 @@ var _ = Describe("unordered lists", func() {
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "with a sub child item"},
+																				&types.StringElement{Content: "with a sub child item"},
 																			},
 																		},
 																	},
@@ -419,7 +419,7 @@ var _ = Describe("unordered lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "a first item"},
+												&types.StringElement{Content: "a first item"},
 											},
 										},
 									},
@@ -430,11 +430,11 @@ var _ = Describe("unordered lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "a second item with "},
+												&types.StringElement{Content: "a second item with "},
 												&types.QuotedText{
 													Kind: types.SingleQuoteBold,
 													Elements: []interface{}{
-														types.StringElement{Content: "bold content"},
+														&types.StringElement{Content: "bold content"},
 													},
 												},
 											},
@@ -463,7 +463,7 @@ on 2 lines, too.`
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "item 1\n  on 2 lines."}, // heading spaces are not trimmed
+												&types.StringElement{Content: "item 1\n  on 2 lines."}, // heading spaces are not trimmed
 											},
 										},
 									},
@@ -474,7 +474,7 @@ on 2 lines, too.`
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "item 2\non 2 lines, too."},
+												&types.StringElement{Content: "item 2\non 2 lines, too."},
 											},
 										},
 									},
@@ -502,7 +502,7 @@ on 2 lines, too.`
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "an item in the first list"},
+												&types.StringElement{Content: "an item in the first list"},
 											},
 										},
 									},
@@ -513,7 +513,7 @@ on 2 lines, too.`
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "an item in the second list"},
+												&types.StringElement{Content: "an item in the second list"},
 											},
 										},
 									},
@@ -545,7 +545,7 @@ on 2 lines, too.`
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "item 1"},
+												&types.StringElement{Content: "item 1"},
 											},
 										},
 										&types.GenericList{
@@ -557,7 +557,7 @@ on 2 lines, too.`
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "item 1.1"},
+																&types.StringElement{Content: "item 1.1"},
 															},
 														},
 													},
@@ -568,7 +568,7 @@ on 2 lines, too.`
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "item 1.2"},
+																&types.StringElement{Content: "item 1.2"},
 															},
 														},
 														&types.GenericList{
@@ -580,7 +580,7 @@ on 2 lines, too.`
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "item 1.2.1"},
+																				&types.StringElement{Content: "item 1.2.1"},
 																			},
 																		},
 																	},
@@ -595,7 +595,7 @@ on 2 lines, too.`
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "item 1.3"},
+																&types.StringElement{Content: "item 1.3"},
 															},
 														},
 													},
@@ -606,7 +606,7 @@ on 2 lines, too.`
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "item 1.4"},
+																&types.StringElement{Content: "item 1.4"},
 															},
 														},
 													},
@@ -621,7 +621,7 @@ on 2 lines, too.`
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "item 2"},
+												&types.StringElement{Content: "item 2"},
 											},
 										},
 										&types.GenericList{
@@ -633,7 +633,7 @@ on 2 lines, too.`
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "item 2.1"},
+																&types.StringElement{Content: "item 2.1"},
 															},
 														},
 													},
@@ -671,7 +671,7 @@ on 2 lines, too.`
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "level 1"},
+												&types.StringElement{Content: "level 1"},
 											},
 										},
 										&types.GenericList{
@@ -683,7 +683,7 @@ on 2 lines, too.`
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "level 2"},
+																&types.StringElement{Content: "level 2"},
 															},
 														},
 														&types.GenericList{
@@ -695,7 +695,7 @@ on 2 lines, too.`
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "level 3"},
+																				&types.StringElement{Content: "level 3"},
 																			},
 																		},
 																		&types.GenericList{
@@ -707,7 +707,7 @@ on 2 lines, too.`
 																					Elements: []interface{}{
 																						&types.Paragraph{
 																							Elements: []interface{}{
-																								types.StringElement{Content: "level 4"},
+																								&types.StringElement{Content: "level 4"},
 																							},
 																						},
 																						&types.GenericList{
@@ -719,7 +719,7 @@ on 2 lines, too.`
 																									Elements: []interface{}{
 																										&types.Paragraph{
 																											Elements: []interface{}{
-																												types.StringElement{Content: "level 5"},
+																												&types.StringElement{Content: "level 5"},
 																											},
 																										},
 																									},
@@ -746,7 +746,7 @@ on 2 lines, too.`
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "level 1"},
+												&types.StringElement{Content: "level 1"},
 											},
 										},
 									},
@@ -780,7 +780,7 @@ on 2 lines, too.`
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "level 1"},
+												&types.StringElement{Content: "level 1"},
 											},
 										},
 										&types.GenericList{
@@ -792,7 +792,7 @@ on 2 lines, too.`
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "level 2"},
+																&types.StringElement{Content: "level 2"},
 															},
 														},
 														&types.GenericList{
@@ -804,7 +804,7 @@ on 2 lines, too.`
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "level 3"},
+																				&types.StringElement{Content: "level 3"},
 																			},
 																		},
 																		&types.GenericList{
@@ -816,7 +816,7 @@ on 2 lines, too.`
 																					Elements: []interface{}{
 																						&types.Paragraph{
 																							Elements: []interface{}{
-																								types.StringElement{Content: "level 4"},
+																								&types.StringElement{Content: "level 4"},
 																							},
 																						},
 																						&types.GenericList{
@@ -828,7 +828,7 @@ on 2 lines, too.`
 																									Elements: []interface{}{
 																										&types.Paragraph{
 																											Elements: []interface{}{
-																												types.StringElement{Content: "level 5"},
+																												&types.StringElement{Content: "level 5"},
 																											},
 																										},
 																									},
@@ -851,7 +851,7 @@ on 2 lines, too.`
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "level 2"},
+																&types.StringElement{Content: "level 2"},
 															},
 														},
 													},
@@ -911,7 +911,7 @@ on 2 lines, too.`
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "item 1"},
+												&types.StringElement{Content: "item 1"},
 											},
 										},
 										&types.GenericList{
@@ -923,7 +923,7 @@ on 2 lines, too.`
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "item 1.1"},
+																&types.StringElement{Content: "item 1.1"},
 															},
 														},
 														&types.GenericList{
@@ -935,7 +935,7 @@ on 2 lines, too.`
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "item 1.1.1"},
+																				&types.StringElement{Content: "item 1.1.1"},
 																			},
 																		},
 																	},
@@ -950,7 +950,7 @@ on 2 lines, too.`
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "item 1.2"},
+																&types.StringElement{Content: "item 1.2"},
 															},
 														},
 													},
@@ -965,7 +965,7 @@ on 2 lines, too.`
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "item 2"},
+												&types.StringElement{Content: "item 2"},
 											},
 										},
 									},
@@ -983,7 +983,7 @@ on 2 lines, too.`
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "*an invalid list element"},
+								&types.StringElement{Content: "*an invalid list element"},
 							},
 						},
 					},
@@ -1017,7 +1017,7 @@ another delimited block
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "foo",
 												},
 											},
@@ -1026,7 +1026,7 @@ another delimited block
 										&types.DelimitedBlock{
 											Kind: types.Listing,
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "a delimited block",
 												},
 											},
@@ -1035,7 +1035,7 @@ another delimited block
 										&types.DelimitedBlock{
 											Kind: types.Listing,
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "another delimited block",
 												},
 											},
@@ -1048,7 +1048,7 @@ another delimited block
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "bar",
 												},
 											},
@@ -1090,7 +1090,7 @@ The {plus} symbol is on a new line.
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "level 1"},
+												&types.StringElement{Content: "level 1"},
 											},
 										},
 										&types.GenericList{
@@ -1102,7 +1102,7 @@ The {plus} symbol is on a new line.
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{
+																&types.StringElement{
 																	Content: "level 2",
 																},
 															},
@@ -1116,17 +1116,17 @@ The {plus} symbol is on a new line.
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{
+																				&types.StringElement{
 																					Content: "level 3\nThis is a new line inside an unordered list using ",
 																				},
 																				types.PredefinedAttribute{
 																					Name: "plus",
 																				},
-																				types.StringElement{
+																				&types.StringElement{
 																					Content: " symbol.\nWe can even force content to start on a separate line\u2026\u200b",
 																				},
 																				types.LineBreak{},
-																				types.StringElement{
+																				&types.StringElement{
 																					Content: "\nAmazing, isn\u2019t it?",
 																				},
 																			},
@@ -1140,7 +1140,7 @@ The {plus} symbol is on a new line.
 																					Elements: []interface{}{
 																						&types.Paragraph{
 																							Elements: []interface{}{
-																								types.StringElement{
+																								&types.StringElement{
 																									Content: "level 4",
 																								},
 																							},
@@ -1149,13 +1149,13 @@ The {plus} symbol is on a new line.
 																						&types.ListElementContinuation{},
 																						&types.Paragraph{
 																							Elements: []interface{}{
-																								types.StringElement{
+																								&types.StringElement{
 																									Content: "The ",
 																								},
 																								types.PredefinedAttribute{
 																									Name: "plus",
 																								},
-																								types.StringElement{
+																								&types.StringElement{
 																									Content: " symbol is on a new line.",
 																								},
 																							},
@@ -1169,7 +1169,7 @@ The {plus} symbol is on a new line.
 																									Elements: []interface{}{
 																										&types.Paragraph{
 																											Elements: []interface{}{
-																												types.StringElement{
+																												&types.StringElement{
 																													Content: "level 5",
 																												},
 																											},
@@ -1222,7 +1222,7 @@ another delimited block
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "foo"},
+												&types.StringElement{Content: "foo"},
 											},
 										},
 									},
@@ -1232,7 +1232,7 @@ another delimited block
 						&types.DelimitedBlock{
 							Kind: types.Listing,
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "a delimited block",
 								},
 							},
@@ -1247,7 +1247,7 @@ another delimited block
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "bar"},
+												&types.StringElement{Content: "bar"},
 											},
 										},
 									},
@@ -1257,7 +1257,7 @@ another delimited block
 						&types.DelimitedBlock{
 							Kind: types.Listing,
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "another delimited block",
 								},
 							},
@@ -1289,7 +1289,7 @@ paragraph attached to grandparent list element`
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "grandparent list element"},
+												&types.StringElement{Content: "grandparent list element"},
 											},
 										},
 										&types.GenericList{
@@ -1301,7 +1301,7 @@ paragraph attached to grandparent list element`
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "parent list element"},
+																&types.StringElement{Content: "parent list element"},
 															},
 														},
 														&types.GenericList{
@@ -1313,7 +1313,7 @@ paragraph attached to grandparent list element`
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "child list element"},
+																				&types.StringElement{Content: "child list element"},
 																			},
 																		},
 																	},
@@ -1327,7 +1327,7 @@ paragraph attached to grandparent list element`
 										&types.ListElementContinuation{},
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "paragraph attached to grandparent list element"},
+												&types.StringElement{Content: "paragraph attached to grandparent list element"},
 											},
 										},
 									},
@@ -1357,7 +1357,7 @@ paragraph attached to parent list element`
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "grandparent list element",
 												},
 											},
@@ -1371,7 +1371,7 @@ paragraph attached to parent list element`
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{
+																&types.StringElement{
 																	Content: "parent list element",
 																},
 															},
@@ -1385,7 +1385,7 @@ paragraph attached to parent list element`
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{
+																				&types.StringElement{
 																					Content: "child list element",
 																				},
 																			},
@@ -1397,7 +1397,7 @@ paragraph attached to parent list element`
 														&types.ListElementContinuation{},
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{
+																&types.StringElement{
 																	Content: "paragraph attached to parent list element",
 																},
 															},

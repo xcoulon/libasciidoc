@@ -429,7 +429,7 @@ package parser
 // 	result := make([]interface{}, 0, len(elements)) // default capacity (but may not be enough)
 // 	for _, element := range elements {
 // 		switch element := element.(type) {
-// 		case types.StringElement:
+// 		case *types.StringElement:
 // 			elmts, err := parseContent("", element.Content, opts...)
 // 			if err != nil {
 // 				return nil, err
@@ -497,7 +497,7 @@ package parser
 // 	for i, line := range lines {
 // 		for _, e := range line {
 // 			switch e := e.(type) {
-// 			case types.StringElement:
+// 			case *types.StringElement:
 // 				result.WriteString(e.Content)
 // 			case types.SingleLineComment:
 // 				// replace with placeholder
@@ -526,7 +526,7 @@ package parser
 // 		pendingLine := []interface{}{}
 // 		for _, element := range line {
 // 			switch element := element.(type) {
-// 			case types.StringElement:
+// 			case *types.StringElement:
 // 				// if content has line feeds, then split in multiple lines
 // 				split := strings.Split(element.Content, "\n")
 // 				for i, s := range split {
@@ -686,9 +686,9 @@ package parser
 // 		ctx.attributes.Counters[c.Name] = counter
 // 		if c.Hidden {
 // 			// return empty string facilitates merging
-// 			return types.StringElement{Content: ""}, nil
+// 			return &types.StringElement{Content: ""}, nil
 // 		}
-// 		return types.StringElement{
+// 		return &types.StringElement{
 // 			Content: strconv.Itoa(counter),
 // 		}, nil
 // 	case rune:
@@ -698,9 +698,9 @@ package parser
 // 		ctx.attributes.Counters[c.Name] = counter
 // 		if c.Hidden {
 // 			// return empty string facilitates merging
-// 			return types.StringElement{Content: ""}, nil
+// 			return &types.StringElement{Content: ""}, nil
 // 		}
-// 		return types.StringElement{
+// 		return &types.StringElement{
 // 			Content: string(counter),
 // 		}, nil
 

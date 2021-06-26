@@ -20,16 +20,16 @@ var _ = Describe("rearrange sections", func() {
 		// == Section B
 		// a paragraph
 		doctitle := []interface{}{
-			types.StringElement{Content: "a header"},
+			&types.StringElement{Content: "a header"},
 		}
 		sectionATitle := []interface{}{
-			types.StringElement{Content: "Section A"},
+			&types.StringElement{Content: "Section A"},
 		}
 		sectionAaTitle := []interface{}{
-			types.StringElement{Content: "Section A.a"},
+			&types.StringElement{Content: "Section A.a"},
 		}
 		sectionBTitle := []interface{}{
-			types.StringElement{Content: "Section B"},
+			&types.StringElement{Content: "Section B"},
 		}
 		actual := []interface{}{
 			types.Section{
@@ -50,7 +50,7 @@ var _ = Describe("rearrange sections", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.StringElement{Content: "a paragraph"},
+								&types.StringElement{Content: "a paragraph"},
 							},
 						},
 					},
@@ -66,7 +66,7 @@ var _ = Describe("rearrange sections", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.StringElement{Content: "a paragraph"},
+								&types.StringElement{Content: "a paragraph"},
 							},
 						},
 					},
@@ -82,7 +82,7 @@ var _ = Describe("rearrange sections", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.StringElement{Content: "a paragraph"},
+								&types.StringElement{Content: "a paragraph"},
 							},
 						},
 					},
@@ -114,7 +114,7 @@ var _ = Describe("rearrange sections", func() {
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{
-											types.StringElement{Content: "a paragraph"},
+											&types.StringElement{Content: "a paragraph"},
 										},
 									},
 								},
@@ -128,7 +128,7 @@ var _ = Describe("rearrange sections", func() {
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{Content: "a paragraph"},
+													&types.StringElement{Content: "a paragraph"},
 												},
 											},
 										},
@@ -146,7 +146,7 @@ var _ = Describe("rearrange sections", func() {
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{
-											types.StringElement{Content: "a paragraph"},
+											&types.StringElement{Content: "a paragraph"},
 										},
 									},
 								},
@@ -171,16 +171,16 @@ var _ = Describe("rearrange sections", func() {
 		// === Section A.b
 		// a paragraph
 		doctitle := []interface{}{
-			types.StringElement{Content: "a header"},
+			&types.StringElement{Content: "a header"},
 		}
 		sectionATitle := []interface{}{
-			types.StringElement{Content: "Section A"},
+			&types.StringElement{Content: "Section A"},
 		}
 		sectionAaTitle := []interface{}{
-			types.StringElement{Content: "Section A.a"},
+			&types.StringElement{Content: "Section A.a"},
 		}
 		sectionBTitle := []interface{}{
-			types.StringElement{Content: "Section A.b"},
+			&types.StringElement{Content: "Section A.b"},
 		}
 		actual := []interface{}{
 			types.Section{
@@ -201,7 +201,7 @@ var _ = Describe("rearrange sections", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.StringElement{Content: "a paragraph"},
+								&types.StringElement{Content: "a paragraph"},
 							},
 						},
 					},
@@ -217,7 +217,7 @@ var _ = Describe("rearrange sections", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.StringElement{Content: "a paragraph"},
+								&types.StringElement{Content: "a paragraph"},
 							},
 						},
 					},
@@ -233,7 +233,7 @@ var _ = Describe("rearrange sections", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.StringElement{Content: "a paragraph"},
+								&types.StringElement{Content: "a paragraph"},
 							},
 						},
 					},
@@ -265,7 +265,7 @@ var _ = Describe("rearrange sections", func() {
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{
-											types.StringElement{Content: "a paragraph"},
+											&types.StringElement{Content: "a paragraph"},
 										},
 									},
 								},
@@ -279,7 +279,7 @@ var _ = Describe("rearrange sections", func() {
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{Content: "a paragraph"},
+													&types.StringElement{Content: "a paragraph"},
 												},
 											},
 										},
@@ -295,7 +295,7 @@ var _ = Describe("rearrange sections", func() {
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{Content: "a paragraph"},
+													&types.StringElement{Content: "a paragraph"},
 												},
 											},
 										},
@@ -322,16 +322,16 @@ var _ = Describe("rearrange sections", func() {
 		// ==== Section A.b
 		// a paragraph
 		doctitle := []interface{}{
-			types.StringElement{Content: "a header"},
+			&types.StringElement{Content: "a header"},
 		}
 		sectionATitle := []interface{}{
-			types.StringElement{Content: "Section A"},
+			&types.StringElement{Content: "Section A"},
 		}
 		sectionAaTitle := []interface{}{
-			types.StringElement{Content: "Section A.a"},
+			&types.StringElement{Content: "Section A.a"},
 		}
 		sectionBTitle := []interface{}{
-			types.StringElement{Content: "Section A.b"},
+			&types.StringElement{Content: "Section A.b"},
 		}
 		actual := []interface{}{
 			types.Section{
@@ -352,7 +352,7 @@ var _ = Describe("rearrange sections", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.StringElement{Content: "a paragraph"},
+								&types.StringElement{Content: "a paragraph"},
 							},
 						},
 					},
@@ -368,7 +368,7 @@ var _ = Describe("rearrange sections", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.StringElement{Content: "a paragraph"},
+								&types.StringElement{Content: "a paragraph"},
 							},
 						},
 					},
@@ -384,7 +384,7 @@ var _ = Describe("rearrange sections", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.StringElement{Content: "a paragraph"},
+								&types.StringElement{Content: "a paragraph"},
 							},
 						},
 					},
@@ -416,7 +416,7 @@ var _ = Describe("rearrange sections", func() {
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{
-											types.StringElement{Content: "a paragraph"},
+											&types.StringElement{Content: "a paragraph"},
 										},
 									},
 								},
@@ -430,7 +430,7 @@ var _ = Describe("rearrange sections", func() {
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{Content: "a paragraph"},
+													&types.StringElement{Content: "a paragraph"},
 												},
 											},
 										},
@@ -446,7 +446,7 @@ var _ = Describe("rearrange sections", func() {
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{Content: "a paragraph"},
+													&types.StringElement{Content: "a paragraph"},
 												},
 											},
 										},

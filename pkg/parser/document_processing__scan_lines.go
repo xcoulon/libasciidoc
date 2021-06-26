@@ -114,9 +114,9 @@ scan:
 		case *types.BlankLine:
 			elements = append(elements, element)
 			// blanklines outside of a delimited block causes the scanner to stop (for this call)
-			if s.scopes.get() == withinParagraph {
+			if s.scopes.get() == withinParagraph || s.scopes.get() == defaultScope {
 				s.scopes.pop()
-				break scan // end of fragment group
+				break scan // end of fragment
 			}
 		case *types.OrderedListElement, *types.UnorderedListElement, *types.LabeledListElement, *types.CalloutListElement:
 			s.scopes.push(withinList)
@@ -126,7 +126,9 @@ scan:
 			if currentScope.kind == element.Kind {
 				// done with current delimited block
 				s.scopes.pop()
-				// TODO: end of fragment group here, if `scopes` is empty? (maybe not, if there are callout list elements afterward)
+				if s.scopes.empty() {
+					break scan // end of fragment
+				}
 			} else {
 				switch element.Kind {
 				case types.Listing:
@@ -265,6 +267,10 @@ func (s *scanScopeStack) get() *scanScope {
 		return defaultScope
 	}
 	return s.scopes[len(s.scopes)-1]
+}
+
+func (s *scanScopeStack) empty() bool {
+	return len(s.scopes) == 0
 }
 
 // // parseDocumentFrontMatter attempts to read the front-matter if it exists.
@@ -436,7 +442,7 @@ func (s *scanScopeStack) get() *scanScope {
 // 			// immediatly process the attribute substitutions in the value (if there is any)
 // 			value := substituteAttributes(fragment.Value, ctx.attributes)
 // 			switch value := value.(type) {
-// 			case types.StringElement:
+// 			case *types.StringElement:
 // 				ctx.attributes[fragment.Name] = value.Content
 // 			case string:
 // 				ctx.attributes[fragment.Name] = value

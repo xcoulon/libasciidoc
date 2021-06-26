@@ -26,10 +26,10 @@ author: Xavier
 							types.BlockDelimiter{
 								Kind: types.FrontMatter,
 							},
-							types.StringElement{
+							&types.StringElement{
 								Content: "title: a title",
 							},
-							types.StringElement{
+							&types.StringElement{
 								Content: "author: Xavier",
 							},
 							types.BlockDelimiter{
@@ -57,11 +57,11 @@ author: Xavier
 								Kind: types.FrontMatter,
 							},
 							&types.BlankLine{},
-							types.StringElement{
+							&types.StringElement{
 								Content: "title: a title",
 							},
 							&types.BlankLine{},
-							types.StringElement{
+							&types.StringElement{
 								Content: "author: Xavier",
 							},
 							&types.BlankLine{},
@@ -97,7 +97,7 @@ author: Xavier
 				expected := []types.DocumentFragment{
 					{
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "some content",
 							},
 						},
@@ -122,10 +122,10 @@ author: Xavier
 							types.BlockDelimiter{
 								Kind: types.FrontMatter,
 							},
-							types.StringElement{
+							&types.StringElement{
 								Content: "title: a title",
 							},
-							types.StringElement{
+							&types.StringElement{
 								Content: "author: Xavier",
 							},
 							types.BlockDelimiter{
@@ -134,7 +134,7 @@ author: Xavier
 							types.Section{
 								Level: 0,
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "A Title",
 									},
 								},
@@ -167,7 +167,7 @@ first paragraph`
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{Content: "first paragraph"},
+									&types.StringElement{Content: "first paragraph"},
 								},
 							},
 						},
@@ -186,7 +186,7 @@ first paragraph`
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{Content: "first paragraph"},
+									&types.StringElement{Content: "first paragraph"},
 								},
 							},
 						},

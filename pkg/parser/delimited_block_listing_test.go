@@ -23,7 +23,7 @@ some *listing* code
 						&types.DelimitedBlock{
 							Kind: types.Listing,
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "some *listing* code",
 								},
 							},
@@ -39,7 +39,8 @@ some *listing* code
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
-							Kind: types.Listing,
+							Kind:     types.Listing,
+							Elements: []interface{}{}, // TODO: have `nil` if empty
 						},
 					},
 				}
@@ -58,7 +59,7 @@ in the middle
 						&types.DelimitedBlock{
 							Kind: types.Listing,
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "some listing code\nwith an empty line\n\nin the middle",
 								},
 							},
@@ -79,7 +80,7 @@ in the middle
 						&types.DelimitedBlock{
 							Kind: types.Listing,
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "* some \n* listing \n* content",
 								},
 							},
@@ -102,14 +103,14 @@ then a normal paragraph.`
 						&types.DelimitedBlock{
 							Kind: types.Listing,
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "some listing code\nwith an empty line\n\nin the middle",
 								},
 							},
 						},
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "then a normal paragraph."},
 							},
 						},
@@ -128,7 +129,7 @@ some listing code
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "a paragraph.",
 								},
 							},
@@ -137,7 +138,7 @@ some listing code
 						&types.DelimitedBlock{
 							Kind: types.Listing,
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "some listing code",
 								},
 							},
@@ -155,7 +156,7 @@ End of file here.`
 						&types.DelimitedBlock{
 							Kind: types.Listing,
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "End of file here.",
 								},
 							},
@@ -175,7 +176,7 @@ import <1>
 						&types.DelimitedBlock{
 							Kind: types.Listing,
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "import ",
 								},
 								types.Callout{
@@ -191,7 +192,7 @@ import <1>
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "an import",
 												},
 											},
@@ -218,13 +219,13 @@ func foo() {} <2>
 						&types.DelimitedBlock{
 							Kind: types.Listing,
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "import ",
 								},
 								types.Callout{
 									Ref: 1,
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "\n\nfunc foo() {} ",
 								},
 								types.Callout{
@@ -240,7 +241,7 @@ func foo() {} <2>
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "an import",
 												},
 											},
@@ -252,7 +253,7 @@ func foo() {} <2>
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "a func",
 												},
 											},
@@ -281,7 +282,7 @@ func foo() {} <4>
 						&types.DelimitedBlock{
 							Kind: types.Listing,
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "import ",
 								},
 								types.Callout{
@@ -293,7 +294,7 @@ func foo() {} <4>
 								types.Callout{
 									Ref: 3,
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "\n\nfunc foo() {} ",
 								},
 								types.Callout{
@@ -309,7 +310,7 @@ func foo() {} <4>
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "an import",
 												},
 											},
@@ -321,7 +322,7 @@ func foo() {} <4>
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "a single import",
 												},
 											},
@@ -333,7 +334,7 @@ func foo() {} <4>
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "a single basic import",
 												},
 											},
@@ -345,7 +346,7 @@ func foo() {} <4>
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "a func",
 												},
 											},
@@ -369,13 +370,13 @@ import <a>
 						&types.DelimitedBlock{
 							Kind: types.Listing,
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "import ",
 								},
 								types.SpecialCharacter{
 									Name: "<",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "a",
 								},
 								types.SpecialCharacter{
@@ -388,13 +389,13 @@ import <a>
 								types.SpecialCharacter{
 									Name: "<",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "a",
 								},
 								types.SpecialCharacter{
 									Name: ">",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: " an import",
 								},
 							},
@@ -417,7 +418,7 @@ some *listing* content`
 								types.AttrStyle: types.Listing,
 							},
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "some *listing* content", // no quote substitution
 								},
 							},

@@ -24,14 +24,14 @@ on 2 lines`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Item1",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "Item 1 description\non 2 lines",
 											},
 										},
@@ -55,7 +55,7 @@ on 2 lines`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Item1",
 									},
 								},
@@ -81,7 +81,7 @@ on 2 lines`
 									&types.QuotedText{
 										Kind: types.SingleQuoteMonospace,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "foo()",
 											},
 										},
@@ -90,18 +90,18 @@ on 2 lines`
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "This function is ",
 											},
 											&types.QuotedText{
 												Kind: types.SingleQuoteItalic,
 												Elements: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "untyped",
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: ".",
 											},
 										},
@@ -130,7 +130,7 @@ on 2 lines`
 											&types.QuotedText{
 												Kind: types.SingleQuoteMonospace,
 												Elements: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "foo",
 													},
 												},
@@ -141,18 +141,18 @@ on 2 lines`
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "This function is ",
 											},
 											&types.QuotedText{
 												Kind: types.SingleQuoteItalic,
 												Elements: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "untyped",
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: ".",
 											},
 										},
@@ -185,18 +185,18 @@ on 2 lines`
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "This function is ",
 											},
 											&types.QuotedText{
 												Kind: types.SingleQuoteItalic,
 												Elements: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "untyped",
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: ".",
 											},
 										},
@@ -224,14 +224,14 @@ Item1:: foo`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Item1",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{Content: "foo"},
+											&types.StringElement{Content: "foo"},
 										},
 									},
 								},
@@ -254,7 +254,7 @@ Item1:: foo`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Item1",
 									},
 								},
@@ -281,14 +281,14 @@ Item 3 description`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Item 1",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{Content: "Item 1 description"},
+											&types.StringElement{Content: "Item 1 description"},
 										},
 									},
 								},
@@ -296,14 +296,14 @@ Item 3 description`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Item 2",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{Content: "Item 2 description"},
+											&types.StringElement{Content: "Item 2 description"},
 										},
 									},
 								},
@@ -311,14 +311,14 @@ Item 3 description`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Item 3",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{Content: "Item 3 description"},
+											&types.StringElement{Content: "Item 3 description"},
 										},
 									},
 								},
@@ -345,14 +345,14 @@ Item 3 description`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Item 1",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{Content: "Item 1 description"},
+											&types.StringElement{Content: "Item 1 description"},
 										},
 									},
 									&types.GenericList{
@@ -361,14 +361,14 @@ Item 3 description`
 											&types.LabeledListElement{
 												Style: types.TripleColons,
 												Term: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "Item 2",
 													},
 												},
 												Elements: []interface{}{
 													&types.Paragraph{
 														Elements: []interface{}{
-															types.StringElement{Content: "Item 2 description"},
+															&types.StringElement{Content: "Item 2 description"},
 														},
 													},
 													&types.GenericList{
@@ -377,14 +377,14 @@ Item 3 description`
 															&types.LabeledListElement{
 																Style: types.QuadrupleColons,
 																Term: []interface{}{
-																	types.StringElement{
+																	&types.StringElement{
 																		Content: "Item 3",
 																	},
 																},
 																Elements: []interface{}{
 																	&types.Paragraph{
 																		Elements: []interface{}{
-																			types.StringElement{Content: "Item 3 description"},
+																			&types.StringElement{Content: "Item 3 description"},
 																		},
 																	},
 																},
@@ -417,7 +417,7 @@ Item with description:: something simple`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Empty item",
 									},
 								},
@@ -431,7 +431,7 @@ Item with description:: something simple`
 												Elements: []interface{}{
 													&types.Paragraph{
 														Elements: []interface{}{
-															types.StringElement{Content: "foo"},
+															&types.StringElement{Content: "foo"},
 														},
 													},
 												},
@@ -442,7 +442,7 @@ Item with description:: something simple`
 												Elements: []interface{}{
 													&types.Paragraph{
 														Elements: []interface{}{
-															types.StringElement{Content: "bar"},
+															&types.StringElement{Content: "bar"},
 														},
 													},
 												},
@@ -454,14 +454,14 @@ Item with description:: something simple`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Item with description",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{Content: "something simple"},
+											&types.StringElement{Content: "something simple"},
 										},
 									},
 								},
@@ -487,14 +487,14 @@ a normal paragraph.`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Item 1",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{Content: "foo\nbar"},
+											&types.StringElement{Content: "foo\nbar"},
 										},
 									},
 								},
@@ -503,7 +503,7 @@ a normal paragraph.`
 					},
 					&types.Paragraph{
 						Elements: []interface{}{
-							types.StringElement{Content: "a normal paragraph."},
+							&types.StringElement{Content: "a normal paragraph."},
 						},
 					},
 				},
@@ -530,7 +530,7 @@ another fenced block
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Item 1",
 									},
 								},
@@ -539,7 +539,7 @@ another fenced block
 									&types.DelimitedBlock{
 										Kind: types.Listing,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "a fenced block",
 											},
 										},
@@ -549,21 +549,21 @@ another fenced block
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Item 2",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{Content: "something simple"},
+											&types.StringElement{Content: "something simple"},
 										},
 									},
 									&types.ListElementContinuation{},
 									&types.DelimitedBlock{
 										Kind: types.Listing,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "another fenced block",
 											},
 										},
@@ -595,7 +595,7 @@ another fenced block
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Item 1",
 									},
 								},
@@ -605,7 +605,7 @@ another fenced block
 					&types.DelimitedBlock{
 						Kind: types.Listing,
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "a fenced block",
 							},
 						},
@@ -616,14 +616,14 @@ another fenced block
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Item 2",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{Content: "something simple"},
+											&types.StringElement{Content: "something simple"},
 										},
 									},
 								},
@@ -633,7 +633,7 @@ another fenced block
 					&types.DelimitedBlock{
 						Kind: types.Listing,
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "another fenced block",
 							},
 						},
@@ -654,7 +654,7 @@ another fenced block
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Labeled item",
 									},
 								},
@@ -668,7 +668,7 @@ another fenced block
 												Elements: []interface{}{
 													&types.Paragraph{
 														Elements: []interface{}{
-															types.StringElement{Content: "unordered item"},
+															&types.StringElement{Content: "unordered item"},
 														},
 													},
 												},
@@ -699,14 +699,14 @@ second term:: definition of the second term`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "first term",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "definition of the first term",
 											},
 										},
@@ -716,14 +716,14 @@ second term:: definition of the second term`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "second term",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "definition of the second term",
 											},
 										},
@@ -756,14 +756,14 @@ level 1:: description 1`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "level 1",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "description 1",
 											},
 										},
@@ -774,14 +774,14 @@ level 1:: description 1`
 											&types.LabeledListElement{
 												Style: types.TripleColons,
 												Term: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "level 2",
 													},
 												},
 												Elements: []interface{}{
 													&types.Paragraph{
 														Elements: []interface{}{
-															types.StringElement{
+															&types.StringElement{
 																Content: "description 2",
 															},
 														},
@@ -792,14 +792,14 @@ level 1:: description 1`
 															&types.LabeledListElement{
 																Style: types.QuadrupleColons,
 																Term: []interface{}{
-																	types.StringElement{
+																	&types.StringElement{
 																		Content: "level 3",
 																	},
 																},
 																Elements: []interface{}{
 																	&types.Paragraph{
 																		Elements: []interface{}{
-																			types.StringElement{
+																			&types.StringElement{
 																				Content: "description 3",
 																			},
 																		},
@@ -817,14 +817,14 @@ level 1:: description 1`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "level 1",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "description 1",
 											},
 										},
@@ -855,14 +855,14 @@ level 2::: description 2`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "level 1",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "description 1",
 											},
 										},
@@ -873,14 +873,14 @@ level 2::: description 2`
 											&types.LabeledListElement{
 												Style: types.TripleColons,
 												Term: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "level 2",
 													},
 												},
 												Elements: []interface{}{
 													&types.Paragraph{
 														Elements: []interface{}{
-															types.StringElement{
+															&types.StringElement{
 																Content: "description 2",
 															},
 														},
@@ -891,14 +891,14 @@ level 2::: description 2`
 															&types.LabeledListElement{
 																Style: types.QuadrupleColons,
 																Term: []interface{}{
-																	types.StringElement{
+																	&types.StringElement{
 																		Content: "level 3",
 																	},
 																},
 																Elements: []interface{}{
 																	&types.Paragraph{
 																		Elements: []interface{}{
-																			types.StringElement{
+																			&types.StringElement{
 																				Content: "description 3",
 																			},
 																		},
@@ -912,14 +912,14 @@ level 2::: description 2`
 											&types.LabeledListElement{
 												Style: types.TripleColons,
 												Term: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "level 2",
 													},
 												},
 												Elements: []interface{}{
 													&types.Paragraph{
 														Elements: []interface{}{
-															types.StringElement{
+															&types.StringElement{
 																Content: "description 2",
 															},
 														},
@@ -947,7 +947,7 @@ level 2::: description 2`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "level 1",
 									},
 								},
@@ -976,14 +976,14 @@ level 2::: description 2`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "what: ever",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{Content: "text"},
+											&types.StringElement{Content: "text"},
 										},
 									},
 								},
@@ -1017,14 +1017,14 @@ TIP: tip`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Item 1",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{Content: "content 1"},
+											&types.StringElement{Content: "content 1"},
 										},
 									},
 									&types.ListElementContinuation{},
@@ -1033,7 +1033,7 @@ TIP: tip`
 											types.AttrStyle: types.Note,
 										},
 										Elements: []interface{}{
-											types.StringElement{Content: "note"},
+											&types.StringElement{Content: "note"},
 										},
 									},
 								},
@@ -1041,20 +1041,20 @@ TIP: tip`
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Item 2",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{Content: "content 2"},
+											&types.StringElement{Content: "content 2"},
 										},
 									},
 									&types.ListElementContinuation{},
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{Content: "addition"},
+											&types.StringElement{Content: "addition"},
 										},
 									},
 									&types.ListElementContinuation{},
@@ -1063,7 +1063,7 @@ TIP: tip`
 											types.AttrStyle: types.Important,
 										},
 										Elements: []interface{}{
-											types.StringElement{Content: "important"},
+											&types.StringElement{Content: "important"},
 										},
 									},
 									&types.ListElementContinuation{},
@@ -1072,7 +1072,7 @@ TIP: tip`
 											types.AttrStyle: types.Tip,
 										},
 										Elements: []interface{}{
-											types.StringElement{Content: "tip"},
+											&types.StringElement{Content: "tip"},
 										},
 									},
 								},
@@ -1104,14 +1104,14 @@ TIP: We can embed admonitions too!
 							&types.LabeledListElement{
 								Style: types.DoubleColons,
 								Term: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "item",
 									},
 								},
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "This is the first line of the first paragraph.\nThis is the second line of the first paragraph.",
 											},
 										},
@@ -1119,7 +1119,7 @@ TIP: We can embed admonitions too!
 									&types.ListElementContinuation{},
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "This is the first line of the continuation paragraph.\nThis is the second line of the continuation paragraph.",
 											},
 										},
@@ -1127,7 +1127,7 @@ TIP: We can embed admonitions too!
 									&types.ListElementContinuation{},
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "This is the next continuation paragraph.",
 											},
 										},
@@ -1138,7 +1138,7 @@ TIP: We can embed admonitions too!
 											types.AttrStyle: types.Tip,
 										},
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "We can embed admonitions too!",
 											},
 										},

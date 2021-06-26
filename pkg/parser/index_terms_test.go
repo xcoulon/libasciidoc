@@ -19,7 +19,7 @@ var _ = Describe("index terms", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.StringElement{
+								&types.StringElement{
 									Content: "a paragraph with an ",
 								},
 								types.IndexTerm{
@@ -28,7 +28,7 @@ var _ = Describe("index terms", func() {
 									},
 									},
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: " term.",
 								},
 							},
@@ -49,25 +49,25 @@ a paragraph with an index term.`
 							{
 								types.IndexTerm{
 									Term: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "foo_bar_baz ",
 										},
 										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "italic",
 												},
 											},
 										},
-										types.StringElement{
+										&types.StringElement{
 											Content: " normal",
 										},
 									},
 								},
 							},
 							{
-								types.StringElement{
+								&types.StringElement{
 									Content: "a paragraph with an index term.",
 								},
 							},
@@ -91,7 +91,7 @@ var _ = Describe("concealed index terms", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.StringElement{
+								&types.StringElement{
 									Content: "a paragraph with an index term ",
 								},
 								types.ConcealedIndexTerm{
@@ -99,7 +99,7 @@ var _ = Describe("concealed index terms", func() {
 									Term2: "term",
 									Term3: "here",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: ".",
 								},
 							},
@@ -124,7 +124,7 @@ a paragraph with an index term.`
 								},
 							},
 							{
-								types.StringElement{
+								&types.StringElement{
 									Content: "a paragraph with an index term.",
 								},
 							},

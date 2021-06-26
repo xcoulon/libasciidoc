@@ -206,7 +206,7 @@ var _ = Describe("table of contents initialization", func() {
 						Attributes: types.Attributes{},
 						Lines: [][]interface{}{
 							{
-								types.StringElement{Content: "a paragraph"},
+								&types.StringElement{Content: "a paragraph"},
 							},
 						},
 					},
@@ -222,15 +222,15 @@ var _ = Describe("table of contents initialization", func() {
 	Context("document with sections", func() {
 
 		doctitle := []interface{}{
-			types.StringElement{Content: "a header"},
+			&types.StringElement{Content: "a header"},
 		}
 		sectionATitle := []interface{}{
-			types.StringElement{Content: "Section A with link to "},
+			&types.StringElement{Content: "Section A with link to "},
 			types.InlineLink{
 				Location: &types.Location{
 					Scheme: "https://",
 					Path: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "redhat.com",
 						},
 					},
@@ -238,17 +238,17 @@ var _ = Describe("table of contents initialization", func() {
 			},
 		}
 		sectionAaTitle := []interface{}{
-			types.StringElement{Content: "Section A.a "},
+			&types.StringElement{Content: "Section A.a "},
 			types.FootnoteReference{
 				ID:  1,
 				Ref: "foo",
 			},
 		}
 		sectionAa1Title := []interface{}{
-			types.StringElement{Content: "Section A.a.1"},
+			&types.StringElement{Content: "Section A.a.1"},
 		}
 		sectionBTitle := []interface{}{
-			types.StringElement{Content: "Section B"},
+			&types.StringElement{Content: "Section B"},
 		}
 		document := types.Document{
 			Attributes: types.Attributes{},
@@ -283,7 +283,7 @@ var _ = Describe("table of contents initialization", func() {
 									Attributes: types.Attributes{},
 									Lines: [][]interface{}{
 										{
-											types.StringElement{Content: "a paragraph"},
+											&types.StringElement{Content: "a paragraph"},
 										},
 									},
 								},
@@ -298,7 +298,7 @@ var _ = Describe("table of contents initialization", func() {
 											Attributes: types.Attributes{},
 											Lines: [][]interface{}{
 												{
-													types.StringElement{Content: "a paragraph"},
+													&types.StringElement{Content: "a paragraph"},
 												},
 											},
 										},
@@ -332,7 +332,7 @@ var _ = Describe("table of contents initialization", func() {
 									Attributes: types.Attributes{},
 									Lines: [][]interface{}{
 										{
-											types.StringElement{Content: "a paragraph"},
+											&types.StringElement{Content: "a paragraph"},
 										},
 									},
 								},

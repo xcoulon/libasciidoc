@@ -8,7 +8,7 @@ import (
 	. "github.com/onsi/gomega" //nolint golint
 )
 
-var _ = Describe("document fragment assembling", func() {
+var _ = Describe("document element assembling", func() {
 
 	It("should assemble 1 paragraph with single line", func() {
 		source := `a line`
@@ -40,6 +40,7 @@ another line`
 							types.RawLine("a line"),
 						},
 					},
+					&types.BlankLine{},
 				},
 			},
 			{
@@ -93,7 +94,7 @@ not a sidebar block
 						Kind: types.Listing,
 						Elements: []interface{}{
 							types.RawLine("a line"),
-							&types.BlankLine{},
+							types.RawLine(""),
 							types.RawLine("****"),
 							types.RawLine("not a sidebar block"),
 							types.RawLine("****"),
@@ -126,10 +127,17 @@ on
 						Kind: types.Listing,
 						Elements: []interface{}{
 							types.RawLine("a line"),
-							&types.BlankLine{},
+							types.RawLine(""),
 							types.RawLine("another line"),
 						},
 					},
+					&types.BlankLine{},
+				},
+			},
+			{
+				LineOffset: 7,
+				Elements: []interface{}{
+					&types.BlankLine{},
 				},
 			},
 			{
@@ -142,6 +150,54 @@ on
 							types.RawLine("3 lines."),
 						},
 					},
+					&types.BlankLine{},
+				},
+			},
+		}
+		Expect(AssembleDocumentFragments(source)).To(MatchDocumentFragments(expected))
+	})
+
+	It("should collect 1 section and content afterwards", func() {
+		source := `== section title
+
+
+a paragraph
+on
+3 lines.
+
+`
+		expected := []types.DocumentFragment{
+			{
+				LineOffset: 1,
+				Elements: []interface{}{
+					&types.Section{
+						Level: 1,
+						Title: []interface{}{
+							types.StringElement{
+								Content: "section title",
+							},
+						},
+					},
+					&types.BlankLine{},
+				},
+			},
+			{
+				LineOffset: 3,
+				Elements: []interface{}{
+					&types.BlankLine{},
+				},
+			},
+			{
+				LineOffset: 4,
+				Elements: []interface{}{
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.RawLine("a paragraph"),
+							types.RawLine("on"),
+							types.RawLine("3 lines."),
+						},
+					},
+					&types.BlankLine{},
 				},
 			},
 		}
@@ -156,23 +212,22 @@ on
 			{
 				LineOffset: 1,
 				Elements: []interface{}{
-					&types.GenericList{
-						Kind: types.CalloutListKind,
-						Elements: []types.ListElement{
-							&types.CalloutListElement{
-								Ref: 1,
+					&types.CalloutListElement{
+						Ref: 1,
+						Elements: []interface{}{
+							&types.Paragraph{
 								Elements: []interface{}{
-									types.StringElement{
-										Content: "first item",
-									},
+									types.RawLine("first item"),
 								},
 							},
-							&types.CalloutListElement{
-								Ref: 2,
+						},
+					},
+					&types.CalloutListElement{
+						Ref: 2,
+						Elements: []interface{}{
+							&types.Paragraph{
 								Elements: []interface{}{
-									types.StringElement{
-										Content: "second item",
-									},
+									types.RawLine("second item"),
 								},
 							},
 						},
@@ -193,23 +248,24 @@ on
 			{
 				LineOffset: 1,
 				Elements: []interface{}{
-					&types.GenericList{
-						Kind: types.CalloutListKind,
-						Elements: []types.ListElement{
-							&types.CalloutListElement{
-								Ref: 1,
+					&types.CalloutListElement{
+						Ref: 1,
+						Elements: []interface{}{
+							&types.Paragraph{
 								Elements: []interface{}{
-									types.StringElement{
-										Content: "first item",
-									},
+									types.RawLine("first item"),
 								},
 							},
-							&types.CalloutListElement{
-								Ref: 2,
+						},
+					},
+					&types.BlankLine{},
+					&types.BlankLine{},
+					&types.CalloutListElement{
+						Ref: 2,
+						Elements: []interface{}{
+							&types.Paragraph{
 								Elements: []interface{}{
-									types.StringElement{
-										Content: "second item",
-									},
+									types.RawLine("second item"),
 								},
 							},
 						},
@@ -228,23 +284,22 @@ on
 			{
 				LineOffset: 1,
 				Elements: []interface{}{
-					&types.GenericList{
-						Kind: types.OrderedListKind,
-						Elements: []types.ListElement{
-							&types.OrderedListElement{
-								Style: types.Arabic,
+					&types.OrderedListElement{
+						Style: types.Arabic,
+						Elements: []interface{}{
+							&types.Paragraph{
 								Elements: []interface{}{
-									types.StringElement{
-										Content: "first item",
-									},
+									types.RawLine("first item"),
 								},
 							},
-							&types.OrderedListElement{
-								Style: types.Arabic,
+						},
+					},
+					&types.OrderedListElement{
+						Style: types.Arabic,
+						Elements: []interface{}{
+							&types.Paragraph{
 								Elements: []interface{}{
-									types.StringElement{
-										Content: "second item",
-									},
+									types.RawLine("second item"),
 								},
 							},
 						},
@@ -265,33 +320,24 @@ on
 			{
 				LineOffset: 1,
 				Elements: []interface{}{
-					&types.GenericList{
-						Kind: types.OrderedListKind,
-						Elements: []types.ListElement{
-							&types.OrderedListElement{
-								Style: types.Arabic,
+					&types.OrderedListElement{
+						Style: types.Arabic,
+						Elements: []interface{}{
+							&types.Paragraph{
 								Elements: []interface{}{
-									&types.Paragraph{
-										Elements: []interface{}{
-											types.StringElement{
-												Content: "first item",
-											},
-										},
-									},
+									types.RawLine("first item"),
 								},
 							},
-							// &types.BlankLine{},
-							// &types.BlankLine{},
-							&types.OrderedListElement{
-								Style: types.Arabic,
+						},
+					},
+					&types.BlankLine{},
+					&types.BlankLine{},
+					&types.OrderedListElement{
+						Style: types.Arabic,
+						Elements: []interface{}{
+							&types.Paragraph{
 								Elements: []interface{}{
-									&types.Paragraph{
-										Elements: []interface{}{
-											types.StringElement{
-												Content: "second item",
-											},
-										},
-									},
+									types.RawLine("second item"),
 								},
 							},
 						},

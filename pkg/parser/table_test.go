@@ -31,12 +31,12 @@ var _ = Describe("tables", func() {
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "foo",
 												},
 											},
 										},
-										types.StringElement{
+										&types.StringElement{
 											Content: " foo  ",
 										},
 									},
@@ -44,12 +44,12 @@ var _ = Describe("tables", func() {
 										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "bar",
 												},
 											},
 										},
-										types.StringElement{
+										&types.StringElement{
 											Content: "  ",
 										},
 									},
@@ -81,12 +81,12 @@ var _ = Describe("tables", func() {
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "foo",
 												},
 											},
 										},
-										types.StringElement{
+										&types.StringElement{
 											Content: " foo  ",
 										},
 									},
@@ -94,17 +94,17 @@ var _ = Describe("tables", func() {
 										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "bar",
 												},
 											},
 										},
-										types.StringElement{
+										&types.StringElement{
 											Content: "  ",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "baz",
 										},
 									},
@@ -142,12 +142,12 @@ var _ = Describe("tables", func() {
 						Header: types.TableLine{
 							Cells: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "heading 1 ",
 									},
 								},
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "heading 2",
 									},
 								},
@@ -158,12 +158,12 @@ var _ = Describe("tables", func() {
 							{
 								Cells: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "row 1, column 1",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "row 1, column 2",
 										},
 									},
@@ -172,12 +172,12 @@ var _ = Describe("tables", func() {
 							{
 								Cells: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "row 2, column 1",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "row 2, column 2",
 										},
 									},
@@ -214,12 +214,12 @@ var _ = Describe("tables", func() {
 						Header: types.TableLine{
 							Cells: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "heading 1 ",
 									},
 								},
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "heading 2",
 									},
 								},
@@ -234,12 +234,12 @@ var _ = Describe("tables", func() {
 							{
 								Cells: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "row 1, column 1",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "row 1, column 2",
 										},
 									},
@@ -248,12 +248,12 @@ var _ = Describe("tables", func() {
 							{
 								Cells: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "row 2, column 1",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "row 2, column 2",
 										},
 									},

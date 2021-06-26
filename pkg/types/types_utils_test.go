@@ -9,21 +9,21 @@ var _ = Describe("convert to inline elements", func() {
 
 	It("inline content without trailing spaces", func() {
 		source := []interface{}{
-			StringElement{Content: "hello"},
-			StringElement{Content: "world"},
+			&StringElement{Content: "hello"},
+			&StringElement{Content: "world"},
 		}
 		expected := []interface{}{
-			StringElement{Content: "helloworld"},
+			&StringElement{Content: "helloworld"},
 		}
 		Expect(Merge(source...)).To(Equal(expected))
 	})
 	It("inline content with trailing spaces", func() {
 		source := []interface{}{
-			StringElement{Content: "hello, "},
-			StringElement{Content: "world   "},
+			&StringElement{Content: "hello, "},
+			&StringElement{Content: "world   "},
 		}
 		expected := []interface{}{
-			StringElement{Content: "hello, world   "},
+			&StringElement{Content: "hello, world   "},
 		}
 		Expect(Merge(source...)).To(Equal(expected))
 	})

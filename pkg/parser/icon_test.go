@@ -38,7 +38,7 @@ var _ = Describe("icons", func() {
 								types.Icon{
 									Class: "note",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "  \t\t  ",
 								},
 							},
@@ -54,13 +54,13 @@ var _ = Describe("icons", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "beware ",
 								},
 								types.Icon{
 									Class: "caution",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: " of tigers",
 								},
 							},
@@ -170,7 +170,7 @@ var _ = Describe("icons", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "here is my icon: ",
 								},
 								types.Icon{
@@ -193,13 +193,13 @@ var _ = Describe("icons", func() {
 							},
 							Level: 1,
 							Title: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "a ",
 								},
 								types.Icon{
 									Class: "note",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: " from me",
 								},
 							},
@@ -220,9 +220,9 @@ var _ = Describe("icons", func() {
 							},
 							Title: []interface{}{
 								types.Icon{Class: "warning"},
-								types.StringElement{Content: " or what "},
+								&types.StringElement{Content: " or what "},
 								types.Icon{Class: "note"},
-								types.StringElement{Content: " to do"},
+								&types.StringElement{Content: " to do"},
 							},
 						},
 					},
@@ -243,13 +243,13 @@ item 2:: two`
 								&types.LabeledListElement{
 									Style: "::",
 									Term: []interface{}{
-										types.StringElement{Content: "discount"},
+										&types.StringElement{Content: "discount"},
 									},
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
 												types.Icon{Class: "tags", Attributes: types.Attributes{types.AttrImageAlt: "Discount"}},
-												types.StringElement{Content: " Cheap cheap!"},
+												&types.StringElement{Content: " Cheap cheap!"},
 											},
 										},
 									},
@@ -257,12 +257,12 @@ item 2:: two`
 								&types.LabeledListElement{
 									Style: "::",
 									Term: []interface{}{
-										types.StringElement{Content: "item 2"},
+										&types.StringElement{Content: "item 2"},
 									},
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "two"},
+												&types.StringElement{Content: "two"},
 											},
 										},
 									},
@@ -281,15 +281,15 @@ item 2:: two`
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "an ",
 								},
 								&types.QuotedText{
 									Kind: types.SingleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "italicized "},
+										&types.StringElement{Content: "italicized "},
 										types.Icon{Class: "warning"},
-										types.StringElement{Content: " message"},
+										&types.StringElement{Content: " message"},
 									},
 								},
 							},
@@ -307,9 +307,9 @@ item 2:: two`
 								&types.QuotedText{
 									Kind: types.SingleQuoteMarked,
 									Elements: []interface{}{
-										types.StringElement{Content: "marked "},
+										&types.StringElement{Content: "marked "},
 										types.Icon{Class: "warning"},
-										types.StringElement{Content: " message"},
+										&types.StringElement{Content: " message"},
 									},
 								},
 							},
@@ -324,13 +324,13 @@ item 2:: two`
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "in "},
+								&types.StringElement{Content: "in "},
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "bold "},
+										&types.StringElement{Content: "bold "},
 										types.Icon{Class: "warning"},
-										types.StringElement{Content: " message"},
+										&types.StringElement{Content: " message"},
 									},
 								},
 							},
@@ -345,13 +345,13 @@ item 2:: two`
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "in "},
+								&types.StringElement{Content: "in "},
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "monospace "},
+										&types.StringElement{Content: "monospace "},
 										types.Icon{Class: "warning"},
-										types.StringElement{Content: " message"},
+										&types.StringElement{Content: " message"},
 									},
 								},
 							},

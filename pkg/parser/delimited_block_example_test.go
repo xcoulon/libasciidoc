@@ -196,18 +196,18 @@ some *example* content`
 									types.AttrStyle: types.Example,
 								},
 								Elements: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "some ",
 									},
 									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "example",
 											},
 										},
 									},
-									types.StringElement{
+									&types.StringElement{
 										Content: " content",
 									},
 								},
@@ -235,18 +235,18 @@ some *example* content
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "some ",
 										},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "example",
 												},
 											},
 										},
-										types.StringElement{
+										&types.StringElement{
 											Content: " content",
 										},
 									},
@@ -291,13 +291,13 @@ with *bold content*
 										types.AttrTitle: "foo",
 									},
 									Elements: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "some listing code\nwith ",
 										},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "bold content",
 												},
 											},
@@ -314,7 +314,7 @@ with *bold content*
 											Elements: []interface{}{
 												&types.Paragraph{
 													Elements: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "and a list item",
 														},
 													},
@@ -340,7 +340,7 @@ End of file here`
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "End of file here",
 										},
 									},
@@ -367,7 +367,7 @@ foo
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "foo",
 										},
 									},
@@ -404,18 +404,18 @@ some *example* content`
 								types.AttrStyle: types.Example,
 							},
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "some ",
 								},
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "example",
 										},
 									},
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: " content",
 								},
 							},

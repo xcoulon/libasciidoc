@@ -20,7 +20,7 @@ var _ = Describe("document matcher", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "a paragraph.",
 						},
 					},
@@ -37,7 +37,7 @@ var _ = Describe("document matcher", func() {
 				types.Paragraph{
 					Lines: [][]interface{}{
 						{
-							types.StringElement{
+							&types.StringElement{
 								Content: "a paragraph.",
 							},
 						},
@@ -59,7 +59,7 @@ var _ = Describe("document matcher", func() {
 				types.Paragraph{
 					Lines: [][]interface{}{
 						{
-							types.StringElement{
+							&types.StringElement{
 								Content: "another paragraph.",
 							},
 						},

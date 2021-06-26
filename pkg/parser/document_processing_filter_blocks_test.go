@@ -17,7 +17,7 @@ var _ = Describe("block filters", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{},
+						&types.StringElement{},
 					},
 				},
 			},
@@ -29,7 +29,7 @@ var _ = Describe("block filters", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{},
+						&types.StringElement{},
 					},
 				},
 			},
@@ -43,7 +43,7 @@ var _ = Describe("block filters", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{},
+						&types.StringElement{},
 					},
 				},
 			},
@@ -52,7 +52,7 @@ var _ = Describe("block filters", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{},
+						&types.StringElement{},
 					},
 				},
 			},
@@ -66,7 +66,7 @@ var _ = Describe("block filters", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{},
+						&types.StringElement{},
 					},
 				},
 			},
@@ -75,7 +75,7 @@ var _ = Describe("block filters", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{},
+						&types.StringElement{},
 					},
 				},
 			},
@@ -89,7 +89,7 @@ var _ = Describe("block filters", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{},
+						&types.StringElement{},
 					},
 				},
 			},
@@ -98,7 +98,7 @@ var _ = Describe("block filters", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{},
+						&types.StringElement{},
 					},
 				},
 			},
@@ -112,7 +112,7 @@ var _ = Describe("block filters", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{},
+						&types.StringElement{},
 					},
 				},
 			},
@@ -121,7 +121,7 @@ var _ = Describe("block filters", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{},
+						&types.StringElement{},
 					},
 				},
 			},
@@ -135,7 +135,7 @@ var _ = Describe("block filters", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{},
+						&types.StringElement{},
 					},
 				},
 			},
@@ -144,7 +144,7 @@ var _ = Describe("block filters", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{},
+						&types.StringElement{},
 					},
 				},
 			},
@@ -157,7 +157,7 @@ var _ = Describe("block filters", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{},
+						&types.StringElement{},
 						&types.SingleLineComment{},
 					},
 				},
@@ -167,7 +167,7 @@ var _ = Describe("block filters", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{},
+						&types.StringElement{},
 					},
 				},
 			},
@@ -215,7 +215,7 @@ var _ = Describe("block filters", func() {
 				Items: []*types.OrderedListElement{
 					{
 						Elements: []interface{}{
-							types.StringElement{},
+							&types.StringElement{},
 							&types.SingleLineComment{},
 						},
 					},
@@ -227,7 +227,7 @@ var _ = Describe("block filters", func() {
 				Items: []*types.OrderedListElement{
 					{
 						Elements: []interface{}{
-							types.StringElement{},
+							&types.StringElement{},
 						},
 					},
 				},
@@ -242,7 +242,7 @@ var _ = Describe("block filters", func() {
 				Items: []*types.UnorderedListElement{
 					{
 						Elements: []interface{}{
-							types.StringElement{},
+							&types.StringElement{},
 							&types.SingleLineComment{},
 						},
 					},
@@ -254,7 +254,7 @@ var _ = Describe("block filters", func() {
 				Items: []*types.UnorderedListElement{
 					{
 						Elements: []interface{}{
-							types.StringElement{},
+							&types.StringElement{},
 						},
 					},
 				},
@@ -269,7 +269,7 @@ var _ = Describe("block filters", func() {
 				Items: []*types.LabeledListElement{
 					{
 						Elements: []interface{}{
-							types.StringElement{},
+							&types.StringElement{},
 							&types.SingleLineComment{},
 						},
 					},
@@ -281,7 +281,7 @@ var _ = Describe("block filters", func() {
 				Items: []*types.LabeledListElement{
 					{
 						Elements: []interface{}{
-							types.StringElement{},
+							&types.StringElement{},
 						},
 					},
 				},

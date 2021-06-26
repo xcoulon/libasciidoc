@@ -22,7 +22,7 @@ with some content linked to <<thetitle>>!`
 				expected := types.Document{
 					ElementReferences: types.ElementReferences{
 						"thetitle": []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "a title",
 							},
 						},
@@ -35,7 +35,7 @@ with some content linked to <<thetitle>>!`
 								types.AttrCustomID: true,
 							},
 							Title: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "a title",
 								},
 							},
@@ -43,13 +43,13 @@ with some content linked to <<thetitle>>!`
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "with some content linked to ",
 											},
 											types.InternalCrossReference{
 												ID: "thetitle",
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: "!",
 											},
 										},
@@ -70,7 +70,7 @@ with some content linked to <<thetitle,a label to the title>>!`
 				expected := types.Document{
 					ElementReferences: types.ElementReferences{
 						"thetitle": []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "a title",
 							},
 						},
@@ -83,7 +83,7 @@ with some content linked to <<thetitle,a label to the title>>!`
 								types.AttrCustomID: true,
 							},
 							Title: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "a title",
 								},
 							},
@@ -91,14 +91,14 @@ with some content linked to <<thetitle,a label to the title>>!`
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "with some content linked to ",
 											},
 											types.InternalCrossReference{
 												ID:    "thetitle",
 												Label: "a label to the title",
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: "!",
 											},
 										},
@@ -121,13 +121,13 @@ with some content linked to <<thetitle,a label to the title>>!`
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "some content linked to ",
 									},
 									types.ExternalCrossReference{
 										Location: &types.Location{
 											Path: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "another-doc.adoc",
 												},
 											},
@@ -136,14 +136,14 @@ with some content linked to <<thetitle,a label to the title>>!`
 											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "another doc",
 													},
 												},
 											},
 										},
 									},
-									types.StringElement{
+									&types.StringElement{
 										Content: "!",
 									},
 								},
@@ -161,20 +161,20 @@ with some content linked to <<thetitle,a label to the title>>!`
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "some content linked to ",
 									},
 									types.ExternalCrossReference{
 										Location: &types.Location{
 											Path: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "{foo}.adoc", // attribute substitution failed for `{foo}`
 												},
 											},
 										},
 										Label: "another doc",
 									},
-									types.StringElement{
+									&types.StringElement{
 										Content: "!",
 									},
 								},
@@ -203,14 +203,14 @@ some content linked to xref:{foo}[another_doc()]!`
 									types.ExternalCrossReference{
 										Location: &types.Location{
 											Path: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "another-doc.adoc",
 												},
 											},
 										},
 										Label: "another_doc()",
 									},
-									types.StringElement{
+									&types.StringElement{
 										Content: "!",
 									},
 								},

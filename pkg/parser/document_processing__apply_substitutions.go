@@ -593,7 +593,7 @@ func replaceAttributeRefsInElement(ctx *processContext, element interface{}) (in
 	case []interface{}:
 		return replaceAttributeRefsInElements(ctx, e)
 	case types.AttributeSubstitution:
-		return types.StringElement{
+		return &types.StringElement{
 			Content: ctx.attributes.GetAsStringWithDefault(e.Name, "{"+e.Name+"}"),
 		}, nil
 	case types.CounterSubstitution:
@@ -686,9 +686,9 @@ func applyCounterSubstitution(ctx *processContext, c types.CounterSubstitution) 
 		ctx.counters[c.Name] = counter
 		if c.Hidden {
 			// return empty string facilitates merging
-			return types.StringElement{Content: ""}, nil
+			return &types.StringElement{Content: ""}, nil
 		}
-		return types.StringElement{
+		return &types.StringElement{
 			Content: strconv.Itoa(counter),
 		}, nil
 	case rune:
@@ -698,13 +698,13 @@ func applyCounterSubstitution(ctx *processContext, c types.CounterSubstitution) 
 		ctx.counters[c.Name] = counter
 		if c.Hidden {
 			// return empty string facilitates merging
-			return types.StringElement{Content: ""}, nil
+			return &types.StringElement{Content: ""}, nil
 		}
-		return types.StringElement{
+		return &types.StringElement{
 			Content: string(counter),
 		}, nil
 	default:
-		return types.StringElement{}, fmt.Errorf("unexpected type of counter value: '%T'", counter)
+		return &types.StringElement{}, fmt.Errorf("unexpected type of counter value: '%T'", counter)
 	}
 }
 
@@ -788,7 +788,7 @@ func serialize(content interface{}) ([]byte, *placeholders) {
 						result.WriteString("\n")
 					}
 				}
-			case types.StringElement:
+			case *types.StringElement:
 				result.WriteString(element.Content)
 			// case types.SingleLineComment:
 			// 	// replace with placeholder

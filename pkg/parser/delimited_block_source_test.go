@@ -30,16 +30,16 @@ end
 								types.AttrStyle: types.Source,
 							},
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "require 'sinatra'",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "get '/hi' do",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "  \"Hello World!\"",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "end",
 								},
 							},
@@ -68,16 +68,16 @@ end
 								types.AttrTitle:    "Source block title",
 							},
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "require 'sinatra'",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "get '/hi' do",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "  \"Hello World!\"",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "end",
 								},
 							},
@@ -108,16 +108,16 @@ end
 								types.AttrTitle:    "app.rb",
 							},
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "require 'sinatra'",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "get '/hi' do",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "  \"Hello World!\"",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "end",
 								},
 							},
@@ -146,7 +146,7 @@ a note
 								types.AttrStyle: types.Source,
 							},
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: `const cookies = "cookies" `,
 								},
 								types.Callout{
@@ -162,7 +162,7 @@ a note
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a constant",
 													},
 												},
@@ -180,7 +180,7 @@ a note
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "a note",
 											},
 										},

@@ -120,7 +120,7 @@ func (r *sgmlRenderer) renderElement(ctx *renderer.Context, element interface{})
 		return r.renderLiteralBlock(ctx, e)
 	case types.InlineLink:
 		return r.renderLink(ctx, e)
-	case types.StringElement:
+	case *types.StringElement:
 		return r.renderStringElement(ctx, e)
 	case types.FootnoteReference:
 		return r.renderFootnoteReference(e)
@@ -166,7 +166,7 @@ func (r *sgmlRenderer) renderPlainText(ctx *renderer.Context, element interface{
 		return element.Location.Stringify(), nil
 	case *types.BlankLine, types.ThematicBreak:
 		return "\n\n", nil
-	case types.StringElement:
+	case *types.StringElement:
 		return element.Content, nil
 	case types.QuotedString:
 		return r.renderQuotedStringPlain(ctx, element)

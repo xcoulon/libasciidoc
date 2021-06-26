@@ -31,7 +31,7 @@ var _ = Describe("mixed lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "Item 1"},
+												&types.StringElement{Content: "Item 1"},
 											},
 										},
 										&types.GenericList{
@@ -43,7 +43,7 @@ var _ = Describe("mixed lists", func() {
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "Item A"},
+																&types.StringElement{Content: "Item A"},
 															},
 														},
 													},
@@ -54,7 +54,7 @@ var _ = Describe("mixed lists", func() {
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "Item B"},
+																&types.StringElement{Content: "Item B"},
 															},
 														},
 													},
@@ -68,7 +68,7 @@ var _ = Describe("mixed lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "Item 2"},
+												&types.StringElement{Content: "Item 2"},
 											},
 										},
 										&types.GenericList{
@@ -80,7 +80,7 @@ var _ = Describe("mixed lists", func() {
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "Item C"},
+																&types.StringElement{Content: "Item C"},
 															},
 														},
 													},
@@ -91,7 +91,7 @@ var _ = Describe("mixed lists", func() {
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "Item D"},
+																&types.StringElement{Content: "Item D"},
 															},
 														},
 													},
@@ -121,7 +121,7 @@ var _ = Describe("mixed lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "unordered list item",
 												},
 											},
@@ -134,7 +134,7 @@ var _ = Describe("mixed lists", func() {
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{
+																&types.StringElement{
 																	Content: "ordered list item",
 																},
 															},
@@ -179,7 +179,7 @@ var _ = Describe("mixed lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "unordered 1"},
+												&types.StringElement{Content: "unordered 1"},
 											},
 										},
 										&types.GenericList{
@@ -190,7 +190,7 @@ var _ = Describe("mixed lists", func() {
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "ordered 1.1"},
+																&types.StringElement{Content: "ordered 1.1"},
 															},
 														},
 														&types.GenericList{
@@ -201,7 +201,7 @@ var _ = Describe("mixed lists", func() {
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "ordered 1.1.a"},
+																				&types.StringElement{Content: "ordered 1.1.a"},
 																			},
 																		},
 																	},
@@ -211,7 +211,7 @@ var _ = Describe("mixed lists", func() {
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "ordered 1.1.b"},
+																				&types.StringElement{Content: "ordered 1.1.b"},
 																			},
 																		},
 																	},
@@ -221,7 +221,7 @@ var _ = Describe("mixed lists", func() {
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "ordered 1.1.c"},
+																				&types.StringElement{Content: "ordered 1.1.c"},
 																			},
 																		},
 																	},
@@ -235,7 +235,7 @@ var _ = Describe("mixed lists", func() {
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "ordered 1.2"},
+																&types.StringElement{Content: "ordered 1.2"},
 															},
 														},
 														&types.GenericList{
@@ -246,7 +246,7 @@ var _ = Describe("mixed lists", func() {
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "ordered 1.2.i"},
+																				&types.StringElement{Content: "ordered 1.2.i"},
 																			},
 																		},
 																	},
@@ -256,7 +256,7 @@ var _ = Describe("mixed lists", func() {
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "ordered 1.2.ii"},
+																				&types.StringElement{Content: "ordered 1.2.ii"},
 																			},
 																		},
 																	},
@@ -270,7 +270,7 @@ var _ = Describe("mixed lists", func() {
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "ordered 1.3"},
+																&types.StringElement{Content: "ordered 1.3"},
 															},
 														},
 													},
@@ -280,7 +280,7 @@ var _ = Describe("mixed lists", func() {
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "ordered 1.4"},
+																&types.StringElement{Content: "ordered 1.4"},
 															},
 														},
 													},
@@ -295,7 +295,7 @@ var _ = Describe("mixed lists", func() {
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "unordered 2"},
+												&types.StringElement{Content: "unordered 2"},
 											},
 										},
 										&types.GenericList{
@@ -307,7 +307,7 @@ var _ = Describe("mixed lists", func() {
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "unordered 2.1"},
+																&types.StringElement{Content: "unordered 2.1"},
 															},
 														},
 													},
@@ -359,7 +359,7 @@ ii) ordered 1.2.ii
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "unordered 1"},
+												&types.StringElement{Content: "unordered 1"},
 											},
 										},
 										&types.GenericList{
@@ -370,7 +370,7 @@ ii) ordered 1.2.ii
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "ordered 1.1"},
+																&types.StringElement{Content: "ordered 1.1"},
 															},
 														},
 														&types.GenericList{
@@ -381,7 +381,7 @@ ii) ordered 1.2.ii
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "ordered 1.1.a"},
+																				&types.StringElement{Content: "ordered 1.1.a"},
 																			},
 																		},
 																	},
@@ -391,7 +391,7 @@ ii) ordered 1.2.ii
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "ordered 1.1.b"},
+																				&types.StringElement{Content: "ordered 1.1.b"},
 																			},
 																		},
 																	},
@@ -401,7 +401,7 @@ ii) ordered 1.2.ii
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "ordered 1.1.c"},
+																				&types.StringElement{Content: "ordered 1.1.c"},
 																			},
 																		},
 																	},
@@ -415,7 +415,7 @@ ii) ordered 1.2.ii
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "ordered 1.2"},
+																&types.StringElement{Content: "ordered 1.2"},
 															},
 														},
 														&types.GenericList{
@@ -426,7 +426,7 @@ ii) ordered 1.2.ii
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "ordered 1.2.i"},
+																				&types.StringElement{Content: "ordered 1.2.i"},
 																			},
 																		},
 																	},
@@ -436,7 +436,7 @@ ii) ordered 1.2.ii
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "ordered 1.2.ii"},
+																				&types.StringElement{Content: "ordered 1.2.ii"},
 																			},
 																		},
 																	},
@@ -450,7 +450,7 @@ ii) ordered 1.2.ii
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "ordered 1.3"},
+																&types.StringElement{Content: "ordered 1.3"},
 															},
 														},
 													},
@@ -460,7 +460,7 @@ ii) ordered 1.2.ii
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "ordered 1.4"},
+																&types.StringElement{Content: "ordered 1.4"},
 															},
 														},
 													},
@@ -475,7 +475,7 @@ ii) ordered 1.2.ii
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "unordered 2"},
+												&types.StringElement{Content: "unordered 2"},
 											},
 										},
 										&types.GenericList{
@@ -487,7 +487,7 @@ ii) ordered 1.2.ii
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "unordered 2.1"},
+																&types.StringElement{Content: "unordered 2.1"},
 															},
 														},
 														&types.GenericList{
@@ -499,7 +499,7 @@ ii) ordered 1.2.ii
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "unordered 2.1.1\n\twith some\n\textra lines."}, // heading tabs are not trimmed
+																				&types.StringElement{Content: "unordered 2.1.1\n\twith some\n\textra lines."}, // heading tabs are not trimmed
 																			},
 																		},
 																	},
@@ -510,7 +510,7 @@ ii) ordered 1.2.ii
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "unordered 2.1.2"},
+																				&types.StringElement{Content: "unordered 2.1.2"},
 																			},
 																		},
 																	},
@@ -525,7 +525,7 @@ ii) ordered 1.2.ii
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "unordered 2.2"},
+																&types.StringElement{Content: "unordered 2.2"},
 															},
 														},
 													},
@@ -540,7 +540,7 @@ ii) ordered 1.2.ii
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{Content: "unordered 3"},
+												&types.StringElement{Content: "unordered 3"},
 											},
 										},
 										&types.GenericList{
@@ -551,7 +551,7 @@ ii) ordered 1.2.ii
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "ordered 3.1"},
+																&types.StringElement{Content: "ordered 3.1"},
 															},
 														},
 													},
@@ -561,7 +561,7 @@ ii) ordered 1.2.ii
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "ordered 3.2"},
+																&types.StringElement{Content: "ordered 3.2"},
 															},
 														},
 														&types.GenericList{
@@ -575,7 +575,7 @@ ii) ordered 1.2.ii
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "ordered 3.2.I"},
+																				&types.StringElement{Content: "ordered 3.2.I"},
 																			},
 																		},
 																	},
@@ -585,7 +585,7 @@ ii) ordered 1.2.ii
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{Content: "ordered 3.2.II"},
+																				&types.StringElement{Content: "ordered 3.2.II"},
 																			},
 																		},
 																	},
@@ -599,7 +599,7 @@ ii) ordered 1.2.ii
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{Content: "ordered 3.3"},
+																&types.StringElement{Content: "ordered 3.3"},
 															},
 														},
 													},
@@ -631,7 +631,7 @@ Operating Systems::
 								&types.LabeledListElement{
 									Style: "::",
 									Term: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "Operating Systems",
 										},
 									},
@@ -644,7 +644,7 @@ Operating Systems::
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{
+																&types.StringElement{
 																	Content: "Fedora",
 																},
 															},
@@ -658,7 +658,7 @@ Operating Systems::
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{
+																				&types.StringElement{
 																					Content: "Desktop",
 																				},
 																			},
@@ -714,7 +714,7 @@ a paragraph
 								&types.LabeledListElement{
 									Style: "::",
 									Term: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "Operating Systems",
 										},
 									},
@@ -725,7 +725,7 @@ a paragraph
 												&types.LabeledListElement{
 													Style: ":::",
 													Term: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "Linux",
 														},
 													},
@@ -738,7 +738,7 @@ a paragraph
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{
+																				&types.StringElement{
 																					Content: "Fedora",
 																				},
 																			},
@@ -752,7 +752,7 @@ a paragraph
 																					Elements: []interface{}{
 																						&types.Paragraph{
 																							Elements: []interface{}{
-																								types.StringElement{
+																								&types.StringElement{
 																									Content: "Desktop",
 																								},
 																							},
@@ -768,7 +768,7 @@ a paragraph
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{
+																				&types.StringElement{
 																					Content: "Ubuntu",
 																				},
 																			},
@@ -782,7 +782,7 @@ a paragraph
 																					Elements: []interface{}{
 																						&types.Paragraph{
 																							Elements: []interface{}{
-																								types.StringElement{
+																								&types.StringElement{
 																									Content: "Desktop",
 																								},
 																							},
@@ -795,7 +795,7 @@ a paragraph
 																					Elements: []interface{}{
 																						&types.Paragraph{
 																							Elements: []interface{}{
-																								types.StringElement{
+																								&types.StringElement{
 																									Content: "Server",
 																								},
 																							},
@@ -813,7 +813,7 @@ a paragraph
 												&types.LabeledListElement{
 													Style: ":::",
 													Term: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "BSD",
 														},
 													},
@@ -826,7 +826,7 @@ a paragraph
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{
+																				&types.StringElement{
 																					Content: "FreeBSD",
 																				},
 																			},
@@ -838,7 +838,7 @@ a paragraph
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{
+																				&types.StringElement{
 																					Content: "NetBSD",
 																				},
 																			},
@@ -856,7 +856,7 @@ a paragraph
 								&types.LabeledListElement{
 									Style: "::",
 									Term: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "Cloud Providers",
 										},
 									},
@@ -867,7 +867,7 @@ a paragraph
 												&types.LabeledListElement{
 													Style: ":::",
 													Term: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "PaaS",
 														},
 													},
@@ -880,7 +880,7 @@ a paragraph
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{
+																				&types.StringElement{
 																					Content: "OpenShift",
 																				},
 																			},
@@ -892,7 +892,7 @@ a paragraph
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{
+																				&types.StringElement{
 																					Content: "CloudBees",
 																				},
 																			},
@@ -906,7 +906,7 @@ a paragraph
 												&types.LabeledListElement{
 													Style: ":::",
 													Term: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "IaaS",
 														},
 													},
@@ -919,7 +919,7 @@ a paragraph
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{
+																				&types.StringElement{
 																					Content: "Amazon EC2",
 																				},
 																			},
@@ -931,7 +931,7 @@ a paragraph
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				types.StringElement{
+																				&types.StringElement{
 																					Content: "Rackspace",
 																				},
 																			},
@@ -951,7 +951,7 @@ a paragraph
 						// &types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "a paragraph",
 								},
 							},
@@ -983,7 +983,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "Five",
 												},
 											},
@@ -996,7 +996,7 @@ a paragraph
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{
+																&types.StringElement{
 																	Content: "a",
 																},
 															},
@@ -1012,7 +1012,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "Six",
 												},
 											},
@@ -1048,7 +1048,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "Five",
 												},
 											},
@@ -1064,7 +1064,7 @@ a paragraph
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{
+																&types.StringElement{
 																	Content: "a",
 																},
 															},
@@ -1076,7 +1076,7 @@ a paragraph
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{
+																&types.StringElement{
 																	Content: "b",
 																},
 															},
@@ -1092,7 +1092,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "Six",
 												},
 											},
@@ -1127,7 +1127,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "Five",
 												},
 											},
@@ -1147,7 +1147,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "a",
 												},
 											},
@@ -1160,7 +1160,7 @@ a paragraph
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																types.StringElement{
+																&types.StringElement{
 																	Content: "Six",
 																},
 															},
@@ -1201,7 +1201,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "checked",
 												},
 											},
@@ -1214,7 +1214,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "normal list item",
 												},
 											},
@@ -1234,7 +1234,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "Step 1",
 												},
 											},
@@ -1246,7 +1246,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "Step 2",
 												},
 											},
@@ -1274,7 +1274,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "a",
 												},
 											},
@@ -1289,7 +1289,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "b",
 												},
 											},
@@ -1319,7 +1319,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "a",
 												},
 											},
@@ -1340,7 +1340,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "b",
 												},
 											},
@@ -1369,7 +1369,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "a",
 												},
 											},
@@ -1389,7 +1389,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "b",
 												},
 											},
@@ -1420,7 +1420,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "a",
 												},
 											},
@@ -1446,7 +1446,7 @@ a paragraph
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "b",
 												},
 											},

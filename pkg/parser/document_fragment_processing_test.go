@@ -28,7 +28,7 @@ foo
 							types.AttrStyle: types.Source,
 						},
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "foo",
 							},
 						},
@@ -54,27 +54,27 @@ Preamble comes here
 
 == Section C`
 			headerTitle := []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "A title",
 				},
 			}
 			titleSectionA := []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "Section A",
 				},
 			}
 			titleSectionAa := []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "Section A.a",
 				},
 			}
 			titleSectionB := []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "Section B",
 				},
 			}
 			titleSectionC := []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "Section C",
 				},
 			}
@@ -96,7 +96,7 @@ Preamble comes here
 									types.Paragraph{
 										Lines: [][]interface{}{
 											{
-												types.StringElement{
+												&types.StringElement{
 													Content: "Preamble comes here",
 												},
 											},
@@ -166,17 +166,17 @@ eve - analyzes an image to determine if it's a picture of a life form
 == Synopsis
 `
 			headerSectionTitle := []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "eve(1)",
 				},
 			}
 			nameSectionTitle := []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "Name",
 				},
 			}
 			synopisSectionTitle := []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "Synopsis",
 				},
 			}
@@ -216,7 +216,7 @@ eve - analyzes an image to determine if it's a picture of a life form
 									types.Paragraph{
 										Lines: [][]interface{}{
 											{
-												types.StringElement{
+												&types.StringElement{
 													Content: "eve - analyzes an image to determine if it\u2019s a picture of a life form",
 												},
 											},

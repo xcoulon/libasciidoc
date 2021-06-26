@@ -172,7 +172,7 @@ func (r *sgmlRenderer) renderSourceLine(ctx *renderer.Context, line interface{})
 	callouts := make([]types.Callout, 0, len(elements))
 	for _, e := range elements {
 		switch e := e.(type) {
-		case types.StringElement, types.SpecialCharacter:
+		case *types.StringElement, types.SpecialCharacter:
 			s, err := r.renderElement(ctx, e)
 			if err != nil {
 				return "", nil, err

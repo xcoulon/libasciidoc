@@ -32,7 +32,7 @@ foo
 									types.Paragraph{
 										Lines: [][]interface{}{
 											{
-												types.StringElement{
+												&types.StringElement{
 													Content: "foo",
 												},
 											},
@@ -64,10 +64,10 @@ paragraphs
 									types.AttrStyle: types.Note,
 								},
 								Elements: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "multiple",
 									},
-									types.StringElement{
+									&types.StringElement{
 										Content: "paragraphs",
 									},
 								},
@@ -99,7 +99,7 @@ foo
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "foo",
 											},
 										},
@@ -131,7 +131,7 @@ paragraphs
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "multiple",
 											},
 										},
@@ -141,7 +141,7 @@ paragraphs
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "paragraphs",
 											},
 										},

@@ -107,7 +107,7 @@ func withTitle(title string) sectionAssertion {
 		if len(s.Title) != 1 {
 			return false
 		}
-		str, ok := s.Title[0].(types.StringElement)
+		str, ok := s.Title[0].(*types.StringElement)
 		return ok && strings.ToLower(str.Content) == title
 	}
 }

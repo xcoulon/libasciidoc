@@ -32,7 +32,7 @@ var _ = Describe("checked lists", func() {
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "checked",
 											},
 										},
@@ -45,7 +45,7 @@ var _ = Describe("checked lists", func() {
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "also checked",
 											},
 										},
@@ -58,7 +58,7 @@ var _ = Describe("checked lists", func() {
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "not checked",
 											},
 										},
@@ -71,7 +71,7 @@ var _ = Describe("checked lists", func() {
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "normal list item",
 											},
 										},
@@ -107,7 +107,7 @@ var _ = Describe("checked lists", func() {
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "checked",
 											},
 										},
@@ -120,7 +120,7 @@ var _ = Describe("checked lists", func() {
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "also checked",
 											},
 										},
@@ -133,7 +133,7 @@ var _ = Describe("checked lists", func() {
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "not checked",
 											},
 										},
@@ -146,7 +146,7 @@ var _ = Describe("checked lists", func() {
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "normal list item",
 											},
 										},
@@ -181,7 +181,7 @@ var _ = Describe("checked lists", func() {
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "parent not checked",
 											},
 										},
@@ -195,7 +195,7 @@ var _ = Describe("checked lists", func() {
 												Elements: []interface{}{
 													&types.Paragraph{
 														Elements: []interface{}{
-															types.StringElement{
+															&types.StringElement{
 																Content: "checked",
 															},
 														},
@@ -208,7 +208,7 @@ var _ = Describe("checked lists", func() {
 												Elements: []interface{}{
 													&types.Paragraph{
 														Elements: []interface{}{
-															types.StringElement{
+															&types.StringElement{
 																Content: "also checked",
 															},
 														},
@@ -221,7 +221,7 @@ var _ = Describe("checked lists", func() {
 												Elements: []interface{}{
 													&types.Paragraph{
 														Elements: []interface{}{
-															types.StringElement{
+															&types.StringElement{
 																Content: "not checked",
 															},
 														},
@@ -238,7 +238,7 @@ var _ = Describe("checked lists", func() {
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "normal list item",
 											},
 										},
@@ -272,7 +272,7 @@ var _ = Describe("checked lists", func() {
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "parent not checked",
 											},
 										},
@@ -286,7 +286,7 @@ var _ = Describe("checked lists", func() {
 												Elements: []interface{}{
 													&types.Paragraph{
 														Elements: []interface{}{
-															types.StringElement{
+															&types.StringElement{
 																Content: "a normal list item",
 															},
 														},
@@ -299,7 +299,7 @@ var _ = Describe("checked lists", func() {
 												Elements: []interface{}{
 													&types.Paragraph{
 														Elements: []interface{}{
-															types.StringElement{
+															&types.StringElement{
 																Content: "another normal list item",
 															},
 														},
@@ -316,7 +316,7 @@ var _ = Describe("checked lists", func() {
 								Elements: []interface{}{
 									&types.Paragraph{
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "normal list item",
 											},
 										},

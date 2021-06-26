@@ -20,7 +20,7 @@ var _ = Describe("fenced blocks", func() {
 					&types.DelimitedBlock{
 						Kind: types.Fenced,
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: content,
 							},
 						},
@@ -49,7 +49,7 @@ var _ = Describe("fenced blocks", func() {
 					&types.DelimitedBlock{
 						Kind: types.Fenced,
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "some fenced code\nwith an empty line\n\nin the middle",
 							},
 						},
@@ -66,14 +66,14 @@ var _ = Describe("fenced blocks", func() {
 					&types.DelimitedBlock{
 						Kind: types.Fenced,
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "some fenced code\nwith an empty line\n\nin the middle",
 							},
 						},
 					},
 					&types.Paragraph{
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "then a normal paragraph."},
 						},
 					},
@@ -89,7 +89,7 @@ var _ = Describe("fenced blocks", func() {
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "a paragraph.",
 							},
 						},
@@ -98,7 +98,7 @@ var _ = Describe("fenced blocks", func() {
 					&types.DelimitedBlock{
 						Kind: types.Fenced,
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: content,
 							},
 						},
@@ -115,7 +115,7 @@ var _ = Describe("fenced blocks", func() {
 					&types.DelimitedBlock{
 						Kind: types.Fenced,
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "End of file here",
 							},
 						},
@@ -136,7 +136,7 @@ var _ = Describe("fenced blocks", func() {
 					&types.DelimitedBlock{
 						Kind: types.Fenced,
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "a https://example.com\nand more text on the\nnext lines",
 							},
 						},
@@ -157,7 +157,7 @@ var _ = Describe("fenced blocks", func() {
 					&types.DelimitedBlock{
 						Kind: types.Fenced,
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "a https://example.com[]\nand more text on the\nnext lines",
 							},
 						},
@@ -177,7 +177,7 @@ var _ = Describe("fenced blocks", func() {
 					&types.DelimitedBlock{
 						Kind: types.Fenced,
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "* some \n* listing \n* content ",
 							},
 						},

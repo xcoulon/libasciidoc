@@ -27,7 +27,7 @@ var _ = Describe("attributes", func() {
 						&types.ImageBlock{
 							Location: &types.Location{
 								Path: []interface{}{
-									types.StringElement{Content: "foo.png"},
+									&types.StringElement{Content: "foo.png"},
 								},
 							},
 						},
@@ -46,7 +46,7 @@ var _ = Describe("attributes", func() {
 						&types.ImageBlock{
 							Location: &types.Location{
 								Path: []interface{}{
-									types.StringElement{Content: "foo.png"},
+									&types.StringElement{Content: "foo.png"},
 								},
 							},
 						},
@@ -65,7 +65,7 @@ var _ = Describe("attributes", func() {
 						&types.ImageBlock{
 							Location: &types.Location{
 								Path: []interface{}{
-									types.StringElement{Content: "foo.png"},
+									&types.StringElement{Content: "foo.png"},
 								},
 							},
 						},
@@ -87,7 +87,7 @@ var _ = Describe("attributes", func() {
 							},
 							Location: &types.Location{
 								Path: []interface{}{
-									types.StringElement{Content: "foo.png"},
+									&types.StringElement{Content: "foo.png"},
 								},
 							},
 						},
@@ -109,7 +109,7 @@ var _ = Describe("attributes", func() {
 							},
 							Location: &types.Location{
 								Path: []interface{}{
-									types.StringElement{Content: "foo.png"},
+									&types.StringElement{Content: "foo.png"},
 								},
 							},
 						},
@@ -131,7 +131,7 @@ var _ = Describe("attributes", func() {
 							},
 							Location: &types.Location{
 								Path: []interface{}{
-									types.StringElement{Content: "foo.png"},
+									&types.StringElement{Content: "foo.png"},
 								},
 							},
 						},
@@ -154,7 +154,7 @@ var _ = Describe("attributes", func() {
 							},
 							Location: &types.Location{
 								Path: []interface{}{
-									types.StringElement{Content: "foo.png"},
+									&types.StringElement{Content: "foo.png"},
 								},
 							},
 						},
@@ -180,7 +180,7 @@ var _ = Describe("attributes", func() {
 							},
 							Location: &types.Location{
 								Path: []interface{}{
-									types.StringElement{Content: "foo.png"},
+									&types.StringElement{Content: "foo.png"},
 								},
 							},
 						},
@@ -206,7 +206,7 @@ var _ = Describe("attributes", func() {
 							},
 							Location: &types.Location{
 								Path: []interface{}{
-									types.StringElement{Content: "foo.png"},
+									&types.StringElement{Content: "foo.png"},
 								},
 							},
 						},
@@ -232,7 +232,7 @@ var _ = Describe("attributes", func() {
 							},
 							Location: &types.Location{
 								Path: []interface{}{
-									types.StringElement{Content: "foo.png"},
+									&types.StringElement{Content: "foo.png"},
 								},
 							},
 						},
@@ -270,7 +270,7 @@ var _ = Describe("attributes", func() {
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "foobar",
 									},
 								},
@@ -302,7 +302,7 @@ var _ = Describe("attributes", func() {
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "{def}bar",
 									},
 								},
@@ -328,7 +328,7 @@ var _ = Describe("attributes", func() {
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: `image::foo.png[ "This \Backslash  2Spaced End Space " ]`,
 										},
 									},
@@ -671,7 +671,7 @@ var _ = DescribeTable("valid inline attributes",
 				&types.QuotedText{
 					Kind: types.SingleQuoteBold,
 					Elements: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "cookie",
 						},
 					},
@@ -681,7 +681,7 @@ var _ = DescribeTable("valid inline attributes",
 				&types.QuotedText{
 					Kind: types.SingleQuoteItalic,
 					Elements: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "chocolate",
 						},
 					},
@@ -696,7 +696,7 @@ var _ = DescribeTable("valid inline attributes",
 				&types.QuotedText{
 					Kind: types.SingleQuoteBold,
 					Elements: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "cookie",
 						},
 					},
@@ -706,7 +706,7 @@ var _ = DescribeTable("valid inline attributes",
 				&types.QuotedText{
 					Kind: types.SingleQuoteItalic,
 					Elements: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "chocolate",
 						},
 					},
@@ -721,7 +721,7 @@ var _ = DescribeTable("valid inline attributes",
 				&types.QuotedText{
 					Kind: types.SingleQuoteBold,
 					Elements: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "cookie",
 						},
 					},
@@ -731,7 +731,7 @@ var _ = DescribeTable("valid inline attributes",
 				&types.QuotedText{
 					Kind: types.SingleQuoteItalic,
 					Elements: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "chocolate",
 						},
 					},

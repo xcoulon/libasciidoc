@@ -23,7 +23,7 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "hello"},
+										&types.StringElement{Content: "hello"},
 									},
 								},
 							},
@@ -42,7 +42,7 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "bold    content"},
+										&types.StringElement{Content: "bold    content"},
 									},
 								},
 							},
@@ -61,7 +61,7 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "some bold content"},
+										&types.StringElement{Content: "some bold content"},
 									},
 								},
 							},
@@ -80,7 +80,7 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "some italic content"},
+										&types.StringElement{Content: "some italic content"},
 									},
 								},
 							},
@@ -99,7 +99,7 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "some monospace content"},
+										&types.StringElement{Content: "some monospace content"},
 									},
 								},
 							},
@@ -115,7 +115,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "~some subscript content~"},
+								&types.StringElement{Content: "~some subscript content~"},
 							},
 						},
 					},
@@ -129,7 +129,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "^some superscript content^"},
+								&types.StringElement{Content: "^some superscript content^"},
 							},
 						},
 					},
@@ -146,14 +146,14 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "some "},
+										&types.StringElement{Content: "some "},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{Content: "bold"},
+												&types.StringElement{Content: "bold"},
 											},
 										},
-										types.StringElement{Content: " content"},
+										&types.StringElement{Content: " content"},
 									},
 								},
 							},
@@ -172,15 +172,15 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "some "},
+										&types.StringElement{Content: "some "},
 										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
-												types.StringElement{Content: "italic and "},
+												&types.StringElement{Content: "italic and "},
 												&types.QuotedText{
 													Kind: types.SingleQuoteMonospace,
 													Elements: []interface{}{
-														types.StringElement{Content: "monospaced content"},
+														&types.StringElement{Content: "monospaced content"},
 													},
 												},
 											},
@@ -203,10 +203,10 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "some _very italic"},
+										&types.StringElement{Content: "some _very italic"},
 									},
 								},
-								types.StringElement{Content: " content_"},
+								&types.StringElement{Content: " content_"},
 							},
 						},
 					},
@@ -220,14 +220,14 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "O"},
+								&types.StringElement{Content: "O"},
 								&types.QuotedText{
 									Kind: types.SingleQuoteSubscript,
 									Elements: []interface{}{
-										types.StringElement{Content: "2"},
+										&types.StringElement{Content: "2"},
 									},
 								},
-								types.StringElement{Content: " is a molecule"},
+								&types.StringElement{Content: " is a molecule"},
 							},
 						},
 					},
@@ -241,14 +241,14 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "M"},
+								&types.StringElement{Content: "M"},
 								&types.QuotedText{
 									Kind: types.SingleQuoteSuperscript,
 									Elements: []interface{}{
-										types.StringElement{Content: "me"},
+										&types.StringElement{Content: "me"},
 									},
 								},
-								types.StringElement{Content: " White"},
+								&types.StringElement{Content: " White"},
 							},
 						},
 					},
@@ -262,7 +262,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "~some subscript content~"},
+								&types.StringElement{Content: "~some subscript content~"},
 							},
 						},
 					},
@@ -276,13 +276,13 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "*some bold"},
+								&types.StringElement{Content: "*some bold"},
 							},
 						},
 						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "content*"},
+								&types.StringElement{Content: "content*"},
 							},
 						},
 					},
@@ -296,13 +296,13 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "_some italic"},
+								&types.StringElement{Content: "_some italic"},
 							},
 						},
 						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "content_"},
+								&types.StringElement{Content: "content_"},
 							},
 						},
 					},
@@ -316,13 +316,13 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "`some monospace"},
+								&types.StringElement{Content: "`some monospace"},
 							},
 						},
 						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "content`"},
+								&types.StringElement{Content: "content`"},
 							},
 						},
 					},
@@ -336,7 +336,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "#some marked",
 								},
 							},
@@ -344,7 +344,7 @@ var _ = Describe("quoted texts", func() {
 						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "content#",
 								},
 							},
@@ -360,31 +360,31 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "a ",
 								},
 								&types.QuotedText{
 									Kind: types.SingleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "a"},
+										&types.StringElement{Content: "a"},
 									},
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: " b ",
 								},
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "b"},
+										&types.StringElement{Content: "b"},
 									},
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: " c ",
 								},
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "c"},
+										&types.StringElement{Content: "c"},
 									},
 								},
 							},
@@ -407,7 +407,7 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.DoubleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "hello"},
+										&types.StringElement{Content: "hello"},
 									},
 								},
 							},
@@ -426,7 +426,7 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.DoubleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "some italic content"},
+										&types.StringElement{Content: "some italic content"},
 									},
 								},
 							},
@@ -445,7 +445,7 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.DoubleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: " some monospace content "},
+										&types.StringElement{Content: " some monospace content "},
 									},
 								},
 							},
@@ -464,14 +464,14 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.DoubleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "some "},
+										&types.StringElement{Content: "some "},
 										&types.QuotedText{
 											Kind: types.SingleQuoteSuperscript,
 											Elements: []interface{}{
-												types.StringElement{Content: "superscript"},
+												&types.StringElement{Content: "superscript"},
 											},
 										},
-										types.StringElement{Content: " content"},
+										&types.StringElement{Content: " content"},
 									},
 								},
 							},
@@ -490,15 +490,15 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.DoubleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "some "},
+										&types.StringElement{Content: "some "},
 										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
-												types.StringElement{Content: "italic and "},
+												&types.StringElement{Content: "italic and "},
 												&types.QuotedText{
 													Kind: types.SingleQuoteSuperscript,
 													Elements: []interface{}{
-														types.StringElement{Content: "superscriptcontent"},
+														&types.StringElement{Content: "superscriptcontent"},
 													},
 												},
 											},
@@ -518,7 +518,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "**some bold",
 								},
 							},
@@ -526,7 +526,7 @@ var _ = Describe("quoted texts", func() {
 						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "content**"},
+								&types.StringElement{Content: "content**"},
 							},
 						},
 					},
@@ -540,7 +540,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "__some italic",
 								},
 							},
@@ -548,7 +548,7 @@ var _ = Describe("quoted texts", func() {
 						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "content__"},
+								&types.StringElement{Content: "content__"},
 							},
 						},
 					},
@@ -562,7 +562,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "``some monospace",
 								},
 							},
@@ -570,7 +570,7 @@ var _ = Describe("quoted texts", func() {
 						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "content``"},
+								&types.StringElement{Content: "content``"},
 							},
 						},
 					},
@@ -584,7 +584,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "##some marked",
 								},
 							},
@@ -592,7 +592,7 @@ var _ = Describe("quoted texts", func() {
 						&types.BlankLine{},
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "content##"},
+								&types.StringElement{Content: "content##"},
 							},
 						},
 					},
@@ -610,11 +610,11 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "a paragraph with "},
+								&types.StringElement{Content: "a paragraph with "},
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "some bold content"},
+										&types.StringElement{Content: "some bold content"},
 									},
 								},
 							},
@@ -630,7 +630,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "a paragraph with *some bold content"},
+								&types.StringElement{Content: "a paragraph with *some bold content"},
 							},
 						},
 					},
@@ -644,7 +644,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "a paragraph with *some bold content *"},
+								&types.StringElement{Content: "a paragraph with *some bold content *"},
 							},
 						},
 					},
@@ -658,7 +658,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "a paragraph with * some bold content*"},
+								&types.StringElement{Content: "a paragraph with * some bold content*"},
 							},
 						},
 					},
@@ -672,14 +672,14 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "some "},
+								&types.StringElement{Content: "some "},
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "bold and _italic content _ together"},
+										&types.StringElement{Content: "bold and _italic content _ together"},
 									},
 								},
-								types.StringElement{Content: "."},
+								&types.StringElement{Content: "."},
 							},
 						},
 					},
@@ -693,14 +693,14 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "some *bold and "},
+								&types.StringElement{Content: "some *bold and "},
 								&types.QuotedText{
 									Kind: types.SingleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "italic content"},
+										&types.StringElement{Content: "italic content"},
 									},
 								},
-								types.StringElement{Content: " together *."},
+								&types.StringElement{Content: " together *."},
 							},
 						},
 					},
@@ -714,7 +714,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "a paragraph with ~some subscript content"},
+								&types.StringElement{Content: "a paragraph with ~some subscript content"},
 							},
 						},
 					},
@@ -728,7 +728,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "a paragraph with ~some subscript content ~"},
+								&types.StringElement{Content: "a paragraph with ~some subscript content ~"},
 							},
 						},
 					},
@@ -742,7 +742,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "a paragraph with ~ some subscript content~"},
+								&types.StringElement{Content: "a paragraph with ~ some subscript content~"},
 							},
 						},
 					},
@@ -756,7 +756,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "a paragraph with ^some superscript content"},
+								&types.StringElement{Content: "a paragraph with ^some superscript content"},
 							},
 						},
 					},
@@ -770,7 +770,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "a paragraph with ^some superscript content ^"},
+								&types.StringElement{Content: "a paragraph with ^some superscript content ^"},
 							},
 						},
 					},
@@ -784,7 +784,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "a paragraph with ^ some superscript content^"},
+								&types.StringElement{Content: "a paragraph with ^ some superscript content^"},
 							},
 						},
 					},
@@ -801,21 +801,21 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "some "},
+								&types.StringElement{Content: "some "},
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "bold and "},
+										&types.StringElement{Content: "bold and "},
 										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
-												types.StringElement{Content: "italic content"},
+												&types.StringElement{Content: "italic content"},
 											},
 										},
-										types.StringElement{Content: " together"},
+										&types.StringElement{Content: " together"},
 									},
 								},
-								types.StringElement{Content: "."},
+								&types.StringElement{Content: "."},
 							},
 						},
 					},
@@ -833,10 +833,10 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "some *nested bold"},
+										&types.StringElement{Content: "some *nested bold"},
 									},
 								},
-								types.StringElement{Content: " content*"},
+								&types.StringElement{Content: " content*"},
 							},
 						},
 					},
@@ -854,14 +854,14 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.DoubleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "some "},
+										&types.StringElement{Content: "some "},
 									},
 								},
-								types.StringElement{Content: "nested bold"},
+								&types.StringElement{Content: "nested bold"},
 								&types.QuotedText{
 									Kind: types.DoubleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: " content"},
+										&types.StringElement{Content: " content"},
 									},
 								},
 							},
@@ -881,14 +881,14 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.DoubleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "some "},
+										&types.StringElement{Content: "some "},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{Content: "nested bold"},
+												&types.StringElement{Content: "nested bold"},
 											},
 										},
-										types.StringElement{Content: " content"},
+										&types.StringElement{Content: " content"},
 									},
 								},
 							},
@@ -908,14 +908,14 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "some "},
+										&types.StringElement{Content: "some "},
 										&types.QuotedText{
 											Kind: types.DoubleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{Content: "nested bold"},
+												&types.StringElement{Content: "nested bold"},
 											},
 										},
-										types.StringElement{Content: " content"},
+										&types.StringElement{Content: " content"},
 									},
 								},
 							},
@@ -935,10 +935,10 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "some _nested italic"},
+										&types.StringElement{Content: "some _nested italic"},
 									},
 								},
-								types.StringElement{Content: " content_"},
+								&types.StringElement{Content: " content_"},
 							},
 						},
 					},
@@ -956,14 +956,14 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.DoubleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "some "},
+										&types.StringElement{Content: "some "},
 									},
 								},
-								types.StringElement{Content: "nested italic"},
+								&types.StringElement{Content: "nested italic"},
 								&types.QuotedText{
 									Kind: types.DoubleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: " content"},
+										&types.StringElement{Content: " content"},
 									},
 								},
 							},
@@ -983,14 +983,14 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.DoubleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "some "},
+										&types.StringElement{Content: "some "},
 										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
-												types.StringElement{Content: "nested italic"},
+												&types.StringElement{Content: "nested italic"},
 											},
 										},
-										types.StringElement{Content: " content"},
+										&types.StringElement{Content: " content"},
 									},
 								},
 							},
@@ -1010,14 +1010,14 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "some "},
+										&types.StringElement{Content: "some "},
 										&types.QuotedText{
 											Kind: types.DoubleQuoteItalic,
 											Elements: []interface{}{
-												types.StringElement{Content: "nested italic"},
+												&types.StringElement{Content: "nested italic"},
 											},
 										},
-										types.StringElement{Content: " content"},
+										&types.StringElement{Content: " content"},
 									},
 								},
 							},
@@ -1037,10 +1037,10 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "some `nested monospace"},
+										&types.StringElement{Content: "some `nested monospace"},
 									},
 								},
-								types.StringElement{Content: " content`"},
+								&types.StringElement{Content: " content`"},
 							},
 						},
 					},
@@ -1058,14 +1058,14 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.DoubleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "some "},
+										&types.StringElement{Content: "some "},
 									},
 								},
-								types.StringElement{Content: "nested monospace"},
+								&types.StringElement{Content: "nested monospace"},
 								&types.QuotedText{
 									Kind: types.DoubleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: " content"},
+										&types.StringElement{Content: " content"},
 									},
 								},
 							},
@@ -1085,14 +1085,14 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "some "},
+										&types.StringElement{Content: "some "},
 										&types.QuotedText{
 											Kind: types.DoubleQuoteMonospace,
 											Elements: []interface{}{
-												types.StringElement{Content: "nested monospace"},
+												&types.StringElement{Content: "nested monospace"},
 											},
 										},
-										types.StringElement{Content: " content"},
+										&types.StringElement{Content: " content"},
 									},
 								},
 							},
@@ -1112,14 +1112,14 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "some "},
+										&types.StringElement{Content: "some "},
 										&types.QuotedText{
 											Kind: types.DoubleQuoteMonospace,
 											Elements: []interface{}{
-												types.StringElement{Content: "nested monospace"},
+												&types.StringElement{Content: "nested monospace"},
 											},
 										},
-										types.StringElement{Content: " content"},
+										&types.StringElement{Content: " content"},
 									},
 								},
 							},
@@ -1138,7 +1138,7 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "*a"},
+										&types.StringElement{Content: "*a"},
 									},
 								},
 							},
@@ -1157,7 +1157,7 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "a*b"},
+										&types.StringElement{Content: "a*b"},
 									},
 								},
 							},
@@ -1179,7 +1179,7 @@ var _ = Describe("quoted texts", func() {
 										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
-												types.StringElement{Content: "a"},
+												&types.StringElement{Content: "a"},
 											},
 										},
 									},
@@ -1200,7 +1200,7 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "a_b"},
+										&types.StringElement{Content: "a_b"},
 									},
 								},
 							},
@@ -1219,7 +1219,7 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "a*b*"},
+										&types.StringElement{Content: "a*b*"},
 									},
 								},
 							},
@@ -1238,11 +1238,11 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "a"},
+										&types.StringElement{Content: "a"},
 										&types.QuotedText{
 											Kind: types.SingleQuoteSubscript,
 											Elements: []interface{}{
-												types.StringElement{Content: "b"},
+												&types.StringElement{Content: "b"},
 											},
 										},
 									},
@@ -1263,7 +1263,7 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "a\nb"},
+										&types.StringElement{Content: "a\nb"},
 									},
 								},
 							},
@@ -1282,7 +1282,7 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "a\nb"},
+										&types.StringElement{Content: "a\nb"},
 									},
 								},
 							},
@@ -1301,11 +1301,11 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "a\n"},
+										&types.StringElement{Content: "a\n"},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{Content: "b"},
+												&types.StringElement{Content: "b"},
 											},
 										},
 									},
@@ -1326,11 +1326,11 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "a\n"},
+										&types.StringElement{Content: "a\n"},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{Content: "b"},
+												&types.StringElement{Content: "b"},
 											},
 										},
 									},
@@ -1351,14 +1351,14 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "a "},
+										&types.StringElement{Content: "a "},
 										&types.InlineLink{
 											Attributes: types.Attributes{
 												types.AttrInlineLinkText: "b",
 											},
 											Location: &types.Location{
 												Path: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "/",
 													},
 												},
@@ -1382,11 +1382,11 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "a "},
+										&types.StringElement{Content: "a "},
 										types.InlineImage{
 											Location: &types.Location{
 												Path: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "foo.png",
 													},
 												},
@@ -1410,11 +1410,11 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "a "},
+										&types.StringElement{Content: "a "},
 										types.InlinePassthrough{
 											Kind: types.SinglePlusPassthrough,
 											Elements: []interface{}{
-												types.StringElement{Content: "image:foo.png[]"},
+												&types.StringElement{Content: "image:foo.png[]"},
 											},
 										},
 									},
@@ -1435,11 +1435,11 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "a "},
+										&types.StringElement{Content: "a "},
 										types.InlinePassthrough{
 											Kind: types.TriplePlusPassthrough,
 											Elements: []interface{}{
-												types.StringElement{Content: "image:foo.png[]"},
+												&types.StringElement{Content: "image:foo.png[]"},
 											},
 										},
 									},
@@ -1460,14 +1460,14 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "a "},
+										&types.StringElement{Content: "a "},
 										&types.InlineLink{
 											Attributes: types.Attributes{
 												types.AttrInlineLinkText: "b",
 											},
 											Location: &types.Location{
 												Path: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "/",
 													},
 												},
@@ -1491,11 +1491,11 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "a "},
+										&types.StringElement{Content: "a "},
 										types.InlineImage{
 											Location: &types.Location{
 												Path: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "foo.png",
 													},
 												},
@@ -1519,11 +1519,11 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "a "},
+										&types.StringElement{Content: "a "},
 										types.InlinePassthrough{
 											Kind: types.SinglePlusPassthrough,
 											Elements: []interface{}{
-												types.StringElement{Content: "image:foo.png[]"},
+												&types.StringElement{Content: "image:foo.png[]"},
 											},
 										},
 									},
@@ -1544,11 +1544,11 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "a "},
+										&types.StringElement{Content: "a "},
 										types.InlinePassthrough{
 											Kind: types.TriplePlusPassthrough,
 											Elements: []interface{}{
-												types.StringElement{Content: "image:foo.png[]"},
+												&types.StringElement{Content: "image:foo.png[]"},
 											},
 										},
 									},
@@ -1569,14 +1569,14 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "a "},
+										&types.StringElement{Content: "a "},
 										&types.InlineLink{
 											Attributes: types.Attributes{
 												types.AttrInlineLinkText: "b",
 											},
 											Location: &types.Location{
 												Path: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "/",
 													},
 												},
@@ -1600,11 +1600,11 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "a "},
+										&types.StringElement{Content: "a "},
 										types.InlineImage{
 											Location: &types.Location{
 												Path: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "foo.png",
 													},
 												},
@@ -1628,11 +1628,11 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "a "},
+										&types.StringElement{Content: "a "},
 										types.InlinePassthrough{
 											Kind: types.SinglePlusPassthrough,
 											Elements: []interface{}{
-												types.StringElement{Content: "image:foo.png[]"},
+												&types.StringElement{Content: "image:foo.png[]"},
 											},
 										},
 									},
@@ -1653,11 +1653,11 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "a "},
+										&types.StringElement{Content: "a "},
 										types.InlinePassthrough{
 											Kind: types.TriplePlusPassthrough,
 											Elements: []interface{}{
-												types.StringElement{Content: "image:foo.png[]"},
+												&types.StringElement{Content: "image:foo.png[]"},
 											},
 										},
 									},
@@ -1684,7 +1684,7 @@ var _ = Describe("quoted texts", func() {
 									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
-											types.StringElement{Content: "*some bold content"},
+											&types.StringElement{Content: "*some bold content"},
 										},
 									},
 								},
@@ -1703,10 +1703,10 @@ var _ = Describe("quoted texts", func() {
 									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
-											types.StringElement{Content: "some bold content"},
+											&types.StringElement{Content: "some bold content"},
 										},
 									},
-									types.StringElement{Content: "*"},
+									&types.StringElement{Content: "*"},
 								},
 							},
 						},
@@ -1726,7 +1726,7 @@ var _ = Describe("quoted texts", func() {
 									&types.QuotedText{
 										Kind: types.SingleQuoteItalic,
 										Elements: []interface{}{
-											types.StringElement{Content: "_some italic content"},
+											&types.StringElement{Content: "_some italic content"},
 										},
 									},
 								},
@@ -1745,10 +1745,10 @@ var _ = Describe("quoted texts", func() {
 									&types.QuotedText{
 										Kind: types.SingleQuoteItalic,
 										Elements: []interface{}{
-											types.StringElement{Content: "some italic content"},
+											&types.StringElement{Content: "some italic content"},
 										},
 									},
-									types.StringElement{Content: "_"},
+									&types.StringElement{Content: "_"},
 								},
 							},
 						},
@@ -1768,7 +1768,7 @@ var _ = Describe("quoted texts", func() {
 									&types.QuotedText{
 										Kind: types.SingleQuoteMonospace,
 										Elements: []interface{}{
-											types.StringElement{Content: "`some monospace content"},
+											&types.StringElement{Content: "`some monospace content"},
 										},
 									},
 								},
@@ -1787,10 +1787,10 @@ var _ = Describe("quoted texts", func() {
 									&types.QuotedText{
 										Kind: types.SingleQuoteMonospace,
 										Elements: []interface{}{
-											types.StringElement{Content: "some monospace content"},
+											&types.StringElement{Content: "some monospace content"},
 										},
 									},
-									types.StringElement{Content: "`"},
+									&types.StringElement{Content: "`"},
 								},
 							},
 						},
@@ -1805,7 +1805,7 @@ var _ = Describe("quoted texts", func() {
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.StringElement{Content: "a paragraph with *some bold content"},
+								&types.StringElement{Content: "a paragraph with *some bold content"},
 							},
 						},
 					},
@@ -1827,7 +1827,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "*bold content*"},
+										&types.StringElement{Content: "*bold content*"},
 									},
 								},
 							},
@@ -1841,7 +1841,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `\*bold content*`},
+										&types.StringElement{Content: `\*bold content*`},
 									},
 								},
 							},
@@ -1855,7 +1855,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `**bold content**`},
+										&types.StringElement{Content: `**bold content**`},
 									},
 								},
 							},
@@ -1869,7 +1869,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `\**bold content**`},
+										&types.StringElement{Content: `\**bold content**`},
 									},
 								},
 							},
@@ -1883,7 +1883,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `**bold content*`},
+										&types.StringElement{Content: `**bold content*`},
 									},
 								},
 							},
@@ -1897,7 +1897,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `\\**bold content*`},
+										&types.StringElement{Content: `\\**bold content*`},
 									},
 								},
 							},
@@ -1914,14 +1914,14 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "*"},
+										&types.StringElement{Content: "*"},
 										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
-												types.StringElement{Content: "italic content"},
+												&types.StringElement{Content: "italic content"},
 											},
 										},
-										types.StringElement{Content: "*"},
+										&types.StringElement{Content: "*"},
 									},
 								},
 							},
@@ -1935,14 +1935,14 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "**"},
+										&types.StringElement{Content: "**"},
 										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
-												types.StringElement{Content: "italic content"},
+												&types.StringElement{Content: "italic content"},
 											},
 										},
-										types.StringElement{Content: "*"},
+										&types.StringElement{Content: "*"},
 									},
 								},
 							},
@@ -1956,14 +1956,14 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "*bold "},
+										&types.StringElement{Content: "*bold "},
 										&types.QuotedText{
 											Kind: types.SingleQuoteItalic,
 											Elements: []interface{}{
-												types.StringElement{Content: "and italic"},
+												&types.StringElement{Content: "and italic"},
 											},
 										},
-										types.StringElement{Content: " content*"},
+										&types.StringElement{Content: " content*"},
 									},
 								},
 							},
@@ -1984,7 +1984,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "_italic content_"},
+										&types.StringElement{Content: "_italic content_"},
 									},
 								},
 							},
@@ -1998,7 +1998,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `\_italic content_`},
+										&types.StringElement{Content: `\_italic content_`},
 									},
 								},
 							},
@@ -2012,7 +2012,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `__italic content__`},
+										&types.StringElement{Content: `__italic content__`},
 									},
 								},
 							},
@@ -2026,7 +2026,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `\__italic content__`},
+										&types.StringElement{Content: `\__italic content__`},
 									},
 								},
 							},
@@ -2040,7 +2040,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `__italic content_`},
+										&types.StringElement{Content: `__italic content_`},
 									},
 								},
 							},
@@ -2054,7 +2054,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `\\__italic content_`}, // only 1 backslash remove
+										&types.StringElement{Content: `\\__italic content_`}, // only 1 backslash remove
 									},
 								},
 							},
@@ -2071,14 +2071,14 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "_"},
+										&types.StringElement{Content: "_"},
 										&types.QuotedText{
 											Kind: types.SingleQuoteMonospace,
 											Elements: []interface{}{
-												types.StringElement{Content: "monospace content"},
+												&types.StringElement{Content: "monospace content"},
 											},
 										},
-										types.StringElement{Content: "_"},
+										&types.StringElement{Content: "_"},
 									},
 								},
 							},
@@ -2092,14 +2092,14 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "__"},
+										&types.StringElement{Content: "__"},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{Content: "bold content"},
+												&types.StringElement{Content: "bold content"},
 											},
 										},
-										types.StringElement{Content: "_"},
+										&types.StringElement{Content: "_"},
 									},
 								},
 							},
@@ -2113,14 +2113,14 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "_italic "},
+										&types.StringElement{Content: "_italic "},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{Content: "and bold"},
+												&types.StringElement{Content: "and bold"},
 											},
 										},
-										types.StringElement{Content: " content_"},
+										&types.StringElement{Content: " content_"},
 									},
 								},
 							},
@@ -2140,7 +2140,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "`monospace content`"}, // backslash removed
+										&types.StringElement{Content: "`monospace content`"}, // backslash removed
 									},
 								},
 							},
@@ -2154,7 +2154,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `\` + "`monospace content`"}, // only 1 backslash removed
+										&types.StringElement{Content: `\` + "`monospace content`"}, // only 1 backslash removed
 									},
 								},
 							},
@@ -2168,7 +2168,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `\` + "`monospace content``"}, // 2 back slashes "consumed"
+										&types.StringElement{Content: `\` + "`monospace content``"}, // 2 back slashes "consumed"
 									},
 								},
 							},
@@ -2182,7 +2182,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `\` + "``monospace content``"}, // 2 back slashes "consumed"
+										&types.StringElement{Content: `\` + "``monospace content``"}, // 2 back slashes "consumed"
 									},
 								},
 							},
@@ -2196,7 +2196,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "``monospace content`"},
+										&types.StringElement{Content: "``monospace content`"},
 									},
 								},
 							},
@@ -2210,7 +2210,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `\\` + "``monospace content`"}, // 2 backslashes removed
+										&types.StringElement{Content: `\\` + "``monospace content`"}, // 2 backslashes removed
 									},
 								},
 							},
@@ -2227,14 +2227,14 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "`"},
+										&types.StringElement{Content: "`"},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{Content: "bold content"},
+												&types.StringElement{Content: "bold content"},
 											},
 										},
-										types.StringElement{Content: "`"},
+										&types.StringElement{Content: "`"},
 									},
 								},
 							},
@@ -2248,14 +2248,14 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "``"},
+										&types.StringElement{Content: "``"},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{Content: "bold content"},
+												&types.StringElement{Content: "bold content"},
 											},
 										},
-										types.StringElement{Content: "`"},
+										&types.StringElement{Content: "`"},
 									},
 								},
 							},
@@ -2269,14 +2269,14 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "`monospace "},
+										&types.StringElement{Content: "`monospace "},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{Content: "and bold"},
+												&types.StringElement{Content: "and bold"},
 											},
 										},
-										types.StringElement{Content: " content`"},
+										&types.StringElement{Content: " content`"},
 									},
 								},
 							},
@@ -2296,7 +2296,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "~subscriptcontent~"},
+										&types.StringElement{Content: "~subscriptcontent~"},
 									},
 								},
 							},
@@ -2310,7 +2310,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `\~subscriptcontent~`}, // only 1 backslash removed
+										&types.StringElement{Content: `\~subscriptcontent~`}, // only 1 backslash removed
 									},
 								},
 							},
@@ -2328,14 +2328,14 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "~"},
+										&types.StringElement{Content: "~"},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{Content: "boldcontent"},
+												&types.StringElement{Content: "boldcontent"},
 											},
 										},
-										types.StringElement{Content: "~"},
+										&types.StringElement{Content: "~"},
 									},
 								},
 							},
@@ -2349,14 +2349,14 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `\~subscript `},
+										&types.StringElement{Content: `\~subscript `},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{Content: "and bold"},
+												&types.StringElement{Content: "and bold"},
 											},
 										},
-										types.StringElement{Content: " content~"},
+										&types.StringElement{Content: " content~"},
 									},
 								},
 							},
@@ -2376,7 +2376,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "^superscriptcontent^"},
+										&types.StringElement{Content: "^superscriptcontent^"},
 									},
 								},
 							},
@@ -2390,7 +2390,7 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `\^superscriptcontent^`}, // only 1 backslash removed
+										&types.StringElement{Content: `\^superscriptcontent^`}, // only 1 backslash removed
 									},
 								},
 							},
@@ -2408,14 +2408,14 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `^`},
+										&types.StringElement{Content: `^`},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{Content: "bold content"},
+												&types.StringElement{Content: "bold content"},
 											},
 										},
-										types.StringElement{Content: "^"},
+										&types.StringElement{Content: "^"},
 									},
 								},
 							},
@@ -2429,14 +2429,14 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: "^"},
+										&types.StringElement{Content: "^"},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{Content: "bold content"},
+												&types.StringElement{Content: "bold content"},
 											},
 										},
-										types.StringElement{Content: "^"},
+										&types.StringElement{Content: "^"},
 									},
 								},
 							},
@@ -2450,14 +2450,14 @@ var _ = Describe("quoted texts", func() {
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{Content: `\^superscript `},
+										&types.StringElement{Content: `\^superscript `},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{Content: "and bold"},
+												&types.StringElement{Content: "and bold"},
 											},
 										},
-										types.StringElement{Content: " content^"},
+										&types.StringElement{Content: " content^"},
 									},
 								},
 							},
@@ -2479,11 +2479,11 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteBold,
 									Elements: []interface{}{
-										types.StringElement{Content: "a "},
+										&types.StringElement{Content: "a "},
 										types.InlineImage{
 											Location: &types.Location{
 												Path: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "foo.png",
 													},
 												},
@@ -2507,11 +2507,11 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteItalic,
 									Elements: []interface{}{
-										types.StringElement{Content: "a "},
+										&types.StringElement{Content: "a "},
 										types.InlineImage{
 											Location: &types.Location{
 												Path: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "foo.png",
 													},
 												},
@@ -2535,11 +2535,11 @@ var _ = Describe("quoted texts", func() {
 								&types.QuotedText{
 									Kind: types.SingleQuoteMonospace,
 									Elements: []interface{}{
-										types.StringElement{Content: "a "},
+										&types.StringElement{Content: "a "},
 										types.InlineImage{
 											Location: &types.Location{
 												Path: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "foo.png",
 													},
 												},

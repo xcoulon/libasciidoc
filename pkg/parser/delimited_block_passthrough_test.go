@@ -32,13 +32,13 @@ _foo_
 								},
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "_foo_",
 										},
 									},
 									{},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "*bar*",
 										},
 									},
@@ -64,13 +64,13 @@ _foo_
 							types.PassthroughBlock{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "<input>",
 										},
 									},
 									{},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "<input>",
 										},
 									},
@@ -94,7 +94,7 @@ http://example.com[]
 							types.PassthroughBlock{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "http://example.com[]",
 										},
 									},
@@ -118,7 +118,7 @@ pass:[foo]
 							types.PassthroughBlock{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "pass:[foo]",
 										},
 									},
@@ -142,7 +142,7 @@ pass:[foo]
 							types.PassthroughBlock{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "*foo*",
 										},
 									},
@@ -174,12 +174,12 @@ another paragraph`
 								},
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "_foo_",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "*bar*",
 										},
 									},
@@ -189,7 +189,7 @@ another paragraph`
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "another paragraph",
 										},
 									},
@@ -223,13 +223,13 @@ _foo_
 							},
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "_foo_",
 									},
 								},
 								{},
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "*bar*",
 									},
 								},
@@ -259,12 +259,12 @@ another paragraph`
 							},
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "_foo_",
 									},
 								},
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "*bar*",
 									},
 								},
@@ -273,7 +273,7 @@ another paragraph`
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "another paragraph",
 									},
 								},

@@ -44,7 +44,7 @@ package parser
 // func (ctx *substitutionContext) onAttributeDeclaration(d types.AttributeDeclaration) error {
 // 	value := substituteAttributes(d.Value, ctx.attributes)
 // 	switch value := value.(type) {
-// 	case types.StringElement:
+// 	case *types.StringElement:
 // 		ctx.attributes[d.Name] = value.Content
 // 	case string:
 // 		ctx.attributes[d.Name] = value

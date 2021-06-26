@@ -38,7 +38,7 @@ func (r *sgmlRenderer) renderInlineElements(ctx *renderer.Context, elements []in
 			return "", err
 		}
 		if i == len(elements)-1 {
-			if _, ok := element.(types.StringElement); ok { // TODO: only for StringElement? or for any kind of element?
+			if _, ok := element.(*types.StringElement); ok { // TODO: only for StringElement? or for any kind of element?
 				// trim trailing spaces before returning the line
 				buf.WriteString(strings.TrimRight(string(renderedElement), " "))
 			} else {

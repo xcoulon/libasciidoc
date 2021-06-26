@@ -965,8 +965,9 @@ func (e *CalloutListElement) SetAttributes(attributes Attributes) {
 }
 
 // CanAddElement checks if the given element can be added
-func (e *CalloutListElement) CanAddElement(_ interface{}) bool {
-	return true
+func (e *CalloutListElement) CanAddElement(element interface{}) bool {
+	_, ok := element.(RawLine)
+	return ok
 }
 
 // AddElement add an element to this CalloutListElement
@@ -1727,7 +1728,7 @@ var _ ListElement = &LabeledListElement{}
 func NewLabeledListElement(level int, term string, description interface{}) (*LabeledListElement, error) {
 	// log.Debugf("new LabeledListItem")
 	t := []interface{}{
-		StringElement{
+		&StringElement{
 			Content: strings.TrimSpace(term),
 		},
 	}
@@ -3408,8 +3409,10 @@ type StringElement struct {
 }
 
 // NewStringElement initializes a new `StringElement` from the given content
-func NewStringElement(content string) (StringElement, error) {
-	return StringElement{Content: content}, nil
+func NewStringElement(content string) (*StringElement, error) {
+	return &StringElement{
+		Content: content,
+	}, nil
 }
 
 // RawText returns the raw text representation of this element as it was (supposedly) written in the source document
@@ -3622,14 +3625,14 @@ func NewEscapedQuotedText(backslashes string, punctuation string, content interf
 			return ""
 		})
 	return []interface{}{
-		StringElement{
+		&StringElement{
 			Content: backslashesStr,
 		},
-		StringElement{
+		&StringElement{
 			Content: punctuation,
 		},
 		content,
-		StringElement{
+		&StringElement{
 			Content: punctuation,
 		},
 	}, nil
@@ -4192,7 +4195,7 @@ func (l *Location) SetPathPrefix(p interface{}) {
 			if u, err := url.Parse(l.Stringify()); err == nil {
 				if !u.IsAbs() {
 					l.Path = Merge(
-						StringElement{
+						&StringElement{
 							Content: p,
 						},
 						l.Path)

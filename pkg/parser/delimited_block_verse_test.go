@@ -33,18 +33,18 @@ ____`
 								},
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "some ",
 										},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "verse",
 												},
 											},
 										},
-										types.StringElement{
+										&types.StringElement{
 											Content: " content",
 										},
 									},
@@ -75,17 +75,17 @@ ____
 								},
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "- some ",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "- verse ",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "- content ",
 										},
 									},
@@ -114,7 +114,7 @@ ____
 								},
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "some verse content ",
 										},
 									},
@@ -145,27 +145,27 @@ ____`
 								},
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "* some",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "----",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "* verse ",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "----",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "* content",
 										},
 									},
@@ -195,14 +195,14 @@ ____`
 								},
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "* foo",
 										},
 									},
 									{},
 									{},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "\t* bar",
 										},
 									},
@@ -251,7 +251,7 @@ foo
 								},
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "foo",
 										},
 									},
@@ -299,26 +299,26 @@ ____
 									},
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "a link to ",
 											},
 											types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "example.com",
 														},
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " ",
 											},
 											types.SpecialCharacter{ // callout is not detected with the `normal` susbtitution
 												Name: "<",
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: "1",
 											},
 											types.SpecialCharacter{
@@ -326,19 +326,19 @@ ____
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "and ",
 											},
 											types.SpecialCharacter{
 												Name: "<",
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: "more text",
 											},
 											types.SpecialCharacter{
 												Name: ">",
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " on the",
 											},
 											types.LineBreak{},
@@ -347,19 +347,19 @@ ____
 											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "next",
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " lines with a link to ",
 											},
 											types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "github.com",
 														},
 													},
@@ -368,7 +368,7 @@ ____
 										},
 										{},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "* not a list item",
 											},
 										},
@@ -381,7 +381,7 @@ ____
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a callout",
 													},
 												},
@@ -414,26 +414,26 @@ ____
 									},
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "a link to ",
 											},
 											types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "example.com",
 														},
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " ",
 											},
 											types.SpecialCharacter{ // callout is not detected with the `normal` susbtitution
 												Name: "<",
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: "1",
 											},
 											types.SpecialCharacter{
@@ -441,19 +441,19 @@ ____
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "and ",
 											},
 											types.SpecialCharacter{
 												Name: "<",
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: "more text",
 											},
 											types.SpecialCharacter{
 												Name: ">",
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " on the",
 											},
 											types.LineBreak{},
@@ -462,19 +462,19 @@ ____
 											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "next",
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " lines with a link to ",
 											},
 											types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "github.com",
 														},
 													},
@@ -483,7 +483,7 @@ ____
 										},
 										{},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "* not a list item",
 											},
 										},
@@ -496,7 +496,7 @@ ____
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a callout",
 													},
 												},
@@ -529,12 +529,12 @@ ____
 									},
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "a link to https://example.com[] <1>",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "and <more text> on the +",
 											},
 										},
@@ -542,18 +542,18 @@ ____
 											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "next",
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " lines with a link to {github-url}[]",
 											},
 										},
 										{},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "* not a list item",
 											},
 										},
@@ -566,7 +566,7 @@ ____
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a callout",
 													},
 												},
@@ -599,36 +599,36 @@ ____
 									},
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "a link to ",
 											},
 											types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "example.com",
 														},
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " <1>",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "and <more text> on the +",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "*next* lines with a link to {github-url}[]",
 											},
 										},
 										{},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "* not a list item",
 											},
 										},
@@ -641,7 +641,7 @@ ____
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a callout",
 													},
 												},
@@ -674,23 +674,23 @@ ____
 									},
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "a link to https://example.com[] <1>",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "and <more text> on the +",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "*next* lines with a link to https://github.com[]",
 											},
 										},
 										{},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "* not a list item",
 											},
 										},
@@ -703,7 +703,7 @@ ____
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a callout",
 													},
 												},
@@ -736,37 +736,37 @@ ____
 									},
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "a link to ",
 											},
 											types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "example.com",
 														},
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " <1>",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "and <more text> on the +",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "*next* lines with a link to ",
 											},
 											types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "github.com",
 														},
 													},
@@ -775,7 +775,7 @@ ____
 										},
 										{},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "* not a list item",
 											},
 										},
@@ -788,7 +788,7 @@ ____
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a callout",
 													},
 												},
@@ -821,13 +821,13 @@ ____
 									},
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "a link to https://example.com[] ",
 											},
 											types.SpecialCharacter{
 												Name: "<",
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: "1",
 											},
 											types.SpecialCharacter{
@@ -835,30 +835,30 @@ ____
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "and ",
 											},
 											types.SpecialCharacter{
 												Name: "<",
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: "more text",
 											},
 											types.SpecialCharacter{
 												Name: ">",
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " on the +",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "*next* lines with a link to {github-url}[]",
 											},
 										},
 										{},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "* not a list item",
 											},
 										},
@@ -871,7 +871,7 @@ ____
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a callout",
 													},
 												},
@@ -905,23 +905,23 @@ ____
 									},
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "a link to https://example.com[] <1>",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "and <more text> on the +",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "*next* lines with a link to {github-url}[]",
 											},
 										},
 										{},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "* not a list item",
 											},
 										},
@@ -934,7 +934,7 @@ ____
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a callout",
 													},
 												},
@@ -967,24 +967,24 @@ ____
 									},
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "a link to https://example.com[] <1>",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "and <more text> on the",
 											},
 											types.LineBreak{},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "*next* lines with a link to {github-url}[]",
 											},
 										},
 										{},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "* not a list item",
 											},
 										},
@@ -997,7 +997,7 @@ ____
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a callout",
 													},
 												},
@@ -1030,25 +1030,25 @@ ____
 									},
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "a link to ",
 											},
 											types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "example.com",
 														},
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " <1>",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "and <more text> on the +",
 											},
 										},
@@ -1056,18 +1056,18 @@ ____
 											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "next",
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " lines with a link to {github-url}[]",
 											},
 										},
 										{},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "* not a list item",
 											},
 										},
@@ -1080,7 +1080,7 @@ ____
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a callout",
 													},
 												},
@@ -1113,25 +1113,25 @@ ____
 									},
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "a link to ",
 											},
 											types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
-														types.StringElement{
+														&types.StringElement{
 															Content: "example.com",
 														},
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " <1>",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "and <more text> on the +",
 											},
 										},
@@ -1139,18 +1139,18 @@ ____
 											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "next",
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " lines with a link to {github-url}[]",
 											},
 										},
 										{},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "* not a list item",
 											},
 										},
@@ -1163,7 +1163,7 @@ ____
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a callout",
 													},
 												},
@@ -1196,23 +1196,23 @@ ____
 									},
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "a link to https://example.com[] <1>",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "and <more text> on the +",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "*next* lines with a link to {github-url}[]",
 											},
 										},
 										{},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "* not a list item",
 											},
 										},
@@ -1225,7 +1225,7 @@ ____
 										types.Paragraph{
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a callout",
 													},
 												},
@@ -1261,18 +1261,18 @@ ____`
 							},
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "some ",
 									},
 									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "verse",
 											},
 										},
 									},
-									types.StringElement{
+									&types.StringElement{
 										Content: " content",
 									},
 								},
@@ -1300,17 +1300,17 @@ ____
 							},
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "- some ",
 									},
 								},
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "- verse ",
 									},
 								},
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "- content ",
 									},
 								},
@@ -1336,7 +1336,7 @@ ____
 							},
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "some verse content ",
 									},
 								},
@@ -1364,27 +1364,27 @@ ____`
 							},
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "* some",
 									},
 								},
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "----",
 									},
 								},
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "* verse ",
 									},
 								},
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "----",
 									},
 								},
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "* content",
 									},
 								},
@@ -1411,14 +1411,14 @@ ____`
 							},
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "* foo",
 									},
 								},
 								{},
 								{},
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "\t* bar",
 									},
 								},
@@ -1461,7 +1461,7 @@ foo
 							},
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "foo",
 									},
 								},

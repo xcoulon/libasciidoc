@@ -33,7 +33,7 @@ Garrett D'Amore
 								"id": "_my_title",
 							},
 							Title: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "My title",
 								},
 							},
@@ -68,7 +68,7 @@ Garrett D'Amore
 								"id": "_my_title",
 							},
 							Title: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "My title",
 								},
 							},
@@ -119,7 +119,7 @@ Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit *am
 					&types.Section{
 						Level: 1,
 						Title: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "Lorem Ipsum",
 							},
 						},
@@ -127,7 +127,7 @@ Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit *am
 					&types.BlankLine{},
 					&types.Paragraph{
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
 sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, 
 sed diam voluptua. 
@@ -142,12 +142,12 @@ Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit `,
 							&types.QuotedText{
 								Kind: types.SingleQuoteBold,
 								Elements: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "amet",
 									},
 								},
 							},
-							types.StringElement{
+							&types.StringElement{
 								Content: ".",
 							},
 						},

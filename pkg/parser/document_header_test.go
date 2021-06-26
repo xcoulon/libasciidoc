@@ -21,7 +21,7 @@ var _ = Describe("headers", func() {
 This journey continues.`
 
 				Title := []interface{}{
-					types.StringElement{Content: "Title"},
+					&types.StringElement{Content: "Title"},
 				}
 				expected := types.Document{
 					ElementReferences: types.ElementReferences{
@@ -38,7 +38,7 @@ This journey continues.`
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{
-											types.StringElement{Content: "This journey continues."},
+											&types.StringElement{Content: "This journey continues."},
 										},
 									},
 								},
@@ -57,7 +57,7 @@ This journey continues.`
 						source := `= Title
 John  Foo    Doe  <johndoe@example.com>`
 						Title := []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "Title",
 							},
 						}
@@ -97,7 +97,7 @@ John  Foo    Doe  <johndoe@example.com>`
 						source := `= Title
 Jane the_Doe <jane@example.com>`
 						Title := []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "Title",
 							},
 						}
@@ -136,7 +136,7 @@ Jane the_Doe <jane@example.com>`
 						source := `= Title
 Jane Foo the Doe <jane@example.com>`
 						Title := []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "Title",
 							},
 						}
@@ -176,7 +176,7 @@ Jane Foo the Doe <jane@example.com>`
 						source := `= Title
 John Doe`
 						Title := []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "Title",
 							},
 						}
@@ -213,7 +213,7 @@ John Doe`
 						source := `= Title
 Doe`
 						Title := []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "Title",
 							},
 						}
@@ -249,7 +249,7 @@ Doe`
 						source := `= Title
 :author: John Foo Doe` // `:"email":` is processed as a regular attribute
 						Title := []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "Title",
 							},
 						}
@@ -290,7 +290,7 @@ Doe`
 						source := `= Title
 John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 						Title := []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "Title",
 							},
 						}
@@ -342,7 +342,7 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 						source := `= Title
 					// John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 						Title := []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "Title",
 							},
 						}
@@ -369,7 +369,7 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 					// a comment
 					John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 						Title := []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "Title",
 							},
 						}
@@ -421,7 +421,7 @@ a comment
 ////
 John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 						Title := []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "Title",
 							},
 						}
@@ -475,7 +475,7 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 				John Doe
 				v1.0, March 29, 2020: Updated revision`
 					Title := []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Title",
 						},
 					}
@@ -533,7 +533,7 @@ with another empty line
 ////
 `
 					Title := []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Title",
 						},
 					}
@@ -580,7 +580,7 @@ with another empty line
 				John Doe
 				v1.0, March 29, 2020: Updated revision`
 					Title := []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Title",
 						},
 					}
@@ -627,7 +627,7 @@ with another empty line
 				// a comment
 				v1.0, March 29, 2020: Updated revision`
 					Title := []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Title",
 						},
 					}
@@ -673,7 +673,7 @@ with another empty line
 				John Doe
 				v1.0, March 29, 2020`
 					Title := []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Title",
 						},
 					}
@@ -717,7 +717,7 @@ with another empty line
 				John Doe
 				1.0, March 29, 2020:`
 					Title := []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Title",
 						},
 					}
@@ -761,7 +761,7 @@ with another empty line
 				John Doe
 				1.0,`
 					Title := []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Title",
 						},
 					}
@@ -803,7 +803,7 @@ with another empty line
 				John Doe
 				1.0`
 					Title := []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Title",
 						},
 					}
@@ -845,7 +845,7 @@ with another empty line
 				John Doe
 				1.0a`
 					Title := []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Title",
 						},
 					}
@@ -887,7 +887,7 @@ with another empty line
 				John Doe
 				v1.0:`
 					Title := []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Title",
 						},
 					}
@@ -929,7 +929,7 @@ with another empty line
 				John Doe
 				V1.0:`
 					Title := []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Title",
 						},
 					}
@@ -971,7 +971,7 @@ with another empty line
 				John Doe
 				v1.0,`
 					Title := []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Title",
 						},
 					}
@@ -1013,7 +1013,7 @@ with another empty line
 				John Doe
 				v1.0,:`
 					Title := []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Title",
 						},
 					}
@@ -1055,7 +1055,7 @@ with another empty line
 John Doe
 v1.0:`
 					Title := []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Title",
 						},
 					}
@@ -1228,16 +1228,16 @@ a paragraph`
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{Content: "a paragraph"},
+									&types.StringElement{Content: "a paragraph"},
 								},
 								{
-									types.StringElement{Content: ":toc:"},
+									&types.StringElement{Content: ":toc:"},
 								},
 								{
-									types.StringElement{Content: ":date: 2017-01-01"},
+									&types.StringElement{Content: ":date: 2017-01-01"},
 								},
 								{
-									types.StringElement{Content: ":author: Xavier"},
+									&types.StringElement{Content: ":author: Xavier"},
 								},
 							},
 						},
@@ -1254,10 +1254,10 @@ a paragraph`
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{Content: ":@date: 2017-01-01"},
+									&types.StringElement{Content: ":@date: 2017-01-01"},
 								},
 								{
-									types.StringElement{Content: ":{author}: Xavier"},
+									&types.StringElement{Content: ":{author}: Xavier"},
 								},
 							},
 						},
@@ -1285,7 +1285,7 @@ a paragraph`
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{Content: "font"},
+									&types.StringElement{Content: "font"},
 								},
 							},
 						},

@@ -39,7 +39,7 @@ var _ = Describe("comments", func() {
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "foo // A single-line comment.",
 										},
 									},
@@ -63,7 +63,7 @@ another line // not a comment`
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a first line",
 										},
 									},
@@ -73,7 +73,7 @@ another line // not a comment`
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "another line // not a comment",
 										},
 									},
@@ -101,7 +101,7 @@ another line // not a comment`
 									},
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "  // A single-line comment.",
 											},
 										},
@@ -129,7 +129,7 @@ another line // not a comment`
 									},
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "\t\t// A single-line comment.",
 											},
 										},
@@ -153,17 +153,17 @@ another line`
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "a first line",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "\t// A single-line comment.",
 											},
 										},
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "another line",
 											},
 										},
@@ -192,12 +192,12 @@ with multiple lines
 							types.CommentBlock{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a *comment* block",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "with multiple lines",
 										},
 									},
@@ -225,7 +225,7 @@ a second paragraph`
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a first paragraph",
 										},
 									},
@@ -235,12 +235,12 @@ a second paragraph`
 							types.CommentBlock{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a *comment* block",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "with multiple lines",
 										},
 									},
@@ -249,7 +249,7 @@ a second paragraph`
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a second paragraph",
 										},
 									},
@@ -286,7 +286,7 @@ a second paragraph`
 							},
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "  // A single-line comment.",
 									},
 								},
@@ -308,7 +308,7 @@ a second paragraph`
 							},
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "\t\t// A single-line comment.",
 									},
 								},
@@ -326,7 +326,7 @@ a second paragraph`
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{Content: "foo // A single-line comment."},
+									&types.StringElement{Content: "foo // A single-line comment."},
 								},
 							},
 						},
@@ -344,10 +344,10 @@ another line`
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{Content: "a first line"},
+									&types.StringElement{Content: "a first line"},
 								},
 								{
-									types.StringElement{Content: "another line"},
+									&types.StringElement{Content: "another line"},
 								},
 							},
 						},
@@ -367,13 +367,13 @@ another line`
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{Content: "a first line"},
+										&types.StringElement{Content: "a first line"},
 									},
 									{
-										types.StringElement{Content: "\t// A single-line comment."},
+										&types.StringElement{Content: "\t// A single-line comment."},
 									},
 									{
-										types.StringElement{Content: "another line"},
+										&types.StringElement{Content: "another line"},
 									},
 								},
 							},
@@ -410,14 +410,14 @@ a second paragraph`
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{Content: "a first paragraph"},
+									&types.StringElement{Content: "a first paragraph"},
 								},
 							},
 						},
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{Content: "a second paragraph"},
+									&types.StringElement{Content: "a second paragraph"},
 								},
 							},
 						},
@@ -438,7 +438,7 @@ with multiple lines
 ////
 a second paragraph`
 			section1Title := []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "section 1",
 				},
 			}
@@ -457,14 +457,14 @@ a second paragraph`
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{Content: "a first paragraph"},
+										&types.StringElement{Content: "a first paragraph"},
 									},
 								},
 							},
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{Content: "a second paragraph"},
+										&types.StringElement{Content: "a second paragraph"},
 									},
 								},
 							},
@@ -489,12 +489,12 @@ a first paragraph
 
 a second paragraph`
 			section0Title := []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "section 0",
 				},
 			}
 			section1Title := []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "section 1",
 				},
 			}
@@ -521,14 +521,14 @@ a second paragraph`
 									types.Paragraph{
 										Lines: [][]interface{}{
 											{
-												types.StringElement{Content: "a first paragraph"},
+												&types.StringElement{Content: "a first paragraph"},
 											},
 										},
 									},
 									types.Paragraph{
 										Lines: [][]interface{}{
 											{
-												types.StringElement{Content: "a second paragraph"},
+												&types.StringElement{Content: "a second paragraph"},
 											},
 										},
 									},

@@ -33,7 +33,7 @@ var _ = Describe("table of contents", func() {
 					},
 					Level: 1,
 					Title: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "Title",
 						},
 					},

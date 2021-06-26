@@ -11,7 +11,7 @@ var _ = Describe("include table of contents", func() {
 
 	// reusable elements
 	doctitle := []interface{}{
-		types.StringElement{Content: "A Title"},
+		&types.StringElement{Content: "A Title"},
 	}
 	preamble := types.Preamble{
 		Elements: []interface{}{
@@ -19,7 +19,7 @@ var _ = Describe("include table of contents", func() {
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{Content: "A short preamble"},
+						&types.StringElement{Content: "A short preamble"},
 					},
 				},
 			},
@@ -32,7 +32,7 @@ var _ = Describe("include table of contents", func() {
 			types.AttrID: "_section_1",
 		},
 		Title: []interface{}{
-			types.StringElement{Content: "section 1"},
+			&types.StringElement{Content: "section 1"},
 		},
 		Elements: []interface{}{},
 	}

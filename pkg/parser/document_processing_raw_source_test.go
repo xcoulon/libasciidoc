@@ -25,35 +25,35 @@ var _ = DescribeTable("'FileLocation' pattern",
 	},
 	Entry("'chapter-a.adoc'", "chapter-a.adoc", types.Location{
 		Path: []interface{}{
-			types.StringElement{
+			&types.StringElement{
 				Content: "chapter-a.adoc",
 			},
 		},
 	}),
 	Entry("'chapter_a.adoc'", "chapter_a.adoc", types.Location{
 		Path: []interface{}{
-			types.StringElement{
+			&types.StringElement{
 				Content: "chapter_a.adoc",
 			},
 		},
 	}),
 	Entry("'../../test/includes/chapter_a.adoc'", "../../test/includes/chapter_a.adoc", types.Location{
 		Path: []interface{}{
-			types.StringElement{
+			&types.StringElement{
 				Content: "../../test/includes/chapter_a.adoc",
 			},
 		},
 	}),
 	Entry("'{includedir}/chapter-{foo}.adoc'", "{includedir}/chapter-{foo}.adoc", types.Location{
 		Path: []interface{}{
-			types.StringElement{
+			&types.StringElement{
 				Content: "{includedir}/chapter-{foo}.adoc", // attribute substitutions are treared as part of the string element
 			},
 		},
 	}),
 	Entry("'{scheme}://{path}'", "{scheme}://{path}", types.Location{
 		Path: []interface{}{
-			types.StringElement{ // attribute substitutions are treared as part of the string element
+			&types.StringElement{ // attribute substitutions are treared as part of the string element
 				Content: "{scheme}://{path}",
 			},
 		},
@@ -90,7 +90,7 @@ var _ = Describe("file inclusions", func() {
 							types.Section{
 								Level: 0,
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Chapter A",
 									},
 								},
@@ -98,7 +98,7 @@ var _ = Describe("file inclusions", func() {
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "content",
 								},
 							},
@@ -123,7 +123,7 @@ var _ = Describe("file inclusions", func() {
 							types.Section{
 								Level: 0,
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Chapter A",
 									},
 								},
@@ -131,7 +131,7 @@ var _ = Describe("file inclusions", func() {
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "content",
 								},
 							},
@@ -154,7 +154,7 @@ var _ = Describe("file inclusions", func() {
 							types.Section{
 								Level: 1,
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Chapter A",
 									},
 								},
@@ -162,7 +162,7 @@ var _ = Describe("file inclusions", func() {
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "content",
 								},
 							},
@@ -184,7 +184,7 @@ var _ = Describe("file inclusions", func() {
 							types.Section{
 								Level: 0,
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Chapter A",
 									},
 								},
@@ -192,7 +192,7 @@ var _ = Describe("file inclusions", func() {
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "content",
 								},
 							},
@@ -219,7 +219,7 @@ include::{includedir}/chapter-a.adoc[]`
 							types.Section{
 								Level: 0,
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Chapter A",
 									},
 								},
@@ -227,7 +227,7 @@ include::{includedir}/chapter-a.adoc[]`
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "content",
 								},
 							},
@@ -269,7 +269,7 @@ include::hello_world.go.txt[]
 							types.Section{
 								Level: 1,
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "grandchild title",
 									},
 								},
@@ -277,13 +277,13 @@ include::hello_world.go.txt[]
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "first line of grandchild",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "last line of grandchild",
 								},
 							},
@@ -302,7 +302,7 @@ include::hello_world.go.txt[]
 							types.Section{
 								Level: 2,
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "grandchild title",
 									},
 								},
@@ -310,13 +310,13 @@ include::hello_world.go.txt[]
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "first line of grandchild",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "last line of grandchild",
 								},
 							},
@@ -335,7 +335,7 @@ include::hello_world.go.txt[]
 							types.Section{
 								Level: 0,
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "grandchild title",
 									},
 								},
@@ -343,13 +343,13 @@ include::hello_world.go.txt[]
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "first line of grandchild",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "last line of grandchild",
 								},
 							},
@@ -368,7 +368,7 @@ include::hello_world.go.txt[]
 							types.Section{
 								Level: 1, // here the level is changed from `0` to `1` since `root` doc has a `leveloffset=+1` during its inclusion
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "parent title",
 									},
 								},
@@ -376,13 +376,13 @@ include::hello_world.go.txt[]
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "first line of parent",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "child preamble",
 								},
 							},
@@ -390,7 +390,7 @@ include::hello_world.go.txt[]
 							types.Section{
 								Level: 3, // here the level is changed from `1` to `3` since both `root` and `parent` docs have a `leveloffset=+1` during their inclusion
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "child section 1",
 									},
 								},
@@ -398,7 +398,7 @@ include::hello_world.go.txt[]
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "first line of child",
 								},
 							},
@@ -406,7 +406,7 @@ include::hello_world.go.txt[]
 							types.Section{
 								Level: 4, // here the level is changed from `1` to `4` since both `root`, `parent` and `child` docs have a `leveloffset=+1` during their inclusion
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "grandchild title",
 									},
 								},
@@ -414,13 +414,13 @@ include::hello_world.go.txt[]
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "first line of grandchild",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "last line of grandchild",
 								},
 							},
@@ -428,7 +428,7 @@ include::hello_world.go.txt[]
 							types.Section{
 								Level: 4, // here the level is changed from `2` to `4` since both `root` and `parent` docs have a `leveloffset=+1` during their inclusion
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "child section 2",
 									},
 								},
@@ -436,13 +436,13 @@ include::hello_world.go.txt[]
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "last line of child",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "last line of parent",
 								},
 							},
@@ -461,7 +461,7 @@ include::hello_world.go.txt[]
 							types.Section{
 								Level: 1, // here the level is offset by `+1` as per root doc attribute in the `include` macro
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "parent title",
 									},
 								},
@@ -469,13 +469,13 @@ include::hello_world.go.txt[]
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "first line of parent",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "child preamble",
 								},
 							},
@@ -483,7 +483,7 @@ include::hello_world.go.txt[]
 							types.Section{
 								Level: 3, // here level is forced to "absolute 3"
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "child section 1",
 									},
 								},
@@ -491,7 +491,7 @@ include::hello_world.go.txt[]
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "first line of child",
 								},
 							},
@@ -499,7 +499,7 @@ include::hello_world.go.txt[]
 							types.Section{
 								Level: 4, // here the level is set to `4` because it was its parent was offset by 3...
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "grandchild title",
 									},
 								},
@@ -507,13 +507,13 @@ include::hello_world.go.txt[]
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "first line of grandchild",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "last line of grandchild",
 								},
 							},
@@ -521,7 +521,7 @@ include::hello_world.go.txt[]
 							types.Section{
 								Level: 4, // here the level is set to `4` because it the first section was moved from `1` to `3` so we use the same offset here
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "child section 2",
 									},
 								},
@@ -529,13 +529,13 @@ include::hello_world.go.txt[]
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "last line of child",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "last line of parent",
 								},
 							},
@@ -559,55 +559,55 @@ include::hello_world.go.txt[]
 								Kind: types.Fenced,
 							},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "= parent title",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "first line of parent",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "= child title",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "first line of child",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "== grandchild title",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "first line of grandchild",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "last line of grandchild",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "last line of child",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "last line of parent ",
 								},
 								types.Callout{
@@ -620,7 +620,7 @@ include::hello_world.go.txt[]
 							types.CalloutListElement{
 								Ref: 1,
 								Elements: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "a callout",
 									},
 								},
@@ -645,55 +645,55 @@ include::hello_world.go.txt[]
 								Kind: types.Quote,
 							},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "= parent title",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "first line of parent",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "= child title",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "first line of child",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "== grandchild title",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "first line of grandchild",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "last line of grandchild",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "last line of child",
 								},
 							},
 							&types.BlankLine{},
 							types.InlineElements{
-								types.StringElement{
+								&types.StringElement{
 									Content: "last line of parent ",
 								},
 								types.Callout{
@@ -722,7 +722,7 @@ include::hello_world.go.txt[]
 									types.Section{
 										Level: 0,
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "Chapter A",
 											},
 										},
@@ -743,7 +743,7 @@ include::hello_world.go.txt[]
 									types.Section{
 										Level: 0,
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "Chapter A",
 											},
 										},
@@ -765,7 +765,7 @@ include::hello_world.go.txt[]
 									types.Section{
 										Level: 0,
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "Chapter A",
 											},
 										},
@@ -802,7 +802,7 @@ include::hello_world.go.txt[]
 									types.Section{
 										Level: 0,
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "Chapter A",
 											},
 										},
@@ -828,7 +828,7 @@ include::hello_world.go.txt[]
 									types.Section{
 										Level: 0,
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "Chapter A",
 											},
 										},
@@ -851,7 +851,7 @@ include::hello_world.go.txt[]
 									types.Section{
 										Level: 0,
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "Chapter A",
 											},
 										},
@@ -874,7 +874,7 @@ include::hello_world.go.txt[]
 									types.Section{
 										Level: 0,
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "Chapter A",
 											},
 										},
@@ -901,7 +901,7 @@ include::hello_world.go.txt[]
 									types.Section{
 										Level: 0,
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "Chapter A",
 											},
 										},
@@ -936,7 +936,7 @@ include::hello_world.go.txt[]
 									types.Section{
 										Level: 1,
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "Section 1",
 											},
 										},
@@ -963,7 +963,7 @@ include::hello_world.go.txt[]
 								types.Section{
 									Level: 1,
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "Section 1",
 										},
 									},
@@ -988,7 +988,7 @@ include::hello_world.go.txt[]
 								types.Section{
 									Level: 1,
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "Section 1",
 										},
 									},
@@ -996,7 +996,7 @@ include::hello_world.go.txt[]
 								},
 								&types.BlankLine{},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: "content",
 									},
 								},
@@ -1020,14 +1020,14 @@ include::hello_world.go.txt[]
 
 								&types.BlankLine{},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: "content",
 									},
 								},
 								&types.BlankLine{},
 								&types.BlankLine{},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: "end",
 									},
 								},
@@ -1059,7 +1059,7 @@ include::hello_world.go.txt[]
 								types.Section{
 									Level: 1,
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "Section 1",
 										},
 									},
@@ -1067,14 +1067,14 @@ include::hello_world.go.txt[]
 								},
 								&types.BlankLine{},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: "content",
 									},
 								},
 								&types.BlankLine{},
 								&types.BlankLine{},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: "end",
 									},
 								},
@@ -1095,7 +1095,7 @@ include::hello_world.go.txt[]
 									types.Section{
 										Level: 1,
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "Section 1",
 											},
 										},
@@ -1103,14 +1103,14 @@ include::hello_world.go.txt[]
 									},
 									&types.BlankLine{},
 									types.InlineElements{
-										types.StringElement{
+										&types.StringElement{
 											Content: "content",
 										},
 									},
 									&types.BlankLine{},
 									&types.BlankLine{},
 									types.InlineElements{
-										types.StringElement{
+										&types.StringElement{
 											Content: "end",
 										},
 									},
@@ -1129,7 +1129,7 @@ include::hello_world.go.txt[]
 									types.Section{
 										Level: 1,
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "Section 1",
 											},
 										},
@@ -1137,7 +1137,7 @@ include::hello_world.go.txt[]
 									},
 									&types.BlankLine{},
 									types.InlineElements{
-										types.StringElement{
+										&types.StringElement{
 											Content: "content",
 										},
 									},
@@ -1157,7 +1157,7 @@ include::hello_world.go.txt[]
 									types.Section{
 										Level: 1,
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "Section 1",
 											},
 										},
@@ -1165,14 +1165,14 @@ include::hello_world.go.txt[]
 									},
 									&types.BlankLine{},
 									types.InlineElements{
-										types.StringElement{
+										&types.StringElement{
 											Content: "content",
 										},
 									},
 									&types.BlankLine{},
 									&types.BlankLine{},
 									types.InlineElements{
-										types.StringElement{
+										&types.StringElement{
 											Content: "end",
 										},
 									},
@@ -1191,7 +1191,7 @@ include::hello_world.go.txt[]
 									types.Section{
 										Level: 1,
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "Section 1",
 											},
 										},
@@ -1213,7 +1213,7 @@ include::hello_world.go.txt[]
 									types.Section{
 										Level: 1,
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "Section 1",
 											},
 										},
@@ -1235,7 +1235,7 @@ include::hello_world.go.txt[]
 									types.Section{
 										Level: 1,
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "Section 1",
 											},
 										},
@@ -1244,7 +1244,7 @@ include::hello_world.go.txt[]
 									&types.BlankLine{},
 									&types.BlankLine{},
 									types.InlineElements{
-										types.StringElement{
+										&types.StringElement{
 											Content: "end",
 										},
 									},
@@ -1262,7 +1262,7 @@ include::hello_world.go.txt[]
 
 									&types.BlankLine{},
 									types.InlineElements{
-										types.StringElement{
+										&types.StringElement{
 											Content: "end",
 										},
 									},
@@ -1330,7 +1330,7 @@ include::{includedir}/grandchild-include.adoc[]`
 								types.Section{
 									Level: 1,
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "grandchild title",
 										},
 									},
@@ -1338,13 +1338,13 @@ include::{includedir}/grandchild-include.adoc[]`
 								},
 								&types.BlankLine{},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: "first line of grandchild",
 									},
 								},
 								&types.BlankLine{},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: "last line of grandchild",
 									},
 								},
@@ -1370,7 +1370,7 @@ include::{includedir}/grandchild-include.adoc[]`
 								types.Section{
 									Level: 1,
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "grandchild title",
 										},
 									},
@@ -1378,13 +1378,13 @@ include::{includedir}/grandchild-include.adoc[]`
 								},
 								&types.BlankLine{},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: "first line of grandchild",
 									},
 								},
 								&types.BlankLine{},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: "last line of grandchild",
 									},
 								},
@@ -1413,19 +1413,19 @@ include::{includedir}/grandchild-include.adoc[]
 									Kind: types.Listing,
 								},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: "== grandchild title",
 									},
 								},
 								&types.BlankLine{},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: "first line of grandchild",
 									},
 								},
 								&types.BlankLine{},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: "last line of grandchild",
 									},
 								},
@@ -1454,29 +1454,29 @@ include::../../test/includes/hello_world.go.txt[]
 									Kind: types.Listing,
 								},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: `package includes`,
 									},
 								},
 								&types.BlankLine{},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: `import "fmt"`,
 									},
 								},
 								&types.BlankLine{},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: `func helloworld() {`,
 									},
 								},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: `	fmt.Println("hello, world!")`,
 									},
 								},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: `}`,
 									},
 								},
@@ -1504,7 +1504,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 									Kind: types.Listing,
 								},
 								types.InlineElements{
-									types.StringElement{
+									&types.StringElement{
 										Content: `package includes`,
 									},
 								},
@@ -1530,22 +1530,22 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 			expected := types.Document{
 				ElementReferences: types.ElementReferences{
 					"_parent_title": []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "parent title",
 						},
 					},
 					"_child_section_1": []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "child section 1",
 						},
 					},
 					"_child_section_2": []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "child section 2",
 						},
 					},
 					"_grandchild_title": []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "grandchild title",
 						},
 					},
@@ -1557,7 +1557,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 						},
 						Level: 1, // here the level is changed from `0` to `1` since `root` doc has a `leveloffset=+1` during its inclusion
 						Title: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "parent title",
 							},
 						},
@@ -1565,7 +1565,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "first line of parent",
 										},
 									},
@@ -1574,7 +1574,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "child preamble",
 										},
 									},
@@ -1586,7 +1586,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 								},
 								Level: 3, // here the level is changed from `1` to `3` since both `root` and `parent` docs have a `leveloffset=+1` during their inclusion
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "child section 1",
 									},
 								},
@@ -1594,7 +1594,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 									types.Paragraph{
 										Lines: [][]interface{}{
 											{
-												types.StringElement{
+												&types.StringElement{
 													Content: "first line of child",
 												},
 											},
@@ -1606,7 +1606,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 										},
 										Level: 4, // here the level is changed from `1` to `4` since both `root`, `parent` and `child` docs have a `leveloffset=+1` during their inclusion
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "grandchild title",
 											},
 										},
@@ -1614,7 +1614,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 											types.Paragraph{
 												Lines: [][]interface{}{
 													{
-														types.StringElement{
+														&types.StringElement{
 															Content: "first line of grandchild",
 														},
 													},
@@ -1623,7 +1623,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 											types.Paragraph{
 												Lines: [][]interface{}{
 													{
-														types.StringElement{
+														&types.StringElement{
 															Content: "last line of grandchild",
 														},
 													},
@@ -1637,7 +1637,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 										},
 										Level: 4, // here the level is changed from `2` to `4` since both `root` and `parent` docs have a `leveloffset=+1` during their inclusion
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "child section 2",
 											},
 										},
@@ -1645,7 +1645,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 											types.Paragraph{
 												Lines: [][]interface{}{
 													{
-														types.StringElement{
+														&types.StringElement{
 															Content: "last line of child",
 														},
 													},
@@ -1654,7 +1654,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 											types.Paragraph{
 												Lines: [][]interface{}{
 													{
-														types.StringElement{
+														&types.StringElement{
 															Content: "last line of parent",
 														},
 													},
@@ -1676,22 +1676,22 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 			expected := types.Document{
 				ElementReferences: types.ElementReferences{
 					"_parent_title": []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "parent title",
 						},
 					},
 					"_child_section_1": []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "child section 1",
 						},
 					},
 					"_child_section_2": []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "child section 2",
 						},
 					},
 					"_grandchild_title": []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "grandchild title",
 						},
 					},
@@ -1703,7 +1703,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 						},
 						Level: 1, // here the level is offset by `+1` as per root doc attribute in the `include` macro
 						Title: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "parent title",
 							},
 						},
@@ -1711,7 +1711,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "first line of parent",
 										},
 									},
@@ -1720,7 +1720,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "child preamble",
 										},
 									},
@@ -1732,7 +1732,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 								},
 								Level: 3, // here level is forced to "absolute 3"
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "child section 1",
 									},
 								},
@@ -1740,7 +1740,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 									types.Paragraph{
 										Lines: [][]interface{}{
 											{
-												types.StringElement{
+												&types.StringElement{
 													Content: "first line of child",
 												},
 											},
@@ -1752,7 +1752,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 										},
 										Level: 4, // here the level is set to `4` because it was its parent was offset by 3...
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "grandchild title",
 											},
 										},
@@ -1760,7 +1760,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 											types.Paragraph{
 												Lines: [][]interface{}{
 													{
-														types.StringElement{
+														&types.StringElement{
 															Content: "first line of grandchild",
 														},
 													},
@@ -1769,7 +1769,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 											types.Paragraph{
 												Lines: [][]interface{}{
 													{
-														types.StringElement{
+														&types.StringElement{
 															Content: "last line of grandchild",
 														},
 													},
@@ -1783,7 +1783,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 										},
 										Level: 4, // here the level is set to `4` because it the first section was moved from `1` to `3` so we use the same offset here
 										Title: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "child section 2",
 											},
 										},
@@ -1791,7 +1791,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 											types.Paragraph{
 												Lines: [][]interface{}{
 													{
-														types.StringElement{
+														&types.StringElement{
 															Content: "last line of child",
 														},
 													},
@@ -1800,7 +1800,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 											types.Paragraph{
 												Lines: [][]interface{}{
 													{
-														types.StringElement{
+														&types.StringElement{
 															Content: "last line of parent",
 														},
 													},

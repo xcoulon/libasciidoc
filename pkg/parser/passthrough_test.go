@@ -24,7 +24,7 @@ var _ = Describe("passthroughs", func() {
 									types.InlinePassthrough{
 										Kind: types.TriplePlusPassthrough,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "hello, world",
 											},
 										},
@@ -71,7 +71,7 @@ var _ = Describe("passthroughs", func() {
 									types.InlinePassthrough{
 										Kind: types.TriplePlusPassthrough,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: " {hello}, world ",
 											},
 										},
@@ -94,7 +94,7 @@ var _ = Describe("passthroughs", func() {
 									types.InlinePassthrough{
 										Kind: types.TriplePlusPassthrough,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: " *hello*, world ",
 											},
 										},
@@ -117,7 +117,7 @@ var _ = Describe("passthroughs", func() {
 									types.InlinePassthrough{
 										Kind: types.TriplePlusPassthrough,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: " ",
 											},
 										},
@@ -140,7 +140,7 @@ var _ = Describe("passthroughs", func() {
 									types.InlinePassthrough{
 										Kind: types.TriplePlusPassthrough,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "\nhello,\nworld\n",
 											},
 										},
@@ -160,16 +160,16 @@ var _ = Describe("passthroughs", func() {
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{Content: "The text "},
+									&types.StringElement{Content: "The text "},
 									types.InlinePassthrough{
 										Kind: types.TriplePlusPassthrough,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "<u>underline & me</u>",
 											},
 										},
 									},
-									types.StringElement{Content: " is underlined."},
+									&types.StringElement{Content: " is underlined."},
 								},
 							},
 						},
@@ -188,7 +188,7 @@ var _ = Describe("passthroughs", func() {
 									types.InlinePassthrough{
 										Kind: types.TriplePlusPassthrough,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "image:foo.png[]",
 											},
 										},
@@ -215,7 +215,7 @@ var _ = Describe("passthroughs", func() {
 									types.InlinePassthrough{
 										Kind: types.SinglePlusPassthrough,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "hello, world",
 											},
 										},
@@ -235,7 +235,7 @@ var _ = Describe("passthroughs", func() {
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "++",
 									},
 								},
@@ -256,7 +256,7 @@ var _ = Describe("passthroughs", func() {
 									types.InlinePassthrough{
 										Kind: types.SinglePlusPassthrough,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "image:foo.png[]",
 											},
 										},
@@ -276,18 +276,18 @@ var _ = Describe("passthroughs", func() {
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "+",
 									},
 									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "hello",
 											},
 										},
 									},
-									types.StringElement{
+									&types.StringElement{
 										Content: ", world",
 									},
 									types.LineBreak{},
@@ -306,18 +306,18 @@ var _ = Describe("passthroughs", func() {
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "+ ",
 									},
 									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "hello",
 											},
 										},
 									},
-									types.StringElement{
+									&types.StringElement{
 										Content: ", world+",
 									},
 								},
@@ -335,18 +335,18 @@ var _ = Describe("passthroughs", func() {
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "+ ",
 									},
 									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "hello",
 											},
 										},
 									},
-									types.StringElement{
+									&types.StringElement{
 										Content: ", world",
 									},
 									types.LineBreak{},
@@ -365,12 +365,12 @@ var _ = Describe("passthroughs", func() {
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "+hello,",
 									},
 								},
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "world+",
 									},
 								},
@@ -389,18 +389,18 @@ var _ = Describe("passthroughs", func() {
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "The text + ",
 										},
 										&types.QuotedText{
 											Kind: types.SingleQuoteBold,
 											Elements: []interface{}{
-												types.StringElement{
+												&types.StringElement{
 													Content: "hello",
 												},
 											},
 										},
-										types.StringElement{
+										&types.StringElement{
 											Content: ", world + is not passed through.",
 										},
 									},
@@ -429,7 +429,7 @@ var _ = Describe("passthroughs", func() {
 									{types.InlinePassthrough{
 										Kind: types.PassthroughMacro,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "hello",
 											},
 										},
@@ -451,7 +451,7 @@ var _ = Describe("passthroughs", func() {
 									{types.InlinePassthrough{
 										Kind: types.PassthroughMacro,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "hello, world",
 											},
 										},
@@ -491,7 +491,7 @@ var _ = Describe("passthroughs", func() {
 									{types.InlinePassthrough{
 										Kind: types.PassthroughMacro,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: " *hello*, world ",
 											},
 										},
@@ -513,7 +513,7 @@ var _ = Describe("passthroughs", func() {
 									{types.InlinePassthrough{
 										Kind: types.PassthroughMacro,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "hello,\nworld",
 											},
 										},
@@ -541,7 +541,7 @@ var _ = Describe("passthroughs", func() {
 											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "hello",
 													},
 												},
@@ -565,18 +565,18 @@ var _ = Describe("passthroughs", func() {
 									{types.InlinePassthrough{
 										Kind: types.PassthroughMacro,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: " a ",
 											},
 											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "hello",
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: ", world ",
 											},
 										},

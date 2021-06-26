@@ -30,7 +30,7 @@ func (r *sgmlRenderer) renderPassthroughContent(ctx *renderer.Context, p types.I
 	buf := &strings.Builder{}
 	for _, element := range p.Elements {
 		switch element := element.(type) {
-		case types.StringElement:
+		case *types.StringElement:
 			// "string" elements must be rendered as-is, ie, without any HTML escaping.
 			_, err := buf.WriteString(element.Content)
 			if err != nil {

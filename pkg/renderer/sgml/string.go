@@ -43,11 +43,11 @@ func (r *sgmlRenderer) renderQuotedString(ctx *renderer.Context, s types.QuotedS
 	elements := append([]interface{}{
 		types.StringElement{Content: quotes[s.Kind].Open},
 	}, s.Elements...)
-	elements = append(elements, types.StringElement{Content: quotes[s.Kind].Close})
+	elements = append(elements, &types.StringElement{Content: quotes[s.Kind].Close})
 	return r.renderInlineElements(ctx, elements)
 }
 
-func (r *sgmlRenderer) renderStringElement(ctx *renderer.Context, str types.StringElement) (string, error) {
+func (r *sgmlRenderer) renderStringElement(ctx *renderer.Context, str *types.StringElement) (string, error) {
 	buf := &strings.Builder{}
 	err := r.stringElement.Execute(buf, str.Content)
 	if err != nil {

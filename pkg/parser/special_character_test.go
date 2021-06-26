@@ -22,37 +22,37 @@ var _ = Describe("special characters", func() {
 								types.SpecialCharacter{
 									Name: "<",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "b",
 								},
 								types.SpecialCharacter{
 									Name: ">",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "*",
 								},
 								types.SpecialCharacter{
 									Name: "<",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "/b",
 								},
 								types.SpecialCharacter{
 									Name: ">",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: " ",
 								},
 								types.SpecialCharacter{
 									Name: "&",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "apos; ",
 								},
 								types.SpecialCharacter{
 									Name: "&",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "amp;",
 								},
 							},
@@ -75,37 +75,37 @@ var _ = Describe("special characters", func() {
 								types.SpecialCharacter{
 									Name: "<",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "b",
 								},
 								types.SpecialCharacter{
 									Name: ">",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "*",
 								},
 								types.SpecialCharacter{
 									Name: "<",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "/b",
 								},
 								types.SpecialCharacter{
 									Name: ">",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: " ",
 								},
 								types.SpecialCharacter{
 									Name: "&",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "apos; ",
 								},
 								types.SpecialCharacter{
 									Name: "&",
 								},
-								types.StringElement{
+								&types.StringElement{
 									Content: "amp;",
 								},
 							},

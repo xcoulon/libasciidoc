@@ -15,7 +15,7 @@ func (r *sgmlRenderer) renderUserMacro(ctx *renderer.Context, um types.UserMacro
 			// fallback to paragraph
 			p, _ := types.NewParagraph([]interface{}{
 				[]interface{}{
-					types.StringElement{Content: um.RawText},
+					&types.StringElement{Content: um.RawText},
 				},
 			}, nil)
 			return r.renderParagraph(ctx, p)

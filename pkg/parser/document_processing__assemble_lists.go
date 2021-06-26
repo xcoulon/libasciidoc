@@ -114,7 +114,7 @@ content:
 		case *types.ListElementContinuation:
 			// fall back for a list element continuation which is not following a list element
 			block, _ := types.NewParagraph([]interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "+\n",
 				},
 			}, nil)

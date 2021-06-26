@@ -25,18 +25,18 @@ some *verse* content
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "some ",
 											},
 											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "verse",
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " content",
 											},
 										},
@@ -69,18 +69,18 @@ bar
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "some ",
 											},
 											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "verse",
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " content",
 											},
 										},
@@ -89,10 +89,10 @@ bar
 								&types.BlankLine{}, // blankline is required between paragraph and the next block
 								types.ListingBlock{
 									Elements: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "foo",
 										},
-										types.StringElement{
+										&types.StringElement{
 											Content: "bar",
 										},
 									},
@@ -135,18 +135,18 @@ some *verse* content
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "some ",
 											},
 											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "verse",
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " content",
 											},
 										},
@@ -179,18 +179,18 @@ bar
 								types.Paragraph{
 									Lines: [][]interface{}{
 										{
-											types.StringElement{
+											&types.StringElement{
 												Content: "some ",
 											},
 											&types.QuotedText{
 												Kind: types.SingleQuoteBold,
 												Elements: []interface{}{
-													types.StringElement{
+													&types.StringElement{
 														Content: "verse",
 													},
 												},
 											},
-											types.StringElement{
+											&types.StringElement{
 												Content: " content",
 											},
 										},
@@ -199,10 +199,10 @@ bar
 								&types.BlankLine{}, // blankline is required between paragraph and the next block
 								types.ListingBlock{
 									Elements: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "foo",
 										},
-										types.StringElement{
+										&types.StringElement{
 											Content: "bar",
 										},
 									},

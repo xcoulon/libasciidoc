@@ -16,7 +16,7 @@ package parser
 // 							types.AttributeSubstitution{
 // 								Name: "foo",
 // 							},
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: " and more content.",
 // 							},
 // 						},
@@ -40,7 +40,7 @@ package parser
 // 				types.Paragraph{
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "bar and more content.",
 // 							},
 // 						},
@@ -55,13 +55,13 @@ package parser
 // 				types.Paragraph{
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "baz, ",
 // 							},
 // 							types.AttributeSubstitution{
 // 								Name: "foo",
 // 							},
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: " and more content.",
 // 							},
 // 						},
@@ -85,7 +85,7 @@ package parser
 // 				types.Paragraph{
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "baz, bar and more content.",
 // 							},
 // 						},
@@ -100,13 +100,13 @@ package parser
 // 				types.Paragraph{
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "baz, ",
 // 							},
 // 							types.AttributeSubstitution{
 // 								Name: "foo",
 // 							},
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: " and more content.",
 // 							},
 // 						},
@@ -129,7 +129,7 @@ package parser
 // 				types.Paragraph{
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "baz, {foo} and more content.",
 // 							},
 // 						},
@@ -144,13 +144,13 @@ package parser
 // 				types.Paragraph{
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "baz, ",
 // 							},
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "foo",
 // 							},
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: " and more content.",
 // 							},
 // 						},
@@ -173,7 +173,7 @@ package parser
 // 				types.Paragraph{
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "baz, foo and more content.",
 // 							},
 // 						},
@@ -188,19 +188,19 @@ package parser
 // 				types.Paragraph{
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "a link to ",
 // 							},
 // 							types.AttributeSubstitution{
 // 								Name: "scheme",
 // 							},
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "://",
 // 							},
 // 							types.AttributeSubstitution{
 // 								Name: "host",
 // 							},
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "[].", // explicit use of `[]` to avoid grabbing the `.`
 // 							},
 // 						},
@@ -226,20 +226,20 @@ package parser
 // 				types.Paragraph{
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "a link to ",
 // 							},
 // 							types.InlineLink{
 // 								Location: &types.Location{
 // 									Scheme: "https://",
 // 									Path: []interface{}{
-// 										types.StringElement{
+// 										&types.StringElement{
 // 											Content: "example.com",
 // 										},
 // 									},
 // 								},
 // 							},
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: ".",
 // 							},
 // 						},
@@ -254,7 +254,7 @@ package parser
 // 				types.Paragraph{
 // 					Attributes: types.Attributes{
 // 						types.AttrTitle: []interface{}{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "a ",
 // 							},
 // 							types.AttributeSubstitution{
@@ -264,13 +264,13 @@ package parser
 // 					},
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "a paragraph with title '",
 // 							},
 // 							types.AttributeSubstitution{
 // 								Name: "title",
 // 							},
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "'",
 // 							},
 // 						},
@@ -297,7 +297,7 @@ package parser
 // 					},
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "a paragraph with title 'cookie'",
 // 							},
 // 						},
@@ -322,7 +322,7 @@ package parser
 // 					},
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "some content.",
 // 							},
 // 						},
@@ -349,7 +349,7 @@ package parser
 // 					},
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "some content.",
 // 							},
 // 						},
@@ -378,7 +378,7 @@ package parser
 // 					},
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "some content.",
 // 							},
 // 						},
@@ -406,7 +406,7 @@ package parser
 // 					},
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "some content.",
 // 							},
 // 						},
@@ -431,7 +431,7 @@ package parser
 // 					},
 // 					Location: &types.Location{
 // 						Path: []interface{}{
-// 							types.StringElement{Content: "foo.png"},
+// 							&types.StringElement{Content: "foo.png"},
 // 						},
 // 					},
 // 				},
@@ -456,7 +456,7 @@ package parser
 // 					},
 // 					Location: &types.Location{
 // 						Path: []interface{}{
-// 							types.StringElement{Content: "foo.png"},
+// 							&types.StringElement{Content: "foo.png"},
 // 						},
 // 					},
 // 				},
@@ -492,7 +492,7 @@ package parser
 // 				&types.ImageBlock{
 // 					Location: &types.Location{
 // 						Path: []interface{}{
-// 							types.StringElement{Content: "cookie.png"},
+// 							&types.StringElement{Content: "cookie.png"},
 // 						},
 // 					},
 // 				},
@@ -514,7 +514,7 @@ package parser
 // 									types.AttributeSubstitution{
 // 										Name: "foo",
 // 									},
-// 									types.StringElement{
+// 									&types.StringElement{
 // 										Content: " and more content.",
 // 									},
 // 								},
@@ -542,7 +542,7 @@ package parser
 // 						types.Paragraph{
 // 							Lines: [][]interface{}{
 // 								{
-// 									types.StringElement{
+// 									&types.StringElement{
 // 										Content: "bar and more content.",
 // 									},
 // 								},
@@ -564,7 +564,7 @@ package parser
 // 									types.AttributeSubstitution{
 // 										Name: "foo",
 // 									},
-// 									types.StringElement{
+// 									&types.StringElement{
 // 										Content: " and more content.",
 // 									},
 // 								},
@@ -592,7 +592,7 @@ package parser
 // 						types.Paragraph{
 // 							Lines: [][]interface{}{
 // 								{
-// 									types.StringElement{
+// 									&types.StringElement{
 // 										Content: "bar and more content.",
 // 									},
 // 								},
@@ -614,7 +614,7 @@ package parser
 // 									types.AttributeSubstitution{
 // 										Name: "foo",
 // 									},
-// 									types.StringElement{
+// 									&types.StringElement{
 // 										Content: " and more content.",
 // 									},
 // 								},
@@ -642,7 +642,7 @@ package parser
 // 						types.Paragraph{
 // 							Lines: [][]interface{}{
 // 								{
-// 									types.StringElement{
+// 									&types.StringElement{
 // 										Content: "bar and more content.",
 // 									},
 // 								},
@@ -667,7 +667,7 @@ package parser
 // 									types.AttributeSubstitution{
 // 										Name: "foo",
 // 									},
-// 									types.StringElement{
+// 									&types.StringElement{
 // 										Content: " and more content.",
 // 									},
 // 								},
@@ -695,7 +695,7 @@ package parser
 // 						types.Paragraph{
 // 							Lines: [][]interface{}{
 // 								{
-// 									types.StringElement{
+// 									&types.StringElement{
 // 										Content: "bar and more content.",
 // 									},
 // 								},
@@ -715,7 +715,7 @@ package parser
 // 				types.Paragraph{
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "hello ",
 // 							},
 // 							&types.QuotedText{
@@ -723,14 +723,14 @@ package parser
 // 									types.AttributeSubstitution{
 // 										Name: "foo",
 // 									},
-// 									types.StringElement{
+// 									&types.StringElement{
 // 										Content: " and more content.",
 // 									},
 // 								},
 // 							},
 // 						},
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "and another line",
 // 							},
 // 						},
@@ -754,19 +754,19 @@ package parser
 // 				types.Paragraph{
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "hello ",
 // 							},
 // 							&types.QuotedText{
 // 								Elements: []interface{}{
-// 									types.StringElement{
+// 									&types.StringElement{
 // 										Content: "bar and more content.",
 // 									},
 // 								},
 // 							},
 // 						},
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "and another line",
 // 							},
 // 						},
@@ -794,7 +794,7 @@ package parser
 // 							types.AttributeSubstitution{
 // 								Name: "foo",
 // 							},
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: " and more content.",
 // 							},
 // 						},
@@ -827,7 +827,7 @@ package parser
 // 				types.Paragraph{
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "BAR and more content.",
 // 							},
 // 						},
@@ -858,7 +858,7 @@ package parser
 // 			result, err := applySubstitutions(ctx, elements)
 // 			Expect(err).To(Not(HaveOccurred()))
 // 			Expect(result).To(Equal([]interface{}{ // at this stage, AttributeDeclaration and AttributeReset are still present
-// 				types.StringElement{
+// 				&types.StringElement{
 // 					Content: "1",
 // 				},
 // 			}))
@@ -910,14 +910,14 @@ package parser
 // 			Expect(err).To(Not(HaveOccurred()))
 // 			Expect(result).To(Equal([]interface{}{
 // 				// elements are not concatenated after calling `applyAttributeSubstitutionsOnElements`
-// 				types.StringElement{Content: "1"},
-// 				types.StringElement{Content: "1"},
-// 				types.StringElement{Content: "2"},
-// 				types.StringElement{Content: ""},
-// 				types.StringElement{Content: "b"},
-// 				types.StringElement{Content: ""},
-// 				types.StringElement{Content: ""},
-// 				types.StringElement{Content: "35"},
+// 				&types.StringElement{Content: "1"},
+// 				&types.StringElement{Content: "1"},
+// 				&types.StringElement{Content: "2"},
+// 				&types.StringElement{Content: ""},
+// 				&types.StringElement{Content: "b"},
+// 				&types.StringElement{Content: ""},
+// 				&types.StringElement{Content: ""},
+// 				&types.StringElement{Content: "35"},
 // 			}))
 // 		})
 // 	})
@@ -936,7 +936,7 @@ package parser
 // 						types.AttributeSubstitution{
 // 							Name: "def",
 // 						},
-// 						types.StringElement{
+// 						&types.StringElement{
 // 							Content: "bar",
 // 						},
 // 					},
@@ -974,7 +974,7 @@ package parser
 // 				types.Paragraph{
 // 					Lines: [][]interface{}{
 // 						{
-// 							types.StringElement{
+// 							&types.StringElement{
 // 								Content: "foobar",
 // 							},
 // 						},

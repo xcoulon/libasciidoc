@@ -21,7 +21,7 @@ func Merge(elements ...interface{}) []interface{} {
 			buf.WriteString(element)
 		case []byte:
 			buf.Write(element)
-		case StringElement:
+		case *StringElement:
 			buf.WriteString(element.Content)
 		case []interface{}:
 			if len(element) > 0 {
@@ -84,7 +84,7 @@ func Reduce(elements interface{}, opts ...ReduceOption) interface{} {
 		case 0: // if empty, return nil
 			return nil
 		case 1:
-			if e, ok := e[0].(StringElement); ok {
+			if e, ok := e[0].(*StringElement); ok {
 				c := e.Content
 				for _, apply := range opts {
 					c = apply(c)
@@ -127,7 +127,7 @@ func stringify(element interface{}) string {
 		return result.String()
 	case string:
 		return element
-	case StringElement:
+	case *StringElement:
 		return element.Content
 	case AttributeSubstitution:
 		return "{" + element.Name + "}"

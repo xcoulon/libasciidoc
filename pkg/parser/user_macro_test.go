@@ -26,7 +26,7 @@ var _ = Describe("user macros", func() {
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "AAA ",
 									},
 									types.UserMacro{
@@ -100,7 +100,7 @@ var _ = Describe("user macros", func() {
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "repository: ",
 									},
 									types.UserMacro{
@@ -128,7 +128,7 @@ var _ = Describe("user macros", func() {
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "AAA hello:[]",
 									},
 								},
@@ -218,7 +218,7 @@ var _ = Describe("user macros", func() {
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "git::[]",
 									},
 								},

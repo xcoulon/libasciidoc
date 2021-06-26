@@ -41,12 +41,12 @@ package parser
 // 		return types.Merge(element...)
 // 	case types.AttributeSubstitution:
 // 		if value, found := attributes[element.Name]; found {
-// 			return types.StringElement{
+// 			return &types.StringElement{
 // 				Content: value,
 // 			}
 // 		}
 // 		log.Debugf("unable to substitute attribute '%s': no match found", element.Name)
-// 		return types.StringElement{
+// 		return &types.StringElement{
 // 			Content: "{" + element.Name + "}",
 // 		}
 // 	default:
@@ -87,7 +87,7 @@ package parser
 // 		for _, elmt := range element {
 // 			result.WriteString(serialize(elmt, placeholders))
 // 		}
-// 	case types.StringElement:
+// 	case *types.StringElement:
 // 		result.WriteString(element.Content)
 // 	case types.SingleLineComment:
 // 		// replace with placeholder

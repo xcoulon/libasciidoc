@@ -10,11 +10,11 @@ import (
 var _ = Describe("preambles", func() {
 
 	sectionATitle := []interface{}{
-		types.StringElement{Content: "Section A"},
+		&types.StringElement{Content: "Section A"},
 	}
 
 	sectionBTitle := []interface{}{
-		types.StringElement{Content: "Section B"},
+		&types.StringElement{Content: "Section B"},
 	}
 
 	It("doc without sections", func() {
@@ -30,7 +30,7 @@ var _ = Describe("preambles", func() {
 				types.Paragraph{
 					Lines: [][]interface{}{
 						{
-							types.StringElement{Content: "a short paragraph"},
+							&types.StringElement{Content: "a short paragraph"},
 						},
 					},
 				},
@@ -38,7 +38,7 @@ var _ = Describe("preambles", func() {
 				types.Paragraph{
 					Lines: [][]interface{}{
 						{
-							types.StringElement{Content: "another short paragraph"},
+							&types.StringElement{Content: "another short paragraph"},
 						},
 					},
 				},
@@ -56,7 +56,7 @@ var _ = Describe("preambles", func() {
 				types.Paragraph{
 					Lines: [][]interface{}{
 						{
-							types.StringElement{Content: "a short paragraph"},
+							&types.StringElement{Content: "a short paragraph"},
 						},
 					},
 				},
@@ -64,7 +64,7 @@ var _ = Describe("preambles", func() {
 				types.Paragraph{
 					Lines: [][]interface{}{
 						{
-							types.StringElement{Content: "another short paragraph"},
+							&types.StringElement{Content: "another short paragraph"},
 						},
 					},
 				},
@@ -86,7 +86,7 @@ var _ = Describe("preambles", func() {
 				types.Paragraph{
 					Lines: [][]interface{}{
 						{
-							types.StringElement{Content: "a short paragraph"},
+							&types.StringElement{Content: "a short paragraph"},
 						},
 					},
 				},
@@ -164,7 +164,7 @@ var _ = Describe("preambles", func() {
 				types.Paragraph{
 					Lines: [][]interface{}{
 						{
-							types.StringElement{Content: "a short paragraph"},
+							&types.StringElement{Content: "a short paragraph"},
 						},
 					},
 				},
@@ -172,7 +172,7 @@ var _ = Describe("preambles", func() {
 				types.Paragraph{
 					Lines: [][]interface{}{
 						{
-							types.StringElement{Content: "another short paragraph"},
+							&types.StringElement{Content: "another short paragraph"},
 						},
 					},
 				},

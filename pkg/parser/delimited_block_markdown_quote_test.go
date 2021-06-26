@@ -23,18 +23,18 @@ on *multiple lines*`
 						types.MarkdownQuoteBlock{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "some text",
 									},
 								},
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "on ",
 									},
 									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "multiple lines",
 											},
 										},
@@ -55,18 +55,18 @@ on *multiple lines*`
 						types.MarkdownQuoteBlock{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "some text",
 									},
 								},
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "on ",
 									},
 									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "multiple lines",
 											},
 										},
@@ -91,18 +91,18 @@ on *multiple lines*`
 							},
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "some text",
 									},
 								},
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "on ",
 									},
 									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "multiple lines",
 											},
 										},
@@ -129,18 +129,18 @@ on *multiple lines*`
 							},
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "some text",
 									},
 								},
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "on ",
 									},
 									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
-											types.StringElement{
+											&types.StringElement{
 												Content: "multiple lines",
 											},
 										},

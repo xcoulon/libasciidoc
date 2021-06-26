@@ -23,7 +23,7 @@ second paragraph`
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "first paragraph",
 									},
 								},
@@ -37,7 +37,7 @@ second paragraph`
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "second paragraph",
 									},
 								},
@@ -63,7 +63,7 @@ second paragraph
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "first paragraph",
 									},
 								},
@@ -77,7 +77,7 @@ second paragraph
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "second paragraph",
 									},
 								},
@@ -116,14 +116,14 @@ second paragraph`
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.StringElement{Content: "first paragraph"},
+								&types.StringElement{Content: "first paragraph"},
 							},
 						},
 					},
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.StringElement{Content: "second paragraph"},
+								&types.StringElement{Content: "second paragraph"},
 							},
 						},
 					},
@@ -143,14 +143,14 @@ second paragraph
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.StringElement{Content: "first paragraph"},
+								&types.StringElement{Content: "first paragraph"},
 							},
 						},
 					},
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.StringElement{Content: "second paragraph"},
+								&types.StringElement{Content: "second paragraph"},
 							},
 						},
 					},

@@ -63,7 +63,7 @@ v1.0, March 29, 2020: Updated revision
 
 This journey continues`
 			title := []interface{}{
-				types.StringElement{Content: "Document Title"},
+				&types.StringElement{Content: "Document Title"},
 			}
 			expected := types.Document{
 				Attributes: types.Attributes{
@@ -114,7 +114,7 @@ This journey continues`
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{Content: "This journey continues"},
+										&types.StringElement{Content: "This journey continues"},
 									},
 								},
 							},

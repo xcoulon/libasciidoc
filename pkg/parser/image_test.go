@@ -19,7 +19,7 @@ var _ = Describe("block images", func() {
 					&types.ImageBlock{
 						Location: &types.Location{
 							Path: []interface{}{
-								types.StringElement{Content: "images/foo.png"},
+								&types.StringElement{Content: "images/foo.png"},
 							},
 						},
 					},
@@ -47,7 +47,7 @@ image::images/foo.png[{alt}]`
 						},
 						Location: &types.Location{
 							Path: []interface{}{
-								types.StringElement{Content: "images/foo.png"},
+								&types.StringElement{Content: "images/foo.png"},
 							},
 						},
 					},
@@ -73,7 +73,7 @@ image::foo.png[]`
 					&types.ImageBlock{
 						Location: &types.Location{
 							Path: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "./path/to/images/foo.png",
 								},
 							},
@@ -101,7 +101,7 @@ image::{dir}/foo.png[]`
 					&types.ImageBlock{
 						Location: &types.Location{
 							Path: []interface{}{
-								types.StringElement{Content: "./path/to/images/foo.png"},
+								&types.StringElement{Content: "./path/to/images/foo.png"},
 							},
 						},
 					},
@@ -127,7 +127,7 @@ image::foo.png[]`
 					&types.ImageBlock{
 						Location: &types.Location{
 							Path: []interface{}{
-								types.StringElement{Content: "./path/to/images/foo.png"},
+								&types.StringElement{Content: "./path/to/images/foo.png"},
 							},
 						},
 					},
@@ -153,7 +153,7 @@ image::{imagesdir}/foo.png[]`
 					&types.ImageBlock{
 						Location: &types.Location{
 							Path: []interface{}{
-								types.StringElement{Content: "./path/to/images/./path/to/images/foo.png"},
+								&types.StringElement{Content: "./path/to/images/./path/to/images/foo.png"},
 							},
 						},
 					},
@@ -170,14 +170,14 @@ image::images/bar.png[]`
 					&types.ImageBlock{
 						Location: &types.Location{
 							Path: []interface{}{
-								types.StringElement{Content: "images/foo.png"},
+								&types.StringElement{Content: "images/foo.png"},
 							},
 						},
 					},
 					&types.ImageBlock{
 						Location: &types.Location{
 							Path: []interface{}{
-								types.StringElement{Content: "images/bar.png"},
+								&types.StringElement{Content: "images/bar.png"},
 							},
 						},
 					},
@@ -195,7 +195,7 @@ image::images/bar.png[]`
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "a paragraph\nimage::images/foo.png[]",
 							},
 						},
@@ -211,7 +211,7 @@ image::images/bar.png[]`
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
-							types.StringElement{Content: "a foo image::foo.png[foo image, 600, 400] bar"},
+							&types.StringElement{Content: "a foo image::foo.png[foo image, 600, 400] bar"},
 						},
 					},
 				},
@@ -234,7 +234,7 @@ var _ = Describe("inline images", func() {
 							&types.InlineImage{
 								Location: &types.Location{
 									Path: []interface{}{
-										types.StringElement{Content: "images/foo.png"},
+										&types.StringElement{Content: "images/foo.png"},
 									},
 								},
 							},
@@ -257,15 +257,15 @@ an image:{dir}/foo.png[].`
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
-							types.StringElement{Content: "an "},
+							&types.StringElement{Content: "an "},
 							&types.InlineImage{
 								Location: &types.Location{
 									Path: []interface{}{
-										types.StringElement{Content: "./path/to/images/foo.png"},
+										&types.StringElement{Content: "./path/to/images/foo.png"},
 									},
 								},
 							},
-							types.StringElement{Content: "."},
+							&types.StringElement{Content: "."},
 						},
 					},
 				},
@@ -285,16 +285,16 @@ an image:foo.png[].`
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
-							types.StringElement{Content: "an "},
+							&types.StringElement{Content: "an "},
 							&types.InlineImage{
 								Location: &types.Location{
 									Path: []interface{}{
-										types.StringElement{Content: "./path/to/images/"},
-										types.StringElement{Content: "foo.png"},
+										&types.StringElement{Content: "./path/to/images/"},
+										&types.StringElement{Content: "foo.png"},
 									},
 								},
 							},
-							types.StringElement{Content: "."},
+							&types.StringElement{Content: "."},
 						},
 					},
 				},
@@ -314,16 +314,16 @@ an image:{imagesdir}/foo.png[].`
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
-							types.StringElement{Content: "an "},
+							&types.StringElement{Content: "an "},
 							&types.InlineImage{
 								Location: &types.Location{
 									Path: []interface{}{
-										types.StringElement{Content: "./path/to/images/"},
-										types.StringElement{Content: "./path/to/images/foo.png"},
+										&types.StringElement{Content: "./path/to/images/"},
+										&types.StringElement{Content: "./path/to/images/foo.png"},
 									},
 								},
 							},
-							types.StringElement{Content: "."},
+							&types.StringElement{Content: "."},
 						},
 					},
 				},
@@ -345,7 +345,7 @@ image:{path}/foo.png[]`
 							&types.InlineImage{
 								Location: &types.Location{
 									Path: []interface{}{
-										types.StringElement{Content: "./path/to/images/foo.png"},
+										&types.StringElement{Content: "./path/to/images/foo.png"},
 									},
 								},
 							},

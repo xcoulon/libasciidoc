@@ -29,14 +29,14 @@ What is the answer to the Ultimate Question?:: 42`
 						&types.LabeledListElement{
 							Style: "::",
 							Term: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "What is libasciidoc?",
 								},
 							},
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											// TODO: trim spaces
 											Content: "\tAn implementation of the AsciiDoc processor in Golang.",
 										},
@@ -47,14 +47,14 @@ What is the answer to the Ultimate Question?:: 42`
 						&types.LabeledListElement{
 							Style: "::",
 							Term: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "What is the answer to the Ultimate Question?",
 								},
 							},
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "42",
 										},
 									},
@@ -92,12 +92,12 @@ What is the answer to the Ultimate Question?:: 42`
 						&types.LabeledListElement{
 							Style: "::",
 							Term: []interface{}{
-								types.StringElement{Content: "What is libasciidoc?"},
+								&types.StringElement{Content: "What is libasciidoc?"},
 							},
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "\tAn implementation of the AsciiDoc processor in Golang.",
 										},
 									},
@@ -107,14 +107,14 @@ What is the answer to the Ultimate Question?:: 42`
 						&types.LabeledListElement{
 							Style: "::",
 							Term: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "What is the answer to the Ultimate Question?",
 								},
 							},
 							Elements: []interface{}{
 								&types.Paragraph{
 									Elements: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "42",
 										},
 									},

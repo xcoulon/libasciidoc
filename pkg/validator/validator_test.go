@@ -22,7 +22,7 @@ var _ = Describe("document validator", func() {
 						Attributes: types.Attributes{},
 						Level:      0,
 						Title: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "foo",
 							},
 						},
@@ -54,7 +54,7 @@ var _ = Describe("document validator", func() {
 						Attributes: types.Attributes{},
 						Level:      0,
 						Title: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "foo",
 							},
 						},
@@ -63,7 +63,7 @@ var _ = Describe("document validator", func() {
 								Attributes: types.Attributes{},
 								Level:      1,
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Name",
 									},
 								},
@@ -72,7 +72,7 @@ var _ = Describe("document validator", func() {
 										Attributes: types.Attributes{},
 										Lines: [][]interface{}{
 											{
-												types.StringElement{
+												&types.StringElement{
 													Content: "a single paragraph to describe the program",
 												},
 											},
@@ -84,7 +84,7 @@ var _ = Describe("document validator", func() {
 								Attributes: types.Attributes{},
 								Level:      1,
 								Title: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "Synopsis",
 									},
 								},
@@ -119,7 +119,7 @@ var _ = Describe("document validator", func() {
 							Attributes: types.Attributes{},
 							Level:      1, // invalid level
 							Title: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "foo",
 								},
 							},
@@ -128,7 +128,7 @@ var _ = Describe("document validator", func() {
 									Attributes: types.Attributes{},
 									Level:      1,
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "Name",
 										},
 									},
@@ -137,7 +137,7 @@ var _ = Describe("document validator", func() {
 											Attributes: types.Attributes{},
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a single paragraph to describe the program",
 													},
 												},
@@ -149,7 +149,7 @@ var _ = Describe("document validator", func() {
 									Attributes: types.Attributes{},
 									Level:      1,
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "Synopsis",
 										},
 									},
@@ -185,7 +185,7 @@ var _ = Describe("document validator", func() {
 							Attributes: types.Attributes{},
 							Level:      0,
 							Title: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "foo",
 								},
 							},
@@ -194,7 +194,7 @@ var _ = Describe("document validator", func() {
 									Attributes: types.Attributes{},
 									Level:      2, // invalid level
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "Name",
 										},
 									},
@@ -203,7 +203,7 @@ var _ = Describe("document validator", func() {
 											Attributes: types.Attributes{},
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a single paragraph to describe the program",
 													},
 												},
@@ -215,7 +215,7 @@ var _ = Describe("document validator", func() {
 									Attributes: types.Attributes{},
 									Level:      1,
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "Synopsis",
 										},
 									},
@@ -251,7 +251,7 @@ var _ = Describe("document validator", func() {
 							Attributes: types.Attributes{},
 							Level:      0,
 							Title: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "foo",
 								},
 							},
@@ -260,7 +260,7 @@ var _ = Describe("document validator", func() {
 									Attributes: types.Attributes{},
 									Level:      1,
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "bar", // invalid title
 										},
 									},
@@ -269,7 +269,7 @@ var _ = Describe("document validator", func() {
 											Attributes: types.Attributes{},
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a single paragraph to describe the program",
 													},
 												},
@@ -281,7 +281,7 @@ var _ = Describe("document validator", func() {
 									Attributes: types.Attributes{},
 									Level:      1,
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "Synopsis",
 										},
 									},
@@ -317,7 +317,7 @@ var _ = Describe("document validator", func() {
 							Attributes: types.Attributes{},
 							Level:      0,
 							Title: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "foo",
 								},
 							},
@@ -326,7 +326,7 @@ var _ = Describe("document validator", func() {
 									Attributes: types.Attributes{},
 									Level:      1,
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "Name",
 										},
 									},
@@ -336,7 +336,7 @@ var _ = Describe("document validator", func() {
 									Attributes: types.Attributes{},
 									Level:      1,
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "Synopsis",
 										},
 									},
@@ -372,7 +372,7 @@ var _ = Describe("document validator", func() {
 							Attributes: types.Attributes{},
 							Level:      0,
 							Title: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "foo",
 								},
 							},
@@ -381,7 +381,7 @@ var _ = Describe("document validator", func() {
 									Attributes: types.Attributes{},
 									Level:      1,
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "Name",
 										},
 									},
@@ -390,7 +390,7 @@ var _ = Describe("document validator", func() {
 											Attributes: types.Attributes{},
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a single paragraph to describe the program",
 													},
 												},
@@ -402,7 +402,7 @@ var _ = Describe("document validator", func() {
 									Attributes: types.Attributes{},
 									Level:      2, // invalid level
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "Synopsis",
 										},
 									},
@@ -438,7 +438,7 @@ var _ = Describe("document validator", func() {
 							Attributes: types.Attributes{},
 							Level:      0,
 							Title: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "foo",
 								},
 							},
@@ -447,7 +447,7 @@ var _ = Describe("document validator", func() {
 									Attributes: types.Attributes{},
 									Level:      1,
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "Name",
 										},
 									},
@@ -456,7 +456,7 @@ var _ = Describe("document validator", func() {
 											Attributes: types.Attributes{},
 											Lines: [][]interface{}{
 												{
-													types.StringElement{
+													&types.StringElement{
 														Content: "a single paragraph to describe the program",
 													},
 												},
@@ -468,7 +468,7 @@ var _ = Describe("document validator", func() {
 									Attributes: types.Attributes{},
 									Level:      1,
 									Title: []interface{}{
-										types.StringElement{
+										&types.StringElement{
 											Content: "bar", // invalid title
 										},
 									},

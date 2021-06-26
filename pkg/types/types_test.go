@@ -491,7 +491,7 @@ var _ = Describe("element id resolution", func() {
 					Level:      0,
 					Attributes: types.Attributes{},
 					Title: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "foo",
 						},
 					},
@@ -513,14 +513,14 @@ var _ = Describe("element id resolution", func() {
 					Level:      0,
 					Attributes: types.Attributes{},
 					Title: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "a link to ",
 						},
 						types.InlineLink{
 							Location: &types.Location{
 								Scheme: "https://",
 								Path: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "foo.com",
 									},
 								},
@@ -548,7 +548,7 @@ var _ = Describe("element id resolution", func() {
 					Level:      0,
 					Attributes: types.Attributes{},
 					Title: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "foo",
 						},
 					},
@@ -572,14 +572,14 @@ var _ = Describe("element id resolution", func() {
 					Level:      0,
 					Attributes: types.Attributes{},
 					Title: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "a link to ",
 						},
 						types.InlineLink{
 							Location: &types.Location{
 								Scheme: "https://",
 								Path: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "foo.com",
 									},
 								},
@@ -611,7 +611,7 @@ var _ = Describe("element id resolution", func() {
 						types.AttrID: "bar",
 					},
 					Title: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "foo",
 						},
 					},
@@ -637,14 +637,14 @@ var _ = Describe("element id resolution", func() {
 						types.AttrID: "bar",
 					},
 					Title: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "a link to ",
 						},
 						types.InlineLink{
 							Location: &types.Location{
 								Scheme: "https://",
 								Path: []interface{}{
-									types.StringElement{
+									&types.StringElement{
 										Content: "foo.com",
 									},
 								},
@@ -678,12 +678,12 @@ var _ = Describe("footnote replacements", func() {
 				Level:      0,
 				Attributes: types.Attributes{},
 				Title: []interface{}{
-					types.StringElement{
+					&types.StringElement{
 						Content: "foo",
 					},
 					types.Footnote{
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "a regular footnote.",
 							},
 						},
@@ -699,7 +699,7 @@ var _ = Describe("footnote replacements", func() {
 				Level:      0,
 				Attributes: types.Attributes{},
 				Title: []interface{}{
-					types.StringElement{
+					&types.StringElement{
 						Content: "foo",
 					},
 					types.FootnoteReference{
@@ -712,7 +712,7 @@ var _ = Describe("footnote replacements", func() {
 				{
 					ID: 1,
 					Elements: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "a regular footnote.",
 						},
 					},
@@ -726,13 +726,13 @@ var _ = Describe("footnote replacements", func() {
 				Level:      0,
 				Attributes: types.Attributes{},
 				Title: []interface{}{
-					types.StringElement{
+					&types.StringElement{
 						Content: "foo",
 					},
 					types.Footnote{
 						Ref: "disclaimer",
 						Elements: []interface{}{
-							types.StringElement{
+							&types.StringElement{
 								Content: "a regular footnote.",
 							},
 						},
@@ -748,7 +748,7 @@ var _ = Describe("footnote replacements", func() {
 				Level:      0,
 				Attributes: types.Attributes{},
 				Title: []interface{}{
-					types.StringElement{
+					&types.StringElement{
 						Content: "foo",
 					},
 					types.FootnoteReference{
@@ -763,7 +763,7 @@ var _ = Describe("footnote replacements", func() {
 					ID:  1,
 					Ref: "disclaimer",
 					Elements: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "a regular footnote.",
 						},
 					},
@@ -779,32 +779,32 @@ var _ = Describe("footnote replacements", func() {
 			paragraph := types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "first line",
 						},
 						types.Footnote{
 							Ref: "disclaimer",
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "a disclaimer.",
 								},
 							},
 						},
 					},
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "second line",
 						},
 						types.Footnote{
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "a regular footnote.",
 								},
 							},
 						},
 					},
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "third line",
 						},
 						types.Footnote{
@@ -821,7 +821,7 @@ var _ = Describe("footnote replacements", func() {
 			Expect(paragraph).To(Equal(types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "first line",
 						},
 						types.FootnoteReference{
@@ -830,7 +830,7 @@ var _ = Describe("footnote replacements", func() {
 						},
 					},
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "second line",
 						},
 						types.FootnoteReference{
@@ -838,7 +838,7 @@ var _ = Describe("footnote replacements", func() {
 						},
 					},
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "third line",
 						},
 						types.FootnoteReference{
@@ -854,7 +854,7 @@ var _ = Describe("footnote replacements", func() {
 					ID:  1,
 					Ref: "disclaimer",
 					Elements: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "a disclaimer.",
 						},
 					},
@@ -862,7 +862,7 @@ var _ = Describe("footnote replacements", func() {
 				{
 					ID: 2,
 					Elements: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "a regular footnote.",
 						},
 					},
@@ -875,32 +875,32 @@ var _ = Describe("footnote replacements", func() {
 			paragraph := types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "first line",
 						},
 						types.Footnote{
 							Ref: "disclaimer",
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "a disclaimer.",
 								},
 							},
 						},
 					},
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "second line",
 						},
 						types.Footnote{
 							Elements: []interface{}{
-								types.StringElement{
+								&types.StringElement{
 									Content: "a regular footnote.",
 								},
 							},
 						},
 					},
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "third line",
 						},
 						types.Footnote{
@@ -917,7 +917,7 @@ var _ = Describe("footnote replacements", func() {
 			Expect(paragraph).To(Equal(types.Paragraph{
 				Lines: [][]interface{}{
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "first line",
 						},
 						types.FootnoteReference{
@@ -926,7 +926,7 @@ var _ = Describe("footnote replacements", func() {
 						},
 					},
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "second line",
 						},
 						types.FootnoteReference{
@@ -934,7 +934,7 @@ var _ = Describe("footnote replacements", func() {
 						},
 					},
 					{
-						types.StringElement{
+						&types.StringElement{
 							Content: "third line",
 						},
 						types.FootnoteReference{
@@ -949,7 +949,7 @@ var _ = Describe("footnote replacements", func() {
 					ID:  1,
 					Ref: "disclaimer",
 					Elements: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "a disclaimer.",
 						},
 					},
@@ -957,7 +957,7 @@ var _ = Describe("footnote replacements", func() {
 				{
 					ID: 2,
 					Elements: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "a regular footnote.",
 						},
 					},
@@ -1026,7 +1026,7 @@ var _ = DescribeTable("rawtest",
 		&types.QuotedText{
 			Kind: types.SingleQuoteBold,
 			Elements: []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "content",
 				},
 			},
@@ -1036,7 +1036,7 @@ var _ = DescribeTable("rawtest",
 		&types.QuotedText{
 			Kind: types.DoubleQuoteBold,
 			Elements: []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "content",
 				},
 			},
@@ -1046,7 +1046,7 @@ var _ = DescribeTable("rawtest",
 		&types.QuotedText{
 			Kind: types.SingleQuoteItalic,
 			Elements: []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "content",
 				},
 			},
@@ -1056,7 +1056,7 @@ var _ = DescribeTable("rawtest",
 		&types.QuotedText{
 			Kind: types.DoubleQuoteItalic,
 			Elements: []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "content",
 				},
 			},
@@ -1066,7 +1066,7 @@ var _ = DescribeTable("rawtest",
 		&types.QuotedText{
 			Kind: types.SingleQuoteMonospace,
 			Elements: []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "content",
 				},
 			},
@@ -1076,7 +1076,7 @@ var _ = DescribeTable("rawtest",
 		&types.QuotedText{
 			Kind: types.DoubleQuoteMonospace,
 			Elements: []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "content",
 				},
 			},
@@ -1086,7 +1086,7 @@ var _ = DescribeTable("rawtest",
 		&types.QuotedText{
 			Kind: types.SingleQuoteMarked,
 			Elements: []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "content",
 				},
 			},
@@ -1096,7 +1096,7 @@ var _ = DescribeTable("rawtest",
 		&types.QuotedText{
 			Kind: types.DoubleQuoteMarked,
 			Elements: []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "content",
 				},
 			},
@@ -1106,7 +1106,7 @@ var _ = DescribeTable("rawtest",
 		&types.QuotedText{
 			Kind: types.SingleQuoteSubscript,
 			Elements: []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "content",
 				},
 			},
@@ -1116,7 +1116,7 @@ var _ = DescribeTable("rawtest",
 		&types.QuotedText{
 			Kind: types.SingleQuoteSuperscript,
 			Elements: []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "content",
 				},
 			},
@@ -1127,7 +1127,7 @@ var _ = DescribeTable("rawtest",
 		types.QuotedString{
 			Kind: types.SingleQuote,
 			Elements: []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "content",
 				},
 			},
@@ -1137,7 +1137,7 @@ var _ = DescribeTable("rawtest",
 		types.QuotedString{
 			Kind: types.DoubleQuote,
 			Elements: []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "content",
 				},
 			},
@@ -1148,7 +1148,7 @@ var _ = DescribeTable("rawtest",
 		types.InlinePassthrough{
 			Kind: types.SinglePlusPassthrough,
 			Elements: []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "content",
 				},
 			},
@@ -1158,7 +1158,7 @@ var _ = DescribeTable("rawtest",
 		types.InlinePassthrough{
 			Kind: types.TriplePlusPassthrough,
 			Elements: []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "content",
 				},
 			},
@@ -1168,7 +1168,7 @@ var _ = DescribeTable("rawtest",
 		types.InlinePassthrough{
 			Kind: types.PassthroughMacro,
 			Elements: []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "content",
 				},
 			},
@@ -1191,13 +1191,13 @@ var _ = DescribeTable("rawtest",
 		&types.QuotedText{
 			Kind: types.SingleQuoteBold,
 			Elements: []interface{}{
-				types.StringElement{
+				&types.StringElement{
 					Content: "some ",
 				},
 				types.QuotedString{
 					Kind: types.DoubleQuote,
 					Elements: []interface{}{
-						types.StringElement{
+						&types.StringElement{
 							Content: "content",
 						},
 						types.SpecialCharacter{
@@ -1208,7 +1208,7 @@ var _ = DescribeTable("rawtest",
 						},
 					},
 				},
-				types.StringElement{
+				&types.StringElement{
 					Content: " ",
 				},
 				types.AttributeSubstitution{

@@ -14,7 +14,7 @@ var _ = Describe("parse document", func() {
 		Elements: []interface{}{
 			&types.Paragraph{
 				Elements: []interface{}{
-					types.StringElement{
+					&types.StringElement{
 						Content: "hello, world!",
 					},
 				},

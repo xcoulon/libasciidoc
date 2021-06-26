@@ -27,7 +27,7 @@ a paragraph`
 								},
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a paragraph",
 										},
 									},
@@ -48,7 +48,7 @@ a paragraph`
 								},
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a paragraph",
 										},
 									},
@@ -70,12 +70,12 @@ a paragraph`
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "[ link=http://foo.bar]",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a paragraph",
 										},
 									},
@@ -94,12 +94,12 @@ a paragraph`
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "[link=http://foo.bar",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a paragraph",
 										},
 									},
@@ -127,7 +127,7 @@ a paragraph`
 								},
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a paragraph",
 										},
 									},
@@ -149,7 +149,7 @@ a paragraph`
 								},
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a paragraph",
 										},
 									},
@@ -171,12 +171,12 @@ a paragraph`
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "[ #img-foobar ]",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a paragraph",
 										},
 									},
@@ -195,12 +195,12 @@ a paragraph`
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "[#img-foobar",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a paragraph",
 										},
 									},
@@ -228,7 +228,7 @@ a paragraph`
 								},
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a paragraph",
 										},
 									},
@@ -255,12 +255,12 @@ a list item!`
 											types.Paragraph{
 												Lines: [][]interface{}{
 													{
-														types.StringElement{
+														&types.StringElement{
 															Content: "a title",
 														},
 													},
 													{
-														types.StringElement{
+														&types.StringElement{
 															Content: "a list item!",
 														},
 													},
@@ -284,12 +284,12 @@ a paragraph`
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "!a title",
 										},
 									},
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a paragraph",
 										},
 									},
@@ -317,7 +317,7 @@ a paragraph`
 								},
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a paragraph",
 										},
 									},
@@ -339,7 +339,7 @@ a paragraph`
 								},
 								Lines: [][]interface{}{
 									{
-										types.StringElement{
+										&types.StringElement{
 											Content: "a paragraph",
 										},
 									},
@@ -427,7 +427,7 @@ a paragraph`
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
-									types.StringElement{
+									&types.StringElement{
 										Content: "a paragraph",
 									},
 								},
