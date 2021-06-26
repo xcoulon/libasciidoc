@@ -2089,7 +2089,7 @@ InlineWord <-
     content:([\pL0-9,?!;]+ {
         return types.NewStringElement(string(c.text))
     })
-    &([\r\n ] / ElementPlaceHolderDelimiter / EOF) {
+    &(Space / ElementPlaceHolderDelimiter / EOF) {
       return content, nil  
     } / Word
 
