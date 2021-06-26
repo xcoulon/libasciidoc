@@ -12,7 +12,7 @@ var _ = Describe("sidebar blocks", func() {
 
 	Context("in final documents", func() {
 
-		Context("delimited blocks", func() {
+		Context("as delimited blocks", func() {
 
 			It("with rich content", func() {
 				source := `****

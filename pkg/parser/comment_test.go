@@ -16,25 +16,25 @@ var _ = Describe("comments", func() {
 
 			It("single line comment alone", func() {
 				source := `// A single-line comment.`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 							&types.SingleLineComment{
 								Content: " A single-line comment.",
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("single line comment at end of line", func() {
 				source := `foo // A single-line comment.`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.Paragraph{
 								Lines: [][]interface{}{
@@ -48,17 +48,17 @@ var _ = Describe("comments", func() {
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("single line comment within a paragraph", func() {
 				source := `a first line
 // A single-line comment.
 another line // not a comment`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.Paragraph{
 								Lines: [][]interface{}{
@@ -82,17 +82,17 @@ another line // not a comment`
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			Context("invalid", func() {
 
 				It("single line comment with prefixing spaces alone", func() {
 					source := `  // A single-line comment.`
-					expected := []types.DocumentFragmentGroup{
+					expected := []types.DocumentFragment{
 						{
 							LineOffset: 1,
-							Content: []interface{}{
+							Elements: []interface{}{
 
 								types.LiteralBlock{
 									Attributes: types.Attributes{
@@ -117,10 +117,10 @@ another line // not a comment`
 
 				It("single line comment with prefixing tabs alone", func() {
 					source := "\t\t// A single-line comment."
-					expected := []types.DocumentFragmentGroup{
+					expected := []types.DocumentFragment{
 						{
 							LineOffset: 1,
-							Content: []interface{}{
+							Elements: []interface{}{
 
 								types.LiteralBlock{
 									Attributes: types.Attributes{
@@ -138,17 +138,17 @@ another line // not a comment`
 							},
 						},
 					}
-					Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 				})
 
 				It("single line comment within a paragraph with tab", func() {
 					source := `a first line
 	// A single-line comment.
 another line`
-					expected := []types.DocumentFragmentGroup{
+					expected := []types.DocumentFragment{
 						{
 							LineOffset: 1,
-							Content: []interface{}{
+							Elements: []interface{}{
 
 								types.Paragraph{
 									Lines: [][]interface{}{
@@ -172,7 +172,7 @@ another line`
 							},
 						},
 					}
-					Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+					Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 				})
 			})
 		})
@@ -184,10 +184,10 @@ another line`
 a *comment* block
 with multiple lines
 ////`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.CommentBlock{
 								Lines: [][]interface{}{
@@ -206,7 +206,7 @@ with multiple lines
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("comment block with paragraphs around", func() {
@@ -217,10 +217,10 @@ a *comment* block
 with multiple lines
 ////
 a second paragraph`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.Paragraph{
 								Lines: [][]interface{}{
@@ -258,7 +258,7 @@ a second paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 	})

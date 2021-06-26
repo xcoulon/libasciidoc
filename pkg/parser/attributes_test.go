@@ -20,10 +20,10 @@ var _ = Describe("attributes", func() {
 
 		It("block image with empty alt", func() {
 			source := "image::foo.png[]"
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content: []interface{}{
+					Elements: []interface{}{
 						&types.ImageBlock{
 							Location: &types.Location{
 								Path: []interface{}{
@@ -34,15 +34,15 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("block image with empty alt and extra whitespace", func() {
 			source := "image::foo.png[ ]"
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content: []interface{}{
+					Elements: []interface{}{
 						&types.ImageBlock{
 							Location: &types.Location{
 								Path: []interface{}{
@@ -53,15 +53,15 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("block image with empty positional parameters", func() {
 			source := "image::foo.png[ , , ]"
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content: []interface{}{
+					Elements: []interface{}{
 						&types.ImageBlock{
 							Location: &types.Location{
 								Path: []interface{}{
@@ -72,15 +72,15 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("block image with empty first parameter, non-empty width", func() {
 			source := "image::foo.png[ , 200, ]"
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content: []interface{}{
+					Elements: []interface{}{
 						&types.ImageBlock{
 							Attributes: types.Attributes{
 								types.AttrWidth: "200",
@@ -94,15 +94,15 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("block image with double quoted alt", func() {
 			source := "image::foo.png[\"Quoted, Here\"]"
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content: []interface{}{
+					Elements: []interface{}{
 						&types.ImageBlock{
 							Attributes: types.Attributes{
 								types.AttrImageAlt: `Quoted, Here`,
@@ -116,15 +116,15 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("block image with double quoted alt and embedded quotes", func() {
 			source := `image::foo.png["The Foo\"Bar\" here"]`
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content: []interface{}{
+					Elements: []interface{}{
 						&types.ImageBlock{
 							Attributes: types.Attributes{
 								types.AttrImageAlt: `The Foo"Bar" here`,
@@ -138,15 +138,15 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("block image alt and named pair", func() {
 			source := `image::foo.png["Quoted, Here", height=100]`
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content: []interface{}{
+					Elements: []interface{}{
 						&types.ImageBlock{
 							Attributes: types.Attributes{
 								types.AttrImageAlt: `Quoted, Here`,
@@ -168,10 +168,10 @@ var _ = Describe("attributes", func() {
 
 		It("block image alt, width, height, and named pair", func() {
 			source := "image::foo.png[\"Quoted, Here\", 1, 2, height=100]"
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content: []interface{}{
+					Elements: []interface{}{
 						&types.ImageBlock{
 							Attributes: types.Attributes{
 								types.AttrImageAlt: `Quoted, Here`,
@@ -187,15 +187,15 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("block image alt, width, height, and named pair (spacing)", func() {
 			source := "image::foo.png[\"Quoted, Here\", 1, 2, height=100, test1=123 ,test2 = second test ]"
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content: []interface{}{
+					Elements: []interface{}{
 						&types.ImageBlock{
 							Attributes: types.Attributes{
 								types.AttrImageAlt: `Quoted, Here`,
@@ -213,15 +213,15 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("block image alt, width, height, and named pair embedded quote", func() {
 			source := "image::foo.png[\"Quoted, Here\", 1, 2, height=100, test1=123 ,test2 = second \"test\" ]"
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content: []interface{}{
+					Elements: []interface{}{
 						&types.ImageBlock{
 							Attributes: types.Attributes{
 								types.AttrImageAlt: `Quoted, Here`,
@@ -239,7 +239,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 	})
 
@@ -250,10 +250,10 @@ var _ = Describe("attributes", func() {
 :abc: {def}bar
 
 {abc}`
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content: []interface{}{
+					Elements: []interface{}{
 						&types.AttributeDeclaration{
 							Name:  "def",
 							Value: "foo",
@@ -266,7 +266,7 @@ var _ = Describe("attributes", func() {
 				},
 				{
 					LineOffset: 3,
-					Content: []interface{}{
+					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
@@ -279,17 +279,17 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("should not substitute an attribute in another attribute when not defined", func() {
 			source := `:abc: {def}bar
 
 {abc}`
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content: []interface{}{
+					Elements: []interface{}{
 						&types.AttributeDeclaration{
 							Name:  "abc",
 							Value: "{def}bar", // unresolved
@@ -298,7 +298,7 @@ var _ = Describe("attributes", func() {
 				},
 				{
 					LineOffset: 3,
-					Content: []interface{}{
+					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
@@ -311,7 +311,7 @@ var _ = Describe("attributes", func() {
 					},
 				},
 			}
-			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		Context("invalid syntax", func() {
@@ -321,10 +321,10 @@ var _ = Describe("attributes", func() {
 
 			It("block image with double quoted alt extra whitespace", func() {
 				source := `image::foo.png[ "This \Backslash  2Spaced End Space " ]`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 							types.Paragraph{
 								Lines: [][]interface{}{
 									{
@@ -337,7 +337,7 @@ var _ = Describe("attributes", func() {
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 	})

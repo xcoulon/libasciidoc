@@ -38,12 +38,23 @@ func processSubstitutions(ctx *processContext, f types.DocumentFragment) types.D
 	if err := f.Error; err != nil {
 		return f
 	}
-	element, err := processSubstitutionsOnElement(ctx, f.Content)
+	elements, err := processSubstitutionsOnElements(ctx, f.Elements)
 	if err != nil {
 		return types.NewErrorFragment(f.LineOffset, err)
 	}
-	f.Content = element
+	f.Elements = elements
 	return f
+}
+
+func processSubstitutionsOnElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
+	result := make([]interface{}, len(elements))
+	for i, element := range elements {
+		var err error
+		if result[i], err = processSubstitutionsOnElement(ctx, element); err != nil {
+			return nil, err
+		}
+	}
+	return result, nil
 }
 
 func processSubstitutionsOnElement(ctx *processContext, element interface{}) (interface{}, error) {
@@ -72,14 +83,14 @@ func processSubstitutionsOnElement(ctx *processContext, element interface{}) (in
 
 // replaces the AttributeSubstitution by their actual values.
 // TODO: returns `true` if at least one AttributeSubstitution was found (whatever its replacement)?
-func replaceAttributeSubstitutionsInAttributes(ctx *processContext, b types.WithAttributes) error {
+func replaceAttributeRefsInAttributes(ctx *processContext, b types.WithAttributes) error {
 	// if log.IsLevelEnabled(log.DebugLevel) {
 	// 	log.Debugf("applying attribute substitutions on attributes\n%s", spew.Sdump(b.GetAttributes()))
 	// }
 	for key, value := range b.GetAttributes() {
 		switch value := value.(type) {
 		case []interface{}: // multi-value attributes
-			value, err := replaceAttributeSubstitutionsInElements(ctx, value)
+			value, err := replaceAttributeRefsInElements(ctx, value)
 			if err != nil {
 				return err
 			}
@@ -91,7 +102,7 @@ func replaceAttributeSubstitutionsInAttributes(ctx *processContext, b types.With
 				b.GetAttributes()[key] = types.Reduce(value)
 			}
 		default: // single-value attributes
-			value, err := replaceAttributeSubstitutionsInElement(ctx, value)
+			value, err := replaceAttributeRefsInElement(ctx, value)
 			if err != nil {
 				return err
 			}
@@ -156,7 +167,7 @@ func processBlockWithLocation(ctx *processContext, block types.WithLocation) err
 	}
 	log.Debugf("applying substitutions on `location` of block of type '%T'", block)
 	elements := block.GetLocation().Path
-	elements, err := replaceAttributeSubstitutionsInElements(ctx, elements)
+	elements, err := replaceAttributeRefsInElements(ctx, elements)
 	if err != nil {
 		return err
 	}
@@ -167,7 +178,7 @@ func processBlockWithLocation(ctx *processContext, block types.WithLocation) err
 }
 
 func processAttributes(ctx *processContext, block types.WithAttributes) error {
-	if err := replaceAttributeSubstitutionsInAttributes(ctx, block); err != nil {
+	if err := replaceAttributeRefsInAttributes(ctx, block); err != nil {
 		return err
 	}
 	// TODO: only parse element attributes if an attribute substitution occurred?
@@ -219,6 +230,8 @@ func defaultSubstitution(b interface{}) (string, error) {
 		switch b.Kind {
 		case types.Listing, types.Fenced, types.Literal:
 			return "verbatim", nil
+		case types.Example:
+			return "normal", nil
 		default:
 			return "", fmt.Errorf("unsupported kind of delimited block: '%v'", b.Kind)
 		}
@@ -245,6 +258,63 @@ const (
 	SpecialcharactersGroup substitutionGroup = "SpecialCharactersGroup"
 	VerbatimGroup          substitutionGroup = "VerbatimGroup"
 )
+
+func (g substitutionGroup) defaults() map[SubstitutionKind]bool {
+	switch g {
+	case AttributesGroup:
+		return map[SubstitutionKind]bool{
+			InlinePassthroughs: true,
+			Attributes:         true,
+		}
+	case ElementAttributesGroup:
+		return map[SubstitutionKind]bool{
+			InlinePassthroughs: true,
+			Attributes:         true,
+			Quotes:             true,
+			SpecialCharacters:  true, // TODO: is it needed?
+		}
+	case HeaderGroup:
+		return map[SubstitutionKind]bool{
+			InlinePassthroughs: true,
+			SpecialCharacters:  true,
+			Attributes:         true,
+		}
+	case MacrosGroup:
+		return map[SubstitutionKind]bool{
+			Macros: true,
+		}
+	case NoneGroup:
+		return map[SubstitutionKind]bool{}
+	case NormalGroup:
+		return map[SubstitutionKind]bool{
+			InlinePassthroughs: true,
+			SpecialCharacters:  true,
+			Attributes:         true,
+			Quotes:             true,
+			Replacements:       true,
+			Macros:             true,
+			PostReplacements:   true,
+		}
+	case QuotesGroup:
+		return map[SubstitutionKind]bool{
+			Quotes: true,
+		}
+	case ReplacementsGroup:
+		return map[SubstitutionKind]bool{
+			Replacements: true,
+		}
+	case SpecialcharactersGroup:
+		return map[SubstitutionKind]bool{
+			SpecialCharacters: true,
+		}
+	case VerbatimGroup:
+		return map[SubstitutionKind]bool{
+			SpecialCharacters: true,
+			Callouts:          true,
+		}
+	}
+	return map[SubstitutionKind]bool{}
+}
 
 type substitution struct {
 	group                     substitutionGroup
@@ -273,29 +343,29 @@ func newSubstitution(kind string) (*substitution, error) {
 		return nil, fmt.Errorf("unsupported kind of substitution: '%v'", kind)
 	}
 	s := &substitution{
-		group: group,
+		group:       group,
+		enablements: group.defaults(),
 	}
-	s.reset()
 	return s, nil
 }
 
 func (step *substitution) processElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
 	// log.Debugf("applying step '%s'", step.group)
-	elements, err := parseElements(elements, step.group, GlobalStore(substitutionPhaseKey, step))
+	elements, err := parseElements(elements, step.group, GlobalStore(substitutionsKey, step))
 	if err != nil {
 		return nil, err
 	}
 	if step.hasAttributeSubstitutions {
 		// log.WithField("group", step.group).Debug("attribute substitutions detected during parsing")
 		// apply substitutions on elements
-		elements, err = replaceAttributeSubstitutionsInElements(ctx, elements)
+		elements, err = replaceAttributeRefsInElements(ctx, elements)
 		if err != nil {
 			return nil, err
 		}
 		elements = types.Merge(elements)
 		// re-run the Parser, skipping attribute substitutions and earlier rules this time
 		if step.reduce() {
-			if elements, err = parseElements(elements, step.group, GlobalStore(substitutionPhaseKey, step)); err != nil {
+			if elements, err = parseElements(elements, step.group, GlobalStore(substitutionsKey, step)); err != nil {
 				return nil, err
 			}
 		}
@@ -303,66 +373,10 @@ func (step *substitution) processElements(ctx *processContext, elements []interf
 	return elements, nil
 }
 
-func (s *substitution) reset() {
-	switch s.group {
-	case AttributesGroup:
-		s.enablements = map[SubstitutionKind]bool{
-			InlinePassthroughs: true,
-			Attributes:         true,
-		}
-	case ElementAttributesGroup:
-		s.enablements = map[SubstitutionKind]bool{
-			InlinePassthroughs: true,
-			Attributes:         true,
-			Quotes:             true,
-			SpecialCharacters:  true, // TODO: is it needed?
-		}
-	case HeaderGroup:
-		s.enablements = map[SubstitutionKind]bool{
-			InlinePassthroughs: true,
-			SpecialCharacters:  true,
-			Attributes:         true,
-		}
-	case MacrosGroup:
-		s.enablements = map[SubstitutionKind]bool{
-			Macros: true,
-		}
-	case NoneGroup:
-		s.enablements = map[SubstitutionKind]bool{}
-	case NormalGroup:
-		s.enablements = map[SubstitutionKind]bool{
-			InlinePassthroughs: true,
-			SpecialCharacters:  true,
-			Attributes:         true,
-			Quotes:             true,
-			Replacements:       true,
-			Macros:             true,
-			PostReplacements:   true,
-		}
-	case QuotesGroup:
-		s.enablements = map[SubstitutionKind]bool{
-			Quotes: true,
-		}
-	case ReplacementsGroup:
-		s.enablements = map[SubstitutionKind]bool{
-			Replacements: true,
-		}
-	case SpecialcharactersGroup:
-		s.enablements = map[SubstitutionKind]bool{
-			SpecialCharacters: true,
-		}
-	case VerbatimGroup:
-		s.enablements = map[SubstitutionKind]bool{
-			SpecialCharacters: true,
-			Callouts:          true,
-		}
-	}
-}
-
 // disables the "inline_passthroughs", "special_characters" and "attributes" substitution
 // return `true` if there are more enablements to apply, `false` otherwise (ie, no substitution would be applied if the content was parsed again)
 func (s *substitution) reduce() bool { // TODO: rename this func
-	s.reset()
+	s.enablements = s.group.defaults() // reset
 	for sub := range s.enablements {
 		switch sub {
 		case InlinePassthroughs, SpecialCharacters, Attributes:
@@ -383,16 +397,16 @@ func (c *current) setCurrentSubstitution(kind string) error {
 	if err != nil {
 		return err
 	}
-	c.globalStore[substitutionPhaseKey] = p
+	c.globalStore[substitutionsKey] = p
 	return nil
 }
 
 func (c *current) unsetCurrentSubstitution() {
-	delete(c.globalStore, substitutionPhaseKey)
+	delete(c.globalStore, substitutionsKey)
 }
 
 func (c *current) lookupCurrentSubstitution() (*substitution, error) {
-	ctx, ok := c.globalStore[substitutionPhaseKey].(*substitution)
+	ctx, ok := c.globalStore[substitutionsKey].(*substitution)
 	if !ok {
 		return nil, fmt.Errorf("unable to look-up the substitution context in the parser's global store")
 	}
@@ -432,8 +446,8 @@ func (c *current) isSubstitutionEnabled(k SubstitutionKind) (bool, error) {
 type SubstitutionKind string
 
 const (
-	// substitutionPhaseKey the key in which substitutions contexts are stored
-	substitutionPhaseKey string = "substitution_contexts"
+	// substitutionsKey the key in which substitutions are stored in the parser's GlobalStore
+	substitutionsKey string = "substitutions"
 
 	// Attributes the "attributes" substitution
 	Attributes SubstitutionKind = "attributes"
@@ -571,13 +585,13 @@ func parseContent(content []byte, opts ...Option) ([]interface{}, error) {
 
 // replaces the AttributeSubstitution or Counter substitution with its actual value, recursively if the given `element`
 // is a slice
-func replaceAttributeSubstitutionsInElement(ctx *processContext, element interface{}) (interface{}, error) {
+func replaceAttributeRefsInElement(ctx *processContext, element interface{}) (interface{}, error) {
 	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("applying attribute substitution on element of type '%T'", element)
+		log.Debugf("replacing attribute references in element of type '%T'", element)
 	}
 	switch e := element.(type) {
 	case []interface{}:
-		return replaceAttributeSubstitutionsInElements(ctx, e)
+		return replaceAttributeRefsInElements(ctx, e)
 	case types.AttributeSubstitution:
 		return types.StringElement{
 			Content: ctx.attributes.GetAsStringWithDefault(e.Name, "{"+e.Name+"}"),
@@ -586,32 +600,32 @@ func replaceAttributeSubstitutionsInElement(ctx *processContext, element interfa
 		return applyCounterSubstitution(ctx, e)
 	case types.WithElements:
 		// replace AttributeSubstitutions on attributes
-		if err := replaceAttributeSubstitutionsInAttributes(ctx, e); err != nil {
+		if err := replaceAttributeRefsInAttributes(ctx, e); err != nil {
 			return nil, err
 		}
 		// replace AttributeSubstitutions on nested elements
-		elements, err := replaceAttributeSubstitutionsInElements(ctx, e.GetElements())
+		elements, err := replaceAttributeRefsInElements(ctx, e.GetElements())
 		if err != nil {
 			return nil, err
 		}
 		// elements = types.Merge(elements)
 		if err := e.SetElements(elements); err != nil {
-			return nil, errors.Wrapf(err, "failed to apply attribute substitutions on block of type '%T'", e)
+			return nil, errors.Wrapf(err, "failed to replace attribute references in block of type '%T'", e)
 		}
 		return e, nil
 	case types.WithLocation:
 		// replace AttributeSubstitutions on attributes
-		if err := replaceAttributeSubstitutionsInAttributes(ctx, e); err != nil {
+		if err := replaceAttributeRefsInAttributes(ctx, e); err != nil {
 			return nil, err
 		}
 		// replace AttributeSubstitutions on embedded location
-		if err := applyAttributeSubstitutionsOnLocation(ctx, e); err != nil {
+		if err := replaceAttributeRefsInLocation(ctx, e); err != nil {
 			return nil, err
 		}
 		return e, nil
 	case types.WithAttributes:
 		// replace AttributeSubstitutions on attributes
-		if err := replaceAttributeSubstitutionsInAttributes(ctx, e); err != nil {
+		if err := replaceAttributeRefsInAttributes(ctx, e); err != nil {
 			return nil, err
 		}
 		return e, nil
@@ -620,8 +634,8 @@ func replaceAttributeSubstitutionsInElement(ctx *processContext, element interfa
 	}
 }
 
-func applyAttributeSubstitutionsOnLocation(ctx *processContext, b types.WithLocation) error {
-	path, err := replaceAttributeSubstitutionsInElements(ctx, b.GetLocation().Path)
+func replaceAttributeRefsInLocation(ctx *processContext, b types.WithLocation) error {
+	path, err := replaceAttributeRefsInElements(ctx, b.GetLocation().Path)
 	if err != nil {
 		return err
 	}
@@ -629,20 +643,20 @@ func applyAttributeSubstitutionsOnLocation(ctx *processContext, b types.WithLoca
 	return nil
 }
 
-func replaceAttributeSubstitutionsInElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
+func replaceAttributeRefsInElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
 	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("applying attribute substitutions on elements:\n%s", spew.Sdump(elements))
+		log.Debugf("replacing attribute refs in elements:\n%s", spew.Sdump(elements))
 	}
 	result := make([]interface{}, len(elements)) // maximum capacity should exceed initial input
 	for i, element := range elements {
-		element, err := replaceAttributeSubstitutionsInElement(ctx, element)
+		element, err := replaceAttributeRefsInElement(ctx, element)
 		if err != nil {
 			return nil, err
 		}
 		result[i] = element
 	}
 	if log.IsLevelEnabled(log.DebugLevel) {
-		log.Debugf("applied attribute substitutions on elements:\n%s", spew.Sdump(result))
+		log.Debugf("replaced attribute refs in elements:\n%s", spew.Sdump(result))
 	}
 	return result, nil
 }

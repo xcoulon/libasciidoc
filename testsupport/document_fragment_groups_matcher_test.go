@@ -15,10 +15,10 @@ import (
 var _ = Describe("document fragment groups matcher", func() {
 
 	// given
-	expected := []types.DocumentFragmentGroup{
+	expected := []types.DocumentFragment{
 		{
 			LineOffset: 1,
-			Content: []interface{}{
+			Elements: []interface{}{
 				types.RawLine("a paragraph."),
 			},
 		},
@@ -27,10 +27,10 @@ var _ = Describe("document fragment groups matcher", func() {
 
 	It("should match", func() {
 		// given
-		actual := []types.DocumentFragmentGroup{
+		actual := []types.DocumentFragment{
 			{
 				LineOffset: 1,
-				Content: []interface{}{
+				Elements: []interface{}{
 					types.RawLine("a paragraph."),
 				},
 			},
@@ -44,10 +44,10 @@ var _ = Describe("document fragment groups matcher", func() {
 
 	It("should not match", func() {
 		// given
-		actual := []types.DocumentFragmentGroup{
+		actual := []types.DocumentFragment{
 			{
 				LineOffset: 1,
-				Content: []interface{}{
+				Elements: []interface{}{
 					types.RawLine("something else"),
 				},
 			},
@@ -68,7 +68,7 @@ var _ = Describe("document fragment groups matcher", func() {
 		result, err := matcher.Match(1)
 		// then
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(Equal("MatchDocumentFragmentGroups matcher expects an array of types.DocumentFragmentGroup (actual: int)"))
+		Expect(err.Error()).To(Equal("MatchDocumentFragmentGroups matcher expects an array of types.DocumentFragment (actual: int)"))
 		Expect(result).To(BeFalse())
 	})
 

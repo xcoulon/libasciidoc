@@ -14,16 +14,16 @@ var _ = Describe("verse blocks", func() {
 
 	Context("in raw documents", func() {
 
-		Context("delimited blocks", func() {
+		Context("as delimited blocks", func() {
 
 			It("single line verse with author and title", func() {
 				source := `[verse, john doe, verse title]
 ____
 some *verse* content
 ____`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.VerseBlock{
 								Attributes: types.Attributes{
@@ -53,7 +53,7 @@ ____`
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("multi-line verse with unrendered list and author only", func() {
@@ -64,9 +64,9 @@ ____
 - content 
 ____
 `
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.VerseBlock{
 								Attributes: types.Attributes{
@@ -94,7 +94,7 @@ ____
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("multi-line verse with title only", func() {
@@ -103,9 +103,9 @@ ____
 some verse content 
 ____
 `
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.VerseBlock{
 								Attributes: types.Attributes{
@@ -123,7 +123,7 @@ ____
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("multi-line verse with unrendered lists and block without author and title", func() {
@@ -135,9 +135,9 @@ ____
 ----
 * content
 ____`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.VerseBlock{
 								Attributes: types.Attributes{
@@ -174,7 +174,7 @@ ____`
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("multi-line verse with unrendered list without author and title", func() {
@@ -185,9 +185,9 @@ ____
 
 	* bar
 ____`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.VerseBlock{
 								Attributes: types.Attributes{
@@ -211,16 +211,16 @@ ____`
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("empty verse without author and title", func() {
 				source := `[verse]
 ____
 ____`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.VerseBlock{
 								Attributes: types.Attributes{
@@ -233,7 +233,7 @@ ____`
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("unclosed verse without author and title", func() {
@@ -241,9 +241,9 @@ ____`
 ____
 foo
 `
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.VerseBlock{
 								Attributes: types.Attributes{
@@ -260,7 +260,7 @@ foo
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			Context("with custom substitutions", func() {
@@ -284,7 +284,7 @@ ____
 					s := strings.ReplaceAll(source, "[subs=\"$SUBS\"]\n", "")
 					expected := []types.DocumentFragment{
 						{
-							Content: []interface{}{
+							Elements: []interface{}{
 
 								&types.AttributeDeclaration{
 									Name:  "github-url",
@@ -399,8 +399,7 @@ ____
 					s := strings.ReplaceAll(source, "$SUBS", "normal")
 					expected := []types.DocumentFragment{
 						{
-							Content: []interface{}{
-
+							Elements: []interface{}{
 								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
@@ -515,8 +514,7 @@ ____
 					s := strings.ReplaceAll(source, "$SUBS", "quotes")
 					expected := []types.DocumentFragment{
 						{
-							Content: []interface{}{
-
+							Elements: []interface{}{
 								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
@@ -586,8 +584,7 @@ ____
 					s := strings.ReplaceAll(source, "$SUBS", "macros")
 					expected := []types.DocumentFragment{
 						{
-							Content: []interface{}{
-
+							Elements: []interface{}{
 								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
@@ -662,8 +659,7 @@ ____
 					s := strings.ReplaceAll(source, "$SUBS", "attributes")
 					expected := []types.DocumentFragment{
 						{
-							Content: []interface{}{
-
+							Elements: []interface{}{
 								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
@@ -725,8 +721,7 @@ ____
 					s := strings.ReplaceAll(source, "$SUBS", "attributes,macros")
 					expected := []types.DocumentFragment{
 						{
-							Content: []interface{}{
-
+							Elements: []interface{}{
 								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
@@ -811,8 +806,7 @@ ____
 					s := strings.ReplaceAll(source, "$SUBS", "specialchars")
 					expected := []types.DocumentFragment{
 						{
-							Content: []interface{}{
-
+							Elements: []interface{}{
 								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
@@ -893,9 +887,9 @@ ____
 
 				It("should apply the 'replacements' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "replacements")
-					expected := []types.DocumentFragmentGroup{
+					expected := []types.DocumentFragment{
 						{
-							Content: []interface{}{
+							Elements: []interface{}{
 
 								&types.AttributeDeclaration{
 									Name:  "github-url",
@@ -958,8 +952,7 @@ ____
 					s := strings.ReplaceAll(source, "$SUBS", "post_replacements")
 					expected := []types.DocumentFragment{
 						{
-							Content: []interface{}{
-
+							Elements: []interface{}{
 								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
@@ -1022,8 +1015,7 @@ ____
 					s := strings.ReplaceAll(source, "$SUBS", "quotes,macros")
 					expected := []types.DocumentFragment{
 						{
-							Content: []interface{}{
-
+							Elements: []interface{}{
 								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
@@ -1106,8 +1098,7 @@ ____
 					s := strings.ReplaceAll(source, "$SUBS", "macros,quotes")
 					expected := []types.DocumentFragment{
 						{
-							Content: []interface{}{
-
+							Elements: []interface{}{
 								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
@@ -1190,8 +1181,7 @@ ____
 					s := strings.ReplaceAll(source, "$SUBS", "none")
 					expected := []types.DocumentFragment{
 						{
-							Content: []interface{}{
-
+							Elements: []interface{}{
 								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
@@ -1254,7 +1244,7 @@ ____
 
 	Context("in final documents", func() {
 
-		Context("delimited blocks", func() {
+		Context("as delimited blocks", func() {
 
 			It("single line verse with author and title", func() {
 				source := `[verse, john doe, verse title]

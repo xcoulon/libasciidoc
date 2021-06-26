@@ -27,7 +27,7 @@ type documentFragmentsMatcher struct {
 
 func (m *documentFragmentsMatcher) Match(actual interface{}) (success bool, err error) {
 	if _, ok := actual.([]types.DocumentFragment); !ok {
-		return false, errors.Errorf("MatchDocumentFragments matcher expects an array of types.DocumentFragmentGroup (actual: %T)", actual)
+		return false, errors.Errorf("MatchDocumentFragments matcher expects an array of types.DocumentFragment (actual: %T)", actual)
 	}
 	if !reflect.DeepEqual(m.expected, actual) {
 		if log.IsLevelEnabled(log.DebugLevel) {

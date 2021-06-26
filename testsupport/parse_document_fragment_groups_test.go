@@ -13,7 +13,7 @@ var _ = Describe("parse document fragment groups", func() {
 	expected := []types.DocumentFragment{
 		{
 			LineOffset: 1,
-			Content: []interface{}{
+			Elements: []interface{}{
 				types.RawLine("hello, world!"),
 			},
 		},
@@ -23,7 +23,7 @@ var _ = Describe("parse document fragment groups", func() {
 		// given
 		actual := "hello, world!"
 		// when
-		result, err := testsupport.ParseDocumentFragmentGroups(actual)
+		result, err := testsupport.ParseDocumentFragments(actual)
 		// then
 		Expect(err).ToNot(HaveOccurred())
 		Expect(result).To(Equal(expected))
@@ -33,7 +33,7 @@ var _ = Describe("parse document fragment groups", func() {
 		// given
 		actual := "foo"
 		// when
-		result, err := testsupport.ParseDocumentFragmentGroups(actual)
+		result, err := testsupport.ParseDocumentFragments(actual)
 		// then
 		Expect(err).ToNot(HaveOccurred())
 		Expect(result).NotTo(Equal(expected))

@@ -20,9 +20,9 @@ title: a title
 author: Xavier
 ---
 `
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
-						Content: []interface{}{
+						Elements: []interface{}{
 							types.BlockDelimiter{
 								Kind: types.FrontMatter,
 							},
@@ -38,7 +38,7 @@ author: Xavier
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("with simple attributes and blanklines", func() {
@@ -50,9 +50,9 @@ author: Xavier
 
 ---
 `
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
-						Content: []interface{}{
+						Elements: []interface{}{
 							types.BlockDelimiter{
 								Kind: types.FrontMatter,
 							},
@@ -71,15 +71,15 @@ author: Xavier
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("empty front-matter", func() {
 				source := `---
 ---`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
-						Content: []interface{}{
+						Elements: []interface{}{
 							types.BlockDelimiter{
 								Kind: types.FrontMatter,
 							},
@@ -89,21 +89,21 @@ author: Xavier
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("no front-matter", func() {
 				source := `some content`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
-						Content: []interface{}{
+						Elements: []interface{}{
 							types.StringElement{
 								Content: "some content",
 							},
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 
@@ -116,9 +116,9 @@ author: Xavier
 ---
 = A Title
 `
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
-						Content: []interface{}{
+						Elements: []interface{}{
 							types.BlockDelimiter{
 								Kind: types.FrontMatter,
 							},
@@ -142,7 +142,7 @@ author: Xavier
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 	})

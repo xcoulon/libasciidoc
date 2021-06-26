@@ -12,7 +12,7 @@ var _ = Describe("markdown-style quote blocks", func() {
 
 	Context("in final documents", func() {
 
-		Context("delimited blocks", func() {
+		Context("as delimited blocks", func() {
 
 			It("with single marker without author", func() {
 				source := `> some text

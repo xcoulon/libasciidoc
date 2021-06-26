@@ -13,97 +13,143 @@ import (
 // - paragraphs using rawlines
 //
 // also, this tasks takes care of "attaching" attributes to their parent block/element
-func AssembleFragments(done <-chan interface{}, fragmentGroupStream <-chan types.DocumentFragmentGroup) <-chan types.DocumentFragmentGroup {
-	assembledElementStream := make(chan types.DocumentFragmentGroup)
+func AssembleFragments(done <-chan interface{}, fragmentStream <-chan types.DocumentFragment) <-chan types.DocumentFragment {
+	assembledFragmentStream := make(chan types.DocumentFragment)
 	go func() {
-		defer close(assembledElementStream)
-		for group := range fragmentGroupStream {
+		defer close(assembledFragmentStream)
+		for fragment := range fragmentStream {
 			select {
 			case <-done:
-				log.WithField("pipeline_task", "assemble_fragments").Debug("received 'done' signal")
+				log.WithField("pipeline_task", "assemble_fragment_elements").Debug("received 'done' signal")
 				return
-			case assembledElementStream <- assembleFragments(group):
+			case assembledFragmentStream <- assembleFragments(fragment):
 			}
 		}
-		log.WithField("pipeline_task", "assemble_fragments").Debug("done processing upstream content")
+		log.WithField("pipeline_task", "assemble_fragment_elements").Debug("done processing upstream content")
 	}()
-	return assembledElementStream
+	return assembledFragmentStream
 }
 
-func assembleFragments(f types.DocumentFragmentGroup) types.DocumentFragmentGroup {
+func assembleFragments(f types.DocumentFragment) types.DocumentFragment {
 	// if the fragment contains an error, then send it as-is downstream
 	if f.Error != nil {
 		return f
 	}
+	elements, err := assembleFragmentElements(f.Elements)
+	if err != nil {
+		return types.NewErrorFragment(f.LineOffset, errors.Wrap(err, "unable to assemble fragments"))
+	}
+	return types.DocumentFragment{
+		LineOffset: f.LineOffset,
+		Elements:   elements,
+	}
+}
+
+func assembleFragmentElements(elements []interface{}) ([]interface{}, error) {
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.WithField("pipeline_task", "assemble_fragment_elements").Debugf("assembling %d elements", len(elements))
+	}
 	attributes := newAttributeStack()
-	content := make([]interface{}, 0, len(f.Content))
-	var block types.WithElements // here, a delimited block or a paragraph
-	for _, e := range f.Content {
+	result := make([]interface{}, 0, len(elements))
+	var parentBlock types.WithElements // here, a delimited block or a paragraph
+	for _, e := range elements {
+		log.Debugf("assembling element of type '%T'", e)
 		switch e := e.(type) {
 		case types.Attributes:
+			// within a delimited block, we may want to add the attributes as-is
+			if b, ok := parentBlock.(*types.DelimitedBlock); ok {
+				log.Debugf("adding attributes as an element of a delimited block of kind '%v'", b.Kind)
+				if err := b.AddElement(e); err != nil {
+					return nil, err
+				}
+			}
+			// outside of a block, we keep the attributes in a stack
 			attributes.push(e)
 		case *types.BlockDelimiter:
 			// opening
-			if _, ok := block.(*types.DelimitedBlock); !ok {
-				block = types.NewDelimitedBlock(e.Kind, attributes.pop())
-				content = append(content, block)
+			b, ok := parentBlock.(*types.DelimitedBlock)
+			if !ok {
+				parentBlock = types.NewDelimitedBlock(e.Kind, attributes.pop())
+				result = append(result, parentBlock)
 				continue
 			}
+			// if block was an Example, there redo elements aeembly with its own content this time
+			switch b.Kind {
+			case types.Example:
+				var err error
+				if b.Elements, err = assembleFragmentElements(b.Elements); err != nil {
+					return nil, err
+				}
+			}
 			// closing (ie, reset block)
-			block = nil
+			parentBlock = nil
+
 		case types.ListElement:
 			e.SetAttributes(attributes.pop())
-			block = e
-			content = append(content, block)
+			// if the current block can take this list element, then let's add it
+			if parentBlock != nil && parentBlock.CanAddElement(e) {
+				if err := parentBlock.AddElement(e); err != nil {
+					return nil, err
+				}
+			} else {
+				parentBlock = e
+				result = append(result, parentBlock)
+			}
 		case *types.BlankLine:
-			switch block.(type) {
+			switch b := parentBlock.(type) {
 			case *types.Paragraph, types.ListElement:
 				// end of paragraph
-				block = nil
+				parentBlock = nil
+				result = append(result, e)
+			case *types.DelimitedBlock:
+				if b.CanAddElement(e) {
+					if err := b.AddElement(e); err != nil {
+						return nil, err
+					}
+				} else {
+					result = append(result, e)
+				}
+			default:
+				result = append(result, e)
 			}
-			content = append(content, e)
 		case types.RawLine:
-			if block == nil {
-				block, _ = types.NewParagraph([]interface{}{}, attributes.pop())
-				content = append(content, block)
+			if parentBlock == nil {
+				parentBlock, _ = types.NewParagraph([]interface{}{}, attributes.pop())
+				result = append(result, parentBlock)
 			}
-			if err := block.AddElement(e); err != nil {
-				return types.NewErrorFragmentGroup(f.LineOffset, errors.Wrap(err, "unable to assemble fragments"))
+			if err := parentBlock.AddElement(e); err != nil {
+				return nil, err
 			}
 		case *types.AdmonitionLine:
-			block = types.NewAdminitionParagraph(e, attributes.pop())
-			content = append(content, block)
+			parentBlock = types.NewAdminitionParagraph(e, attributes.pop())
+			result = append(result, parentBlock)
 			log.Debug("adding a new fragment with an admonition paragraph")
 		case *types.SingleLineComment:
 			// add into block (if applicable)
-			if block != nil {
-				if err := block.AddElement(e); err != nil {
-					return types.NewErrorFragmentGroup(f.LineOffset, errors.Wrap(err, "unable to assemble fragments"))
+			if parentBlock != nil {
+				if err := parentBlock.AddElement(e); err != nil {
+					return nil, err
 				}
 				continue
 			}
-			content = append(content, e)
+			result = append(result, e)
 		case *types.ListElementContinuation:
-			content = append(content, e)
+			result = append(result, e)
 			// what's coming next shall not be attach to the current block (a list element)
-			block = nil
+			parentBlock = nil
 		case types.WithAttributes:
 			// set attributes on the target element
 			e.SetAttributes(attributes.pop())
-			content = append(content, e)
+			result = append(result, e)
 		default:
-			content = append(content, e)
+			result = append(result, e)
 		}
 	}
 
-	result := types.DocumentFragmentGroup{
-		LineOffset: f.LineOffset,
-		Content:    content,
-	}
 	if log.IsLevelEnabled(log.DebugLevel) {
-		log.WithField("pipeline_task", "assemble_fragments").Debugf("assembled fragment group: %s", spew.Sdump(result))
+		log.WithField("pipeline_task", "assemble_fragment_elements").Debugf("assembled fragment elements: %s", spew.Sdump(result))
 	}
-	return result
+	return result, nil
 }
 
 type attributeStack struct {

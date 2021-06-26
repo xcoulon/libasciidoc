@@ -23,14 +23,14 @@ pasta`
 				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 							types.RawLine("cookie"),
 							types.RawLine("chocolate"),
 							types.RawLine("pasta"),
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with hardbreaks attribute", func() {
@@ -41,7 +41,7 @@ pasta`
 				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 							types.Attributes{
 								types.AttrOptions: []interface{}{"hardbreaks"},
 							},
@@ -63,7 +63,7 @@ pasta`
 				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 							types.Attributes{
 								types.AttrTitle: "my title",
 							},
@@ -72,7 +72,7 @@ pasta`
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with custom title attribute - explicit and unquoted", func() {
@@ -84,7 +84,7 @@ pasta`
 				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 							&types.AttributeDeclaration{
 								Name:  "title",
 								Value: "cookies",
@@ -93,7 +93,7 @@ pasta`
 					},
 					{
 						LineOffset: 3,
-						Content: []interface{}{
+						Elements: []interface{}{
 							types.Attributes{
 								types.AttrTitle: []interface{}{
 									types.StringElement{
@@ -109,7 +109,7 @@ pasta`
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			It("with multiple attributes and blanklines in-between", func() {
@@ -122,7 +122,7 @@ pasta`
 				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 							types.Attributes{
 								types.AttrRoles: []interface{}{
 									types.StringElement{
@@ -139,7 +139,7 @@ pasta`
 					},
 					{
 						LineOffset: 3,
-						Content: []interface{}{
+						Elements: []interface{}{
 							types.Attributes{
 								types.AttrID: "anchor",
 							},
@@ -147,13 +147,13 @@ pasta`
 					},
 					{
 						LineOffset: 5,
-						Content: []interface{}{
+						Elements: []interface{}{
 							types.RawLine("cookie"),
 							types.RawLine("pasta"),
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragments(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 			})
 
 			Context("with custom substitutions", func() {
@@ -172,7 +172,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 					expected := []types.DocumentFragment{
 						{
 							LineOffset: 1,
-							Content: []interface{}{
+							Elements: []interface{}{
 								&types.AttributeDeclaration{
 									Name:  "github-url",
 									Value: "https://github.com",
@@ -185,7 +185,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 						},
 						{
 							LineOffset: 4,
-							Content: []interface{}{
+							Elements: []interface{}{
 								types.Attributes{
 									types.AttrSubstitutions: "normal",
 								},

@@ -1106,7 +1106,7 @@ and <more text> on the +
 
 	Context("listing blocks", func() {
 
-		Context("delimited blocks", func() {
+		Context("as delimited blocks", func() {
 			// testing custom substitutions on listing blocks only, as
 			// other verbatim blocks (fenced, literal, source, passthrough)
 			// share the same implementation
@@ -2272,7 +2272,7 @@ _foo_
 			})
 		})
 
-		Context("paragraph blocks", func() {
+		Context("as paragraph blocks", func() {
 
 			source := `:github-url: https://github.com
 

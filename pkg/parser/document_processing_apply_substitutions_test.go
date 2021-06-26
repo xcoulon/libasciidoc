@@ -654,7 +654,7 @@ package parser
 // 		})
 // 	})
 
-// 	Context("delimited blocks", func() {
+// 	Context("as delimited blocks", func() {
 
 // 		It("should replace with new StringElement in delimited block", func() {
 // 			// given

@@ -12,7 +12,7 @@ var _ = Describe("quote blocks", func() {
 
 	Context("in final documents", func() {
 
-		Context("delimited blocks", func() {
+		Context("as delimited blocks", func() {
 
 			It("single-line quote block with author and title", func() {
 				source := `[quote, john doe, quote title]

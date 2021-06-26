@@ -14,20 +14,20 @@ import (
 
 // MatchDocumentFragmentGroups a custom matcher to verify that a document matches the given expectation
 // Similar to the standard `Equal` matcher, but display a diff when the values don't match
-func MatchDocumentFragmentGroups(expected []types.DocumentFragmentGroup) gomegatypes.GomegaMatcher {
+func MatchDocumentFragmentGroups(expected []types.DocumentFragment) gomegatypes.GomegaMatcher {
 	return &documentFragmentGroupsMatcher{
 		expected: expected,
 	}
 }
 
 type documentFragmentGroupsMatcher struct {
-	expected []types.DocumentFragmentGroup
+	expected []types.DocumentFragment
 	diffs    string
 }
 
 func (m *documentFragmentGroupsMatcher) Match(actual interface{}) (success bool, err error) {
-	if _, ok := actual.([]types.DocumentFragmentGroup); !ok {
-		return false, errors.Errorf("MatchDocumentFragmentGroups matcher expects an array of types.DocumentFragmentGroup (actual: %T)", actual)
+	if _, ok := actual.([]types.DocumentFragment); !ok {
+		return false, errors.Errorf("MatchDocumentFragmentGroups matcher expects an array of types.DocumentFragment (actual: %T)", actual)
 	}
 	if !reflect.DeepEqual(m.expected, actual) {
 		if log.IsLevelEnabled(log.DebugLevel) {

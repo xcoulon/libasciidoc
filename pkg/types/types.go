@@ -242,37 +242,37 @@ var defaultPassthroughBlockSubstitutions = []string{}
 // }
 
 // DocumentFragment a set of (very raw) fragments of document, read by the scanner
-type DocumentFragmentGroup struct {
-	LineOffset int
-	Content    []interface{}
-	Error      error
-}
+// type DocumentFragmentGroup struct {
+// 	LineOffset int
+// 	Elements   []interface{}
+// 	Error      error
+// }
 
-func NewDocumentFragmentGroup(lineOffset int, elements ...interface{}) DocumentFragmentGroup {
-	return DocumentFragmentGroup{
-		LineOffset: lineOffset,
-		Content:    elements,
-	}
-}
+// func NewDocumentFragmentGroup(lineOffset int, elements ...interface{}) DocumentFragmentGroup {
+// 	return DocumentFragmentGroup{
+// 		LineOffset: lineOffset,
+// 		Elements:   elements,
+// 	}
+// }
 
-func NewErrorFragmentGroup(lineOffset int, err error) DocumentFragmentGroup {
-	return DocumentFragmentGroup{
-		LineOffset: lineOffset,
-		Error:      err,
-	}
-}
+// func NewErrorFragmentGroup(lineOffset int, err error) DocumentFragmentGroup {
+// 	return DocumentFragmentGroup{
+// 		LineOffset: lineOffset,
+// 		Error:      err,
+// 	}
+// }
 
 // DocumentFragment a single fragment of document
 type DocumentFragment struct {
 	LineOffset int
-	Content    interface{}
+	Elements   []interface{}
 	Error      error
 }
 
-func NewDocumentFragment(lineOffset int, element interface{}) DocumentFragment {
+func NewDocumentFragment(lineOffset int, elements []interface{}) DocumentFragment {
 	return DocumentFragment{
 		LineOffset: lineOffset,
-		Content:    element,
+		Elements:   elements,
 	}
 }
 
@@ -671,12 +671,6 @@ type ListElement interface { // TODO: convert to struct and use as composant in 
 	ListKind() ListKind
 	adjustStyle(ListElement)
 	matchesStyle(ListElement) bool
-}
-
-type ListItemBucket struct {
-	Kind     ListKind
-	Elements []interface{}
-	lists    []List
 }
 
 type GenericList struct { // TODO: remove `ListItem` interface, `LabeledList`, etc. and rename this type `ListItem`.
@@ -2754,14 +2748,16 @@ func (b *DelimitedBlock) CanAddElement(element interface{}) bool {
 	case *BlockDelimiter, RawLine:
 		return true
 	default:
+		// Example blocks can have more kinds of elements
+		if b.Kind == Example {
+			return true
+		}
 		return false
 	}
 }
 
 func (b *DelimitedBlock) AddElement(element interface{}) error {
-	if e, ok := element.(RawLine); ok {
-		b.Elements = append(b.Elements, e)
-	}
+	b.Elements = append(b.Elements, element)
 	return nil
 }
 

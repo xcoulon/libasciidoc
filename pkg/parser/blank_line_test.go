@@ -16,10 +16,10 @@ var _ = Describe("blank lines", func() {
 			source := `first paragraph
  
 second paragraph`
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content: []interface{}{
+					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
@@ -33,7 +33,7 @@ second paragraph`
 				},
 				{
 					LineOffset: 3,
-					Content: []interface{}{
+					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
@@ -46,7 +46,7 @@ second paragraph`
 					},
 				},
 			}
-			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("blank line with spaces and tabs between 2 paragraphs and after second paragraph", func() {
@@ -56,10 +56,10 @@ second paragraph`
 		
 second paragraph
 `
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content: []interface{}{
+					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
@@ -73,7 +73,7 @@ second paragraph
 				},
 				{
 					LineOffset: 5,
-					Content: []interface{}{
+					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
 								{
@@ -86,17 +86,17 @@ second paragraph
 					},
 				},
 			}
-			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("blank line with attributes", func() {
 			source := `.ignored
  
 `
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content:    []interface{}{},
+					Elements:   []interface{}{},
 				},
 			}
 			result, err := AssembleDocumentFragments(source) // , parser.Debug(true))

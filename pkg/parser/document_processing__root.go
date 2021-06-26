@@ -31,22 +31,24 @@ func ParseDocument(r io.Reader, config configuration.Configuration, opts ...Opti
 			log.WithField("_state", "document_parsing").WithError(err).Error("error occurred")
 			return types.Document{}, err
 		}
-		switch b := f.Content.(type) {
-		case types.Section:
-			if b.Level != 0 && inHeader { // do not even allow 2ndary section with level 0 as headers
+		for _, element := range f.Elements {
+			switch b := element.(type) {
+			case types.Section:
+				if b.Level != 0 && inHeader { // do not even allow 2ndary section with level 0 as headers
+					inHeader = false
+				}
+			case *types.AttributeDeclaration:
+				if inHeader {
+					attributes.Set(b.Name, b.Value)
+				}
+			case types.AttributeReset:
+				delete(attributes, b.Name)
+			default:
+				// anything else and we're not in the header anynore
 				inHeader = false
 			}
-		case *types.AttributeDeclaration:
-			if inHeader {
-				attributes.Set(b.Name, b.Value)
-			}
-		case types.AttributeReset:
-			delete(attributes, b.Name)
-		default:
-			// anything else and we're not in the header anynore
-			inHeader = false
+			blocks = append(blocks, element)
 		}
-		blocks = append(blocks, f.Content)
 	}
 	// fragments := make(chan types.DocumentFragment)
 	// err := ParseDocumentFragmentGroups							(r, fragments, opts...)

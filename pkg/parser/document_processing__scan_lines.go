@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/bytesparadise/libasciidoc/pkg/types"
 	"github.com/davecgh/go-spew/spew"
@@ -12,8 +13,8 @@ import (
 
 // ScanDocument scans a document's content and applies the preprocessing directives (file inclusions)
 // Returns the document fragments (to be assembled) or an error
-func ScanDocument(source io.Reader, done <-chan interface{}, opts ...Option) <-chan types.DocumentFragmentGroup {
-	fragmentGroupStream := make(chan types.DocumentFragmentGroup)
+func ScanDocument(source io.Reader, done <-chan interface{}, opts ...Option) <-chan types.DocumentFragment {
+	fragmentGroupStream := make(chan types.DocumentFragment)
 	// errStream := make(chan error)
 	go func() {
 		defer close(fragmentGroupStream)
@@ -36,14 +37,24 @@ type DocumentFragmentScanner struct {
 	opts         []Option
 	scanner      *bufio.Scanner
 	lineNumber   int
-	currentGroup types.DocumentFragmentGroup
+	currentGroup types.DocumentFragment
 	scopes       *scanScopeStack
 	err          error // sticky error
 }
 
 type scanScope struct {
-	name  string
-	extra string
+	name string
+	kind string
+}
+
+func (s scanScope) String() string {
+	result := &strings.Builder{}
+	result.WriteString(s.name)
+	if s.kind != "" {
+		result.WriteString("/")
+		result.WriteString(s.kind)
+	}
+	return result.String()
 }
 
 // const (
@@ -57,12 +68,14 @@ var (
 	defaultScope       = &scanScope{name: "default"}
 	withinParagraph    = &scanScope{name: "within_paragraph"}
 	withinList         = &scanScope{name: "within_list"}
-	withinListingBlock = &scanScope{name: "within_delimited_block", extra: types.Listing}
-	withinFencedBlock  = &scanScope{name: "within_delimited_block", extra: types.Fenced}
-	withinLiteralBlock = &scanScope{name: "within_delimited_block", extra: types.Literal}
+	withinListingBlock = &scanScope{name: "within_delimited_block", kind: types.Listing}
+	withinExampleBlock = &scanScope{name: "within_delimited_block", kind: types.Example}
+	withinFencedBlock  = &scanScope{name: "within_delimited_block", kind: types.Fenced}
+	withinLiteralBlock = &scanScope{name: "within_delimited_block", kind: types.Literal}
 )
 
 func NewDocumentScanner(source io.Reader, opts ...Option) *DocumentFragmentScanner {
+	opts = append([]Option{Entrypoint("DefaultDocumentFragmentElement")}, opts...) // set the default entrypoint to parse the content
 	return &DocumentFragmentScanner{
 		scanner: bufio.NewScanner(source),
 		opts:    opts,
@@ -80,7 +93,7 @@ func (s *DocumentFragmentScanner) Scan() bool {
 		return false
 	}
 	elements := []interface{}{}
-	s.currentGroup = types.DocumentFragmentGroup{
+	s.currentGroup = types.DocumentFragment{
 		LineOffset: s.lineNumber + 1, // next fragment will begin at the next line read by the underlying scanner
 	}
 scan:
@@ -110,7 +123,7 @@ scan:
 			elements = append(elements, element)
 		case *types.BlockDelimiter:
 			currentScope := s.scopes.get()
-			if currentScope.extra == element.Kind {
+			if currentScope.kind == element.Kind {
 				// done with current delimited block
 				s.scopes.pop()
 				// TODO: end of fragment group here, if `scopes` is empty? (maybe not, if there are callout list elements afterward)
@@ -118,6 +131,8 @@ scan:
 				switch element.Kind {
 				case types.Listing:
 					s.scopes.push(withinListingBlock)
+				case types.Example:
+					s.scopes.push(withinExampleBlock)
 				case types.Fenced:
 					s.scopes.push(withinFencedBlock)
 				case types.Literal:
@@ -144,8 +159,8 @@ scan:
 	}
 	if err := s.scanner.Err(); err != nil {
 		log.WithError(err).Error("failed to read the content")
-		s.err = err                  // will cause next call to `Scan()` to return false
-		s.currentGroup.Content = nil // reset
+		s.err = err                   // will cause next call to `Scan()` to return false
+		s.currentGroup.Elements = nil // reset
 		s.currentGroup.Error = err
 		return true // this fragment needs to be processed upstream
 	}
@@ -154,7 +169,7 @@ scan:
 			log.Debugf("parsed fragment elements:\n%s", spew.Sdump(elements))
 		}
 
-		s.currentGroup.Content = elements
+		s.currentGroup.Elements = elements
 		return true // (and will also return the underlying scanner's error if something wrong happened)
 	}
 	// reached the end of source
@@ -188,23 +203,27 @@ func (s *DocumentFragmentScanner) entrypoint() []Option {
 			Entrypoint("DocumentFragmentElementWithinParagraph"),
 		}
 	case withinListingBlock, withinFencedBlock, withinLiteralBlock:
-		log.Debugf("using '%s' entrypoint", "DocumentFragmentElementWithinDelimitedBlock")
+		log.Debugf("using '%s' entrypoint", "DocumentFragmentElementWithinVerbatimBlock")
 		return []Option{
-			Entrypoint("DocumentFragmentElementWithinDelimitedBlock"),
-			GlobalStore(validDelimitedBlockKind, currentScope.extra),
+			Entrypoint("DocumentFragmentElementWithinVerbatimBlock"),
+			GlobalStore(validDelimitedBlockKind, currentScope.kind),
+		}
+	case withinExampleBlock:
+		log.Debugf("using '%s' entrypoint", "DocumentFragmentElementWithinNormalBlock")
+		return []Option{
+			Entrypoint("DocumentFragmentElementWithinNormalBlock"),
+			GlobalStore(validDelimitedBlockKind, currentScope.kind),
 		}
 	default:
-		log.Debugf("using '%s' entrypoint", "DefaultDocumentFragmentElement")
-		return []Option{
-			Entrypoint("DefaultDocumentFragmentElement"),
-		}
+		log.Debugf("using default entrypoint")
+		return nil
 	}
 }
 
 // Fragments returns document fragments that were read by the last call to `Next`.
 // Multiple calls will return the same value, until `Next` is called again
-func (s *DocumentFragmentScanner) Fragments() types.DocumentFragmentGroup {
-	log.Debugf("returning group with %d fragments", len(s.currentGroup.Content))
+func (s *DocumentFragmentScanner) Fragments() types.DocumentFragment {
+	log.Debugf("returning fragment group with %d elements", len(s.currentGroup.Elements))
 	return s.currentGroup
 }
 

@@ -3,6 +3,7 @@ package parser
 
 import (
     "io"
+    "fmt"
     "strconv"
     "strings"
     "unicode"
@@ -32,28 +33,44 @@ DefaultDocumentFragmentElement <-
     / AttributeDeclaration
     / AttributeReset
     / Admonition
+    // if no match, parser will return an error and content will be store in a RawLine
 
-    // if nothing match, will return an error and content will be store in a RawLine
-
-// when parsing rawlines within a delimited block, there are less
-// type of fragment elements to expect.
+// when parsing rawlines within a delimited block, there are fewer types of fragment element to expect.
 DocumentFragmentElementWithinParagraph <- 
     BlankLine
     / SingleLineComment
-    // if nothing match, will return an error and content will be store in a RawLine
+    // if no match, parser will return an error and content will be store in a RawLine
 
-// when parsing rawlines within a delimited block, there are less
-// type of fragment elements to expect.
-DocumentFragmentElementWithinDelimitedBlock <- 
+// when parsing rawlines within a verbatim delimited block, there are fewer types of fragment element to expect.
+DocumentFragmentElementWithinVerbatimBlock <- 
     delimiter:(BlockDelimiter)
     &{
         // only accept if the delimiter matches the current delimited block
         return c.isValidBlockDelimiter(delimiter.(*types.BlockDelimiter))
-    }
-    {
+    }{
         return delimiter, nil
     }
-    // if nothing match, will return an error and content will be store in a RawLine
+    // if no match, parser will return an error and content will be store in a RawLine
+
+// when parsing rawlines within a normal delimited block, there are slightly fewer types of fragment element to expect.
+DocumentFragmentElementWithinNormalBlock <- 
+    (delimiter:BlockDelimiter
+    &{
+        // only accept if the delimiter matches the current delimited block
+        return c.isValidBlockDelimiter(delimiter.(*types.BlockDelimiter))
+    }{
+        return delimiter, nil
+    })
+    / BlankLine
+    / ImageBlock
+    / BlockAttributes
+    / FileInclusion 
+    / ThematicBreak // must appear before ListElement :/
+    / ListElement
+    / ListElementContinuation
+    / SingleLineComment
+    / Admonition
+    // if no match, parser will return an error and content will be store in a RawLine
 
 // ------------------------------------------
 // Admonitions

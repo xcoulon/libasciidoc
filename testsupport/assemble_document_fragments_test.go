@@ -13,9 +13,11 @@ var _ = Describe("assemble document fragments", func() {
 	expected := []types.DocumentFragment{
 		{
 			LineOffset: 1,
-			Content: &types.Paragraph{
-				Elements: []interface{}{
-					types.RawLine("hello, world!"),
+			Elements: []interface{}{
+				&types.Paragraph{
+					Elements: []interface{}{
+						types.RawLine("hello, world!"),
+					},
 				},
 			},
 		},

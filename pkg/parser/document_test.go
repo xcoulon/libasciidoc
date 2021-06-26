@@ -14,8 +14,8 @@ var _ = Describe("documents", func() {
 
 		It("should parse empty document", func() {
 			source := ``
-			expected := []types.DocumentFragmentGroup{}
-			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+			expected := []types.DocumentFragment{}
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 		})
 
 		It("should parse header without empty first line", func() {
@@ -23,10 +23,10 @@ var _ = Describe("documents", func() {
 Garrett D'Amore
 1.0, July 4, 2020
 `
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content: []interface{}{
+					Elements: []interface{}{
 						types.Section{
 							Level: 0,
 							Attributes: types.Attributes{
@@ -49,7 +49,7 @@ Garrett D'Amore
 					},
 				},
 			}
-			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 
 		})
 
@@ -58,10 +58,10 @@ Garrett D'Amore
 = My title
 Garrett D'Amore
 1.0, July 4, 2020`
-			expected := []types.DocumentFragmentGroup{
+			expected := []types.DocumentFragment{
 				{
 					LineOffset: 1,
-					Content: []interface{}{
+					Elements: []interface{}{
 						types.Section{
 							Level: 0,
 							Attributes: types.Attributes{
@@ -85,7 +85,7 @@ Garrett D'Amore
 					},
 				},
 			}
-			Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 
 		})
 	})

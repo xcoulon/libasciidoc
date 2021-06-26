@@ -15,9 +15,11 @@ var _ = Describe("document fragment assembling", func() {
 		expected := []types.DocumentFragment{
 			{
 				LineOffset: 1,
-				Content: &types.Paragraph{
-					Elements: []interface{}{
-						types.RawLine("a line"),
+				Elements: []interface{}{
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.RawLine("a line"),
+						},
 					},
 				},
 			},
@@ -32,17 +34,21 @@ another line`
 		expected := []types.DocumentFragment{
 			{
 				LineOffset: 1,
-				Content: &types.Paragraph{
-					Elements: []interface{}{
-						types.RawLine("a line"),
+				Elements: []interface{}{
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.RawLine("a line"),
+						},
 					},
 				},
 			},
 			{
 				LineOffset: 3,
-				Content: &types.Paragraph{
-					Elements: []interface{}{
-						types.RawLine("another line"),
+				Elements: []interface{}{
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.RawLine("another line"),
+						},
 					},
 				},
 			},
@@ -57,10 +63,12 @@ a line
 		expected := []types.DocumentFragment{
 			{
 				LineOffset: 1,
-				Content: &types.DelimitedBlock{
-					Kind: types.Listing,
-					Elements: []interface{}{
-						types.RawLine("a line"),
+				Elements: []interface{}{
+					&types.DelimitedBlock{
+						Kind: types.Listing,
+						Elements: []interface{}{
+							types.RawLine("a line"),
+						},
 					},
 				},
 			},
@@ -80,14 +88,16 @@ not a sidebar block
 		expected := []types.DocumentFragment{
 			{
 				LineOffset: 1,
-				Content: &types.DelimitedBlock{
-					Kind: types.Listing,
-					Elements: []interface{}{
-						types.RawLine("a line"),
-						&types.BlankLine{},
-						types.RawLine("****"),
-						types.RawLine("not a sidebar block"),
-						types.RawLine("****"),
+				Elements: []interface{}{
+					&types.DelimitedBlock{
+						Kind: types.Listing,
+						Elements: []interface{}{
+							types.RawLine("a line"),
+							&types.BlankLine{},
+							types.RawLine("****"),
+							types.RawLine("not a sidebar block"),
+							types.RawLine("****"),
+						},
 					},
 				},
 			},
@@ -111,22 +121,26 @@ on
 		expected := []types.DocumentFragment{
 			{
 				LineOffset: 1,
-				Content: &types.DelimitedBlock{
-					Kind: types.Listing,
-					Elements: []interface{}{
-						types.RawLine("a line"),
-						&types.BlankLine{},
-						types.RawLine("another line"),
+				Elements: []interface{}{
+					&types.DelimitedBlock{
+						Kind: types.Listing,
+						Elements: []interface{}{
+							types.RawLine("a line"),
+							&types.BlankLine{},
+							types.RawLine("another line"),
+						},
 					},
 				},
 			},
 			{
 				LineOffset: 8,
-				Content: &types.Paragraph{
-					Elements: []interface{}{
-						types.RawLine("a paragraph"),
-						types.RawLine("on"),
-						types.RawLine("3 lines."),
+				Elements: []interface{}{
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.RawLine("a paragraph"),
+							types.RawLine("on"),
+							types.RawLine("3 lines."),
+						},
 					},
 				},
 			},
@@ -141,21 +155,24 @@ on
 		expected := []types.DocumentFragment{
 			{
 				LineOffset: 1,
-				Content: &types.ListItemBucket{
-					Elements: []interface{}{
-						&types.CalloutListElement{
-							Ref: 1,
-							Elements: []interface{}{
-								types.StringElement{
-									Content: "first item",
+				Elements: []interface{}{
+					&types.GenericList{
+						Kind: types.CalloutListKind,
+						Elements: []types.ListElement{
+							&types.CalloutListElement{
+								Ref: 1,
+								Elements: []interface{}{
+									types.StringElement{
+										Content: "first item",
+									},
 								},
 							},
-						},
-						&types.CalloutListElement{
-							Ref: 2,
-							Elements: []interface{}{
-								types.StringElement{
-									Content: "second item",
+							&types.CalloutListElement{
+								Ref: 2,
+								Elements: []interface{}{
+									types.StringElement{
+										Content: "second item",
+									},
 								},
 							},
 						},
@@ -175,23 +192,24 @@ on
 		expected := []types.DocumentFragment{
 			{
 				LineOffset: 1,
-				Content: &types.ListItemBucket{
-					Elements: []interface{}{
-						&types.CalloutListElement{
-							Ref: 1,
-							Elements: []interface{}{
-								types.StringElement{
-									Content: "first item",
+				Elements: []interface{}{
+					&types.GenericList{
+						Kind: types.CalloutListKind,
+						Elements: []types.ListElement{
+							&types.CalloutListElement{
+								Ref: 1,
+								Elements: []interface{}{
+									types.StringElement{
+										Content: "first item",
+									},
 								},
 							},
-						},
-						&types.BlankLine{},
-						&types.BlankLine{},
-						&types.CalloutListElement{
-							Ref: 2,
-							Elements: []interface{}{
-								types.StringElement{
-									Content: "second item",
+							&types.CalloutListElement{
+								Ref: 2,
+								Elements: []interface{}{
+									types.StringElement{
+										Content: "second item",
+									},
 								},
 							},
 						},
@@ -209,21 +227,24 @@ on
 		expected := []types.DocumentFragment{
 			{
 				LineOffset: 1,
-				Content: &types.ListItemBucket{
-					Elements: []interface{}{
-						&types.OrderedListElement{
-							Style: types.Arabic,
-							Elements: []interface{}{
-								types.StringElement{
-									Content: "first item",
+				Elements: []interface{}{
+					&types.GenericList{
+						Kind: types.OrderedListKind,
+						Elements: []types.ListElement{
+							&types.OrderedListElement{
+								Style: types.Arabic,
+								Elements: []interface{}{
+									types.StringElement{
+										Content: "first item",
+									},
 								},
 							},
-						},
-						&types.OrderedListElement{
-							Style: types.Arabic,
-							Elements: []interface{}{
-								types.StringElement{
-									Content: "second item",
+							&types.OrderedListElement{
+								Style: types.Arabic,
+								Elements: []interface{}{
+									types.StringElement{
+										Content: "second item",
+									},
 								},
 							},
 						},
@@ -243,29 +264,32 @@ on
 		expected := []types.DocumentFragment{
 			{
 				LineOffset: 1,
-				Content: &types.ListItemBucket{
-					Elements: []interface{}{
-						&types.OrderedListElement{
-							Style: types.Arabic,
-							Elements: []interface{}{
-								&types.Paragraph{
-									Elements: []interface{}{
-										types.StringElement{
-											Content: "first item",
+				Elements: []interface{}{
+					&types.GenericList{
+						Kind: types.OrderedListKind,
+						Elements: []types.ListElement{
+							&types.OrderedListElement{
+								Style: types.Arabic,
+								Elements: []interface{}{
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "first item",
+											},
 										},
 									},
 								},
 							},
-						},
-						&types.BlankLine{},
-						&types.BlankLine{},
-						&types.OrderedListElement{
-							Style: types.Arabic,
-							Elements: []interface{}{
-								&types.Paragraph{
-									Elements: []interface{}{
-										types.StringElement{
-											Content: "second item",
+							// &types.BlankLine{},
+							// &types.BlankLine{},
+							&types.OrderedListElement{
+								Style: types.Arabic,
+								Elements: []interface{}{
+									&types.Paragraph{
+										Elements: []interface{}{
+											types.StringElement{
+												Content: "second item",
+											},
 										},
 									},
 								},

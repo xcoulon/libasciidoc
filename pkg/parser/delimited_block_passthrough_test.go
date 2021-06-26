@@ -12,7 +12,7 @@ var _ = Describe("passthrough blocks", func() {
 
 	Context("in raw documents", func() {
 
-		Context("delimited blocks", func() {
+		Context("as delimited blocks", func() {
 
 			It("with title", func() {
 				source := `.a title
@@ -21,10 +21,10 @@ _foo_
 
 *bar*
 ++++`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.PassthroughBlock{
 								Attributes: types.Attributes{
@@ -47,7 +47,7 @@ _foo_
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("with special characters", func() {
@@ -56,10 +56,10 @@ _foo_
 
 <input>
 ++++`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.PassthroughBlock{
 								Lines: [][]interface{}{
@@ -79,17 +79,17 @@ _foo_
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("with inline link", func() {
 				source := `++++
 http://example.com[]
 ++++`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.PassthroughBlock{
 								Lines: [][]interface{}{
@@ -103,17 +103,17 @@ http://example.com[]
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("with inline pass", func() {
 				source := `++++
 pass:[foo]
 ++++`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.PassthroughBlock{
 								Lines: [][]interface{}{
@@ -127,17 +127,17 @@ pass:[foo]
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("with quoted text", func() {
 				source := `++++
 *foo*
 ++++`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.PassthroughBlock{
 								Lines: [][]interface{}{
@@ -151,7 +151,7 @@ pass:[foo]
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 
@@ -163,10 +163,10 @@ _foo_
 *bar*
 
 another paragraph`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.PassthroughBlock{
 								Attributes: types.Attributes{
@@ -198,7 +198,7 @@ another paragraph`
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 
@@ -206,7 +206,7 @@ another paragraph`
 
 	Context("in final documents", func() {
 
-		Context("delimited blocks", func() {
+		Context("as delimited blocks", func() {
 
 			It("with title", func() {
 				source := `.a title

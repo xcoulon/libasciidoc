@@ -12,17 +12,17 @@ var _ = Describe("admonition blocks", func() {
 
 	Context("in raw documents", func() {
 
-		Context("delimited blocks", func() {
+		Context("as delimited blocks", func() {
 
 			It("example block as admonition", func() {
 				source := `[NOTE]
 ====
 foo
 ====`
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.ExampleBlock{
 								Attributes: types.Attributes{
@@ -43,7 +43,7 @@ foo
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 
 			It("as admonition", func() {
@@ -54,10 +54,10 @@ multiple
 paragraphs
 ----
 `
-				expected := []types.DocumentFragmentGroup{
+				expected := []types.DocumentFragment{
 					{
 						LineOffset: 1,
-						Content: []interface{}{
+						Elements: []interface{}{
 
 							types.ListingBlock{
 								Attributes: types.Attributes{
@@ -75,14 +75,14 @@ paragraphs
 						},
 					},
 				}
-				Expect(ParseDocumentFragmentGroups(source)).To(MatchDocumentFragmentGroups(expected))
+				Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
 			})
 		})
 	})
 
 	Context("in final documents", func() {
 
-		Context("delimited blocks", func() {
+		Context("as delimited blocks", func() {
 
 			It("example block as admonition", func() {
 				source := `[NOTE]
