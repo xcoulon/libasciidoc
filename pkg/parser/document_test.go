@@ -15,7 +15,7 @@ var _ = Describe("documents", func() {
 		It("should parse empty document", func() {
 			source := ``
 			expected := []types.DocumentFragment{}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 		})
 
 		It("should parse header without empty first line", func() {
@@ -49,7 +49,7 @@ Garrett D'Amore
 					},
 				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 
 		})
 
@@ -85,7 +85,7 @@ Garrett D'Amore
 					},
 				},
 			}
-			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragmentGroups(expected))
+			Expect(ParseDocumentFragments(source)).To(MatchDocumentFragments(expected))
 
 		})
 	})
@@ -97,7 +97,64 @@ Garrett D'Amore
 			expected := types.Document{
 				Elements: []interface{}{},
 			}
-			Expect(ParseDocument(source)).To(Equal(expected))
+			Expect(ParseDocument(source)).To(MatchDocument(expected))
+		})
+
+		It("should parse basic document", func() {
+			source := `== Lorem Ipsum
+			
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, 
+sed diam voluptua. 
+At vero eos et accusam et justo duo dolores et ea rebum. 
+Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. 
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, 
+sed diam voluptua. 
+At vero eos et accusam et justo duo dolores et ea rebum. 
+Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit *amet*.`
+
+			expected := types.Document{
+				Elements: []interface{}{
+					&types.Section{
+						Level: 1,
+						Title: []interface{}{
+							types.StringElement{
+								Content: "Lorem Ipsum",
+							},
+						},
+					},
+					&types.BlankLine{},
+					&types.Paragraph{
+						Elements: []interface{}{
+							types.StringElement{
+								Content: `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, 
+sed diam voluptua. 
+At vero eos et accusam et justo duo dolores et ea rebum. 
+Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. 
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, 
+sed diam voluptua. 
+At vero eos et accusam et justo duo dolores et ea rebum. 
+Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit `,
+							},
+							&types.QuotedText{
+								Kind: types.SingleQuoteBold,
+								Elements: []interface{}{
+									types.StringElement{
+										Content: "amet",
+									},
+								},
+							},
+							types.StringElement{
+								Content: ".",
+							},
+						},
+					},
+				},
+			}
+			Expect(ParseDocument(source)).To(MatchDocument(expected))
 		})
 	})
 })
