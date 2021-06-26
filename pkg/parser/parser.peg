@@ -1779,7 +1779,7 @@ Section <-
 
 RawSectionTitle <- [^\r\n]* { 
     return []interface{}{
-        types.StringElement{Content: string(c.text)},
+        types.RawLine(c.text),
     }, nil 
 }
 
