@@ -651,6 +651,7 @@ a link to {url}`
 								Name:  "url",
 								Value: "https://foo2.bar",
 							},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Elements: []interface{}{
 									&types.StringElement{
@@ -693,6 +694,7 @@ a link to {scheme}://{path} and https://foo.com`
 								Name:  "path",
 								Value: "example.com",
 							},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Elements: []interface{}{
 									&types.StringElement{Content: "a link to "},
@@ -744,6 +746,7 @@ a link to *{scheme}://{path}[] and https://foo.com[]*`
 								Name:  "path",
 								Value: "example.com",
 							},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Elements: []interface{}{
 									&types.StringElement{
@@ -806,9 +809,11 @@ a link to {scheme}://{path} and https://foo.com`
 								Name:  "path",
 								Value: "example.com",
 							},
-							types.AttributeReset{
+							&types.BlankLine{},
+							&types.AttributeReset{
 								Name: "path",
 							},
+							&types.BlankLine{},
 							&types.Paragraph{
 								Elements: []interface{}{
 									&types.StringElement{Content: "a link to "},
@@ -940,6 +945,7 @@ a link to {scheme}://{path} and https://foo.com`
 								Name:  "path",
 								Value: "example.com",
 							},
+							&types.BlankLine{},
 							&types.Section{
 								Level: 1,
 								Attributes: types.Attributes{
@@ -1252,7 +1258,7 @@ a link to {scheme}:{path}[] and https://foo.com`
 							Name:  "path",
 							Value: "example.com",
 						},
-						types.AttributeReset{
+						&types.AttributeReset{
 							Name: "path",
 						},
 						&types.Paragraph{

@@ -785,7 +785,7 @@ package parser
 // 					Name:  "foo",
 // 					Value: "foo",
 // 				},
-// 				types.AttributeReset{
+// 				&types.AttributeReset{
 // 					Name: "foo",
 // 				},
 // 				types.Paragraph{
@@ -821,7 +821,7 @@ package parser
 // 					Name:  "foo",
 // 					Value: "foo",
 // 				},
-// 				types.AttributeReset{
+// 				&types.AttributeReset{
 // 					Name: "foo",
 // 				},
 // 				types.Paragraph{

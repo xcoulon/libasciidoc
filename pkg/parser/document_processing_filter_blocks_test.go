@@ -85,7 +85,7 @@ var _ = Describe("block filters", func() {
 
 	It("should remove document attribute reset", func() {
 		actual := []interface{}{
-			types.AttributeReset{},
+			&types.AttributeReset{},
 			types.Paragraph{
 				Lines: [][]interface{}{
 					{

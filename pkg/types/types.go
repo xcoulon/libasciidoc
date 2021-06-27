@@ -548,9 +548,9 @@ type AttributeReset struct {
 }
 
 // NewAttributeReset initializes a new Document Attribute Resets.
-func NewAttributeReset(attrName string) (AttributeReset, error) {
+func NewAttributeReset(attrName string) (*AttributeReset, error) {
 	// log.Debugf("new AttributeReset: '%s'", attrName)
-	return AttributeReset{Name: attrName}, nil
+	return &AttributeReset{Name: attrName}, nil
 }
 
 // AttributeSubstitution the type for AttributeSubstitution

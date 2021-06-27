@@ -62,7 +62,7 @@ func processSubstitutionsOnElement(ctx *processContext, element interface{}) (in
 	case *types.AttributeDeclaration:
 		ctx.addAttribute(e.Name, e.Value)
 		return e, nil
-	case types.AttributeReset:
+	case *types.AttributeReset:
 		delete(ctx.attributes, e.Name)
 		return e, nil
 	case types.WithElements:

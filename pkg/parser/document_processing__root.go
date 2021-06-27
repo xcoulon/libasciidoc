@@ -46,7 +46,7 @@ func ParseDocument(r io.Reader, config configuration.Configuration, opts ...Opti
 				if inHeader {
 					attributes.Set(b.Name, b.Value)
 				}
-			case types.AttributeReset:
+			case *types.AttributeReset:
 				delete(attributes, b.Name)
 			default:
 				// anything else and we're not in the header anynore
