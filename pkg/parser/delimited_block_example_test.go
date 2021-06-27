@@ -265,8 +265,7 @@ some *example* content
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
-							Kind:     types.Example,
-							Elements: []interface{}{},
+							Kind: types.Example,
 						},
 					},
 				}

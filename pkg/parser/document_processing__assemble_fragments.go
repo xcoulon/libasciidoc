@@ -66,20 +66,11 @@ func assembleFragmentElements(elements []interface{}) ([]interface{}, error) {
 			// outside of a block, we keep the attributes in a stack
 			attributes.push(e)
 		case *types.BlockDelimiter:
-			// opening
-			b, ok := parentBlock.(*types.DelimitedBlock)
-			if !ok {
+			if _, ok := parentBlock.(*types.DelimitedBlock); !ok {
+				// -- opening
 				parentBlock = types.NewDelimitedBlock(e.Kind, attributes.pop())
 				result = append(result, parentBlock)
 				continue
-			}
-			// if block was an Example, there redo elements aeembly with its own content this time
-			switch b.Kind {
-			case types.Example:
-				var err error
-				if b.Elements, err = assembleFragmentElements(b.Elements); err != nil {
-					return nil, err
-				}
 			}
 			// closing (ie, reset block)
 			parentBlock = nil
@@ -145,7 +136,22 @@ func assembleFragmentElements(elements []interface{}) ([]interface{}, error) {
 			result = append(result, e)
 		}
 	}
-
+	// for delimited blocks (even unclosed) with normal content, redo the assembly with their own content
+	for _, block := range result {
+		if b, ok := block.(*types.DelimitedBlock); ok {
+			switch b.Kind {
+			case types.Example:
+				var err error
+				if b.Elements, err = assembleFragmentElements(b.Elements); err != nil {
+					return nil, err
+				}
+			}
+		}
+	}
+	// no need to return empty slices
+	if len(result) == 0 {
+		result = nil
+	}
 	if log.IsLevelEnabled(log.DebugLevel) {
 		log.WithField("pipeline_task", "assemble_fragment_elements").Debugf("assembled fragment elements: %s", spew.Sdump(result))
 	}

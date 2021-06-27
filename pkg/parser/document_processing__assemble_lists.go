@@ -126,6 +126,9 @@ content:
 			result = append(result, e)
 		}
 	}
+	if len(result) == 0 {
+		result = nil
+	}
 	return result, nil
 }
 
