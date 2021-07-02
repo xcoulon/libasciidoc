@@ -57,17 +57,9 @@ func (s scanScope) String() string {
 	return result.String()
 }
 
-// const (
-// 	defaultScope         scanScopeKind = "default"
-// 	withinParagraph      scanScopeKind = "within_paragraph"
-// 	withinList           scanScopeKind = "within_list"
-// 	withinDelimitedBlock scanScopeKind = "within_delimited_block"
-// )
-
 var (
 	defaultScope       = &scanScope{name: "default"}
 	withinParagraph    = &scanScope{name: "within_paragraph"}
-	withinList         = &scanScope{name: "within_list"}
 	withinListingBlock = &scanScope{name: "within_delimited_block", kind: types.Listing}
 	withinExampleBlock = &scanScope{name: "within_delimited_block", kind: types.Example}
 	withinFencedBlock  = &scanScope{name: "within_delimited_block", kind: types.Fenced}
@@ -119,7 +111,6 @@ scan:
 				break scan // end of fragment
 			}
 		case *types.OrderedListElement, *types.UnorderedListElement, *types.LabeledListElement, *types.CalloutListElement:
-			s.scopes.push(withinList)
 			elements = append(elements, element)
 		case *types.BlockDelimiter:
 			currentScope := s.scopes.get()

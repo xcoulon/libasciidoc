@@ -23,6 +23,7 @@ var _ = Describe("apply custom substitutions", func() {
 		// For example, if you set subs on a literal block, and assign it a value of attributes,
 		// only attributes are substituted."
 
+		// TODO: include character replacement (eg: `(C)`)
 		source := `:github-url: https://github.com
 			
 [subs="$SUBS"]
@@ -50,74 +51,72 @@ and <more text> on the +
 							Value: "https://github.com",
 						},
 						&types.BlankLine{},
-						types.ExampleBlock{
+						&types.DelimitedBlock{
+							Kind: types.Example,
 							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											&types.StringElement{
-												Content: "a link to ",
-											},
-											&types.InlineLink{
-												Location: &types.Location{
-													Scheme: "https://",
-													Path: []interface{}{
-														&types.StringElement{
-															Content: "example.com",
-														},
-													},
-												},
-											},
-											&types.StringElement{
-												Content: " ",
-											},
-											&types.SpecialCharacter{
-												Name: "<",
-											},
-											&types.StringElement{
-												Content: "1",
-											},
-											&types.SpecialCharacter{
-												Name: ">",
-											},
+								&types.Paragraph{
+									Elements: []interface{}{
+										&types.StringElement{
+											Content: "a link to ",
 										},
-										{
-											&types.StringElement{
-												Content: "and ",
-											},
-											&types.SpecialCharacter{
-												Name: "<",
-											},
-											&types.StringElement{
-												Content: "more text",
-											},
-											&types.SpecialCharacter{
-												Name: ">",
-											},
-											&types.StringElement{
-												Content: " on the",
-											},
-											types.LineBreak{},
-										},
-										{
-											&types.QuotedText{
-												Kind: types.SingleQuoteBold,
-												Elements: []interface{}{
+										&types.InlineLink{
+											Location: &types.Location{
+												Scheme: "https://",
+												Path: []interface{}{
 													&types.StringElement{
-														Content: "next",
+														Content: "example.com",
 													},
 												},
 											},
-											&types.StringElement{
-												Content: " lines with a link to ",
+										},
+										&types.StringElement{
+											Content: " ",
+										},
+										&types.SpecialCharacter{
+											Name: "<",
+										},
+										&types.StringElement{
+											Content: "1",
+										},
+										&types.SpecialCharacter{
+											Name: ">",
+										},
+										&types.StringElement{
+											Content: "\nand ",
+										},
+										&types.SpecialCharacter{
+											Name: "<",
+										},
+										&types.StringElement{
+											Content: "more text",
+										},
+										&types.SpecialCharacter{
+											Name: ">",
+										},
+										&types.StringElement{
+											Content: " on the",
+										},
+										types.LineBreak{},
+										&types.StringElement{
+											Content: "\n",
+										},
+										&types.QuotedText{
+											Kind: types.SingleQuoteBold,
+											Elements: []interface{}{
+												&types.StringElement{
+													Content: "next",
+												},
 											},
-											&types.InlineLink{
-												Location: &types.Location{
-													Scheme: "https://",
-													Path: []interface{}{
-														&types.StringElement{
-															Content: "github.com",
-														},
+										},
+										&types.StringElement{
+											Content: " lines with a link to ",
+										},
+										&types.InlineLink{
+											Location: &types.Location{
+												Scheme: "https://",
+												Path: []interface{}{
+													&types.StringElement{
+														Content: "github.com",
 													},
 												},
 											},
@@ -125,15 +124,18 @@ and <more text> on the +
 									},
 								},
 								&types.BlankLine{},
-								types.UnorderedListElement{
-									BulletStyle: types.OneAsterisk,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													&types.StringElement{
-														Content: "a list item",
+								&types.GenericList{
+									Kind: types.UnorderedListKind,
+									Elements: []types.ListElement{
+										&types.UnorderedListElement{
+											BulletStyle: types.OneAsterisk,
+											CheckStyle:  types.NoCheck,
+											Elements: []interface{}{
+												&types.Paragraph{
+													Elements: []interface{}{
+														&types.StringElement{
+															Content: "a list item",
+														},
 													},
 												},
 											},
@@ -177,77 +179,75 @@ and <more text> on the +
 							Value: "https://github.com",
 						},
 						&types.BlankLine{},
-						types.ExampleBlock{
+						&types.DelimitedBlock{
+							Kind: types.Example,
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "normal",
 							},
 							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											&types.StringElement{
-												Content: "a link to ",
-											},
-											&types.InlineLink{
-												Location: &types.Location{
-													Scheme: "https://",
-													Path: []interface{}{
-														&types.StringElement{
-															Content: "example.com",
-														},
-													},
-												},
-											},
-											&types.StringElement{
-												Content: " ",
-											},
-											&types.SpecialCharacter{ // callout is not detected with the `normal` susbtitution
-												Name: "<",
-											},
-											&types.StringElement{
-												Content: "1",
-											},
-											&types.SpecialCharacter{
-												Name: ">",
-											},
+								&types.Paragraph{
+									Elements: []interface{}{
+										&types.StringElement{
+											Content: "a link to ",
 										},
-										{
-											&types.StringElement{
-												Content: "and ",
-											},
-											&types.SpecialCharacter{
-												Name: "<",
-											},
-											&types.StringElement{
-												Content: "more text",
-											},
-											&types.SpecialCharacter{
-												Name: ">",
-											},
-											&types.StringElement{
-												Content: " on the",
-											},
-											types.LineBreak{},
-										},
-										{
-											&types.QuotedText{
-												Kind: types.SingleQuoteBold,
-												Elements: []interface{}{
+										&types.InlineLink{
+											Location: &types.Location{
+												Scheme: "https://",
+												Path: []interface{}{
 													&types.StringElement{
-														Content: "next",
+														Content: "example.com",
 													},
 												},
 											},
-											&types.StringElement{
-												Content: " lines with a link to ",
+										},
+										&types.StringElement{
+											Content: " ",
+										},
+										&types.SpecialCharacter{ // callout is not detected with the `normal` susbtitution
+											Name: "<",
+										},
+										&types.StringElement{
+											Content: "1",
+										},
+										&types.SpecialCharacter{
+											Name: ">",
+										},
+										&types.StringElement{
+											Content: "\nand ",
+										},
+										&types.SpecialCharacter{
+											Name: "<",
+										},
+										&types.StringElement{
+											Content: "more text",
+										},
+										&types.SpecialCharacter{
+											Name: ">",
+										},
+										&types.StringElement{
+											Content: " on the",
+										},
+										types.LineBreak{},
+										&types.StringElement{
+											Content: "\n",
+										},
+										&types.QuotedText{
+											Kind: types.SingleQuoteBold,
+											Elements: []interface{}{
+												&types.StringElement{
+													Content: "next",
+												},
 											},
-											&types.InlineLink{
-												Location: &types.Location{
-													Scheme: "https://",
-													Path: []interface{}{
-														&types.StringElement{
-															Content: "github.com",
-														},
+										},
+										&types.StringElement{
+											Content: " lines with a link to ",
+										},
+										&types.InlineLink{
+											Location: &types.Location{
+												Scheme: "https://",
+												Path: []interface{}{
+													&types.StringElement{
+														Content: "github.com",
 													},
 												},
 											},
@@ -255,15 +255,18 @@ and <more text> on the +
 									},
 								},
 								&types.BlankLine{},
-								types.UnorderedListElement{
-									BulletStyle: types.OneAsterisk,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													&types.StringElement{
-														Content: "a list item",
+								&types.GenericList{
+									Kind: types.UnorderedListKind,
+									Elements: []types.ListElement{
+										&types.UnorderedListElement{
+											BulletStyle: types.OneAsterisk,
+											CheckStyle:  types.NoCheck,
+											Elements: []interface{}{
+												&types.Paragraph{
+													Elements: []interface{}{
+														&types.StringElement{
+															Content: "a list item",
+														},
 													},
 												},
 											},
@@ -307,48 +310,43 @@ and <more text> on the +
 							Value: "https://github.com",
 						},
 						&types.BlankLine{},
-						types.ExampleBlock{
+						&types.DelimitedBlock{
+							Kind: types.Example,
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "quotes",
 							},
 							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											&types.StringElement{
-												Content: "a link to https://example.com[] <1>",
-											},
+								&types.Paragraph{
+									Elements: []interface{}{
+										&types.StringElement{
+											Content: "a link to https://example.com[] <1>\nand <more text> on the +\n",
 										},
-										{
-											&types.StringElement{
-												Content: "and <more text> on the +",
-											},
-										},
-										{
-											&types.QuotedText{
-												Kind: types.SingleQuoteBold,
-												Elements: []interface{}{
-													&types.StringElement{
-														Content: "next",
-													},
+										&types.QuotedText{
+											Kind: types.SingleQuoteBold,
+											Elements: []interface{}{
+												&types.StringElement{
+													Content: "next",
 												},
 											},
-											&types.StringElement{
-												Content: " lines with a link to {github-url}[]",
-											},
+										},
+										&types.StringElement{
+											Content: " lines with a link to {github-url}[]",
 										},
 									},
 								},
 								&types.BlankLine{},
-								types.UnorderedListElement{
-									BulletStyle: types.OneAsterisk,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													&types.StringElement{
-														Content: "a list item",
+								&types.GenericList{
+									Kind: types.UnorderedListKind,
+									Elements: []types.ListElement{
+										&types.UnorderedListElement{
+											BulletStyle: types.OneAsterisk,
+											CheckStyle:  types.NoCheck,
+											Elements: []interface{}{
+												&types.Paragraph{
+													Elements: []interface{}{
+														&types.StringElement{
+															Content: "a list item",
+														},
 													},
 												},
 											},
@@ -392,53 +390,45 @@ and <more text> on the +
 							Value: "https://github.com",
 						},
 						&types.BlankLine{},
-						types.ExampleBlock{
+						&types.DelimitedBlock{
+							Kind: types.Example,
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "macros",
 							},
 							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											&types.StringElement{
-												Content: "a link to ",
-											},
-											&types.InlineLink{
-												Location: &types.Location{
-													Scheme: "https://",
-													Path: []interface{}{
-														&types.StringElement{
-															Content: "example.com",
-														},
+								&types.Paragraph{
+									Elements: []interface{}{
+										&types.StringElement{
+											Content: "a link to ",
+										},
+										&types.InlineLink{
+											Location: &types.Location{
+												Scheme: "https://",
+												Path: []interface{}{
+													&types.StringElement{
+														Content: "example.com",
 													},
 												},
 											},
-											&types.StringElement{
-												Content: " <1>",
-											},
 										},
-										{
-											&types.StringElement{
-												Content: "and <more text> on the +",
-											},
-										},
-										{
-											&types.StringElement{
-												Content: "*next* lines with a link to {github-url}[]",
-											},
+										&types.StringElement{
+											Content: " <1>\nand <more text> on the +\n*next* lines with a link to {github-url}[]",
 										},
 									},
 								},
 								&types.BlankLine{},
-								types.UnorderedListElement{
-									BulletStyle: types.OneAsterisk,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													&types.StringElement{
-														Content: "a list item",
+								&types.GenericList{
+									Kind: types.UnorderedListKind,
+									Elements: []types.ListElement{
+										&types.UnorderedListElement{
+											BulletStyle: types.OneAsterisk,
+											CheckStyle:  types.NoCheck,
+											Elements: []interface{}{
+												&types.Paragraph{
+													Elements: []interface{}{
+														&types.StringElement{
+															Content: "a list item",
+														},
 													},
 												},
 											},
@@ -482,40 +472,32 @@ and <more text> on the +
 							Value: "https://github.com",
 						},
 						&types.BlankLine{},
-						types.ExampleBlock{
+						&types.DelimitedBlock{
+							Kind: types.Example,
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "attributes",
 							},
 							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											&types.StringElement{
-												Content: "a link to https://example.com[] <1>",
-											},
-										},
-										{
-											&types.StringElement{
-												Content: "and <more text> on the +",
-											},
-										},
-										{
-											&types.StringElement{
-												Content: "*next* lines with a link to https://github.com[]",
-											},
+								&types.Paragraph{
+									Elements: []interface{}{
+										&types.StringElement{
+											Content: "a link to https://example.com[] <1>\nand <more text> on the +\n*next* lines with a link to https://github.com[]",
 										},
 									},
 								},
 								&types.BlankLine{},
-								types.UnorderedListElement{
-									BulletStyle: types.OneAsterisk,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													&types.StringElement{
-														Content: "a list item",
+								&types.GenericList{
+									Kind: types.UnorderedListKind,
+									Elements: []types.ListElement{
+										&types.UnorderedListElement{
+											BulletStyle: types.OneAsterisk,
+											CheckStyle:  types.NoCheck,
+											Elements: []interface{}{
+												&types.Paragraph{
+													Elements: []interface{}{
+														&types.StringElement{
+															Content: "a list item",
+														},
 													},
 												},
 											},
@@ -559,47 +541,36 @@ and <more text> on the +
 							Value: "https://github.com",
 						},
 						&types.BlankLine{},
-						types.ExampleBlock{
+						&types.DelimitedBlock{
+							Kind: types.Example,
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "attributes,macros",
 							},
 							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											&types.StringElement{
-												Content: "a link to ",
-											},
-											&types.InlineLink{
-												Location: &types.Location{
-													Scheme: "https://",
-													Path: []interface{}{
-														&types.StringElement{
-															Content: "example.com",
-														},
+								&types.Paragraph{
+									Elements: []interface{}{
+										&types.StringElement{
+											Content: "a link to ",
+										},
+										&types.InlineLink{
+											Location: &types.Location{
+												Scheme: "https://",
+												Path: []interface{}{
+													&types.StringElement{
+														Content: "example.com",
 													},
 												},
 											},
-											&types.StringElement{
-												Content: " <1>",
-											},
 										},
-										{
-											&types.StringElement{
-												Content: "and <more text> on the +",
-											},
+										&types.StringElement{
+											Content: " <1>\nand <more text> on the +\n*next* lines with a link to ",
 										},
-										{
-											&types.StringElement{
-												Content: "*next* lines with a link to ",
-											},
-											&types.InlineLink{
-												Location: &types.Location{
-													Scheme: "https://",
-													Path: []interface{}{
-														&types.StringElement{
-															Content: "github.com",
-														},
+										&types.InlineLink{
+											Location: &types.Location{
+												Scheme: "https://",
+												Path: []interface{}{
+													&types.StringElement{
+														Content: "github.com",
 													},
 												},
 											},
@@ -607,15 +578,18 @@ and <more text> on the +
 									},
 								},
 								&types.BlankLine{},
-								types.UnorderedListElement{
-									BulletStyle: types.OneAsterisk,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													&types.StringElement{
-														Content: "a list item",
+								&types.GenericList{
+									Kind: types.UnorderedListKind,
+									Elements: []types.ListElement{
+										&types.UnorderedListElement{
+											BulletStyle: types.OneAsterisk,
+											CheckStyle:  types.NoCheck,
+											Elements: []interface{}{
+												&types.Paragraph{
+													Elements: []interface{}{
+														&types.StringElement{
+															Content: "a list item",
+														},
 													},
 												},
 											},
@@ -659,61 +633,56 @@ and <more text> on the +
 							Value: "https://github.com",
 						},
 						&types.BlankLine{},
-						types.ExampleBlock{
+						&types.DelimitedBlock{
+							Kind: types.Example,
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "specialchars",
 							},
 							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											&types.StringElement{
-												Content: "a link to https://example.com[] ",
-											},
-											&types.SpecialCharacter{
-												Name: "<",
-											},
-											&types.StringElement{
-												Content: "1",
-											},
-											&types.SpecialCharacter{
-												Name: ">",
-											},
+								&types.Paragraph{
+									Elements: []interface{}{
+										&types.StringElement{
+											Content: "a link to https://example.com[] ",
 										},
-										{
-											&types.StringElement{
-												Content: "and ",
-											},
-											&types.SpecialCharacter{
-												Name: "<",
-											},
-											&types.StringElement{
-												Content: "more text",
-											},
-											&types.SpecialCharacter{
-												Name: ">",
-											},
-											&types.StringElement{
-												Content: " on the +",
-											},
+										&types.SpecialCharacter{
+											Name: "<",
 										},
-										{
-											&types.StringElement{
-												Content: "*next* lines with a link to {github-url}[]",
-											},
+										&types.StringElement{
+											Content: "1",
+										},
+										&types.SpecialCharacter{
+											Name: ">",
+										},
+										&types.StringElement{
+											Content: "\nand ",
+										},
+										&types.SpecialCharacter{
+											Name: "<",
+										},
+										&types.StringElement{
+											Content: "more text",
+										},
+										&types.SpecialCharacter{
+											Name: ">",
+										},
+										&types.StringElement{
+											Content: " on the +\n*next* lines with a link to {github-url}[]",
 										},
 									},
 								},
 								&types.BlankLine{},
-								types.UnorderedListElement{
-									BulletStyle: types.OneAsterisk,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													&types.StringElement{
-														Content: "a list item",
+								&types.GenericList{
+									Kind: types.UnorderedListKind,
+									Elements: []types.ListElement{
+										&types.UnorderedListElement{
+											BulletStyle: types.OneAsterisk,
+											CheckStyle:  types.NoCheck,
+											Elements: []interface{}{
+												&types.Paragraph{
+													Elements: []interface{}{
+														&types.StringElement{
+															Content: "a list item",
+														},
 													},
 												},
 											},
@@ -757,40 +726,32 @@ and <more text> on the +
 							Value: "https://github.com",
 						},
 						&types.BlankLine{},
-						types.ExampleBlock{
+						&types.DelimitedBlock{
+							Kind: types.Example,
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "replacements",
 							},
 							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											&types.StringElement{
-												Content: "a link to https://example.com[] <1>",
-											},
-										},
-										{
-											&types.StringElement{
-												Content: "and <more text> on the +",
-											},
-										},
-										{
-											&types.StringElement{
-												Content: "*next* lines with a link to {github-url}[]",
-											},
+								&types.Paragraph{
+									Elements: []interface{}{
+										&types.StringElement{
+											Content: "a link to https://example.com[] <1>\nand <more text> on the +\n*next* lines with a link to {github-url}[]",
 										},
 									},
 								},
 								&types.BlankLine{},
-								types.UnorderedListElement{
-									BulletStyle: types.OneAsterisk,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													&types.StringElement{
-														Content: "a list item",
+								&types.GenericList{
+									Kind: types.UnorderedListKind,
+									Elements: []types.ListElement{
+										&types.UnorderedListElement{
+											BulletStyle: types.OneAsterisk,
+											CheckStyle:  types.NoCheck,
+											Elements: []interface{}{
+												&types.Paragraph{
+													Elements: []interface{}{
+														&types.StringElement{
+															Content: "a list item",
+														},
 													},
 												},
 											},
@@ -834,41 +795,36 @@ and <more text> on the +
 							Value: "https://github.com",
 						},
 						&types.BlankLine{},
-						types.ExampleBlock{
+						&types.DelimitedBlock{
+							Kind: types.Example,
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "post_replacements",
 							},
 							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											&types.StringElement{
-												Content: "a link to https://example.com[] <1>",
-											},
+								&types.Paragraph{
+									Elements: []interface{}{
+										&types.StringElement{
+											Content: "a link to https://example.com[] <1>\nand <more text> on the",
 										},
-										{
-											&types.StringElement{
-												Content: "and <more text> on the",
-											},
-											types.LineBreak{},
-										},
-										{
-											&types.StringElement{
-												Content: "*next* lines with a link to {github-url}[]",
-											},
+										types.LineBreak{},
+										&types.StringElement{
+											Content: "\n*next* lines with a link to {github-url}[]",
 										},
 									},
 								},
 								&types.BlankLine{},
-								types.UnorderedListElement{
-									BulletStyle: types.OneAsterisk,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													&types.StringElement{
-														Content: "a list item",
+								&types.GenericList{
+									Kind: types.UnorderedListKind,
+									Elements: []types.ListElement{
+										&types.UnorderedListElement{
+											BulletStyle: types.OneAsterisk,
+											CheckStyle:  types.NoCheck,
+											Elements: []interface{}{
+												&types.Paragraph{
+													Elements: []interface{}{
+														&types.StringElement{
+															Content: "a list item",
+														},
 													},
 												},
 											},
@@ -912,61 +868,56 @@ and <more text> on the +
 							Value: "https://github.com",
 						},
 						&types.BlankLine{},
-						types.ExampleBlock{
+						&types.DelimitedBlock{
+							Kind: types.Example,
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "quotes,macros",
 							},
 							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											&types.StringElement{
-												Content: "a link to ",
-											},
-											&types.InlineLink{
-												Location: &types.Location{
-													Scheme: "https://",
-													Path: []interface{}{
-														&types.StringElement{
-															Content: "example.com",
-														},
-													},
-												},
-											},
-											&types.StringElement{
-												Content: " <1>",
-											},
+								&types.Paragraph{
+									Elements: []interface{}{
+										&types.StringElement{
+											Content: "a link to ",
 										},
-										{
-											&types.StringElement{
-												Content: "and <more text> on the +",
-											},
-										},
-										{
-											&types.QuotedText{
-												Kind: types.SingleQuoteBold,
-												Elements: []interface{}{
+										&types.InlineLink{
+											Location: &types.Location{
+												Scheme: "https://",
+												Path: []interface{}{
 													&types.StringElement{
-														Content: "next",
+														Content: "example.com",
 													},
 												},
 											},
-											&types.StringElement{
-												Content: " lines with a link to {github-url}[]",
+										},
+										&types.StringElement{
+											Content: " <1>\nand <more text> on the +\n",
+										},
+										&types.QuotedText{
+											Kind: types.SingleQuoteBold,
+											Elements: []interface{}{
+												&types.StringElement{
+													Content: "next",
+												},
 											},
+										},
+										&types.StringElement{
+											Content: " lines with a link to {github-url}[]",
 										},
 									},
 								},
 								&types.BlankLine{},
-								types.UnorderedListElement{
-									BulletStyle: types.OneAsterisk,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													&types.StringElement{
-														Content: "a list item",
+								&types.GenericList{
+									Kind: types.UnorderedListKind,
+									Elements: []types.ListElement{
+										&types.UnorderedListElement{
+											BulletStyle: types.OneAsterisk,
+											CheckStyle:  types.NoCheck,
+											Elements: []interface{}{
+												&types.Paragraph{
+													Elements: []interface{}{
+														&types.StringElement{
+															Content: "a list item",
+														},
 													},
 												},
 											},
@@ -1010,61 +961,56 @@ and <more text> on the +
 							Value: "https://github.com",
 						},
 						&types.BlankLine{},
-						types.ExampleBlock{
+						&types.DelimitedBlock{
+							Kind: types.Example,
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "macros,quotes",
 							},
 							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											&types.StringElement{
-												Content: "a link to ",
-											},
-											&types.InlineLink{
-												Location: &types.Location{
-													Scheme: "https://",
-													Path: []interface{}{
-														&types.StringElement{
-															Content: "example.com",
-														},
-													},
-												},
-											},
-											&types.StringElement{
-												Content: " <1>",
-											},
+								&types.Paragraph{
+									Elements: []interface{}{
+										&types.StringElement{
+											Content: "a link to ",
 										},
-										{
-											&types.StringElement{
-												Content: "and <more text> on the +",
-											},
-										},
-										{
-											&types.QuotedText{
-												Kind: types.SingleQuoteBold,
-												Elements: []interface{}{
+										&types.InlineLink{
+											Location: &types.Location{
+												Scheme: "https://",
+												Path: []interface{}{
 													&types.StringElement{
-														Content: "next",
+														Content: "example.com",
 													},
 												},
 											},
-											&types.StringElement{
-												Content: " lines with a link to {github-url}[]",
+										},
+										&types.StringElement{
+											Content: " <1>\nand <more text> on the +\n",
+										},
+										&types.QuotedText{
+											Kind: types.SingleQuoteBold,
+											Elements: []interface{}{
+												&types.StringElement{
+													Content: "next",
+												},
 											},
+										},
+										&types.StringElement{
+											Content: " lines with a link to {github-url}[]",
 										},
 									},
 								},
 								&types.BlankLine{},
-								types.UnorderedListElement{
-									BulletStyle: types.OneAsterisk,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													&types.StringElement{
-														Content: "a list item",
+								&types.GenericList{
+									Kind: types.UnorderedListKind,
+									Elements: []types.ListElement{
+										&types.UnorderedListElement{
+											BulletStyle: types.OneAsterisk,
+											CheckStyle:  types.NoCheck,
+											Elements: []interface{}{
+												&types.Paragraph{
+													Elements: []interface{}{
+														&types.StringElement{
+															Content: "a list item",
+														},
 													},
 												},
 											},
@@ -1108,40 +1054,32 @@ and <more text> on the +
 							Value: "https://github.com",
 						},
 						&types.BlankLine{},
-						types.ExampleBlock{
+						&types.DelimitedBlock{
+							Kind: types.Example,
 							Attributes: types.Attributes{
 								types.AttrSubstitutions: "none",
 							},
 							Elements: []interface{}{
-								types.Paragraph{
-									Lines: [][]interface{}{
-										{
-											&types.StringElement{
-												Content: "a link to https://example.com[] <1>",
-											},
-										},
-										{
-											&types.StringElement{
-												Content: "and <more text> on the +",
-											},
-										},
-										{
-											&types.StringElement{
-												Content: "*next* lines with a link to {github-url}[]",
-											},
+								&types.Paragraph{
+									Elements: []interface{}{
+										&types.StringElement{
+											Content: "a link to https://example.com[] <1>\nand <more text> on the +\n*next* lines with a link to {github-url}[]",
 										},
 									},
 								},
 								&types.BlankLine{},
-								types.UnorderedListElement{
-									BulletStyle: types.OneAsterisk,
-									CheckStyle:  types.NoCheck,
-									Elements: []interface{}{
-										types.Paragraph{
-											Lines: [][]interface{}{
-												{
-													&types.StringElement{
-														Content: "a list item",
+								&types.GenericList{
+									Kind: types.UnorderedListKind,
+									Elements: []types.ListElement{
+										&types.UnorderedListElement{
+											BulletStyle: types.OneAsterisk,
+											CheckStyle:  types.NoCheck,
+											Elements: []interface{}{
+												&types.Paragraph{
+													Elements: []interface{}{
+														&types.StringElement{
+															Content: "a list item",
+														},
 													},
 												},
 											},
@@ -2290,7 +2228,7 @@ and <more text> on the +
 								},
 								{
 									&types.StringElement{
-										Content: "and ",
+										Content: "\nand ",
 									},
 									&types.SpecialCharacter{
 										Name: "<",
@@ -2429,7 +2367,7 @@ and <more text> on the +
 								},
 								{
 									&types.StringElement{
-										Content: "and ",
+										Content: "\nand ",
 									},
 									&types.SpecialCharacter{
 										Name: "<",
