@@ -7,13 +7,14 @@ import (
 	"strings"
 
 	"github.com/bytesparadise/libasciidoc/pkg/types"
+
 	"github.com/davecgh/go-spew/spew"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
 // TODO: convert `ctx *processContext` as a local variable instead of a func param
-func ProcessSubstitutions(ctx *processContext, done <-chan interface{}, fragmentStream <-chan types.DocumentFragment) chan types.DocumentFragment {
+func ApplySubstitutions(ctx *processContext, done <-chan interface{}, fragmentStream <-chan types.DocumentFragment) chan types.DocumentFragment {
 	processedFragmentStream := make(chan types.DocumentFragment)
 	go func() {
 		defer close(processedFragmentStream)
@@ -22,7 +23,7 @@ func ProcessSubstitutions(ctx *processContext, done <-chan interface{}, fragment
 			case <-done:
 				log.WithField("pipeline_stage", "apply_substitutions").Debug("received 'done' signal")
 				return
-			case processedFragmentStream <- processSubstitutions(ctx, f):
+			case processedFragmentStream <- applySubstitutions(ctx, f):
 			}
 		}
 		log.WithField("pipeline_stage", "apply_substitutions").Debug("done processing upstream content")
@@ -30,7 +31,7 @@ func ProcessSubstitutions(ctx *processContext, done <-chan interface{}, fragment
 	return processedFragmentStream
 }
 
-func processSubstitutions(ctx *processContext, f types.DocumentFragment) types.DocumentFragment {
+func applySubstitutions(ctx *processContext, f types.DocumentFragment) types.DocumentFragment {
 	// if log.IsLevelEnabled(log.DebugLevel) {
 	// 	log.WithField("pipeline_stage", "fragment_processing").Debugf("incoming fragment:\n%s", spew.Sdump(f))
 	// }
@@ -38,7 +39,7 @@ func processSubstitutions(ctx *processContext, f types.DocumentFragment) types.D
 	if err := f.Error; err != nil {
 		return f
 	}
-	elements, err := processSubstitutionsOnElements(ctx, f.Elements)
+	elements, err := applySubstitutionsOnElements(ctx, f.Elements)
 	if err != nil {
 		return types.NewErrorFragment(f.LineOffset, err)
 	}
@@ -46,18 +47,18 @@ func processSubstitutions(ctx *processContext, f types.DocumentFragment) types.D
 	return f
 }
 
-func processSubstitutionsOnElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
+func applySubstitutionsOnElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
 	result := make([]interface{}, len(elements))
 	for i, element := range elements {
 		var err error
-		if result[i], err = processSubstitutionsOnElement(ctx, element); err != nil {
+		if result[i], err = applySubstitutionsOnElement(ctx, element); err != nil {
 			return nil, err
 		}
 	}
 	return result, nil
 }
 
-func processSubstitutionsOnElement(ctx *processContext, element interface{}) (interface{}, error) {
+func applySubstitutionsOnElement(ctx *processContext, element interface{}) (interface{}, error) {
 	switch e := element.(type) {
 	case *types.AttributeDeclaration:
 		ctx.addAttribute(e.Name, e.Value)
@@ -121,11 +122,11 @@ func processBlockWithElements(ctx *processContext, block types.WithElements) err
 		return err
 	}
 	// log.Debugf("applying substitutions on elements of block of type '%T'", block)
-	plan, err := newSubstitutions(block)
+	subs, err := newSubstitutions(block)
 	if err != nil {
 		return err
 	}
-	elements, err := plan.processElements(ctx, block.GetElements())
+	elements, err := subs.processElements(ctx, block.GetElements())
 	if err != nil {
 		return err
 	}
@@ -195,11 +196,45 @@ type substitutions []*substitution
 func newSubstitutions(b types.WithAttributes) (substitutions, error) {
 	// TODO: introduce a `types.BlockWithSubstitution` interface?
 	// note: would also be helpful for paragraphs with `[listing]` style.
-	s, err := defaultSubstitution(b)
+	defaultSub, err := defaultSubstitution(b)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to determine substitutions")
 	}
-	subs := strings.Split(b.GetAttributes().GetAsStringWithDefault(types.AttrSubstitutions, s), ",")
+	subs := strings.Split(b.GetAttributes().GetAsStringWithDefault(types.AttrSubstitutions, defaultSub), ",")
+	allIncremental, err := ValidateSubstitutions(subs)
+	if err != nil {
+		return nil, err
+	}
+	// when dealing with incremental substitutions
+	if allIncremental {
+		d, err := newSubstitution(defaultSub)
+		if err != nil {
+			return nil, err
+		}
+		result := substitutions{d}
+		for _, sub := range subs {
+			switch {
+			case strings.HasSuffix(sub, "+"): // prepend
+				s, err := newSubstitution(strings.TrimSuffix(sub, "+"))
+				if err != nil {
+					return nil, err
+				}
+				result = append(substitutions{s}, result...)
+			case strings.HasPrefix(sub, "+"): // append
+				s, err := newSubstitution(strings.TrimPrefix(sub, "+"))
+				if err != nil {
+					return nil, err
+				}
+				result = append(result, s)
+			case strings.HasPrefix(sub, "-"): // remove from all substitutions
+				for _, s := range result {
+					s.removeEnablements(substitutionKind(strings.TrimPrefix(sub, "-")))
+				}
+			}
+		}
+		return result, nil
+	}
+
 	result := make([]*substitution, len(subs))
 	for i, sub := range subs {
 		if result[i], err = newSubstitution(sub); err != nil {
@@ -209,6 +244,36 @@ func newSubstitutions(b types.WithAttributes) (substitutions, error) {
 	return result, nil
 }
 
+// can't mix incremental additions/removals with sets. eg:
+// "attributes+,+replacements,-callouts" // OK
+// "attributes+,normal" // NOT OK
+func ValidateSubstitutions(subs []string) (bool, error) {
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("checking substitutions: %v", subs)
+	}
+	if len(subs) == 0 { // should not happen, there is always a default sub
+		return false, nil
+	}
+	// init with first substitution
+	allIncremental := isIncrementalSubstitution(subs[0])
+	// check others
+	for i, sub := range subs {
+		if i == 0 {
+			// skip, no need to check this one
+			continue
+		}
+		if isIncrementalSubstitution(sub) != allIncremental {
+			return false, fmt.Errorf("cannot mix incremental and non-incremental substitutions: '%s'", strings.Join(subs, ", "))
+		}
+	}
+	return allIncremental, nil
+}
+
+func isIncrementalSubstitution(sub string) bool {
+	return strings.HasPrefix(sub, "+") ||
+		strings.HasPrefix(sub, "-") ||
+		strings.HasSuffix(sub, "+")
+}
 func (s substitutions) processElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
 	// skip if there's nothing to do
 	if len(elements) == 0 {
@@ -244,118 +309,164 @@ func defaultSubstitution(b interface{}) (string, error) {
 	}
 }
 
-type substitutionGroup string
+type substitutionRule string
 
 const (
-	AttributesGroup        substitutionGroup = "AttributesGroup"
-	ElementAttributesGroup substitutionGroup = "ElementAttributesGroup"
-	HeaderGroup            substitutionGroup = "HeaderGroup"
-	MacrosGroup            substitutionGroup = "MacrosGroup"
-	NoneGroup              substitutionGroup = "NoneGroup"
-	NormalGroup            substitutionGroup = "NormalGroup"
-	QuotesGroup            substitutionGroup = "QuotesGroup"
-	ReplacementsGroup      substitutionGroup = "ReplacementsGroup"
-	SpecialcharactersGroup substitutionGroup = "SpecialCharactersGroup"
-	VerbatimGroup          substitutionGroup = "VerbatimGroup"
+	AttributesGroup        substitutionRule = "AttributesGroup"
+	ElementAttributesGroup substitutionRule = "ElementAttributesGroup"
+	HeaderGroup            substitutionRule = "HeaderGroup"
+	MacrosGroup            substitutionRule = "MacrosGroup"
+	NoneGroup              substitutionRule = "NoneGroup"
+	NormalGroup            substitutionRule = "NormalGroup"
+	QuotesGroup            substitutionRule = "QuotesGroup"
+	ReplacementsGroup      substitutionRule = "ReplacementsGroup"
+	PostReplacementsGroup  substitutionRule = "PostReplacementsGroup"
+	SpecialcharactersGroup substitutionRule = "SpecialCharactersGroup"
+	VerbatimGroup          substitutionRule = "VerbatimGroup"
 )
 
-func (g substitutionGroup) defaults() map[SubstitutionKind]bool {
-	switch g {
-	case AttributesGroup:
-		return map[SubstitutionKind]bool{
-			InlinePassthroughs: true,
-			Attributes:         true,
-		}
-	case ElementAttributesGroup:
-		return map[SubstitutionKind]bool{
-			InlinePassthroughs: true,
-			Attributes:         true,
-			Quotes:             true,
-			SpecialCharacters:  true, // TODO: is it needed?
-		}
-	case HeaderGroup:
-		return map[SubstitutionKind]bool{
-			InlinePassthroughs: true,
-			SpecialCharacters:  true,
-			Attributes:         true,
-		}
-	case MacrosGroup:
-		return map[SubstitutionKind]bool{
-			Macros: true,
-		}
-	case NoneGroup:
-		return map[SubstitutionKind]bool{}
-	case NormalGroup:
-		return map[SubstitutionKind]bool{
-			InlinePassthroughs: true,
-			SpecialCharacters:  true,
-			Attributes:         true,
-			Quotes:             true,
-			Replacements:       true,
-			Macros:             true,
-			PostReplacements:   true,
-		}
-	case QuotesGroup:
-		return map[SubstitutionKind]bool{
-			Quotes: true,
-		}
-	case ReplacementsGroup:
-		return map[SubstitutionKind]bool{
-			Replacements: true,
-		}
-	case SpecialcharactersGroup:
-		return map[SubstitutionKind]bool{
-			SpecialCharacters: true,
-		}
-	case VerbatimGroup:
-		return map[SubstitutionKind]bool{
-			SpecialCharacters: true,
-			Callouts:          true,
-		}
-	}
-	return map[SubstitutionKind]bool{}
-}
-
 type substitution struct {
-	group                     substitutionGroup
-	enablements               map[SubstitutionKind]bool
-	hasAttributeSubstitutions bool
+	rule                      substitutionRule
+	enablements               map[substitutionKind]bool
+	hasAttributeSubstitutions bool // TODO: replace with a key in the parser's store
 }
 
-//TODO: simplify by using a single grammar rule and turn-off choices?
-var substitutionGroups = map[string]substitutionGroup{
-	"":                  NormalGroup,
-	"attributes":        AttributesGroup,
-	"header":            HeaderGroup,
-	"macros":            MacrosGroup,
-	"normal":            NormalGroup,
-	"none":              NoneGroup,
-	"quotes":            QuotesGroup,
-	"replacements":      ReplacementsGroup,
-	"specialchars":      SpecialcharactersGroup,
-	"specialcharacters": SpecialcharactersGroup,
-	"verbatim":          VerbatimGroup,
+type SubstitutionGroup struct {
 }
 
 func newSubstitution(kind string) (*substitution, error) {
-	group, found := substitutionGroups[kind]
-	if !found {
+	switch kind {
+	case "attributes":
+		return &substitution{
+			rule: AttributesGroup,
+			enablements: map[substitutionKind]bool{
+				InlinePassthroughs: true,
+				Attributes:         true,
+			},
+		}, nil
+	case "element_attributes":
+		return &substitution{
+			rule: ElementAttributesGroup,
+			enablements: map[substitutionKind]bool{
+				InlinePassthroughs: true,
+				Attributes:         true,
+				Quotes:             true,
+				SpecialCharacters:  true, // TODO: is it needed?
+			},
+		}, nil
+	case "header":
+		return &substitution{
+			rule: HeaderGroup,
+			enablements: map[substitutionKind]bool{
+				InlinePassthroughs: true,
+				SpecialCharacters:  true,
+				Attributes:         true,
+			},
+		}, nil
+	case "macros":
+		return &substitution{
+			rule: MacrosGroup,
+			enablements: map[substitutionKind]bool{
+				Macros: true,
+			},
+		}, nil
+	case "normal":
+		return &substitution{
+			rule: NormalGroup,
+			enablements: map[substitutionKind]bool{
+				InlinePassthroughs: true,
+				SpecialCharacters:  true,
+				Attributes:         true,
+				Quotes:             true,
+				Replacements:       true,
+				Macros:             true,
+				PostReplacements:   true,
+			},
+		}, nil
+	case "none":
+		return &substitution{
+			rule:        NoneGroup,
+			enablements: map[substitutionKind]bool{},
+		}, nil
+	case "quotes":
+		return &substitution{
+			rule: QuotesGroup,
+			enablements: map[substitutionKind]bool{
+				Quotes: true,
+			},
+		}, nil
+	case "replacements":
+		return &substitution{
+			rule: ReplacementsGroup,
+			enablements: map[substitutionKind]bool{
+				Replacements: true,
+			},
+		}, nil
+	case "post_replacements":
+		return &substitution{
+			rule: PostReplacementsGroup,
+			enablements: map[substitutionKind]bool{
+				PostReplacements: true,
+			},
+		}, nil
+	case "specialchars":
+		return &substitution{
+			rule: SpecialcharactersGroup,
+			enablements: map[substitutionKind]bool{
+				SpecialCharacters: true,
+			},
+		}, nil
+	case "verbatim":
+		return &substitution{
+			rule: VerbatimGroup,
+			enablements: map[substitutionKind]bool{
+				SpecialCharacters: true,
+				Callouts:          true,
+			},
+		}, nil
+	default:
 		return nil, fmt.Errorf("unsupported kind of substitution: '%v'", kind)
 	}
-	s := &substitution{
-		group:       group,
-		enablements: group.defaults(),
-	}
-	return s, nil
 }
 
-func (step *substitution) processElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
+func (s *substitution) removeEnablements(kinds ...substitutionKind) {
+	for _, k := range kinds {
+		switch k {
+		case "specialchars":
+			delete(s.enablements, SpecialCharacters)
+		default:
+			delete(s.enablements, k)
+		}
+	}
+}
+
+func (s *substitution) hasEnablements() bool {
+	return len(s.enablements) > 0
+}
+
+// // disables the "inline_passthroughs", "special_characters" and "attributes" substitution
+// // return `true` if there are more enablements to apply, `false` otherwise (ie, no substitution would be applied if the content was parsed again)
+// func (s *substitution) reduce() bool { // TODO: rename this func
+// 	s.enablements = s.defaults() // reset
+// 	for sub := range s.enablements {
+// 		switch sub {
+// 		case InlinePassthroughs, SpecialCharacters, Attributes:
+// 			delete(s.enablements, sub)
+// 		}
+// 	}
+// 	// if log.IsLevelEnabled(log.DebugLevel) {
+// 	// 	log.Debugf("new enablements for '%s': %s", s.group, spew.Sdump(s.enablements))
+// 	// }
+// 	return len(s.enablements) > 0
+// }
+
+func (s *substitution) processElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
 	// log.Debugf("applying step '%s'", step.group)
-	elements, err := parseElements(elements, step.group, GlobalStore(substitutionsKey, step))
+	elements, err := parseElements(elements, s.rule, GlobalStore(substitutionsKey, s))
 	if err != nil {
 		return nil, err
 	}
-	if step.hasAttributeSubstitutions {
+	if s.hasAttributeSubstitutions {
 		// log.WithField("group", step.group).Debug("attribute substitutions detected during parsing")
 		// apply substitutions on elements
 		elements, err = replaceAttributeRefsInElements(ctx, elements)
@@ -364,29 +475,14 @@ func (step *substitution) processElements(ctx *processContext, elements []interf
 		}
 		elements = types.Merge(elements)
 		// re-run the Parser, skipping attribute substitutions and earlier rules this time
-		if step.reduce() {
-			if elements, err = parseElements(elements, step.group, GlobalStore(substitutionsKey, step)); err != nil {
+		s.removeEnablements(Attributes)
+		if s.hasEnablements() {
+			if elements, err = parseElements(elements, s.rule, GlobalStore(substitutionsKey, s)); err != nil {
 				return nil, err
 			}
 		}
 	}
 	return elements, nil
-}
-
-// disables the "inline_passthroughs", "special_characters" and "attributes" substitution
-// return `true` if there are more enablements to apply, `false` otherwise (ie, no substitution would be applied if the content was parsed again)
-func (s *substitution) reduce() bool { // TODO: rename this func
-	s.enablements = s.group.defaults() // reset
-	for sub := range s.enablements {
-		switch sub {
-		case InlinePassthroughs, SpecialCharacters, Attributes:
-			delete(s.enablements, sub)
-		}
-	}
-	// if log.IsLevelEnabled(log.DebugLevel) {
-	// 	log.Debugf("new enablements for '%s': %s", s.group, spew.Sdump(s.enablements))
-	// }
-	return len(s.enablements) > 0
 }
 
 // sets the new substitution plan in the golbal store, overriding any exist–ing one
@@ -431,45 +527,45 @@ func (c *current) hasAttributeSubstitutions() error {
 	return nil
 }
 
-func (c *current) isSubstitutionEnabled(k SubstitutionKind) (bool, error) {
-	phase, err := c.lookupCurrentSubstitution()
+func (c *current) isSubstitutionEnabled(k substitutionKind) (bool, error) {
+	s, err := c.lookupCurrentSubstitution()
 	if err != nil {
 		return false, err
 	}
-	enabled, found := phase.enablements[k]
+	enabled, found := s.enablements[k]
 	if !found {
 		return false, nil
 	}
 	return enabled, nil
 }
 
-type SubstitutionKind string
+type substitutionKind string
 
 const (
 	// substitutionsKey the key in which substitutions are stored in the parser's GlobalStore
 	substitutionsKey string = "substitutions"
 
 	// Attributes the "attributes" substitution
-	Attributes SubstitutionKind = "attributes"
+	Attributes substitutionKind = "attributes"
 	// Callouts the "callouts" substitution
-	Callouts SubstitutionKind = "callouts"
+	Callouts substitutionKind = "callouts"
 	// InlinePassthroughs the "inline_passthrough" substitution
-	InlinePassthroughs SubstitutionKind = "inline_passthrough"
+	InlinePassthroughs substitutionKind = "inline_passthrough"
 	// Macros the "macros" substitution
-	Macros SubstitutionKind = "macros"
+	Macros substitutionKind = "macros"
 	// None the "none" substitution
-	None SubstitutionKind = "none"
+	None substitutionKind = "none"
 	// PostReplacements the "post_replacements" substitution
-	PostReplacements SubstitutionKind = "post_replacements"
+	PostReplacements substitutionKind = "post_replacements"
 	// Quotes the "quotes" substitution
-	Quotes SubstitutionKind = "quotes"
+	Quotes substitutionKind = "quotes"
 	// Replacements the "replacements" substitution
-	Replacements SubstitutionKind = "replacements"
-	// SpecialCharacters the "specialcharacters" substitution
-	SpecialCharacters SubstitutionKind = "specialcharacters"
+	Replacements substitutionKind = "replacements"
+	// SpecialCharacters the "specialchars" substitution
+	SpecialCharacters substitutionKind = "specialchars"
 )
 
-func parseElements(elements []interface{}, group substitutionGroup, opts ...Option) ([]interface{}, error) {
+func parseElements(elements []interface{}, rule substitutionRule, opts ...Option) ([]interface{}, error) {
 	// if log.IsLevelEnabled(log.DebugLevel) {
 	// 	log.WithField("group", group).Debug("parsing elements")
 	// }
@@ -478,7 +574,7 @@ func parseElements(elements []interface{}, group substitutionGroup, opts ...Opti
 		return nil, nil
 	}
 	opts = append(opts)
-	result, err := parseContent(serialized, append(opts, Entrypoint(string(group)))...)
+	result, err := parseContent(serialized, append(opts, Entrypoint(string(rule)))...)
 	if err != nil {
 		return nil, err
 	}
@@ -486,21 +582,21 @@ func parseElements(elements []interface{}, group substitutionGroup, opts ...Opti
 	for key, element := range placeholders.elements {
 		log.Debugf("processing placeholder of type '%T'", element)
 		if e, ok := element.(types.WithAttributes); ok {
-			attrs, err := parseAttributes(e.GetAttributes(), group, opts...)
+			attrs, err := parseAttributes(e.GetAttributes(), rule, opts...)
 			if err != nil {
 				return nil, err
 			}
 			e.SetAttributes(attrs)
 		}
 		if e, ok := element.(*types.LabeledListElement); ok {
-			term, err := parseElements(e.Term, group, opts...)
+			term, err := parseElements(e.Term, rule, opts...)
 			if err != nil {
 				return nil, err
 			}
 			e.Term = term
 		}
 		if e, ok := element.(types.WithElements); ok {
-			elements, err := parseElements(e.GetElements(), group, opts...)
+			elements, err := parseElements(e.GetElements(), rule, opts...)
 			if err != nil {
 				return nil, err
 			}
@@ -509,7 +605,7 @@ func parseElements(elements []interface{}, group substitutionGroup, opts ...Opti
 			}
 		}
 		if e, ok := element.([]interface{}); ok {
-			elements, err := parseElements(e, group, opts...)
+			elements, err := parseElements(e, rule, opts...)
 			if err != nil {
 				return nil, err
 			}
@@ -525,9 +621,9 @@ func parseElements(elements []interface{}, group substitutionGroup, opts ...Opti
 	return result, nil
 }
 
-func parseAttributes(attributes types.Attributes, group substitutionGroup, opts ...Option) (types.Attributes, error) {
-	if !(group == AttributesGroup || group == QuotesGroup) { // TODO: include special_characters?
-		log.Debugf("no need to parse attributes for group '%s'", group)
+func parseAttributes(attributes types.Attributes, rule substitutionRule, opts ...Option) (types.Attributes, error) {
+	if !(rule == AttributesGroup || rule == QuotesGroup) { // TODO: include special_characters?
+		log.Debugf("no need to parse attributes for group '%s'", rule)
 		return attributes, nil
 	}
 	for name, value := range attributes {
@@ -537,14 +633,14 @@ func parseAttributes(attributes types.Attributes, group substitutionGroup, opts 
 			if len(serialized) == 0 {
 				continue
 			}
-			elements, err := parseContent(serialized, append(opts, Entrypoint(string(group)))...)
+			elements, err := parseContent(serialized, append(opts, Entrypoint(string(rule)))...)
 			if err != nil {
 				return nil, err
 			}
 			elements = placeholders.restoreElements(elements)
 			attributes[name] = elements
 		case string:
-			elements, err := parseContent([]byte(value), append(opts, Entrypoint(string(group)))...)
+			elements, err := parseContent([]byte(value), append(opts, Entrypoint(string(rule)))...)
 			if err != nil {
 				return nil, err
 			}

@@ -176,7 +176,7 @@ type WithNestedElementSubstitution interface {
 
 var defaultSubstitutionsForBlockElements = []string{
 	"inline_passthrough",
-	"specialcharacters",
+	"specialchars",
 	"quotes",
 	"attributes",
 	"replacements",
@@ -191,8 +191,8 @@ var defaultParagraphSubstitutions = defaultSubstitutionsForBlockElements  // eve
 
 // blocks of lines
 var defaultSubstitutionsForBlockLines = []string{
-	"callouts", // must be executed before "specialcharacters"
-	"specialcharacters",
+	"callouts", // must be executed before "specialchars"
+	"specialchars",
 }
 var defaultFencedBlockSubstitutions = defaultSubstitutionsForBlockLines
 var defaultListingBlockSubstitutions = defaultSubstitutionsForBlockLines
@@ -914,8 +914,8 @@ type Callout struct {
 }
 
 // NewCallout returns a new Callout with the given reference
-func NewCallout(ref int) (Callout, error) {
-	return Callout{
+func NewCallout(ref int) (*Callout, error) {
+	return &Callout{
 		Ref: ref,
 	}, nil
 }
@@ -4296,8 +4296,8 @@ type SpecialCharacter struct {
 }
 
 // NewSpecialCharacter return a new SpecialCharacter
-func NewSpecialCharacter(name string) (SpecialCharacter, error) {
-	return SpecialCharacter{
+func NewSpecialCharacter(name string) (*SpecialCharacter, error) {
+	return &SpecialCharacter{
 		Name: name,
 	}, nil
 }

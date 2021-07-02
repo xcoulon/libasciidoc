@@ -19,7 +19,7 @@ func ParseDocument(r io.Reader, config configuration.Configuration, opts ...Opti
 	ctx := newProcessContext()
 	pipeline :=
 		// TODO: AggregateSections(...) ?
-		ProcessSubstitutions(ctx, done,
+		ApplySubstitutions(ctx, done,
 			SplitElements(done,
 				ArrangeLists(done,
 					AssembleFragments(done,

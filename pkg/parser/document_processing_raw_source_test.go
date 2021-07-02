@@ -610,7 +610,7 @@ include::hello_world.go.txt[]
 								&types.StringElement{
 									Content: "last line of parent ",
 								},
-								types.Callout{
+								&types.Callout{
 									Ref: 1,
 								},
 							},
@@ -696,7 +696,7 @@ include::hello_world.go.txt[]
 								&types.StringElement{
 									Content: "last line of parent ",
 								},
-								types.Callout{
+								&types.Callout{
 									Ref: 1,
 								},
 							},

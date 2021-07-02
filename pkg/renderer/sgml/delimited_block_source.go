@@ -163,13 +163,13 @@ func (r *sgmlRenderer) renderSourceLines(ctx *renderer.Context, b types.ListingB
 	return result, highlighter, language, nil
 }
 
-func (r *sgmlRenderer) renderSourceLine(ctx *renderer.Context, line interface{}) (string, []types.Callout, error) {
+func (r *sgmlRenderer) renderSourceLine(ctx *renderer.Context, line interface{}) (string, []*types.Callout, error) {
 	elements, ok := line.([]interface{})
 	if !ok {
 		return "", nil, fmt.Errorf("invalid type of line: '%T'", line)
 	}
 	result := strings.Builder{}
-	callouts := make([]types.Callout, 0, len(elements))
+	callouts := make([]*types.Callout, 0, len(elements))
 	for _, e := range elements {
 		switch e := e.(type) {
 		case *types.StringElement, types.SpecialCharacter:
@@ -178,7 +178,7 @@ func (r *sgmlRenderer) renderSourceLine(ctx *renderer.Context, line interface{})
 				return "", nil, err
 			}
 			result.WriteString(s)
-		case types.Callout:
+		case *types.Callout:
 			callouts = append(callouts, e)
 		default:
 			return "", nil, fmt.Errorf("unexpected type of element: '%T'", line)
@@ -187,7 +187,7 @@ func (r *sgmlRenderer) renderSourceLine(ctx *renderer.Context, line interface{})
 	return result.String(), callouts, nil
 }
 
-func (r *sgmlRenderer) renderCalloutRef(co types.Callout) (string, error) {
+func (r *sgmlRenderer) renderCalloutRef(co *types.Callout) (string, error) {
 	result := &strings.Builder{}
 	err := r.calloutRef.Execute(result, co)
 	if err != nil {

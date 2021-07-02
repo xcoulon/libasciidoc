@@ -80,7 +80,7 @@ func (r *sgmlRenderer) renderElement(ctx *renderer.Context, element interface{})
 		return r.renderUnorderedList(ctx, e)
 	case types.CalloutList:
 		return r.renderCalloutList(ctx, e)
-	case types.Callout:
+	case *types.Callout:
 		return r.renderCalloutRef(e)
 	case *types.Paragraph:
 		return r.renderParagraph(ctx, e)
@@ -138,7 +138,7 @@ func (r *sgmlRenderer) renderElement(ctx *renderer.Context, element interface{})
 		return r.renderQuotedString(ctx, e)
 	case types.ThematicBreak:
 		return r.renderThematicBreak()
-	case types.SpecialCharacter:
+	case *types.SpecialCharacter:
 		return r.renderSpecialCharacter(ctx, e)
 	case types.PredefinedAttribute:
 		return r.renderPredefinedAttribute(e)

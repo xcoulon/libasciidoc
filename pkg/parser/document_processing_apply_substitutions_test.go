@@ -229,7 +229,7 @@ package parser
 // 							&types.StringElement{
 // 								Content: "a link to ",
 // 							},
-// 							types.InlineLink{
+// 							&types.InlineLink{
 // 								Location: &types.Location{
 // 									Scheme: "https://",
 // 									Path: []interface{}{

@@ -226,7 +226,7 @@ var _ = Describe("table of contents initialization", func() {
 		}
 		sectionATitle := []interface{}{
 			&types.StringElement{Content: "Section A with link to "},
-			types.InlineLink{
+			&types.InlineLink{
 				Location: &types.Location{
 					Scheme: "https://",
 					Path: []interface{}{

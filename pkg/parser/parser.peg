@@ -1831,7 +1831,7 @@ MacrosGroup <- elements:(
 
 // TODO: do we really need a grammar rule? can't we just skip substitutions?
 // The 'none' substitution
-NoneGroup <- elements:(NormalGroupElement)+ EOF { 
+NoneGroup <- elements:(NoneGroupElement)+ EOF { 
         return types.Merge(elements), nil
     }
 
@@ -1866,6 +1866,15 @@ NormalGroupElement <- !EOF
         / AnyChar) {
             return element, nil
         }
+PostReplacementsGroup <-  elements:(
+    InlineWord
+    / LineBreak // must appear before space :/
+    / Space
+    / Newline
+    / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
+    / AnyChar)+ EOF {
+        return types.Merge(elements), nil
+    }
 
 // Substitution group for 'quotes' only
 QuotesGroup <- elements:(
@@ -2021,7 +2030,7 @@ ImpliedApostrophe <- Alphanum "'" &[\pL] {
 // -------------------------------------------------------------------------------------
 // Thematic break
 // -------------------------------------------------------------------------------------
-ThematicBreak <- ("***" / "* * *" / "---" / "- - -" / "___" / "_ _ _") EOF {
+ThematicBreak <- ("***" / "* * *" / "---" / "- - -" / "___" / "_ _ _") EOF { // TODO: Space* before EOF
         return types.NewThematicBreak()
     }
 
@@ -2116,7 +2125,7 @@ Filename <- elements:(
     ([^\r\n[\]\uFFFD{&<> ])+ { // not supported for now: EOL, space, "[", "]"
         return types.NewStringElement(string(c.text))
     }
-    / AttributeSubstitution 
+    // / AttributeSubstitution 
     / SpecialCharacter
     / "{" {
         return types.NewStringElement(string(c.text))

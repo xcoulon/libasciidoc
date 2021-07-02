@@ -302,7 +302,7 @@ ____
 											&types.StringElement{
 												Content: "a link to ",
 											},
-											types.InlineLink{
+											&types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
@@ -315,13 +315,13 @@ ____
 											&types.StringElement{
 												Content: " ",
 											},
-											types.SpecialCharacter{ // callout is not detected with the `normal` susbtitution
+											&types.SpecialCharacter{ // callout is not detected with the `normal` susbtitution
 												Name: "<",
 											},
 											&types.StringElement{
 												Content: "1",
 											},
-											types.SpecialCharacter{
+											&types.SpecialCharacter{
 												Name: ">",
 											},
 										},
@@ -329,13 +329,13 @@ ____
 											&types.StringElement{
 												Content: "and ",
 											},
-											types.SpecialCharacter{
+											&types.SpecialCharacter{
 												Name: "<",
 											},
 											&types.StringElement{
 												Content: "more text",
 											},
-											types.SpecialCharacter{
+											&types.SpecialCharacter{
 												Name: ">",
 											},
 											&types.StringElement{
@@ -355,7 +355,7 @@ ____
 											&types.StringElement{
 												Content: " lines with a link to ",
 											},
-											types.InlineLink{
+											&types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
@@ -417,7 +417,7 @@ ____
 											&types.StringElement{
 												Content: "a link to ",
 											},
-											types.InlineLink{
+											&types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
@@ -430,13 +430,13 @@ ____
 											&types.StringElement{
 												Content: " ",
 											},
-											types.SpecialCharacter{ // callout is not detected with the `normal` susbtitution
+											&types.SpecialCharacter{ // callout is not detected with the `normal` susbtitution
 												Name: "<",
 											},
 											&types.StringElement{
 												Content: "1",
 											},
-											types.SpecialCharacter{
+											&types.SpecialCharacter{
 												Name: ">",
 											},
 										},
@@ -444,13 +444,13 @@ ____
 											&types.StringElement{
 												Content: "and ",
 											},
-											types.SpecialCharacter{
+											&types.SpecialCharacter{
 												Name: "<",
 											},
 											&types.StringElement{
 												Content: "more text",
 											},
-											types.SpecialCharacter{
+											&types.SpecialCharacter{
 												Name: ">",
 											},
 											&types.StringElement{
@@ -470,7 +470,7 @@ ____
 											&types.StringElement{
 												Content: " lines with a link to ",
 											},
-											types.InlineLink{
+											&types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
@@ -602,7 +602,7 @@ ____
 											&types.StringElement{
 												Content: "a link to ",
 											},
-											types.InlineLink{
+											&types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
@@ -739,7 +739,7 @@ ____
 											&types.StringElement{
 												Content: "a link to ",
 											},
-											types.InlineLink{
+											&types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
@@ -762,7 +762,7 @@ ____
 											&types.StringElement{
 												Content: "*next* lines with a link to ",
 											},
-											types.InlineLink{
+											&types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
@@ -824,13 +824,13 @@ ____
 											&types.StringElement{
 												Content: "a link to https://example.com[] ",
 											},
-											types.SpecialCharacter{
+											&types.SpecialCharacter{
 												Name: "<",
 											},
 											&types.StringElement{
 												Content: "1",
 											},
-											types.SpecialCharacter{
+											&types.SpecialCharacter{
 												Name: ">",
 											},
 										},
@@ -838,13 +838,13 @@ ____
 											&types.StringElement{
 												Content: "and ",
 											},
-											types.SpecialCharacter{
+											&types.SpecialCharacter{
 												Name: "<",
 											},
 											&types.StringElement{
 												Content: "more text",
 											},
-											types.SpecialCharacter{
+											&types.SpecialCharacter{
 												Name: ">",
 											},
 											&types.StringElement{
@@ -1033,7 +1033,7 @@ ____
 											&types.StringElement{
 												Content: "a link to ",
 											},
-											types.InlineLink{
+											&types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{
@@ -1116,7 +1116,7 @@ ____
 											&types.StringElement{
 												Content: "a link to ",
 											},
-											types.InlineLink{
+											&types.InlineLink{
 												Location: &types.Location{
 													Scheme: "https://",
 													Path: []interface{}{

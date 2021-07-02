@@ -1186,7 +1186,7 @@ a link to {scheme}://{path} and https://foo.com`
 											&types.StringElement{
 												Content: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~:/?#@!$",
 											},
-											types.SpecialCharacter{
+											&types.SpecialCharacter{
 												Name: "&",
 											},
 											&types.StringElement{

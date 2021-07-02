@@ -646,7 +646,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
-											types.SpecialCharacter{
+											&types.SpecialCharacter{
 												Name: "<",
 											},
 											&types.InlineLink{
@@ -671,7 +671,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 													},
 												},
 											},
-											types.SpecialCharacter{
+											&types.SpecialCharacter{
 												Name: ">",
 											},
 										},
@@ -750,7 +750,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									&types.QuotedText{
 										Kind: types.SingleQuoteBold,
 										Elements: []interface{}{
-											types.SpecialCharacter{
+											&types.SpecialCharacter{
 												Name: "<",
 											},
 											&types.InlineLink{
@@ -775,7 +775,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 													},
 												},
 											},
-											types.SpecialCharacter{
+											&types.SpecialCharacter{
 												Name: ">",
 											},
 										},
@@ -1034,13 +1034,13 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 									&types.StringElement{
 										Content: "links to {github-title}: https://github.com[{github-title}] and *",
 									},
-									types.SpecialCharacter{
+									&types.SpecialCharacter{
 										Name: "<",
 									},
 									&types.StringElement{
 										Content: "https://github.com[_{github-title}_]",
 									},
-									types.SpecialCharacter{
+									&types.SpecialCharacter{
 										Name: ">",
 									},
 									&types.StringElement{

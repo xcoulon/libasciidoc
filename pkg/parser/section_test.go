@@ -575,7 +575,7 @@ a paragraph`
 `
 				section1aTitle := []interface{}{
 					&types.StringElement{Content: "link to "},
-					types.InlineLink{
+					&types.InlineLink{
 						Location: &types.Location{
 							Scheme: "https://",
 							Path: []interface{}{
@@ -893,13 +893,13 @@ Doc Writer <thedoc@asciidoctor.org>`
 										&types.StringElement{
 											Content: "Doc Writer ",
 										},
-										types.SpecialCharacter{
+										&types.SpecialCharacter{
 											Name: "<",
 										},
 										&types.StringElement{
 											Content: "thedoc@asciidoctor.org",
 										},
-										types.SpecialCharacter{
+										&types.SpecialCharacter{
 											Name: ">",
 										},
 									},
@@ -2037,13 +2037,13 @@ Doc Writer <thedoc@asciidoctor.org>`
 									&types.StringElement{
 										Content: "Doc Writer ",
 									},
-									types.SpecialCharacter{
+									&types.SpecialCharacter{
 										Name: "<",
 									},
 									&types.StringElement{
 										Content: "thedoc@asciidoctor.org",
 									},
-									types.SpecialCharacter{
+									&types.SpecialCharacter{
 										Name: ">",
 									},
 								},

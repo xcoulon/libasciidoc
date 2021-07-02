@@ -179,7 +179,7 @@ import <1>
 								&types.StringElement{
 									Content: "import ",
 								},
-								types.Callout{
+								&types.Callout{
 									Ref: 1,
 								},
 							},
@@ -222,13 +222,13 @@ func foo() {} <2>
 								&types.StringElement{
 									Content: "import ",
 								},
-								types.Callout{
+								&types.Callout{
 									Ref: 1,
 								},
 								&types.StringElement{
 									Content: "\n\nfunc foo() {} ",
 								},
-								types.Callout{
+								&types.Callout{
 									Ref: 2,
 								},
 							},
@@ -285,19 +285,19 @@ func foo() {} <4>
 								&types.StringElement{
 									Content: "import ",
 								},
-								types.Callout{
+								&types.Callout{
 									Ref: 1,
 								},
-								types.Callout{
+								&types.Callout{
 									Ref: 2,
 								},
-								types.Callout{
+								&types.Callout{
 									Ref: 3,
 								},
 								&types.StringElement{
 									Content: "\n\nfunc foo() {} ",
 								},
-								types.Callout{
+								&types.Callout{
 									Ref: 4,
 								},
 							},
@@ -373,26 +373,26 @@ import <a>
 								&types.StringElement{
 									Content: "import ",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: "<",
 								},
 								&types.StringElement{
 									Content: "a",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: ">",
 								},
 							},
 						},
 						&types.Paragraph{
 							Elements: []interface{}{
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: "<",
 								},
 								&types.StringElement{
 									Content: "a",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: ">",
 								},
 								&types.StringElement{

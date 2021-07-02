@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (r *sgmlRenderer) renderSpecialCharacter(ctx *Context, s types.SpecialCharacter) (string, error) {
+func (r *sgmlRenderer) renderSpecialCharacter(ctx *Context, s *types.SpecialCharacter) (string, error) {
 	// log.Debugf("rendering special character...")
 	if !ctx.EncodeSpecialChars {
 		// just return the special character as-is

@@ -19,37 +19,37 @@ var _ = Describe("special characters", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: "<",
 								},
 								&types.StringElement{
 									Content: "b",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: ">",
 								},
 								&types.StringElement{
 									Content: "*",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: "<",
 								},
 								&types.StringElement{
 									Content: "/b",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: ">",
 								},
 								&types.StringElement{
 									Content: " ",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: "&",
 								},
 								&types.StringElement{
 									Content: "apos; ",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: "&",
 								},
 								&types.StringElement{
@@ -72,37 +72,37 @@ var _ = Describe("special characters", func() {
 					types.FencedBlock{
 						Lines: [][]interface{}{
 							{
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: "<",
 								},
 								&types.StringElement{
 									Content: "b",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: ">",
 								},
 								&types.StringElement{
 									Content: "*",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: "<",
 								},
 								&types.StringElement{
 									Content: "/b",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: ">",
 								},
 								&types.StringElement{
 									Content: " ",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: "&",
 								},
 								&types.StringElement{
 									Content: "apos; ",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: "&",
 								},
 								&types.StringElement{

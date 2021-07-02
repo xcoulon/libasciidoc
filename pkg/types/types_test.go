@@ -516,7 +516,7 @@ var _ = Describe("element id resolution", func() {
 						&types.StringElement{
 							Content: "a link to ",
 						},
-						types.InlineLink{
+						&types.InlineLink{
 							Location: &types.Location{
 								Scheme: "https://",
 								Path: []interface{}{
@@ -575,7 +575,7 @@ var _ = Describe("element id resolution", func() {
 						&types.StringElement{
 							Content: "a link to ",
 						},
-						types.InlineLink{
+						&types.InlineLink{
 							Location: &types.Location{
 								Scheme: "https://",
 								Path: []interface{}{
@@ -640,7 +640,7 @@ var _ = Describe("element id resolution", func() {
 						&types.StringElement{
 							Content: "a link to ",
 						},
-						types.InlineLink{
+						&types.InlineLink{
 							Location: &types.Location{
 								Scheme: "https://",
 								Path: []interface{}{
@@ -1176,7 +1176,7 @@ var _ = DescribeTable("rawtest",
 		"pass:[content]"),
 	// special characters
 	Entry("special character",
-		types.SpecialCharacter{
+		&types.SpecialCharacter{
 			Name: "<",
 		},
 		"<"),
@@ -1200,10 +1200,10 @@ var _ = DescribeTable("rawtest",
 						&types.StringElement{
 							Content: "content",
 						},
-						types.SpecialCharacter{
+						&types.SpecialCharacter{
 							Name: "<",
 						},
-						types.SpecialCharacter{
+						&types.SpecialCharacter{
 							Name: ">",
 						},
 					},

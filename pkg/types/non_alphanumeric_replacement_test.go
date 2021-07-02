@@ -62,7 +62,7 @@ var _ = Describe("normalizing string", func() {
 		// == a section title, with *bold content*
 		source := []interface{}{
 			&types.StringElement{Content: "link to "},
-			types.InlineLink{
+			&types.InlineLink{
 				Attributes: types.Attributes{},
 				Location: &types.Location{
 					Scheme: "https://",

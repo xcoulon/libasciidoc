@@ -267,19 +267,19 @@ and <more text> on the +
 								&types.StringElement{
 									Content: "a link to https://example.com[] ",
 								},
-								types.Callout{
+								&types.Callout{
 									Ref: 1,
 								},
 								&types.StringElement{
 									Content: "\nand ",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: "<",
 								},
 								&types.StringElement{
 									Content: "more text",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: ">",
 								},
 								&types.StringElement{
@@ -355,25 +355,25 @@ and <more text> on the +
 								&types.StringElement{
 									Content: " ",
 								},
-								types.SpecialCharacter{ // callout is not detected with the `normal` susbtitution
+								&types.SpecialCharacter{ // callout is not detected with the `normal` susbtitution
 									Name: "<",
 								},
 								&types.StringElement{
 									Content: "1",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: ">",
 								},
 								&types.StringElement{
 									Content: "\nand ",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: "<",
 								},
 								&types.StringElement{
 									Content: "more text",
 								},
-								types.SpecialCharacter{
+								&types.SpecialCharacter{
 									Name: ">",
 								},
 								&types.StringElement{

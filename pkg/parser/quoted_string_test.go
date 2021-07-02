@@ -343,7 +343,7 @@ var _ = Describe("quoted strings", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.InlineLink{
+								&types.InlineLink{
 									Location: &types.Location{
 										Scheme: "https://",
 										Path: []interface{}{
@@ -377,7 +377,7 @@ var _ = Describe("quoted strings", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.InlineLink{
+								&types.InlineLink{
 									Location: &types.Location{
 										Scheme: "https://",
 										Path: []interface{}{
@@ -792,7 +792,7 @@ var _ = Describe("quoted strings", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.InlineLink{
+								&types.InlineLink{
 									Location: &types.Location{
 										Scheme: "https://",
 										Path: []interface{}{
@@ -828,7 +828,7 @@ var _ = Describe("quoted strings", func() {
 					types.Paragraph{
 						Lines: [][]interface{}{
 							{
-								types.InlineLink{
+								&types.InlineLink{
 									Location: &types.Location{
 										Scheme: "https://",
 										Path: []interface{}{

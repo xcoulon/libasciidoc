@@ -149,7 +149,7 @@ a note
 								&types.StringElement{
 									Content: `const cookies = "cookies" `,
 								},
-								types.Callout{
+								&types.Callout{
 									Ref: 1,
 								},
 							},
