@@ -31,8 +31,8 @@ func (m *documentFragmentGroupsMatcher) Match(actual interface{}) (success bool,
 	}
 	if !reflect.DeepEqual(m.expected, actual) {
 		if log.IsLevelEnabled(log.DebugLevel) {
-			log.Debugf("actual raw document:\n%s", spew.Sdump(actual))
-			log.Debugf("expected raw document:\n%s", spew.Sdump(m.expected))
+			log.Debugf("actual document fragments:\n%s", spew.Sdump(actual))
+			log.Debugf("expected document fragments:\n%s", spew.Sdump(m.expected))
 		}
 		dmp := diffmatchpatch.New()
 		diffs := dmp.DiffMain(spew.Sdump(actual), spew.Sdump(m.expected), true)
@@ -43,9 +43,9 @@ func (m *documentFragmentGroupsMatcher) Match(actual interface{}) (success bool,
 }
 
 func (m *documentFragmentGroupsMatcher) FailureMessage(_ interface{}) (message string) {
-	return fmt.Sprintf("expected document fragment groups to match:\n%s", m.diffs)
+	return fmt.Sprintf("expected document fragments to match:\n%s", m.diffs)
 }
 
 func (m *documentFragmentGroupsMatcher) NegatedFailureMessage(_ interface{}) (message string) {
-	return fmt.Sprintf("expected document fragment groups not to match:\n%s", m.diffs)
+	return fmt.Sprintf("expected document fragments not to match:\n%s", m.diffs)
 }
