@@ -3668,8 +3668,8 @@ type QuotedString struct {
 }
 
 // NewQuotedString returns a new QuotedString
-func NewQuotedString(kind QuotedStringKind, elements []interface{}) (QuotedString, error) {
-	return QuotedString{Kind: kind, Elements: elements}, nil
+func NewQuotedString(kind QuotedStringKind, elements []interface{}) (*QuotedString, error) {
+	return &QuotedString{Kind: kind, Elements: elements}, nil
 }
 
 var _ RawText = QuotedString{}

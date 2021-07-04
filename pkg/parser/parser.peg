@@ -1660,7 +1660,7 @@ SingleQuotedString <- SingleQuoteStringStart elements:SingleQuotedStringElements
     }
 
 SingleQuotedStringElements <- elements:(SingleQuotedStringElement+) {
-        return types.NewInlineElements(elements)
+        return types.Merge(elements), nil
     }
 
 SingleQuoteStringStart <- "'`" ![ \t\r\n]
@@ -1700,7 +1700,7 @@ DoubleQuotedString <- DoubleQuoteStringStart elements:DoubleQuotedStringElements
     }
 
 DoubleQuotedStringElements <- elements:(DoubleQuotedStringElement+) {
-        return types.NewInlineElements(elements)
+        return types.Merge(elements), nil
     }
 
 // We have to treat this one special, because of ambiguity with monospace markup.
