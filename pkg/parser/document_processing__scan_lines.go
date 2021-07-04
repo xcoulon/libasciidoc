@@ -20,7 +20,7 @@ func ScanDocument(source io.Reader, done <-chan interface{}, opts ...Option) <-c
 		defer close(fragmentGroupStream)
 		// defer close(errStream)
 		scanner := NewDocumentScanner(source, opts...)
-		for scanner.Scan() {
+		for scanner.scan() {
 			select {
 			case <-done:
 				log.Info("exiting the document parsing routine")
@@ -58,12 +58,15 @@ func (s scanScope) String() string {
 }
 
 var (
-	defaultScope       = &scanScope{name: "default"}
-	withinParagraph    = &scanScope{name: "within_paragraph"}
-	withinListingBlock = &scanScope{name: "within_delimited_block", kind: types.Listing}
-	withinExampleBlock = &scanScope{name: "within_delimited_block", kind: types.Example}
-	withinFencedBlock  = &scanScope{name: "within_delimited_block", kind: types.Fenced}
-	withinLiteralBlock = &scanScope{name: "within_delimited_block", kind: types.Literal}
+	defaultScope           = &scanScope{name: "default"}
+	withinParagraph        = &scanScope{name: "within_paragraph"}
+	withinListElement      = &scanScope{name: "within_list_element"}
+	withinListContinuation = &scanScope{name: "within_list_continuation"}
+	withinListingBlock     = &scanScope{name: "within_delimited_block", kind: types.Listing}
+	withinExampleBlock     = &scanScope{name: "within_delimited_block", kind: types.Example}
+	withinFencedBlock      = &scanScope{name: "within_delimited_block", kind: types.Fenced}
+	withinLiteralBlock     = &scanScope{name: "within_delimited_block", kind: types.Literal}
+	withinQuoteBlock       = &scanScope{name: "within_delimited_block", kind: types.Quote}
 )
 
 func NewDocumentScanner(source io.Reader, opts ...Option) *DocumentFragmentScanner {
@@ -75,11 +78,11 @@ func NewDocumentScanner(source io.Reader, opts ...Option) *DocumentFragmentScann
 	}
 }
 
-// Scan retrieves the next document fragment
+// scan retrieves the next document fragment
 // (ie, a group of lines with essentially raw lines and optionally block delimiters)
 // and returns `true` if a block was found, `false` if the end of the doc was reached,
 // or if an error occurred (see `DocumentFragmentScanner.Err()`)
-func (s *DocumentFragmentScanner) Scan() bool {
+func (s *DocumentFragmentScanner) scan() bool {
 	if s.err != nil {
 		// error was found in the previous call, so let's stop now.
 		return false
@@ -111,6 +114,7 @@ scan:
 				break scan // end of fragment
 			}
 		case *types.OrderedListElement, *types.UnorderedListElement, *types.LabeledListElement, *types.CalloutListElement:
+			s.scopes.push(withinListElement)
 			elements = append(elements, element)
 		case *types.BlockDelimiter:
 			currentScope := s.scopes.get()
@@ -130,8 +134,11 @@ scan:
 					s.scopes.push(withinFencedBlock)
 				case types.Literal:
 					s.scopes.push(withinLiteralBlock)
+				case types.Quote:
+					s.scopes.push(withinQuoteBlock)
 				default:
 					s.err = fmt.Errorf("unsupported kind of block delimiter: %v", element.Kind)
+					s.currentGroup.Error = s.err
 					break scan // end of fragment group
 				}
 			}
@@ -144,7 +151,7 @@ scan:
 			}
 			elements = append(elements, element)
 		case *types.ListElementContinuation:
-			// s.scopes.push(withinListContinuation)
+			s.scopes.push(withinListContinuation)
 			elements = append(elements, element)
 		default:
 			elements = append(elements, element)
@@ -201,7 +208,7 @@ func (s *DocumentFragmentScanner) entrypoint() []Option {
 			Entrypoint("DocumentFragmentElementWithinVerbatimBlock"),
 			GlobalStore(validDelimitedBlockKind, currentScope.kind),
 		}
-	case withinExampleBlock:
+	case withinExampleBlock, withinQuoteBlock:
 		log.Debugf("using '%s' entrypoint", "DocumentFragmentElementWithinNormalBlock")
 		return []Option{
 			Entrypoint("DocumentFragmentElementWithinNormalBlock"),

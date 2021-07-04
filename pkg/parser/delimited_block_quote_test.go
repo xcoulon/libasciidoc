@@ -14,14 +14,15 @@ var _ = Describe("quote blocks", func() {
 
 		Context("as delimited blocks", func() {
 
-			It("single-line quote block with author and title", func() {
+			It("with single-line content and author and title attributes", func() {
 				source := `[quote, john doe, quote title]
 ____
 some *quote* content
 ____`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.QuoteBlock{
+						&types.DelimitedBlock{
+							Kind: types.Quote,
 							Attributes: types.Attributes{
 								types.AttrStyle:       types.Quote,
 								types.AttrQuoteAuthor: "john doe",
@@ -53,7 +54,7 @@ ____`
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("multi-line quote with author only", func() {
+			It("with multi-line content and author attribute", func() {
 				source := `[quote, john doe,   ]
 ____
 - some 
@@ -63,7 +64,8 @@ ____
 `
 				expected := types.Document{
 					Elements: []interface{}{
-						types.QuoteBlock{
+						&types.DelimitedBlock{
+							Kind: types.Quote,
 							Attributes: types.Attributes{
 								types.AttrStyle:       types.Quote,
 								types.AttrQuoteAuthor: "john doe",
@@ -120,7 +122,7 @@ ____
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("single-line quote with title only", func() {
+			It("wioth single-line content with title attribute", func() {
 				source := `[quote, ,quote title]
 ____
 some quote content 
@@ -128,7 +130,8 @@ ____
 `
 				expected := types.Document{
 					Elements: []interface{}{
-						types.QuoteBlock{
+						&types.DelimitedBlock{
+							Kind: types.Quote,
 							Attributes: types.Attributes{
 								types.AttrStyle:      types.Quote,
 								types.AttrQuoteTitle: "quote title",
@@ -155,11 +158,11 @@ ____
 ____`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.QuoteBlock{
+						&types.DelimitedBlock{
+							Kind: types.Quote,
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Quote,
 							},
-							Elements: []interface{}{},
 						},
 					},
 				}
@@ -173,13 +176,14 @@ ____`
 ____
 * some
 ----
-* quote 
+* listing 
 ----
 * content
 ____`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.QuoteBlock{
+						&types.DelimitedBlock{
+							Kind: types.Quote,
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Quote,
 							},
@@ -202,10 +206,11 @@ ____`
 										},
 									},
 								},
-								types.ListingBlock{
+								&types.DelimitedBlock{
+									Kind: types.Listing,
 									Elements: []interface{}{
 										&types.StringElement{
-											Content: "* quote ",
+											Content: "* listing ",
 										},
 									},
 								},
@@ -247,7 +252,8 @@ ____
 ____`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.QuoteBlock{
+						&types.DelimitedBlock{
+							Kind: types.Quote,
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Quote,
 							},
@@ -309,11 +315,11 @@ ____
 ____`
 				expected := types.Document{
 					Elements: []interface{}{
-						types.QuoteBlock{
+						&types.DelimitedBlock{
+							Kind: types.Quote,
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Quote,
 							},
-							Elements: []interface{}{},
 						},
 					},
 				}
@@ -327,7 +333,8 @@ foo
 `
 				expected := types.Document{
 					Elements: []interface{}{
-						types.QuoteBlock{
+						&types.DelimitedBlock{
+							Kind: types.Quote,
 							Attributes: types.Attributes{
 								types.AttrStyle: types.Quote,
 							},

@@ -14,28 +14,18 @@ var _ = Describe("apply custom substitutions", func() {
 
 	Context("example blocks", func() {
 
-		// testing custom substitutions on example blocks only, as
-		// other verbatim blocks (fenced, literal, source, passthrough)
-		// share the same implementation
-
-		// also, see https://asciidoctor.org/docs/user-manual/#incremental-substitutions
-		// "When you set the subs attribute on a block, you automatically remove all of its default substitutions.
-		// For example, if you set subs on a literal block, and assign it a value of attributes,
-		// only attributes are substituted."
-
+		// in normal blocks, the substiution should be defined and applied on the elements
+		// within the blocks
 		// TODO: include character replacement (eg: `(C)`)
 		source := `:github-url: https://github.com
 			
-[subs="$SUBS"]
 ====
+[subs="$SUBS"]
 a link to https://example.com[] <1>
 and <more text> on the +
 *next* lines with a link to {github-url}[]
 
-* a list item
 ====
-
-<1> a callout
 `
 		Context("explicit substitutions", func() {
 
@@ -124,42 +114,6 @@ and <more text> on the +
 									},
 								},
 								&types.BlankLine{},
-								&types.GenericList{
-									Kind: types.UnorderedListKind,
-									Elements: []types.ListElement{
-										&types.UnorderedListElement{
-											BulletStyle: types.OneAsterisk,
-											CheckStyle:  types.NoCheck,
-											Elements: []interface{}{
-												&types.Paragraph{
-													Elements: []interface{}{
-														&types.StringElement{
-															Content: "a list item",
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
 							},
 						},
 					},
@@ -181,11 +135,11 @@ and <more text> on the +
 						&types.BlankLine{},
 						&types.DelimitedBlock{
 							Kind: types.Example,
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "normal",
-							},
 							Elements: []interface{}{
 								&types.Paragraph{
+									Attributes: types.Attributes{
+										types.AttrSubstitutions: "normal",
+									},
 									Elements: []interface{}{
 										&types.StringElement{
 											Content: "a link to ",
@@ -255,42 +209,6 @@ and <more text> on the +
 									},
 								},
 								&types.BlankLine{},
-								&types.GenericList{
-									Kind: types.UnorderedListKind,
-									Elements: []types.ListElement{
-										&types.UnorderedListElement{
-											BulletStyle: types.OneAsterisk,
-											CheckStyle:  types.NoCheck,
-											Elements: []interface{}{
-												&types.Paragraph{
-													Elements: []interface{}{
-														&types.StringElement{
-															Content: "a list item",
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
 							},
 						},
 					},
@@ -312,11 +230,11 @@ and <more text> on the +
 						&types.BlankLine{},
 						&types.DelimitedBlock{
 							Kind: types.Example,
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "quotes",
-							},
 							Elements: []interface{}{
 								&types.Paragraph{
+									Attributes: types.Attributes{
+										types.AttrSubstitutions: "quotes",
+									},
 									Elements: []interface{}{
 										&types.StringElement{
 											Content: "a link to https://example.com[] <1>\nand <more text> on the +\n",
@@ -335,42 +253,6 @@ and <more text> on the +
 									},
 								},
 								&types.BlankLine{},
-								&types.GenericList{
-									Kind: types.UnorderedListKind,
-									Elements: []types.ListElement{
-										&types.UnorderedListElement{
-											BulletStyle: types.OneAsterisk,
-											CheckStyle:  types.NoCheck,
-											Elements: []interface{}{
-												&types.Paragraph{
-													Elements: []interface{}{
-														&types.StringElement{
-															Content: "a list item",
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
 							},
 						},
 					},
@@ -392,11 +274,11 @@ and <more text> on the +
 						&types.BlankLine{},
 						&types.DelimitedBlock{
 							Kind: types.Example,
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "macros",
-							},
 							Elements: []interface{}{
 								&types.Paragraph{
+									Attributes: types.Attributes{
+										types.AttrSubstitutions: "macros",
+									},
 									Elements: []interface{}{
 										&types.StringElement{
 											Content: "a link to ",
@@ -417,42 +299,6 @@ and <more text> on the +
 									},
 								},
 								&types.BlankLine{},
-								&types.GenericList{
-									Kind: types.UnorderedListKind,
-									Elements: []types.ListElement{
-										&types.UnorderedListElement{
-											BulletStyle: types.OneAsterisk,
-											CheckStyle:  types.NoCheck,
-											Elements: []interface{}{
-												&types.Paragraph{
-													Elements: []interface{}{
-														&types.StringElement{
-															Content: "a list item",
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
 							},
 						},
 					},
@@ -474,11 +320,11 @@ and <more text> on the +
 						&types.BlankLine{},
 						&types.DelimitedBlock{
 							Kind: types.Example,
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "attributes",
-							},
 							Elements: []interface{}{
 								&types.Paragraph{
+									Attributes: types.Attributes{
+										types.AttrSubstitutions: "attributes",
+									},
 									Elements: []interface{}{
 										&types.StringElement{
 											Content: "a link to https://example.com[] <1>\nand <more text> on the +\n*next* lines with a link to https://github.com[]",
@@ -486,42 +332,6 @@ and <more text> on the +
 									},
 								},
 								&types.BlankLine{},
-								&types.GenericList{
-									Kind: types.UnorderedListKind,
-									Elements: []types.ListElement{
-										&types.UnorderedListElement{
-											BulletStyle: types.OneAsterisk,
-											CheckStyle:  types.NoCheck,
-											Elements: []interface{}{
-												&types.Paragraph{
-													Elements: []interface{}{
-														&types.StringElement{
-															Content: "a list item",
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
 							},
 						},
 					},
@@ -543,11 +353,11 @@ and <more text> on the +
 						&types.BlankLine{},
 						&types.DelimitedBlock{
 							Kind: types.Example,
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "attributes,macros",
-							},
 							Elements: []interface{}{
 								&types.Paragraph{
+									Attributes: types.Attributes{
+										types.AttrSubstitutions: "attributes,macros",
+									},
 									Elements: []interface{}{
 										&types.StringElement{
 											Content: "a link to ",
@@ -578,42 +388,6 @@ and <more text> on the +
 									},
 								},
 								&types.BlankLine{},
-								&types.GenericList{
-									Kind: types.UnorderedListKind,
-									Elements: []types.ListElement{
-										&types.UnorderedListElement{
-											BulletStyle: types.OneAsterisk,
-											CheckStyle:  types.NoCheck,
-											Elements: []interface{}{
-												&types.Paragraph{
-													Elements: []interface{}{
-														&types.StringElement{
-															Content: "a list item",
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
 							},
 						},
 					},
@@ -635,11 +409,11 @@ and <more text> on the +
 						&types.BlankLine{},
 						&types.DelimitedBlock{
 							Kind: types.Example,
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "specialchars",
-							},
 							Elements: []interface{}{
 								&types.Paragraph{
+									Attributes: types.Attributes{
+										types.AttrSubstitutions: "specialchars",
+									},
 									Elements: []interface{}{
 										&types.StringElement{
 											Content: "a link to https://example.com[] ",
@@ -671,42 +445,6 @@ and <more text> on the +
 									},
 								},
 								&types.BlankLine{},
-								&types.GenericList{
-									Kind: types.UnorderedListKind,
-									Elements: []types.ListElement{
-										&types.UnorderedListElement{
-											BulletStyle: types.OneAsterisk,
-											CheckStyle:  types.NoCheck,
-											Elements: []interface{}{
-												&types.Paragraph{
-													Elements: []interface{}{
-														&types.StringElement{
-															Content: "a list item",
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
 							},
 						},
 					},
@@ -728,11 +466,11 @@ and <more text> on the +
 						&types.BlankLine{},
 						&types.DelimitedBlock{
 							Kind: types.Example,
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "replacements",
-							},
 							Elements: []interface{}{
 								&types.Paragraph{
+									Attributes: types.Attributes{
+										types.AttrSubstitutions: "replacements",
+									},
 									Elements: []interface{}{
 										&types.StringElement{
 											Content: "a link to https://example.com[] <1>\nand <more text> on the +\n*next* lines with a link to {github-url}[]",
@@ -740,42 +478,6 @@ and <more text> on the +
 									},
 								},
 								&types.BlankLine{},
-								&types.GenericList{
-									Kind: types.UnorderedListKind,
-									Elements: []types.ListElement{
-										&types.UnorderedListElement{
-											BulletStyle: types.OneAsterisk,
-											CheckStyle:  types.NoCheck,
-											Elements: []interface{}{
-												&types.Paragraph{
-													Elements: []interface{}{
-														&types.StringElement{
-															Content: "a list item",
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
 							},
 						},
 					},
@@ -797,11 +499,11 @@ and <more text> on the +
 						&types.BlankLine{},
 						&types.DelimitedBlock{
 							Kind: types.Example,
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "post_replacements",
-							},
 							Elements: []interface{}{
 								&types.Paragraph{
+									Attributes: types.Attributes{
+										types.AttrSubstitutions: "post_replacements",
+									},
 									Elements: []interface{}{
 										&types.StringElement{
 											Content: "a link to https://example.com[] <1>\nand <more text> on the",
@@ -813,42 +515,6 @@ and <more text> on the +
 									},
 								},
 								&types.BlankLine{},
-								&types.GenericList{
-									Kind: types.UnorderedListKind,
-									Elements: []types.ListElement{
-										&types.UnorderedListElement{
-											BulletStyle: types.OneAsterisk,
-											CheckStyle:  types.NoCheck,
-											Elements: []interface{}{
-												&types.Paragraph{
-													Elements: []interface{}{
-														&types.StringElement{
-															Content: "a list item",
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
 							},
 						},
 					},
@@ -870,11 +536,11 @@ and <more text> on the +
 						&types.BlankLine{},
 						&types.DelimitedBlock{
 							Kind: types.Example,
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "quotes,macros",
-							},
 							Elements: []interface{}{
 								&types.Paragraph{
+									Attributes: types.Attributes{
+										types.AttrSubstitutions: "quotes,macros",
+									},
 									Elements: []interface{}{
 										&types.StringElement{
 											Content: "a link to ",
@@ -906,42 +572,6 @@ and <more text> on the +
 									},
 								},
 								&types.BlankLine{},
-								&types.GenericList{
-									Kind: types.UnorderedListKind,
-									Elements: []types.ListElement{
-										&types.UnorderedListElement{
-											BulletStyle: types.OneAsterisk,
-											CheckStyle:  types.NoCheck,
-											Elements: []interface{}{
-												&types.Paragraph{
-													Elements: []interface{}{
-														&types.StringElement{
-															Content: "a list item",
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
 							},
 						},
 					},
@@ -963,11 +593,11 @@ and <more text> on the +
 						&types.BlankLine{},
 						&types.DelimitedBlock{
 							Kind: types.Example,
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "macros,quotes",
-							},
 							Elements: []interface{}{
 								&types.Paragraph{
+									Attributes: types.Attributes{
+										types.AttrSubstitutions: "macros,quotes",
+									},
 									Elements: []interface{}{
 										&types.StringElement{
 											Content: "a link to ",
@@ -999,42 +629,6 @@ and <more text> on the +
 									},
 								},
 								&types.BlankLine{},
-								&types.GenericList{
-									Kind: types.UnorderedListKind,
-									Elements: []types.ListElement{
-										&types.UnorderedListElement{
-											BulletStyle: types.OneAsterisk,
-											CheckStyle:  types.NoCheck,
-											Elements: []interface{}{
-												&types.Paragraph{
-													Elements: []interface{}{
-														&types.StringElement{
-															Content: "a list item",
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
 							},
 						},
 					},
@@ -1056,11 +650,11 @@ and <more text> on the +
 						&types.BlankLine{},
 						&types.DelimitedBlock{
 							Kind: types.Example,
-							Attributes: types.Attributes{
-								types.AttrSubstitutions: "none",
-							},
 							Elements: []interface{}{
 								&types.Paragraph{
+									Attributes: types.Attributes{
+										types.AttrSubstitutions: "none",
+									},
 									Elements: []interface{}{
 										&types.StringElement{
 											Content: "a link to https://example.com[] <1>\nand <more text> on the +\n*next* lines with a link to {github-url}[]",
@@ -1068,42 +662,6 @@ and <more text> on the +
 									},
 								},
 								&types.BlankLine{},
-								&types.GenericList{
-									Kind: types.UnorderedListKind,
-									Elements: []types.ListElement{
-										&types.UnorderedListElement{
-											BulletStyle: types.OneAsterisk,
-											CheckStyle:  types.NoCheck,
-											Elements: []interface{}{
-												&types.Paragraph{
-													Elements: []interface{}{
-														&types.StringElement{
-															Content: "a list item",
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
 							},
 						},
 					},
@@ -1131,8 +689,6 @@ and <more text> on the +
 
 * not a list item
 ----
-
-<1> a callout
 `
 			It("should apply the default substitution", func() {
 				s := strings.ReplaceAll(source, "[subs=\"$SUBS\"]\n", "") // remove the 'subs' attribute
@@ -1169,24 +725,6 @@ and <more text> on the +
 								},
 								&types.StringElement{
 									Content: " on the +\n*next* lines with a link to {github-url}[]\n\n* not a list item",
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
 								},
 							},
 						},
@@ -1283,24 +821,6 @@ and <more text> on the +
 								},
 							},
 						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
-							},
-						},
 					},
 				}
 				Expect(ParseDocument(s)).To(MatchDocument(expected))
@@ -1337,24 +857,6 @@ and <more text> on the +
 								},
 								&types.StringElement{
 									Content: " lines with a link to {github-url}[]\n\n* not a list item",
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
 								},
 							},
 						},
@@ -1399,24 +901,6 @@ and <more text> on the +
 								},
 							},
 						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
-							},
-						},
 					},
 				}
 				Expect(ParseDocument(s)).To(MatchDocument(expected))
@@ -1442,24 +926,6 @@ and <more text> on the +
 							Elements: []interface{}{
 								&types.StringElement{
 									Content: "a link to https://example.com[] <1>\nand <more text> on the +\n*next* lines with a link to https://github.com[]\n\n* not a list item",
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
 								},
 							},
 						},
@@ -1517,24 +983,6 @@ and <more text> on the +
 								},
 							},
 						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
-							},
-						},
 					},
 				}
 				Expect(ParseDocument(s)).To(MatchDocument(expected))
@@ -1587,24 +1035,6 @@ and <more text> on the +
 								},
 							},
 						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
-							},
-						},
 					},
 				}
 				Expect(ParseDocument(s)).To(MatchDocument(expected))
@@ -1630,24 +1060,6 @@ and <more text> on the +
 							Elements: []interface{}{
 								&types.StringElement{
 									Content: "a link to https://example.com[] <1>\nand <more text> on the +\n*next* lines with a link to {github-url}[]\n\n* not a list item",
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
 								},
 							},
 						},
@@ -1680,24 +1092,6 @@ and <more text> on the +
 								types.LineBreak{},
 								&types.StringElement{
 									Content: "\n*next* lines with a link to {github-url}[]\n\n* not a list item",
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
 								},
 							},
 						},
@@ -1753,24 +1147,6 @@ and <more text> on the +
 								},
 							},
 						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
-							},
-						},
 					},
 				}
 				Expect(ParseDocument(s)).To(MatchDocument(expected))
@@ -1823,24 +1199,6 @@ and <more text> on the +
 								},
 							},
 						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
-							},
-						},
 					},
 				}
 				Expect(ParseDocument(s)).To(MatchDocument(expected))
@@ -1866,24 +1224,6 @@ and <more text> on the +
 							Elements: []interface{}{
 								&types.StringElement{
 									Content: "a link to https://example.com[] <1>\nand <more text> on the +\n*next* lines with a link to {github-url}[]\n\n* not a list item",
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
 								},
 							},
 						},
@@ -1944,24 +1284,6 @@ and <more text> on the +
 								},
 							},
 						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
-							},
-						},
 					},
 				}
 				Expect(ParseDocument(s)).To(MatchDocument(expected))
@@ -2011,24 +1333,6 @@ and <more text> on the +
 								},
 								&types.StringElement{
 									Content: " on the +\n*next* lines with a link to {github-url}[]\n\n* not a list item",
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
 								},
 							},
 						},
@@ -2089,24 +1393,6 @@ and <more text> on the +
 								},
 							},
 						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
-								},
-							},
-						},
 					},
 				}
 				Expect(ParseDocument(s)).To(MatchDocument(expected))
@@ -2150,24 +1436,6 @@ and <more text> on the +
 								},
 								&types.StringElement{
 									Content: " on the +\n*next* lines with a link to {github-url}[]\n\n* not a list item",
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
-									},
 								},
 							},
 						},
@@ -2246,24 +1514,6 @@ and <more text> on the +
 								{
 									&types.StringElement{
 										Content: "*next* lines with a link to {github-url}[]",
-									},
-								},
-							},
-						},
-						&types.BlankLine{},
-						&types.GenericList{
-							Kind: types.CalloutListKind,
-							Elements: []types.ListElement{
-								&types.CalloutListElement{
-									Ref: 1,
-									Elements: []interface{}{
-										&types.Paragraph{
-											Elements: []interface{}{
-												&types.StringElement{
-													Content: "a callout",
-												},
-											},
-										},
 									},
 								},
 							},

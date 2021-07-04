@@ -25,6 +25,10 @@ func SplitElements(done <-chan interface{}, fragmentStream <-chan types.Document
 }
 
 func splitElements(f types.DocumentFragment) []types.DocumentFragment {
+	if err := f.Error; err != nil {
+		log.Debugf("skipping element splitting: %v", f.Error)
+		return []types.DocumentFragment{f}
+	}
 	result := make([]types.DocumentFragment, len(f.Elements))
 	for i, element := range f.Elements {
 		result[i] = types.NewDocumentFragment(f.LineOffset, []interface{}{element})

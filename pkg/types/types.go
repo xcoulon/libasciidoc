@@ -1148,7 +1148,7 @@ type OrderedListElement struct {
 	Elements   []interface{} // TODO: rename to `Blocks`?
 }
 
-// making sure that the `ListItem` interface is implemented by `OrderedListElement`
+// making sure that the `ListElement` interface is implemented by `OrderedListElement`
 var _ ListElement = &OrderedListElement{}
 
 // NewOrderedListElement initializes a new `orderedListItem` from the given content
@@ -1721,16 +1721,11 @@ type LabeledListElement struct {
 	Elements   []interface{} // TODO: rename to `Blocks`?
 }
 
-// making sure that the `ListItem` interface is implemented by `LabeledListItem`
-var _ ListElement = &LabeledListElement{}
-
-// NewLabeledListElement initializes a new LabeledListItem
+// NewLabeledListElement initializes a new LabeledListElement
 func NewLabeledListElement(level int, term string, description interface{}) (*LabeledListElement, error) {
-	// log.Debugf("new LabeledListItem")
+	// log.Debugf("new LabeledListElement")
 	t := []interface{}{
-		&StringElement{
-			Content: strings.TrimSpace(term),
-		},
+		RawLine(term),
 	}
 	style, err := toLabeledListElementStyle(level)
 	if err != nil {
@@ -1753,6 +1748,9 @@ func NewLabeledListElement(level int, term string, description interface{}) (*La
 	}, nil
 }
 
+// making sure that the `ListElement` interface is implemented by `LabeledListElement`
+var _ ListElement = &LabeledListElement{}
+
 // checks if the given list element matches the style of this element
 func (e *LabeledListElement) matchesStyle(other ListElement) bool {
 	if element, ok := other.(*LabeledListElement); ok {
@@ -1762,7 +1760,7 @@ func (e *LabeledListElement) matchesStyle(other ListElement) bool {
 }
 
 func (e *LabeledListElement) adjustStyle(other ListElement) {
-
+	// do nothing
 }
 
 // ListKind returns the kind of list to which this element shall be attached
@@ -1771,7 +1769,7 @@ func (e *LabeledListElement) ListKind() ListKind {
 }
 
 // CanAddElement checks if the given element can be added
-func (l *LabeledListElement) CanAddElement(element interface{}) bool {
+func (e *LabeledListElement) CanAddElement(element interface{}) bool {
 	switch element.(type) {
 	case RawLine, *AdmonitionLine, *SingleLineComment:
 		return true
@@ -1834,8 +1832,8 @@ func (e *LabeledListElement) LastElement() interface{} {
 }
 
 // SetElements sets this LabeledListElement's elements
-func (i *LabeledListElement) SetElements(elements []interface{}) error {
-	i.Elements = elements
+func (e *LabeledListElement) SetElements(elements []interface{}) error {
+	e.Elements = elements
 	return nil
 }
 
@@ -1855,13 +1853,13 @@ func (i LabeledListElement) ReplaceElements(elements []interface{}) interface{} 
 var _ WithAttributes = &LabeledListElement{}
 
 // GetAttributes returns this list item's attributes
-func (i *LabeledListElement) GetAttributes() Attributes {
-	return i.Attributes
+func (e *LabeledListElement) GetAttributes() Attributes {
+	return e.Attributes
 }
 
 // ReplaceAttributes replaces the attributes in this list item
-func (i *LabeledListElement) SetAttributes(attributes Attributes) {
-	i.Attributes = toAttributesWithMapping(attributes, map[string]string{AttrPositional1: AttrStyle})
+func (e *LabeledListElement) SetAttributes(attributes Attributes) {
+	e.Attributes = toAttributesWithMapping(attributes, map[string]string{AttrPositional1: AttrStyle})
 }
 
 // ------------------------------------------
@@ -2724,6 +2722,14 @@ type DelimitedBlock struct {
 }
 
 func NewDelimitedBlock(kind string, attributes Attributes) *DelimitedBlock {
+	switch kind {
+	case Quote:
+		attributes = toAttributesWithMapping(attributes, map[string]string{
+			AttrPositional1: AttrStyle,
+			AttrPositional2: AttrQuoteAuthor,
+			AttrPositional3: AttrQuoteTitle,
+		})
+	}
 	return &DelimitedBlock{
 		Kind:       kind,
 		Attributes: attributes,
@@ -2749,15 +2755,18 @@ func (b *DelimitedBlock) CanAddElement(element interface{}) bool {
 	case *BlockDelimiter, RawLine:
 		return true
 	default:
-		// Example blocks can have more kinds of elements
-		if b.Kind == Example {
+		switch b.Kind {
+		// Normal blocks can have more kinds of elements
+		case Example, Quote:
 			return true
+		default:
+			return false
 		}
-		return false
 	}
 }
 
 func (b *DelimitedBlock) AddElement(element interface{}) error {
+	log.Debugf("adding element of type '%T' to delimited block of kind '%s'", element, b.Kind)
 	b.Elements = append(b.Elements, element)
 	return nil
 }

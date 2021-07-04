@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"fmt"
+
 	"github.com/bytesparadise/libasciidoc/pkg/types"
 	"github.com/pkg/errors"
 
@@ -51,30 +53,43 @@ func assembleFragmentElements(elements []interface{}) ([]interface{}, error) {
 	}
 	attributes := newAttributeStack()
 	result := make([]interface{}, 0, len(elements))
+	// parentBlocks := newBlockStack()
 	var parentBlock types.WithElements // here, a delimited block or a paragraph
 	for _, e := range elements {
-		log.Debugf("assembling element of type '%T'", e)
+		log.Debugf("assembling element of type '%T' (current parent block type: '%T')", e, parentBlock)
 		switch e := e.(type) {
 		case types.Attributes:
-			// within a delimited block, we may want to add the attributes as-is
+			// within a delimited block, we need to add this attributes as-is
 			if b, ok := parentBlock.(*types.DelimitedBlock); ok {
 				log.Debugf("adding attributes as an element of a delimited block of kind '%v'", b.Kind)
 				if err := b.AddElement(e); err != nil {
 					return nil, err
 				}
+				continue
 			}
 			// outside of a block, we keep the attributes in a stack
 			attributes.push(e)
 		case *types.BlockDelimiter:
-			if _, ok := parentBlock.(*types.DelimitedBlock); !ok {
-				// -- opening
-				parentBlock = types.NewDelimitedBlock(e.Kind, attributes.pop())
-				result = append(result, parentBlock)
+			// closing if parent block is a delimited block of the same kind
+			b, ok := parentBlock.(*types.DelimitedBlock)
+			if ok && b.Kind == e.Kind {
+				// closing the parent block
 				continue
 			}
-			// closing (ie, reset block)
-			parentBlock = nil
-
+			// nested delimited block (will be assembled later)
+			if ok && b.Kind != e.Kind {
+				attrs := attributes.pop()
+				if err := b.AddElement(attrs); err != nil {
+					return nil, err
+				}
+				if err := b.AddElement(e); err != nil {
+					return nil, err
+				}
+				continue
+			}
+			// otherwise, let's init a new delimited block
+			parentBlock = types.NewDelimitedBlock(e.Kind, attributes.pop())
+			result = append(result, parentBlock)
 		case types.ListElement:
 			e.SetAttributes(attributes.pop())
 			// if the current block can take this list element, then let's add it
@@ -83,15 +98,17 @@ func assembleFragmentElements(elements []interface{}) ([]interface{}, error) {
 					return nil, err
 				}
 			} else {
+				// parentBlocks.push(e)
 				parentBlock = e
-				result = append(result, parentBlock)
+				result = append(result, e)
 			}
 		case *types.BlankLine:
 			switch b := parentBlock.(type) {
 			case *types.Paragraph, types.ListElement:
 				// end of paragraph
-				parentBlock = nil
+				// parentBlocks.pop()
 				result = append(result, e)
+				parentBlock = nil
 			case *types.DelimitedBlock:
 				if b.CanAddElement(e) {
 					if err := b.AddElement(e); err != nil {
@@ -104,15 +121,18 @@ func assembleFragmentElements(elements []interface{}) ([]interface{}, error) {
 				result = append(result, e)
 			}
 		case types.RawLine:
-			if parentBlock == nil {
-				parentBlock, _ = types.NewParagraph([]interface{}{}, attributes.pop())
-				result = append(result, parentBlock)
+			if parentBlock != nil && parentBlock.CanAddElement(e) {
+				if err := parentBlock.AddElement(e); err != nil {
+					return nil, err
+				}
+				continue
 			}
-			if err := parentBlock.AddElement(e); err != nil {
-				return nil, err
-			}
+			parentBlock, _ = types.NewParagraph([]interface{}{e}, attributes.pop())
+			// parentBlocks.push(parentBlock)
+			result = append(result, parentBlock)
 		case *types.AdmonitionLine:
 			parentBlock = types.NewAdminitionParagraph(e, attributes.pop())
+			// parentBlocks.push(parentBlock)
 			result = append(result, parentBlock)
 			log.Debug("adding a new fragment with an admonition paragraph")
 		case *types.SingleLineComment:
@@ -125,8 +145,8 @@ func assembleFragmentElements(elements []interface{}) ([]interface{}, error) {
 			}
 			result = append(result, e)
 		case *types.ListElementContinuation:
+			// at this stage, we just append the element to the result set, and remove the parent block from the stack
 			result = append(result, e)
-			// what's coming next shall not be attach to the current block (a list element)
 			parentBlock = nil
 		case types.WithAttributes:
 			// set attributes on the target element
@@ -140,11 +160,15 @@ func assembleFragmentElements(elements []interface{}) ([]interface{}, error) {
 	for _, block := range result {
 		if b, ok := block.(*types.DelimitedBlock); ok {
 			switch b.Kind {
-			case types.Example:
+			case types.Listing:
+				// verbatim content: do nothing
+			case types.Example, types.Quote:
 				var err error
 				if b.Elements, err = assembleFragmentElements(b.Elements); err != nil {
 					return nil, err
 				}
+			default:
+				return nil, fmt.Errorf("unsupported kind of delimited block: '%s'", b.Kind)
 			}
 		}
 	}

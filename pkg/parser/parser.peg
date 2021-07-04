@@ -64,6 +64,7 @@ DocumentFragmentElementWithinNormalBlock <-
     / BlankLine
     / ImageBlock
     / BlockAttributes
+    / BlockDelimiter 
     / FileInclusion 
     / ThematicBreak // must appear before ListElement :/
     / ListElement

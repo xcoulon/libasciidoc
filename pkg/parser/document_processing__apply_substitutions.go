@@ -37,6 +37,7 @@ func applySubstitutions(ctx *processContext, f types.DocumentFragment) types.Doc
 	// }
 	// if the fragment already contains an error, then send it as-is downstream
 	if err := f.Error; err != nil {
+		log.Debugf("skipping substitutions: %v", f.Error)
 		return f
 	}
 	elements, err := applySubstitutionsOnElements(ctx, f.Elements)
@@ -117,7 +118,7 @@ func replaceAttributeRefsInAttributes(ctx *processContext, b types.WithAttribute
 }
 
 func processBlockWithElements(ctx *processContext, block types.WithElements) error {
-	log.Debugf("processing block of type '%T' with attributes and nested elements", block)
+	log.Debugf("processing block with elements of type '%T'", block)
 	if err := processAttributes(ctx, block); err != nil {
 		return err
 	}
@@ -131,35 +132,45 @@ func processBlockWithElements(ctx *processContext, block types.WithElements) err
 		return err
 	}
 	if err := block.SetElements(elements); err != nil {
-		return errors.Wrapf(err, "failed to process substitutions on block of type '%T'", block)
+		return err
 	}
+	// also, process terms of labeled list elements
+	if l, ok := block.(*types.LabeledListElement); ok {
+		var err error
+		if l.Term, err = subs.processElements(ctx, l.Term); err != nil {
+			return err
+		}
+	}
+	// if log.IsLevelEnabled(log.DebugLevel) {
+	// 	log.Debugf("processed block with elements: %s", spew.Sdump(block))
+	// }
 	return nil
 }
 
-func processLabeledListElement(ctx *processContext, block *types.LabeledListElement) error {
-	log.Debugf("processing LabeledListElement")
-	if err := processAttributes(ctx, block); err != nil {
-		return err
-	}
-	// log.Debugf("applying substitutions on elements of block of type '%T'", block)
-	plan, err := newSubstitutions(block)
-	if err != nil {
-		return err
-	}
-	term, err := plan.processElements(ctx, block.Term)
-	if err != nil {
-		return err
-	}
-	block.Term = term
-	elements, err := plan.processElements(ctx, block.GetElements())
-	if err != nil {
-		return err
-	}
-	if err := block.SetElements(elements); err != nil {
-		return errors.Wrapf(err, "failed to process substitutions on block of type '%T'", block)
-	}
-	return nil
-}
+// func processLabeledListElement(ctx *processContext, block *types.LabeledListElement) error {
+// 	log.Debugf("processing LabeledListElement")
+// 	if err := processAttributes(ctx, block); err != nil {
+// 		return err
+// 	}
+// 	// log.Debugf("applying substitutions on elements of block of type '%T'", block)
+// 	plan, err := newSubstitutions(block)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	term, err := plan.processElements(ctx, block.Term)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	block.Term = term
+// 	elements, err := plan.processElements(ctx, block.GetElements())
+// 	if err != nil {
+// 		return err
+// 	}
+// 	if err := block.SetElements(elements); err != nil {
+// 		return errors.Wrapf(err, "failed to process substitutions on block of type '%T'", block)
+// 	}
+// 	return nil
+// }
 
 func processBlockWithLocation(ctx *processContext, block types.WithLocation) error {
 	log.Debugf("processing block with attributes and location")
@@ -228,7 +239,7 @@ func newSubstitutions(b types.WithAttributes) (substitutions, error) {
 				result = append(result, s)
 			case strings.HasPrefix(sub, "-"): // remove from all substitutions
 				for _, s := range result {
-					s.removeEnablements(substitutionKind(strings.TrimPrefix(sub, "-")))
+					s.disable(substitutionKind(strings.TrimPrefix(sub, "-")))
 				}
 			}
 		}
@@ -276,8 +287,9 @@ func isIncrementalSubstitution(sub string) bool {
 }
 func (s substitutions) processElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
 	// skip if there's nothing to do
+	// (and no need to return an empty slice, btw)
 	if len(elements) == 0 {
-		return elements, nil
+		return nil, nil
 	}
 	for _, substitution := range s {
 		var err error
@@ -295,12 +307,12 @@ func defaultSubstitution(b interface{}) (string, error) {
 		switch b.Kind {
 		case types.Listing, types.Fenced, types.Literal:
 			return "verbatim", nil
-		case types.Example:
+		case types.Example, types.Quote:
 			return "normal", nil
 		default:
 			return "", fmt.Errorf("unsupported kind of delimited block: '%v'", b.Kind)
 		}
-	case *types.Paragraph, *types.GenericList:
+	case *types.Paragraph, *types.GenericList, types.ListElement, *types.QuotedText:
 		return "normal", nil
 	case *types.Section:
 		return "header", nil
@@ -429,7 +441,7 @@ func newSubstitution(kind string) (*substitution, error) {
 	}
 }
 
-func (s *substitution) removeEnablements(kinds ...substitutionKind) {
+func (s *substitution) disable(kinds ...substitutionKind) {
 	for _, k := range kinds {
 		switch k {
 		case "specialchars":
@@ -462,7 +474,7 @@ func (s *substitution) hasEnablements() bool {
 
 func (s *substitution) processElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
 	// log.Debugf("applying step '%s'", step.group)
-	elements, err := parseElements(elements, s.rule, GlobalStore(substitutionsKey, s))
+	elements, err := parseElements(ctx, elements, s.rule, GlobalStore(substitutionsKey, s))
 	if err != nil {
 		return nil, err
 	}
@@ -474,10 +486,10 @@ func (s *substitution) processElements(ctx *processContext, elements []interface
 			return nil, err
 		}
 		elements = types.Merge(elements)
-		// re-run the Parser, skipping attribute substitutions and earlier rules this time
-		s.removeEnablements(Attributes)
+		// re-run the parser, skipping the `inline_passthrough` and `attribute` rules this time
+		s.disable(InlinePassthroughs, Attributes)
 		if s.hasEnablements() {
-			if elements, err = parseElements(elements, s.rule, GlobalStore(substitutionsKey, s)); err != nil {
+			if elements, err = parseElements(ctx, elements, s.rule, GlobalStore(substitutionsKey, s)); err != nil {
 				return nil, err
 			}
 		}
@@ -565,7 +577,7 @@ const (
 	SpecialCharacters substitutionKind = "specialchars"
 )
 
-func parseElements(elements []interface{}, rule substitutionRule, opts ...Option) ([]interface{}, error) {
+func parseElements(ctx *processContext, elements []interface{}, rule substitutionRule, opts ...Option) ([]interface{}, error) {
 	// if log.IsLevelEnabled(log.DebugLevel) {
 	// 	log.WithField("group", group).Debug("parsing elements")
 	// }
@@ -578,44 +590,52 @@ func parseElements(elements []interface{}, rule substitutionRule, opts ...Option
 	if err != nil {
 		return nil, err
 	}
-	// also, apply the same substitution group on the placeholders, case by case
-	for key, element := range placeholders.elements {
+	// also, apply the substitutions on the placeholders, case by case
+	for _, element := range placeholders.elements {
 		log.Debugf("processing placeholder of type '%T'", element)
-		if e, ok := element.(types.WithAttributes); ok {
-			attrs, err := parseAttributes(e.GetAttributes(), rule, opts...)
-			if err != nil {
+		// if e, ok := element.(types.WithAttributes); ok {
+		// 	attrs, err := parseAttributes(e.GetAttributes(), rule, opts...)
+		// 	if err != nil {
+		// 		return nil, err
+		// 	}
+		// 	e.SetAttributes(attrs)
+		// }
+		// if e, ok := element.(*types.LabeledListElement); ok {
+		// 	term, err := parseElements(e.Term, rule, opts...)
+		// 	if err != nil {
+		// 		return nil, err
+		// 	}
+		// 	e.Term = term
+		// }
+		if w, ok := element.(types.WithElements); ok {
+			if err := processBlockWithElements(ctx, w); err != nil {
 				return nil, err
 			}
-			e.SetAttributes(attrs)
-		}
-		if e, ok := element.(*types.LabeledListElement); ok {
-			term, err := parseElements(e.Term, rule, opts...)
-			if err != nil {
-				return nil, err
+		} else if elements, ok := element.([]interface{}); ok {
+			for _, e := range elements {
+				if w, ok := e.(types.WithElements); ok {
+					if err := processBlockWithElements(ctx, w); err != nil {
+						return nil, err
+					}
+				}
 			}
-			e.Term = term
+		} else {
+			log.Debugf("skipping substitutions on block of type '%T'", element)
 		}
-		if e, ok := element.(types.WithElements); ok {
-			elements, err := parseElements(e.GetElements(), rule, opts...)
-			if err != nil {
-				return nil, err
-			}
-			if err := e.SetElements(elements); err != nil {
-				return nil, errors.Wrapf(err, "failed to parse elements of block of type '%T'", e)
-			}
-		}
-		if e, ok := element.([]interface{}); ok {
-			elements, err := parseElements(e, rule, opts...)
-			if err != nil {
-				return nil, err
-			}
-			placeholders.elements[key] = elements
-		}
+		// 	elements, err := parseElements(e, rule, opts...)
+		// 	if err != nil {
+		// 		return nil, err
+		// 	}
+		// 	placeholders.elements[key] = elements
+		// }
 		// if e, ok := element.(types.WithLocation); ok {
 		// 	if err := parseElementWithLocation(e, group, opts...); err != nil {
 		// 		return nil, err
 		// 	}
 		// }
+		if log.IsLevelEnabled(log.DebugLevel) {
+			log.Debugf("processed placeholder: %s", spew.Sdump(element))
+		}
 	}
 	result = placeholders.restoreElements(result)
 	return result, nil
@@ -623,7 +643,7 @@ func parseElements(elements []interface{}, rule substitutionRule, opts ...Option
 
 func parseAttributes(attributes types.Attributes, rule substitutionRule, opts ...Option) (types.Attributes, error) {
 	if !(rule == AttributesGroup || rule == QuotesGroup) { // TODO: include special_characters?
-		log.Debugf("no need to parse attributes for group '%s'", rule)
+		// log.Debugf("no need to parse attributes for group '%s'", rule)
 		return attributes, nil
 	}
 	for name, value := range attributes {

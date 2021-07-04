@@ -33,7 +33,7 @@ func ParseDocument(r io.Reader, config configuration.Configuration, opts ...Opti
 		// 	log.WithField("_state", "document_parsing").Debugf("received document fragment: %s", spew.Sdump(f))
 		// }
 		if err := f.Error; err != nil {
-			log.WithField("_state", "document_parsing").WithError(err).Error("error occurred")
+			log.WithField("pipeline_stage", "root").WithError(err).Error("error occurred")
 			return types.Document{}, err
 		}
 		for _, element := range f.Elements {

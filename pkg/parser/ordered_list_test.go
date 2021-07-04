@@ -12,21 +12,21 @@ var _ = Describe("ordered lists", func() {
 
 	Context("in final documents", func() {
 
-		// same single item in the list for each test in this context
+		// same single element in the list for each test in this context
 		elements := []interface{}{
 			&types.Paragraph{
 				Elements: []interface{}{
 					&types.StringElement{
-						Content: "item",
+						Content: "element",
 					},
 				},
 			},
 		}
 
-		Context("ordered list item alone", func() {
+		Context("ordered list element alone", func() {
 
-			It("ordered list item with implicit numbering style on a single line", func() {
-				source := `. item on a single line`
+			It("with implicit numbering style on a single line", func() {
+				source := `. element on a single line`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
@@ -38,7 +38,7 @@ var _ = Describe("ordered lists", func() {
 										&types.Paragraph{
 											Elements: []interface{}{
 												&types.StringElement{
-													Content: "item on a single line",
+													Content: "element on a single line",
 												},
 											},
 										},
@@ -51,8 +51,8 @@ var _ = Describe("ordered lists", func() {
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list item with implicit numbering style on multiple lines", func() {
-				source := `. item 
+			It("with implicit numbering style on multiple lines", func() {
+				source := `. element 
 on 
 multiple 
 lines
@@ -68,7 +68,7 @@ lines
 										&types.Paragraph{
 											Elements: []interface{}{
 												&types.StringElement{
-													Content: "item \non \nmultiple \nlines",
+													Content: "element \non \nmultiple \nlines",
 												},
 											},
 										},
@@ -81,8 +81,8 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list item with implicit numbering style", func() {
-				source := `. item`
+			It("with implicit numbering style", func() {
+				source := `. element`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
@@ -99,8 +99,8 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list item with unnecessary level and numbering style adjustments", func() {
-				source := `.. item`
+			It("with unnecessary level and numbering style adjustments", func() {
+				source := `.. element`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
@@ -117,8 +117,8 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list item with arabic numbering style", func() {
-				source := `1. item`
+			It("with arabic numbering style", func() {
+				source := `1. element`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
@@ -135,8 +135,8 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list item with lower alpha numbering style", func() {
-				source := `b. item`
+			It("with lower alpha numbering style", func() {
+				source := `b. element`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
@@ -153,8 +153,8 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list item with upper alpha numbering style", func() {
-				source := `B. item`
+			It("with upper alpha numbering style", func() {
+				source := `B. element`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
@@ -171,8 +171,8 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list item with lower roman numbering style", func() {
-				source := `i) item`
+			It("with lower roman numbering style", func() {
+				source := `i) element`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
@@ -189,8 +189,8 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list item with upper roman numbering style", func() {
-				source := `I) item`
+			It("with upper roman numbering style", func() {
+				source := `I) element`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
@@ -207,7 +207,7 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list item with predefined attribute", func() {
+			It("with predefined attribute", func() {
 				source := `. {amp}`
 				expected := types.Document{
 					Elements: []interface{}{
@@ -231,9 +231,9 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list item with explicit start only", func() {
+			It("with explicit start only", func() {
 				source := `[start=5]
-. item`
+. element`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
@@ -253,9 +253,9 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list item with explicit quoted numbering and start", func() {
+			It("with explicit quoted numbering and start", func() {
 				source := `["lowerroman", start="5"]
-. item`
+. element`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
@@ -278,9 +278,9 @@ lines
 
 		})
 
-		Context("items without numbers", func() {
+		Context("elements without numbers", func() {
 
-			It("ordered list with simple unnumbered items", func() {
+			It("ordered list with simple unnumbered elements", func() {
 				source := `. a
 . b`
 
@@ -316,10 +316,10 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list item with explicit numbering style", func() {
+			It("with explicit numbering style", func() {
 				source := `[lowerroman]
-. item
-. item`
+. element
+. element`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
@@ -343,9 +343,9 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list with unnumbered items", func() {
-				source := `. item 1
-. item 2`
+			It("ordered list with unnumbered elements", func() {
+				source := `. element 1
+. element 2`
 
 				expected := types.Document{
 					Elements: []interface{}{
@@ -357,7 +357,7 @@ lines
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												&types.StringElement{Content: "item 1"},
+												&types.StringElement{Content: "element 1"},
 											},
 										},
 									},
@@ -367,7 +367,7 @@ lines
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												&types.StringElement{Content: "item 2"},
+												&types.StringElement{Content: "element 2"},
 											},
 										},
 									},
@@ -379,16 +379,16 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list with custom numbering on child items with tabs ", func() {
+			It("ordered list with custom numbering on child elements with tabs ", func() {
 				// note: the [upperroman] attribute must be at the beginning of the line
-				source := `. item 1
-			.. item 1.1
+				source := `. element 1
+			.. element 1.1
 [upperroman]
-			... item 1.1.1
-			... item 1.1.2
-			.. item 1.2
-			. item 2
-			.. item 2.1`
+			... element 1.1.1
+			... element 1.1.2
+			.. element 1.2
+			. element 2
+			.. element 2.1`
 
 				expected := types.Document{
 					Elements: []interface{}{
@@ -400,7 +400,7 @@ lines
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												&types.StringElement{Content: "item 1"},
+												&types.StringElement{Content: "element 1"},
 											},
 										},
 										&types.GenericList{
@@ -411,7 +411,7 @@ lines
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																&types.StringElement{Content: "item 1.1"},
+																&types.StringElement{Content: "element 1.1"},
 															},
 														},
 														&types.GenericList{
@@ -425,7 +425,7 @@ lines
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				&types.StringElement{Content: "item 1.1.1"},
+																				&types.StringElement{Content: "element 1.1.1"},
 																			},
 																		},
 																	},
@@ -435,7 +435,7 @@ lines
 																	Elements: []interface{}{
 																		&types.Paragraph{
 																			Elements: []interface{}{
-																				&types.StringElement{Content: "item 1.1.2"},
+																				&types.StringElement{Content: "element 1.1.2"},
 																			},
 																		},
 																	},
@@ -449,7 +449,7 @@ lines
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																&types.StringElement{Content: "item 1.2"},
+																&types.StringElement{Content: "element 1.2"},
 															},
 														},
 													},
@@ -463,7 +463,7 @@ lines
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												&types.StringElement{Content: "item 2"},
+												&types.StringElement{Content: "element 2"},
 											},
 										},
 										&types.GenericList{
@@ -474,7 +474,7 @@ lines
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																&types.StringElement{Content: "item 2.1"},
+																&types.StringElement{Content: "element 2.1"},
 															},
 														},
 													},
@@ -677,9 +677,9 @@ lines
 			})
 		})
 
-		Context("numbered items", func() {
+		Context("numbered elements", func() {
 
-			It("ordered list with simple numbered items", func() {
+			It("ordered list with simple numbered elements", func() {
 				source := `1. a
 2. b`
 				expected := types.Document{
@@ -714,7 +714,7 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("max level of ordered items - case 1", func() {
+			It("max level of ordered elements - case 1", func() {
 				source := `.Ordered, max nesting
 . level 1
 .. level 2
@@ -829,11 +829,11 @@ lines
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list with numbered items", func() {
-				source := `1. item 1
-a. item 1.a
-2. item 2
-b. item 2.a`
+			It("ordered list with numbered elements", func() {
+				source := `1. element 1
+a. element 1.a
+2. element 2
+b. element 2.a`
 				expected := types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
@@ -844,7 +844,7 @@ b. item 2.a`
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												&types.StringElement{Content: "item 1"},
+												&types.StringElement{Content: "element 1"},
 											},
 										},
 										&types.GenericList{
@@ -855,7 +855,7 @@ b. item 2.a`
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																&types.StringElement{Content: "item 1.a"},
+																&types.StringElement{Content: "element 1.a"},
 															},
 														},
 													},
@@ -869,7 +869,7 @@ b. item 2.a`
 									Elements: []interface{}{
 										&types.Paragraph{
 											Elements: []interface{}{
-												&types.StringElement{Content: "item 2"},
+												&types.StringElement{Content: "element 2"},
 											},
 										},
 										&types.GenericList{
@@ -880,7 +880,7 @@ b. item 2.a`
 													Elements: []interface{}{
 														&types.Paragraph{
 															Elements: []interface{}{
-																&types.StringElement{Content: "item 2.a"},
+																&types.StringElement{Content: "element 2.a"},
 															},
 														},
 													},
@@ -897,9 +897,9 @@ b. item 2.a`
 			})
 		})
 
-		Context("list item continuation", func() {
+		Context("list element continuation", func() {
 
-			It("ordered list with item continuation - case 1", func() {
+			It("ordered list with element continuation - case 1", func() {
 				source := `. foo
 +
 ----
@@ -961,7 +961,7 @@ another delimited block
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
 			})
 
-			It("ordered list with item continuation - case 2", func() {
+			It("ordered list with element continuation - case 2", func() {
 				source := `. {blank}
 +
 ----

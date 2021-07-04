@@ -55,34 +55,26 @@ func arrangeListElements(elements []interface{}) ([]interface{}, error) {
 	blocks := newBlockStack() // so we can support delimited blocks in list elements, etc.
 
 content:
-	for i, elements := range elements {
+	for i, element := range elements {
 		if log.IsLevelEnabled(log.DebugLevel) {
-			log.WithField("pipeline_task", "arrange_lists").Debugf("arranging element of type '%T'", elements)
+			log.WithField("pipeline_task", "arrange_lists").Debugf("arranging element of type '%T'", element)
 		}
 		// case types.AttributeDeclaration, types.AttributeReset:
 		// 	log.Debug("adding a new fragment with an attribute declaration/reset")
 		// 	result = append(result, types.NewDocumentFragment(f.LineOffset, e))
 
 		// lookup the parent block that can add the given element
-		for {
-			parentBlock := blocks.get()
-			if parentBlock == nil {
-				break
-			}
-			if parentBlock.CanAddElement(elements) {
-				if err := parentBlock.AddElement(elements); err != nil {
-					return nil, fragmentError{
-						err:        errors.Wrap(err, "unable to assemble fragments"),
-						lineOffset: i,
-					}
+		if parentBlock := blocks.parentFor(element); parentBlock != nil {
+			if err := parentBlock.AddElement(element); err != nil {
+				return nil, fragmentError{
+					err:        errors.Wrap(err, "unable to assemble fragments"),
+					lineOffset: i,
 				}
-				continue content
 			}
-			log.Debugf("couldn't add element of type '%T' to block of type '%T'", elements, parentBlock)
-			blocks.pop()
+			continue content
 		}
 
-		switch e := elements.(type) {
+		switch e := element.(type) {
 		// case *types.Section:
 		// 	blocks.push(e)
 		// 	log.Debug("adding a new fragment with a section")
@@ -174,4 +166,19 @@ func (s *blockStack) get() types.WithElements {
 		return nil
 	}
 	return s.stack[s.index]
+}
+
+func (s *blockStack) parentFor(element interface{}) types.WithElements {
+	for {
+		parentBlock := s.get()
+		if parentBlock == nil {
+			break
+		}
+		if parentBlock.CanAddElement(element) {
+			return parentBlock
+		}
+		log.Debugf("can't add element of type '%T' to block of type '%T'", element, parentBlock)
+		s.pop()
+	}
+	return nil
 }
