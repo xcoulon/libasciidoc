@@ -111,7 +111,7 @@ second paragraph
 			source := `first paragraph
  
 second paragraph`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Paragraph{
 						Lines: [][]interface{}{
@@ -138,7 +138,7 @@ second paragraph`
 		
 second paragraph
 `
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Paragraph{
 						Lines: [][]interface{}{

@@ -16,7 +16,7 @@ var _ = Describe("literal blocks", func() {
 
 			It("from 1-line paragraph with single space", func() {
 				source := ` some literal content`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Literal,
@@ -39,7 +39,7 @@ var _ = Describe("literal blocks", func() {
 				source := ` some literal content
 on 3
 lines.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Literal,
@@ -70,7 +70,7 @@ lines.`
   some literal content
 
 a normal paragraph.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Literal,
@@ -108,7 +108,7 @@ a normal paragraph.`
 
 some content
 ....`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Literal,
@@ -130,7 +130,7 @@ some content
 some literal content
 ....
 a normal paragraph.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Literal,
@@ -165,7 +165,7 @@ a normal paragraph.`
 some literal content
 
 a normal paragraph.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Literal,
@@ -200,7 +200,7 @@ some literal content
 on two lines.
 
 a normal paragraph.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Literal,
@@ -251,7 +251,7 @@ and <more text> on the +
 
 <1> a callout
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Attributes: types.Attributes{
 						"github-url": "https://github.com",
 					},
@@ -323,7 +323,7 @@ and <more text> on the +
 
 <1> a callout
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Attributes: types.Attributes{
 						"github-url": "https://github.com",
 					},
@@ -446,7 +446,7 @@ and <more text> on the +
 
 <1> a callout
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Attributes: types.Attributes{
 						"github-url": "https://github.com",
 					},
@@ -524,7 +524,7 @@ and <more text> on the +
 
 <1> a callout
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Attributes: types.Attributes{
 						"github-url": "https://github.com",
 					},
@@ -611,7 +611,7 @@ and <more text> on the +
 
 <1> a callout
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Attributes: types.Attributes{
 						"github-url": "https://github.com",
 					},

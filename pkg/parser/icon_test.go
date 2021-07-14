@@ -15,7 +15,7 @@ var _ = Describe("icons", func() {
 
 			It("inline icon with empty alt only", func() {
 				source := "icon:tip[]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -31,7 +31,7 @@ var _ = Describe("icons", func() {
 
 			It("inline icon with empty alt and trailing spaces", func() {
 				source := "icon:note[]  \t\t  "
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -50,7 +50,7 @@ var _ = Describe("icons", func() {
 
 			It("inline icon with empty alt surrounded by text", func() {
 				source := "beware icon:caution[] of tigers"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -72,7 +72,7 @@ var _ = Describe("icons", func() {
 
 			It("inline icon with size alone", func() {
 				source := "icon:caution[2x]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -89,7 +89,7 @@ var _ = Describe("icons", func() {
 
 			It("inline icon with other attribute (title)", func() {
 				source := "icon:caution[title=\"bogus\"]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -106,7 +106,7 @@ var _ = Describe("icons", func() {
 
 			It("inline icon with anchor attribute", func() {
 				source := "icon:caution[id=anchor]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -125,7 +125,7 @@ var _ = Describe("icons", func() {
 
 			It("inline icon with multiple other attributes", func() {
 				source := "icon:caution[id=anchor,title=\"White Fang\"]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -145,7 +145,7 @@ var _ = Describe("icons", func() {
 
 			It("inline icon with size and multiple other attributes", func() {
 				source := "icon:caution[fw,id=anchor,title=\"White Fang\"]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -166,7 +166,7 @@ var _ = Describe("icons", func() {
 
 			It("inline icon with space after colon", func() {
 				source := "here is my icon: icon:info[]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -185,7 +185,7 @@ var _ = Describe("icons", func() {
 
 			It("inline icon in title works", func() {
 				source := `== a icon:note[] from me`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Section{
 							Attributes: types.Attributes{
@@ -211,7 +211,7 @@ var _ = Describe("icons", func() {
 
 			It("inline icon at title start", func() {
 				source := `= icon:warning[] or what icon:note[] to do`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Section{
 							Level: 0,
@@ -235,7 +235,7 @@ var _ = Describe("icons", func() {
 			It("inline icon as labeled list item description", func() {
 				source := `discount:: icon:tags[alt="Discount"] Cheap cheap!
 item 2:: two`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.LabeledListKind,
@@ -277,7 +277,7 @@ item 2:: two`
 
 			It("inline icon in quoted text", func() {
 				source := `an _italicized icon:warning[] message_`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -300,7 +300,7 @@ item 2:: two`
 			})
 			It("inline icon in marked text", func() {
 				source := `#marked icon:warning[] message#`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -320,7 +320,7 @@ item 2:: two`
 			})
 			It("inline icon in bold text", func() {
 				source := `in *bold icon:warning[] message*`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -341,7 +341,7 @@ item 2:: two`
 			})
 			It("inline icon in monospace text", func() {
 				source := "in `monospace icon:warning[] message`"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{

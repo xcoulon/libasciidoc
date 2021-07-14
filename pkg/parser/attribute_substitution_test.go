@@ -16,7 +16,7 @@ var _ = Describe("attribute substitutions", func() {
 			source := `:author: Xavier
 
 a paragraph written by {author}.`
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					"author": "Xavier",
 				},
@@ -37,7 +37,7 @@ a paragraph written by {author}.`
 :!author1:
 :author2!:
 a paragraph written by {author}.`
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					"author":  "Xavier",
 					"author1": nil,
@@ -65,7 +65,7 @@ This journey continues`
 			title := []interface{}{
 				&types.StringElement{Content: "Document Title"},
 			}
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					"toc":      nil,
 					"keywords": "documentation, team, obstacles, journey, victory",
@@ -133,7 +133,7 @@ author: Xavier
 ---
 
 a paragraph written by {author}.`
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					"author": "Xavier",
 				},

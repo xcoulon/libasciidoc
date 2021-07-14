@@ -16,7 +16,7 @@ var _ = Describe("paragraphs", func() {
 
 			It("form1 by itself", func() {
 				source := "***"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.ThematicBreak{},
 					},
@@ -26,7 +26,7 @@ var _ = Describe("paragraphs", func() {
 
 			It("form2 by itself", func() {
 				source := "* * *"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.ThematicBreak{},
 					},
@@ -36,7 +36,7 @@ var _ = Describe("paragraphs", func() {
 
 			It("form3 by itself", func() {
 				source := "---"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.ThematicBreak{},
 					},
@@ -46,7 +46,7 @@ var _ = Describe("paragraphs", func() {
 
 			It("form4 by itself", func() {
 				source := "- - -"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.ThematicBreak{},
 					},
@@ -56,7 +56,7 @@ var _ = Describe("paragraphs", func() {
 
 			It("form5 by itself", func() {
 				source := "___"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.ThematicBreak{},
 					},
@@ -66,7 +66,7 @@ var _ = Describe("paragraphs", func() {
 
 			It("form4 by itself", func() {
 				source := "_ _ _"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.ThematicBreak{},
 					},
@@ -76,7 +76,7 @@ var _ = Describe("paragraphs", func() {
 
 			It("with leading text", func() {
 				source := "text ***"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -91,7 +91,7 @@ var _ = Describe("paragraphs", func() {
 			// NB: three asterisks gets confused with bullets if with trailing text
 			It("with trailing text", func() {
 				source := "* * * text"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,

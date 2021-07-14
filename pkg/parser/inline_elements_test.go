@@ -14,7 +14,7 @@ var _ = Describe("inline elements", func() {
 
 		It("bold text without parenthesis", func() {
 			source := "*some bold content*"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -33,7 +33,7 @@ var _ = Describe("inline elements", func() {
 
 		It("bold text within parenthesis", func() {
 			source := "(*some bold content*)"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -54,7 +54,7 @@ var _ = Describe("inline elements", func() {
 
 		It("non-bold text within words", func() {
 			source := "some*bold*content"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -68,7 +68,7 @@ var _ = Describe("inline elements", func() {
 
 		It("non-italic text within words", func() {
 			source := "some_italic_content"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -81,7 +81,7 @@ var _ = Describe("inline elements", func() {
 		})
 		It("non-monospace text within words", func() {
 			source := "some`monospace`content"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -95,7 +95,7 @@ var _ = Describe("inline elements", func() {
 
 		It("invalid bold portion of text", func() {
 			source := "*foo*bar"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -109,7 +109,7 @@ var _ = Describe("inline elements", func() {
 
 		It("valid bold portion of text", func() {
 			source := "**foo**bar"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -129,7 +129,7 @@ var _ = Describe("inline elements", func() {
 
 		It("latin characters", func() {
 			source := "à bientôt"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{

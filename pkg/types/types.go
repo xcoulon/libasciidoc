@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
@@ -127,12 +126,16 @@ type WithAttributes interface {
 	GetAttributes() Attributes
 	SetAttributes(Attributes)
 }
+
+type WithElementAddition interface {
+	CanAddElement(interface{}) bool
+	AddElement(interface{}) error
+}
 type WithElements interface {
 	WithAttributes
 	GetElements() []interface{}
 	SetElements([]interface{}) error
-	AddElement(interface{}) error
-	CanAddElement(interface{}) bool
+	WithElementAddition
 }
 
 type WithLocation interface {
@@ -351,7 +354,7 @@ type Document struct {
 }
 
 // Authors retrieves the document authors from the document header, or empty array if no author was found
-func (d Document) Authors() ([]DocumentAuthor, bool) {
+func (d *Document) Authors() ([]DocumentAuthor, bool) {
 	if authors, ok := d.Attributes[AttrAuthors].([]DocumentAuthor); ok {
 		return authors, true
 	}
@@ -360,14 +363,79 @@ func (d Document) Authors() ([]DocumentAuthor, bool) {
 
 // Header returns the header, i.e., the section with level 0 if it found as the first element of the document
 // For manpage documents, this also includes the first section (`Name` along with its first paragraph)
-func (d Document) Header() (Section, bool) {
+func (d *Document) Header() (*Section, bool) {
 	if len(d.Elements) == 0 {
-		return Section{}, false
+		return nil, false
 	}
-	if section, ok := d.Elements[0].(Section); ok && section.Level == 0 {
+	if section, ok := d.Elements[0].(*Section); ok && section.Level == 0 {
 		return section, true
 	}
-	return Section{}, false
+	return nil, false
+}
+
+var _ WithElementAddition = &Document{}
+
+func (d *Document) CanAddElement(element interface{}) bool {
+	return true
+}
+
+func (d *Document) AddElement(element interface{}) error {
+	d.Elements = append(d.Elements, element)
+	return nil
+}
+
+func (d *Document) InsertPreamble() {
+	if header, ok := d.Header(); ok {
+		header.Elements = insertPreamble(header.Elements)
+		d.Elements[0] = header // need to update the header in the parent doc as we don't use pointers here.
+	} else {
+		d.Elements = insertPreamble(d.Elements)
+	}
+}
+
+func insertPreamble(blocks []interface{}) []interface{} {
+	preamble := &Preamble{
+		Elements: make([]interface{}, 0, len(blocks)),
+	}
+	for _, block := range blocks {
+		switch block.(type) {
+		case *Section:
+			break
+		default:
+			preamble.Elements = append(preamble.Elements, block)
+		}
+	}
+	// no element in the preamble, or no section in the document, so no preamble to generate
+	if len(preamble.Elements) == 0 || len(preamble.Elements) == len(blocks) {
+		return blocks
+	}
+	// now, insert the preamble instead of the 'n' blocks that belong to the preamble
+	// and copy the other items
+	result := make([]interface{}, len(blocks)-len(preamble.Elements)+1)
+	result[0] = preamble
+	copy(result[1:], blocks[len(preamble.Elements):])
+	return result
+}
+
+func (d *Document) InsertTableOfContents(toc *TableOfContents) {
+	if toc == nil {
+		return
+	}
+	position := d.Attributes.GetAsStringWithDefault(AttrTableOfContents, "")
+	if header, ok := d.Header(); ok {
+		header.Elements = insertTableOfContents(header.Elements, toc, position)
+		d.Elements[0] = header // need to update the header in the parent doc as we don't use pointers here.
+	} else {
+		d.Elements = insertTableOfContents(d.Elements, toc, position)
+	}
+
+}
+
+func insertTableOfContents(blocks []interface{}, toc *TableOfContents, position string) []interface{} {
+	result := make([]interface{}, len(blocks)+1)
+	result[0] = toc
+	copy(result[1:], blocks)
+	return result
 }
 
 // ------------------------------------------
@@ -385,7 +453,7 @@ type Metadata struct {
 
 // TableOfContents the table of contents
 type TableOfContents struct {
-	Sections []ToCSection
+	Sections []*ToCSection
 }
 
 // ToCSection a section in the table of contents
@@ -393,7 +461,30 @@ type ToCSection struct {
 	ID       string
 	Level    int
 	Title    string // the title as it was rendered in HTML
-	Children []ToCSection
+	Children []*ToCSection
+}
+
+// Add adds a ToCSection associated with the given Section
+func (t *TableOfContents) Add(s *Section) {
+	ts := &ToCSection{
+		ID:    s.GetAttributes().GetAsStringWithDefault(AttrID, ""),
+		Level: s.Level,
+		Title: stringify(s.Title),
+	}
+	// lookup the last child at the given section's level
+	if len(t.Sections) == 0 {
+		t.Sections = []*ToCSection{ts}
+		return
+	}
+	parent := t.Sections[len(t.Sections)-1]
+	for i := 1; i < s.Level; i++ {
+		if len(parent.Children) == 0 {
+			parent.Children = []*ToCSection{ts}
+			return
+		}
+		parent = parent.Children[len(parent.Children)-1]
+	}
+	parent.Children = append(parent.Children, ts)
 }
 
 // ------------------------------------------
@@ -621,7 +712,7 @@ type Preamble struct {
 
 // HasContent returns `true` if this Preamble has at least one element which is neither a
 // BlankLine nor a AttributeDeclaration
-func (p Preamble) HasContent() bool {
+func (p *Preamble) HasContent() bool {
 	for _, pe := range p.Elements {
 		switch pe.(type) {
 		case *BlankLine:
@@ -2409,7 +2500,7 @@ func (f *Footnotes) Reference(note Footnote) FootnoteReference {
 		ref.Duplicate = true
 	} else {
 		ref.ID = InvalidFootnoteReference
-		logrus.Warnf("no footnote with reference '%s'", note.Ref)
+		log.Warnf("no footnote with reference '%s'", note.Ref)
 	}
 	ref.Ref = note.Ref
 	return ref
@@ -3122,10 +3213,13 @@ func NewSection(level int, title []interface{}, ids []interface{}) (*Section, er
 	// if _, exists := attrs[AttrID]; exists {
 	// 	attrs[AttrCustomID] = true
 	// }
+	attrs := Attributes{}
+	// set the default ID
+
 	return &Section{
-		Level: level,
-		// Attributes: attrs,
-		Title: title,
+		Level:      level,
+		Attributes: attrs,
+		Title:      title,
 		// Elements: []interface{}{},
 	}, nil
 }
@@ -3138,7 +3232,6 @@ func (s *Section) GetElements() []interface{} {
 }
 
 // SetElements sets this section's title
-// TODO: set ID attribute
 func (s *Section) SetElements(title []interface{}) error {
 	s.Title = title
 	return nil
@@ -3168,24 +3261,60 @@ func (s *Section) SetAttributes(attributes Attributes) {
 }
 
 // ResolveID resolves/updates the "ID" attribute in the section (in case the title changed after some document attr substitution)
-func (s Section) ResolveID(docAttributes AttributesWithOverrides) (Section, error) {
+func (s *Section) ResolveID(docAttributes Attributes, refs ElementReferences) error {
+	base, err := s.resolveID(docAttributes)
+	if err != nil {
+		return err
+	}
+
+	for i := 1; ; i++ {
+		var id string
+		if i == 1 {
+			id = base
+		} else {
+			id = base + "_" + strconv.Itoa(i)
+		}
+		if _, exists := refs[id]; !exists {
+			refs[id] = s.Title
+			s.Attributes[AttrID] = id
+			break
+		}
+	}
+	log.Debugf("updated section id to '%s'", s.Attributes[AttrID])
+	return nil
+}
+
+// resolveID resolves/updates the "ID" attribute in the section (in case the title changed after some document attr substitution)
+func (s *Section) resolveID(docAttributes Attributes) (string, error) {
 	// if log.IsLevelEnabled(log.DebugLevel) {
 	// 	log.Debugf("section attributes:")
 	// 	spew.Fdump(log.StandardLogger().Out, s.Attributes)
 	// }
 
-	if !s.Attributes.Has(AttrID) {
-		// log.Debugf("resolving section id")
-		separator := docAttributes.GetAsStringWithDefault(AttrIDSeparator, DefaultIDSeparator)
-		replacement, err := ReplaceNonAlphanumerics(s.Title, separator)
-		if err != nil {
-			return s, errors.Wrapf(err, "failed to generate default ID on Section element")
-		}
-		idPrefix := docAttributes.GetAsStringWithDefault(AttrIDPrefix, DefaultIDPrefix)
-		s.Attributes = s.Attributes.Set(AttrID, idPrefix+replacement)
-		// log.Debugf("updated section id to '%s'", s.Attributes[AttrID])
+	if s.Attributes == nil {
+		s.Attributes = Attributes{}
 	}
-	return s, nil
+	// block attribute
+	if id := s.Attributes.GetAsStringWithDefault(AttrID, ""); id != "" {
+		return id, nil
+	}
+	// inline attribute
+	if id, ok := s.Title[len(s.Title)-1].(*Attribute); ok {
+		sectionID := stringify(id.Value)
+		s.Attributes[AttrID] = sectionID
+		return sectionID, nil
+	}
+	log.Debugf("resolving section id")
+	separator := docAttributes.GetAsStringWithDefault(AttrIDSeparator, DefaultIDSeparator)
+	replacement, err := ReplaceNonAlphanumerics(s.Title, separator)
+	if err != nil {
+		return "", errors.Wrapf(err, "failed to generate default ID on Section element")
+	}
+	idPrefix := docAttributes.GetAsStringWithDefault(AttrIDPrefix, DefaultIDPrefix)
+	id := idPrefix + replacement
+	s.Attributes[AttrID] = id
+	log.Debugf("updated section id to '%s'", s.Attributes[AttrID])
+	return id, nil
 }
 
 // CanAddElement checks if the given element can be added
@@ -3833,7 +3962,7 @@ func NewInlineLinkAttributes(attributes []interface{}) (Attributes, error) {
 	for i, attr := range attributes {
 		// log.Debugf("new inline link attribute: '%[1]v' (%[1]T)", attr)
 		switch attr := attr.(type) {
-		case Attribute:
+		case *Attribute:
 			result[attr.Key] = attr.Value
 		case Attributes:
 			for k, v := range attr {

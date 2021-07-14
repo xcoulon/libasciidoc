@@ -14,7 +14,7 @@ var _ = Describe("index terms", func() {
 
 		It("index term in existing paragraph line", func() {
 			source := `a paragraph with an ((index)) term.`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Paragraph{
 						Lines: [][]interface{}{
@@ -42,7 +42,7 @@ var _ = Describe("index terms", func() {
 		It("index term in single paragraph line", func() {
 			source := `((foo_bar_baz _italic_ normal))
 a paragraph with an index term.`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Paragraph{
 						Lines: [][]interface{}{
@@ -86,7 +86,7 @@ var _ = Describe("concealed index terms", func() {
 
 		It("concealed index term in existing paragraph line", func() {
 			source := `a paragraph with an index term (((index, term, here))).`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Paragraph{
 						Lines: [][]interface{}{
@@ -113,7 +113,7 @@ var _ = Describe("concealed index terms", func() {
 		It("concealed index term in separate paragraph line", func() {
 			source := `(((index, term)))
 a paragraph with an index term.`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Paragraph{
 						Lines: [][]interface{}{

@@ -23,7 +23,7 @@ get '/hi' do
   "Hello World!"
 end
 ----`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.ListingBlock{
 							Attributes: types.Attributes{
@@ -59,7 +59,7 @@ get '/hi' do
   "Hello World!"
 end
 ----`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.ListingBlock{
 							Attributes: types.Attributes{
@@ -98,7 +98,7 @@ get '/hi' do
   "Hello World!"
 end
 ----`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.ListingBlock{
 							Attributes: types.Attributes{
@@ -139,7 +139,7 @@ const cookies = "cookies" <1>
 a note
 ====`
 
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.ListingBlock{
 							Attributes: types.Attributes{

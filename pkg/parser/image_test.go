@@ -14,7 +14,7 @@ var _ = Describe("block images", func() {
 
 		It("with empty alt", func() {
 			source := "image::images/foo.png[]"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.ImageBlock{
 						Location: &types.Location{
@@ -32,7 +32,7 @@ var _ = Describe("block images", func() {
 			source := `:alt: the foo.png image
 			
 image::images/foo.png[{alt}]`
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					"alt": "the foo.png image",
 				},
@@ -61,7 +61,7 @@ image::images/foo.png[{alt}]`
 :imagesdir: ./path/to/images
 
 image::foo.png[]`
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					"imagesdir": "./path/to/images",
 				},
@@ -89,7 +89,7 @@ image::foo.png[]`
 :dir: ./path/to/images
 
 image::{dir}/foo.png[]`
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					"dir": "./path/to/images",
 				},
@@ -115,7 +115,7 @@ image::{dir}/foo.png[]`
 :imagesdir: ./path/to/images
 
 image::foo.png[]`
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					"imagesdir": "./path/to/images",
 				},
@@ -141,7 +141,7 @@ image::foo.png[]`
 :imagesdir: ./path/to/images
 
 image::{imagesdir}/foo.png[]`
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					"imagesdir": "./path/to/images",
 				},
@@ -165,7 +165,7 @@ image::{imagesdir}/foo.png[]`
 		It("2 block images", func() {
 			source := `image::images/foo.png[]
 image::images/bar.png[]`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.ImageBlock{
 						Location: &types.Location{
@@ -191,7 +191,7 @@ image::images/bar.png[]`
 
 		It("appending inline content", func() {
 			source := "a paragraph\nimage::images/foo.png[]"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -207,7 +207,7 @@ image::images/bar.png[]`
 
 		It("paragraph with block image with alt and dimensions", func() {
 			source := "a foo image::foo.png[foo image, 600, 400] bar"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -227,7 +227,7 @@ var _ = Describe("inline images", func() {
 
 		It("with empty alt only", func() {
 			source := "image:images/foo.png[]"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -250,7 +250,7 @@ var _ = Describe("inline images", func() {
 :dir: ./path/to/images
 
 an image:{dir}/foo.png[].`
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					"dir": "./path/to/images",
 				},
@@ -278,7 +278,7 @@ an image:{dir}/foo.png[].`
 :imagesdir: ./path/to/images
 
 an image:foo.png[].`
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					"imagesdir": "./path/to/images",
 				},
@@ -307,7 +307,7 @@ an image:foo.png[].`
 :imagesdir: ./path/to/images
 
 an image:{imagesdir}/foo.png[].`
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					"imagesdir": "./path/to/images",
 				},
@@ -335,7 +335,7 @@ an image:{imagesdir}/foo.png[].`
 			source := `:path: ./path/to/images
 
 image:{path}/foo.png[]`
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					"path": "./path/to/images",
 				},

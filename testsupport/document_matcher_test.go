@@ -15,7 +15,7 @@ import (
 var _ = Describe("document matcher", func() {
 
 	// given
-	expected := types.Document{
+	expected := &types.Document{
 		Elements: []interface{}{
 			types.Paragraph{
 				Lines: [][]interface{}{
@@ -32,7 +32,7 @@ var _ = Describe("document matcher", func() {
 
 	It("should match", func() {
 		// given
-		actual := types.Document{
+		actual := &types.Document{
 			Elements: []interface{}{
 				types.Paragraph{
 					Lines: [][]interface{}{
@@ -54,7 +54,7 @@ var _ = Describe("document matcher", func() {
 
 	It("should not match", func() {
 		// given
-		actual := types.Document{
+		actual := &types.Document{
 			Elements: []interface{}{
 				types.Paragraph{
 					Lines: [][]interface{}{

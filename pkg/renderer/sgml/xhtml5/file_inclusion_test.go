@@ -36,12 +36,12 @@ var _ = Describe("file inclusions", func() {
 			Title:       "",
 			LastUpdated: lastUpdated.Format(configuration.LastUpdatedFormat),
 			TableOfContents: types.TableOfContents{
-				Sections: []types.ToCSection{
+				Sections: []*types.ToCSection{
 					{
 						ID:       "_grandchild_title",
 						Level:    1,
 						Title:    "grandchild title",
-						Children: []types.ToCSection{},
+						Children: []*types.ToCSection{},
 					},
 				},
 			},

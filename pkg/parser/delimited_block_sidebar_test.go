@@ -18,7 +18,7 @@ var _ = Describe("sidebar blocks", func() {
 				source := `****
 some *verse* content
 ****`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.SidebarBlock{
 							Elements: []interface{}{
@@ -59,7 +59,7 @@ foo
 bar
 ----
 ****`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.SidebarBlock{
 							Attributes: types.Attributes{
@@ -109,7 +109,7 @@ bar
 ****
 .foo
 ****`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.SidebarBlock{
 							Elements: []interface{}{},
@@ -128,7 +128,7 @@ bar
 				source := `****
 some *verse* content
 ****`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.SidebarBlock{
 							Elements: []interface{}{
@@ -169,7 +169,7 @@ foo
 bar
 ----
 ****`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.SidebarBlock{
 							Attributes: types.Attributes{
@@ -219,7 +219,7 @@ bar
 ****
 .foo
 ****`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.SidebarBlock{
 							Elements: []interface{}{},

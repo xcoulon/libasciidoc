@@ -16,7 +16,7 @@ var _ = Describe("unordered lists", func() {
 
 			It("with a basic single item", func() {
 				source := `* a list element`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -44,7 +44,7 @@ var _ = Describe("unordered lists", func() {
 [#listID]
 [.myrole]
 * a list element`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -75,7 +75,7 @@ var _ = Describe("unordered lists", func() {
 			It("with a title and a single item", func() {
 				source := `.a title
 	* a list element`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -104,7 +104,7 @@ var _ = Describe("unordered lists", func() {
 			It("with 2 items with stars", func() {
 				source := `* a first item
 					* a second item with *bold content*`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -154,7 +154,7 @@ var _ = Describe("unordered lists", func() {
 		*** nested nested list element B.1
 		*** nested nested list element B.2
 		* list element 2`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -275,7 +275,7 @@ var _ = Describe("unordered lists", func() {
 			It("with 2 items with carets", func() {
 				source := "- a first item\n" +
 					"- a second item with *bold content*"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -321,7 +321,7 @@ var _ = Describe("unordered lists", func() {
 					- another parent item
 					* another child item
 					** with a sub child item`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -408,7 +408,7 @@ var _ = Describe("unordered lists", func() {
 				source := "* a first item\n" +
 					"\n" +
 					"* a second item with *bold content*"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -452,7 +452,7 @@ var _ = Describe("unordered lists", func() {
   on 2 lines.
 * item 2
 on 2 lines, too.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -491,7 +491,7 @@ on 2 lines, too.`
 					"\n" +
 					"\n" +
 					"* an item in the second list"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -534,7 +534,7 @@ on 2 lines, too.`
 	** item 1.4
 	* item 2
 	** item 2.1`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -657,7 +657,7 @@ on 2 lines, too.`
 **** level 4
 ***** level 5
 * level 1`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -766,7 +766,7 @@ on 2 lines, too.`
 **** level 4
 ***** level 5
 ** level 2`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -869,7 +869,7 @@ on 2 lines, too.`
 
 			It("unordered list element with predefined attribute", func() {
 				source := `* {amp}`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -900,7 +900,7 @@ on 2 lines, too.`
 					*** item 1.1.1
 					** item 1.2
 					* item 2`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -979,7 +979,7 @@ on 2 lines, too.`
 
 			It("invalid list element", func() {
 				source := "*an invalid list element"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -1006,7 +1006,7 @@ another delimited block
 ----
 * bar
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -1076,7 +1076,7 @@ The {plus} symbol is on a new line.
 
 ***** level 5
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -1211,7 +1211,7 @@ a delimited block
 ----
 another delimited block
 ----`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -1278,7 +1278,7 @@ another delimited block
 
 +
 paragraph attached to grandparent list element`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -1346,7 +1346,7 @@ paragraph attached to grandparent list element`
 
 +
 paragraph attached to parent list element`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,

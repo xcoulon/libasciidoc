@@ -7,7 +7,7 @@ import (
 )
 
 // rearrangeSections moves elements into section to obtain a hierarchical document instead of a flat thing
-func rearrangeSections(blocks []interface{}) (types.Document, error) {
+func rearrangeSections(blocks []interface{}) (*types.Document, error) {
 
 	// use same logic as with list items:
 	// only append a child section to her parent section when
@@ -22,7 +22,7 @@ func rearrangeSections(blocks []interface{}) (types.Document, error) {
 		if e, ok := element.(types.Section); ok {
 			// avoid duplicate IDs in sections
 			if err := referenceSection(&e, elementRefs); err != nil {
-				return types.Document{}, err
+				return &types.Document{}, err
 			}
 			if previous == nil { // set first parent
 				// log.Debugf("setting section with title %v as a top-level element", e.Title)
@@ -60,7 +60,7 @@ func rearrangeSections(blocks []interface{}) (types.Document, error) {
 	if len(elementRefs) == 0 {
 		elementRefs = nil
 	}
-	return types.Document{
+	return &types.Document{
 		Elements:          tle,
 		ElementReferences: elementRefs,
 	}, nil

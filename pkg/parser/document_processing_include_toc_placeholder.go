@@ -7,14 +7,14 @@ import (
 
 // IncludeTableOfContentsPlaceHolder includes a `TableOfContentsPlaceHolder` block in the document
 // if the `toc` attribute is present
-func includeTableOfContentsPlaceHolder(doc types.Document) types.Document {
+func includeTableOfContentsPlaceHolder(doc *types.Document) *types.Document {
 	if t, found := doc.Attributes[types.AttrTableOfContents]; found {
 		doc = doInsertTableOfContentsPlaceHolder(doc, t)
 	}
 	return doc
 }
 
-func doInsertTableOfContentsPlaceHolder(doc types.Document, location interface{}) types.Document {
+func doInsertTableOfContentsPlaceHolder(doc *types.Document, location interface{}) *types.Document {
 	// insert a TableOfContentsPlaceHolder element if `toc` value is:
 	// - "auto" (or `nil`)
 	// - "preamble"

@@ -14,7 +14,7 @@ var _ = Describe("quoted strings", func() {
 
 		It("simple single quoted string", func() {
 			source := "'`curly was single`'"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -32,7 +32,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("interior spaces with single quoted string", func() {
 			source := "'` curly was single `'"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -46,7 +46,7 @@ var _ = Describe("quoted strings", func() {
 
 		It("interior ending space with single quoted string", func() {
 			source := "'`curly was single `'"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -60,7 +60,7 @@ var _ = Describe("quoted strings", func() {
 
 		It("interior leading space with single quoted string", func() {
 			source := "'` curly was single`'"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -74,7 +74,7 @@ var _ = Describe("quoted strings", func() {
 
 		It("bold in single quoted string", func() {
 			source := "'`curly *was* single`'"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -100,7 +100,7 @@ var _ = Describe("quoted strings", func() {
 
 		It("italics in single quoted string", func() {
 			source := "'`curly _was_ single`'"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -125,7 +125,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("span in single quoted string", func() {
 			source := "'`curly [.strikeout]#was#_is_ single`'"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -168,7 +168,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("curly in monospace string", func() {
 			source := "'`curly `is` single`'"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -193,7 +193,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("curly as monospace string", func() {
 			source := "'``curly``'"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -217,7 +217,7 @@ var _ = Describe("quoted strings", func() {
 
 		It("curly with nested double curly", func() {
 			source := "'`single\"`double`\"`'"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -242,7 +242,7 @@ var _ = Describe("quoted strings", func() {
 
 		It("curly in monospace string", func() {
 			source := "`'`curly`'`"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -265,7 +265,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("curly in italics", func() {
 			source := "_'`curly`'_"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -288,7 +288,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("curly in bold", func() {
 			source := "*'`curly`'*"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -312,7 +312,7 @@ var _ = Describe("quoted strings", func() {
 
 		It("curly in link", func() {
 			source := "https://www.example.com/a['`example`']"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -344,7 +344,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("curly in quoted link", func() {
 			source := "https://www.example.com/a[\"an '`example`'\"]"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -380,7 +380,7 @@ var _ = Describe("quoted strings", func() {
 
 		It("image in curly", func() {
 			source := "'`a image:foo.png[]`'"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -408,7 +408,7 @@ var _ = Describe("quoted strings", func() {
 
 		It("icon in curly", func() {
 			source := "'`a icon:note[]`'"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -430,7 +430,7 @@ var _ = Describe("quoted strings", func() {
 
 		It("simple double quoted string", func() {
 			source := "\"`curly was single`\""
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -449,7 +449,7 @@ var _ = Describe("quoted strings", func() {
 
 		It("interior spaces with double quoted string", func() {
 			source := "\"` curly was single `\""
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -462,7 +462,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("interior ending space with double quoted string", func() {
 			source := "\"`curly was single `\""
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -475,7 +475,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("interior leading space with double quoted string", func() {
 			source := "\"` curly was single`\""
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -489,7 +489,7 @@ var _ = Describe("quoted strings", func() {
 
 		It("bold in double quoted string", func() {
 			source := "\"`curly *was* single`\""
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -514,7 +514,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("italics in double quoted string", func() {
 			source := "\"`curly _was_ single`\""
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -540,7 +540,7 @@ var _ = Describe("quoted strings", func() {
 
 		It("span in double quoted string", func() {
 			source := "\"`curly [.strikeout]#was#_is_ single`\""
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -583,7 +583,7 @@ var _ = Describe("quoted strings", func() {
 
 		It("double curly in monospace string", func() {
 			source := "\"`curly `is` single`\""
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -608,7 +608,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("double curly as monospace string", func() {
 			source := "\"``curly``\""
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -631,7 +631,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("double curly with nested single curly", func() {
 			source := "\"`double'`single`'`\""
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -655,7 +655,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("double curly in monospace string", func() {
 			source := "`\"`curly`\"`"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -678,7 +678,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("double curly in italics", func() {
 			source := "_\"`curly`\"_"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -701,7 +701,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("double curly in bold", func() {
 			source := "*\"`curly`\"*"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -727,7 +727,7 @@ var _ = Describe("quoted strings", func() {
 		// the link text.  Nest them explicitly if this is needed.
 		It("double curly in link (becomes mono)", func() {
 			source := "https://www.example.com/a[\"`example`\"]"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -761,7 +761,7 @@ var _ = Describe("quoted strings", func() {
 		// This is the unambiguous form.
 		It("curly in quoted link", func() {
 			source := "https://www.example.com/a[\"\"`example`\"\"]"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -793,7 +793,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("image in double curly", func() {
 			source := "\"`a image:foo.png[]`\""
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -820,7 +820,7 @@ var _ = Describe("quoted strings", func() {
 		})
 		It("icon in double curly", func() {
 			source := "\"`a icon:note[]`\""
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -843,7 +843,7 @@ var _ = Describe("quoted strings", func() {
 
 	It("curly in title", func() {
 		source := "== a '`curly`' episode"
-		expected := types.Document{
+		expected := &types.Document{
 			Elements: []interface{}{
 				types.Section{
 					Attributes: types.Attributes{
@@ -868,7 +868,7 @@ var _ = Describe("quoted strings", func() {
 
 	It("curly in list element", func() {
 		source := "* a '`curly`' episode"
-		expected := types.Document{
+		expected := &types.Document{
 			Elements: []interface{}{
 				&types.GenericList{
 					Kind: types.OrderedListKind,
@@ -900,7 +900,7 @@ var _ = Describe("quoted strings", func() {
 
 	It("curly in labeled list", func() {
 		source := "'`term`':: something '`quoted`'"
-		expected := types.Document{
+		expected := &types.Document{
 			Elements: []interface{}{
 				&types.GenericList{
 					Kind: types.LabeledListKind,
@@ -932,7 +932,7 @@ var _ = Describe("quoted strings", func() {
 
 	It("double curly in title", func() {
 		source := "== a \"`curly`\" episode"
-		expected := types.Document{
+		expected := &types.Document{
 			Elements: []interface{}{
 				types.Section{
 					Attributes: types.Attributes{
@@ -957,7 +957,7 @@ var _ = Describe("quoted strings", func() {
 
 	It("double curly in labeled list", func() {
 		source := "\"`term`\":: something \"`quoted`\""
-		expected := types.Document{
+		expected := &types.Document{
 			Elements: []interface{}{
 				types.LabeledListElement{
 					Term: []interface{}{
@@ -984,7 +984,7 @@ var _ = Describe("quoted strings", func() {
 
 	It("double in list element", func() {
 		source := "* a \"`curly`\" episode"
-		expected := types.Document{
+		expected := &types.Document{
 			Elements: []interface{}{
 				&types.GenericList{
 					Kind: types.OrderedListKind,

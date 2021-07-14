@@ -24,7 +24,7 @@ type Context struct {
 }
 
 // NewContext returns a new rendering context for the given document.
-func NewContext(doc types.Document, config configuration.Configuration) *Context {
+func NewContext(doc *types.Document, config configuration.Configuration) *Context {
 	_, hasHeader := doc.Header()
 	return &Context{
 		Config:             config,

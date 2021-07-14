@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("parse document", func() {
 
-	expected := types.Document{
+	expected := &types.Document{
 		Elements: []interface{}{
 			&types.Paragraph{
 				Elements: []interface{}{

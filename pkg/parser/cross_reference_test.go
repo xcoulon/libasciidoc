@@ -19,7 +19,7 @@ var _ = Describe("cross references", func() {
 == a title
 
 with some content linked to <<thetitle>>!`
-				expected := types.Document{
+				expected := &types.Document{
 					ElementReferences: types.ElementReferences{
 						"thetitle": []interface{}{
 							&types.StringElement{
@@ -31,8 +31,8 @@ with some content linked to <<thetitle>>!`
 						types.Section{
 							Level: 1,
 							Attributes: types.Attributes{
-								types.AttrID:       "thetitle",
-								types.AttrCustomID: true,
+								types.AttrID: "thetitle",
+								// types.AttrCustomID: true,
 							},
 							Title: []interface{}{
 								&types.StringElement{
@@ -67,7 +67,7 @@ with some content linked to <<thetitle>>!`
 == a title
 
 with some content linked to <<thetitle,a label to the title>>!`
-				expected := types.Document{
+				expected := &types.Document{
 					ElementReferences: types.ElementReferences{
 						"thetitle": []interface{}{
 							&types.StringElement{
@@ -79,8 +79,8 @@ with some content linked to <<thetitle,a label to the title>>!`
 						types.Section{
 							Level: 1,
 							Attributes: types.Attributes{
-								types.AttrID:       "thetitle",
-								types.AttrCustomID: true,
+								types.AttrID: "thetitle",
+								// types.AttrCustomID: true,
 							},
 							Title: []interface{}{
 								&types.StringElement{
@@ -116,7 +116,7 @@ with some content linked to <<thetitle,a label to the title>>!`
 
 			It("external cross reference to other doc with plain text location and rich label", func() {
 				source := `some content linked to xref:another-doc.adoc[*another doc*]!`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
@@ -156,7 +156,7 @@ with some content linked to <<thetitle,a label to the title>>!`
 
 			It("external cross reference to other doc with document attribute in location", func() {
 				source := `some content linked to xref:{foo}.adoc[another doc]!`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
@@ -190,7 +190,7 @@ with some content linked to <<thetitle,a label to the title>>!`
 :foo: another-doc.adoc
 
 some content linked to xref:{foo}[another_doc()]!`
-				expected := types.Document{
+				expected := &types.Document{
 					Attributes: types.Attributes{
 						"foo": "another-doc.adoc",
 					},

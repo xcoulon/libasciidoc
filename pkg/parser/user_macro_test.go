@@ -21,7 +21,7 @@ var _ = Describe("user macros", func() {
 
 			It("without attributes", func() {
 				source := "AAA hello:[]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
@@ -45,7 +45,7 @@ var _ = Describe("user macros", func() {
 
 			It("with double quoted attributes", func() {
 				source := `AAA hello:[prefix="hello ",suffix="!!"]`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
@@ -72,7 +72,7 @@ var _ = Describe("user macros", func() {
 
 			It("with value", func() {
 				source := `AAA hello:JohnDoe[]`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
@@ -95,7 +95,7 @@ var _ = Describe("user macros", func() {
 
 			It("with value and attributes", func() {
 				source := "repository: git:some/url.git[key1=value1,key2=value2]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
@@ -123,7 +123,7 @@ var _ = Describe("user macros", func() {
 
 			It("unknown", func() {
 				source := "AAA hello:[]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
@@ -145,7 +145,7 @@ var _ = Describe("user macros", func() {
 			It("without value", func() {
 
 				source := "git::[]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.UserMacro{
 							Kind:    types.BlockMacro,
@@ -160,7 +160,7 @@ var _ = Describe("user macros", func() {
 
 			It("with value and attributes", func() {
 				source := "git::some/url.git[key1=value1,key2=value2]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.UserMacro{
 							Kind:  types.BlockMacro,
@@ -179,7 +179,7 @@ var _ = Describe("user macros", func() {
 
 			It("with attribute", func() {
 				source := `git::[key1="value1"]`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.UserMacro{
 							Kind:  types.BlockMacro,
@@ -197,7 +197,7 @@ var _ = Describe("user macros", func() {
 
 			It("with value", func() {
 				source := `git::some/url.git[]`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.UserMacro{
 							Kind:    types.BlockMacro,
@@ -213,7 +213,7 @@ var _ = Describe("user macros", func() {
 			It("unknown", func() {
 
 				source := "git::[]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{

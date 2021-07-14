@@ -21,7 +21,7 @@ var _ = Describe("mixed lists", func() {
 . Item 2
 * Item C
 * Item D`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -110,7 +110,7 @@ var _ = Describe("mixed lists", func() {
 			It("unordered list item and order list item with roman numbering", func() {
 				source := `- unordered list item
  II) ordered list item`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -168,7 +168,7 @@ var _ = Describe("mixed lists", func() {
 	4. ordered 1.4
 	- unordered 2
 	* unordered 2.1`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -348,7 +348,7 @@ ii) ordered 1.2.ii
 .. ordered 3.2.I
 .. ordered 3.2.II
 . ordered 3.3`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -620,7 +620,7 @@ ii) ordered 1.2.ii
 Operating Systems::
   . Fedora
     * Desktop`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.LabeledListKind,
@@ -703,7 +703,7 @@ Cloud Providers::
 	
 a paragraph
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.LabeledListKind,
@@ -969,7 +969,7 @@ a paragraph
 	. Five
 	.. a
 	. Six`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{ // a single ordered list
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -1034,7 +1034,7 @@ a paragraph
 .. a
 .. b
 . Six`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{ // a single ordered list
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -1113,7 +1113,7 @@ a paragraph
 [upperalpha]
 .. a
 . Six`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{ // a single ordered list
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -1187,7 +1187,7 @@ a paragraph
 .Ordered, basic
 . Step 1
 . Step 2`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.UnorderedListKind,
@@ -1264,7 +1264,7 @@ a paragraph
 				source := `. a
 // -
 . b`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -1309,7 +1309,7 @@ a paragraph
 // -
 // -
 . b`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -1359,7 +1359,7 @@ a paragraph
 	
 // -
 . b`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -1410,7 +1410,7 @@ a paragraph
 // -
 // -
 . b`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,

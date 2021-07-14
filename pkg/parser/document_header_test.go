@@ -23,12 +23,12 @@ This journey continues.`
 				Title := []interface{}{
 					&types.StringElement{Content: "Title"},
 				}
-				expected := types.Document{
+				expected := &types.Document{
 					ElementReferences: types.ElementReferences{
 						"_document_Title": Title,
 					},
 					Elements: []interface{}{
-						types.Section{
+						&types.Section{
 							Level: 0,
 							Attributes: types.Attributes{
 								types.AttrID: "_document_Title",
@@ -61,7 +61,7 @@ John  Foo    Doe  <johndoe@example.com>`
 								Content: "Title",
 							},
 						}
-						expected := types.Document{
+						expected := &types.Document{
 							Attributes: types.Attributes{
 								types.AttrAuthors: []types.DocumentAuthor{
 									{
@@ -80,10 +80,10 @@ John  Foo    Doe  <johndoe@example.com>`
 								"_Title": Title,
 							},
 							Elements: []interface{}{
-								types.Section{
+								&types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_Title",
+										types.AttrID: "_title",
 									},
 									Title:    Title,
 									Elements: []interface{}{},
@@ -101,7 +101,7 @@ Jane the_Doe <jane@example.com>`
 								Content: "Title",
 							},
 						}
-						expected := types.Document{
+						expected := &types.Document{
 							Attributes: types.Attributes{
 								types.AttrAuthors: []types.DocumentAuthor{
 									{
@@ -119,10 +119,10 @@ Jane the_Doe <jane@example.com>`
 								"_Title": Title,
 							},
 							Elements: []interface{}{
-								types.Section{
+								&types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_Title",
+										types.AttrID: "_title",
 									},
 									Title:    Title,
 									Elements: []interface{}{},
@@ -140,7 +140,7 @@ Jane Foo the Doe <jane@example.com>`
 								Content: "Title",
 							},
 						}
-						expected := types.Document{
+						expected := &types.Document{
 							Attributes: types.Attributes{
 								types.AttrAuthors: []types.DocumentAuthor{
 									{
@@ -159,10 +159,10 @@ Jane Foo the Doe <jane@example.com>`
 								"_Title": Title,
 							},
 							Elements: []interface{}{
-								types.Section{
+								&types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_Title",
+										types.AttrID: "_title",
 									},
 									Title:    Title,
 									Elements: []interface{}{},
@@ -180,7 +180,7 @@ John Doe`
 								Content: "Title",
 							},
 						}
-						expected := types.Document{
+						expected := &types.Document{
 							Attributes: types.Attributes{
 								types.AttrAuthors: []types.DocumentAuthor{
 									{
@@ -196,10 +196,10 @@ John Doe`
 								"_Title": Title,
 							},
 							Elements: []interface{}{
-								types.Section{
+								&types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_Title",
+										types.AttrID: "_title",
 									},
 									Title:    Title,
 									Elements: []interface{}{},
@@ -217,7 +217,7 @@ Doe`
 								Content: "Title",
 							},
 						}
-						expected := types.Document{
+						expected := &types.Document{
 							Attributes: types.Attributes{
 								types.AttrAuthors: []types.DocumentAuthor{
 									{
@@ -232,10 +232,10 @@ Doe`
 								"_Title": Title,
 							},
 							Elements: []interface{}{
-								types.Section{
+								&types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_Title",
+										types.AttrID: "_title",
 									},
 									Title:    Title,
 									Elements: []interface{}{},
@@ -253,7 +253,7 @@ Doe`
 								Content: "Title",
 							},
 						}
-						expected := types.Document{
+						expected := &types.Document{
 							Attributes: types.Attributes{
 								types.AttrAuthors: []types.DocumentAuthor{
 									{
@@ -270,10 +270,10 @@ Doe`
 								"_Title": Title,
 							},
 							Elements: []interface{}{
-								types.Section{
+								&types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_Title",
+										types.AttrID: "_title",
 									},
 									Title:    Title,
 									Elements: []interface{}{},
@@ -294,7 +294,7 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 								Content: "Title",
 							},
 						}
-						expected := types.Document{
+						expected := &types.Document{
 							Attributes: types.Attributes{
 								types.AttrAuthors: []types.DocumentAuthor{
 									{
@@ -322,10 +322,10 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 								"_Title": Title,
 							},
 							Elements: []interface{}{
-								types.Section{
+								&types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_Title",
+										types.AttrID: "_title",
 									},
 									Title:    Title,
 									Elements: []interface{}{},
@@ -346,15 +346,15 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 								Content: "Title",
 							},
 						}
-						expected := types.Document{
+						expected := &types.Document{
 							ElementReferences: types.ElementReferences{
 								"_Title": Title,
 							},
 							Elements: []interface{}{
-								types.Section{
+								&types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_Title",
+										types.AttrID: "_title",
 									},
 									Title:    Title,
 									Elements: []interface{}{},
@@ -373,7 +373,7 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 								Content: "Title",
 							},
 						}
-						expected := types.Document{
+						expected := &types.Document{
 							Attributes: types.Attributes{
 								types.AttrAuthors: []types.DocumentAuthor{
 									{
@@ -401,10 +401,10 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 								"_Title": Title,
 							},
 							Elements: []interface{}{
-								types.Section{
+								&types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_Title",
+										types.AttrID: "_title",
 									},
 									Title:    Title,
 									Elements: []interface{}{},
@@ -425,7 +425,7 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 								Content: "Title",
 							},
 						}
-						expected := types.Document{
+						expected := &types.Document{
 							Attributes: types.Attributes{
 								types.AttrAuthors: []types.DocumentAuthor{
 									{
@@ -453,10 +453,10 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 								"_Title": Title,
 							},
 							Elements: []interface{}{
-								types.Section{
+								&types.Section{
 									Level: 0,
 									Attributes: types.Attributes{
-										types.AttrID: "_Title",
+										types.AttrID: "_title",
 									},
 									Title:    Title,
 									Elements: []interface{}{},
@@ -479,7 +479,7 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 							Content: "Title",
 						},
 					}
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							types.AttrAuthors: []types.DocumentAuthor{
 								{
@@ -503,10 +503,10 @@ John  Foo Doe  <johndoe@example.com>; Jane the_Doe <jane@example.com>`
 							"_Title": Title,
 						},
 						Elements: []interface{}{
-							types.Section{
+							&types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_Title",
+									types.AttrID: "_title",
 								},
 								Title:    Title,
 								Elements: []interface{}{},
@@ -537,7 +537,7 @@ with another empty line
 							Content: "Title",
 						},
 					}
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							types.AttrAuthors: []types.DocumentAuthor{
 								{
@@ -561,10 +561,10 @@ with another empty line
 							"_Title": Title,
 						},
 						Elements: []interface{}{
-							types.Section{
+							&types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_Title",
+									types.AttrID: "_title",
 								},
 								Title:    Title,
 								Elements: []interface{}{},
@@ -584,7 +584,7 @@ with another empty line
 							Content: "Title",
 						},
 					}
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							types.AttrAuthors: []types.DocumentAuthor{
 								{
@@ -608,10 +608,10 @@ with another empty line
 							"_Title": Title,
 						},
 						Elements: []interface{}{
-							types.Section{
+							&types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_Title",
+									types.AttrID: "_title",
 								},
 								Title:    Title,
 								Elements: []interface{}{},
@@ -631,7 +631,7 @@ with another empty line
 							Content: "Title",
 						},
 					}
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							types.AttrAuthors: []types.DocumentAuthor{
 								{
@@ -655,10 +655,10 @@ with another empty line
 							"_Title": Title,
 						},
 						Elements: []interface{}{
-							types.Section{
+							&types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_Title",
+									types.AttrID: "_title",
 								},
 								Title:    Title,
 								Elements: []interface{}{},
@@ -677,7 +677,7 @@ with another empty line
 							Content: "Title",
 						},
 					}
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							types.AttrAuthors: []types.DocumentAuthor{
 								{
@@ -699,10 +699,10 @@ with another empty line
 							"_Title": Title,
 						},
 						Elements: []interface{}{
-							types.Section{
+							&types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_Title",
+									types.AttrID: "_title",
 								},
 								Title:    Title,
 								Elements: []interface{}{},
@@ -721,7 +721,7 @@ with another empty line
 							Content: "Title",
 						},
 					}
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							types.AttrAuthors: []types.DocumentAuthor{
 								{
@@ -743,10 +743,10 @@ with another empty line
 							"_Title": Title,
 						},
 						Elements: []interface{}{
-							types.Section{
+							&types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_Title",
+									types.AttrID: "_title",
 								},
 								Title:    Title,
 								Elements: []interface{}{},
@@ -765,7 +765,7 @@ with another empty line
 							Content: "Title",
 						},
 					}
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							types.AttrAuthors: []types.DocumentAuthor{
 								{
@@ -785,10 +785,10 @@ with another empty line
 							"_Title": Title,
 						},
 						Elements: []interface{}{
-							types.Section{
+							&types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_Title",
+									types.AttrID: "_title",
 								},
 								Title:    Title,
 								Elements: []interface{}{},
@@ -807,7 +807,7 @@ with another empty line
 							Content: "Title",
 						},
 					}
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							types.AttrAuthors: []types.DocumentAuthor{
 								{
@@ -827,10 +827,10 @@ with another empty line
 							"_Title": Title,
 						},
 						Elements: []interface{}{
-							types.Section{
+							&types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_Title",
+									types.AttrID: "_title",
 								},
 								Title:    Title,
 								Elements: []interface{}{},
@@ -849,7 +849,7 @@ with another empty line
 							Content: "Title",
 						},
 					}
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							types.AttrAuthors: []types.DocumentAuthor{
 								{
@@ -869,10 +869,10 @@ with another empty line
 							"_Title": Title,
 						},
 						Elements: []interface{}{
-							types.Section{
+							&types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_Title",
+									types.AttrID: "_title",
 								},
 								Title:    Title,
 								Elements: []interface{}{},
@@ -891,7 +891,7 @@ with another empty line
 							Content: "Title",
 						},
 					}
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							types.AttrAuthors: []types.DocumentAuthor{
 								{
@@ -911,10 +911,10 @@ with another empty line
 							"_Title": Title,
 						},
 						Elements: []interface{}{
-							types.Section{
+							&types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_Title",
+									types.AttrID: "_title",
 								},
 								Title:    Title,
 								Elements: []interface{}{},
@@ -933,7 +933,7 @@ with another empty line
 							Content: "Title",
 						},
 					}
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							types.AttrAuthors: []types.DocumentAuthor{
 								{
@@ -953,10 +953,10 @@ with another empty line
 							"_Title": Title,
 						},
 						Elements: []interface{}{
-							types.Section{
+							&types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_Title",
+									types.AttrID: "_title",
 								},
 								Title:    Title,
 								Elements: []interface{}{},
@@ -975,7 +975,7 @@ with another empty line
 							Content: "Title",
 						},
 					}
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							types.AttrAuthors: []types.DocumentAuthor{
 								{
@@ -995,10 +995,10 @@ with another empty line
 							"_Title": Title,
 						},
 						Elements: []interface{}{
-							types.Section{
+							&types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_Title",
+									types.AttrID: "_title",
 								},
 								Title:    Title,
 								Elements: []interface{}{},
@@ -1017,7 +1017,7 @@ with another empty line
 							Content: "Title",
 						},
 					}
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							types.AttrAuthors: []types.DocumentAuthor{
 								{
@@ -1037,10 +1037,10 @@ with another empty line
 							"_Title": Title,
 						},
 						Elements: []interface{}{
-							types.Section{
+							&types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_Title",
+									types.AttrID: "_title",
 								},
 								Title:    Title,
 								Elements: []interface{}{},
@@ -1059,7 +1059,7 @@ v1.0:`
 							Content: "Title",
 						},
 					}
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							types.AttrAuthors: []types.DocumentAuthor{
 								{
@@ -1080,10 +1080,10 @@ v1.0:`
 							"_Title": Title,
 						},
 						Elements: []interface{}{
-							types.Section{
+							&types.Section{
 								Level: 0,
 								Attributes: types.Attributes{
-									types.AttrID: "_Title",
+									types.AttrID: "_title",
 								},
 								Title:    Title,
 								Elements: []interface{}{},
@@ -1101,7 +1101,7 @@ v1.0:`
 					source := `:a:
 :author: Xavier
 :_author: Xavier`
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"a":       nil,
 							"author":  "Xavier",
@@ -1118,7 +1118,7 @@ v1.0:`
 :author: Xavier
 :hardbreaks:
 a paragraph`
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"toc":                        nil,
 							"date":                       "2017-01-01",
@@ -1143,7 +1143,7 @@ a paragraph`
 :author: Xavier
 
 a paragraph`
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"toc":    nil,
 							"date":   "2017-01-01",
@@ -1170,7 +1170,7 @@ a paragraph`
 :hardbreaks:
 
 a paragraph`
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"toc":        nil,
 							"date":       "2017-01-01",
@@ -1195,7 +1195,7 @@ a paragraph`
 :toc:
 :date: 2017-01-01
 :author: Xavier`
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"toc":    nil,
 							"date":   "2017-01-01",
@@ -1223,7 +1223,7 @@ a paragraph`
 :toc:
 :date: 2017-01-01
 :author: Xavier`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
@@ -1249,7 +1249,7 @@ a paragraph`
 			It("invalid attribute names", func() {
 				source := `:@date: 2017-01-01
 :{author}: Xavier`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
@@ -1276,7 +1276,7 @@ a paragraph`
 					"source-highlighter": "pygments",
 				}
 				source := `{icons}`
-				expected := types.Document{
+				expected := &types.Document{
 					Attributes: types.Attributes{
 						"icons":              "font",
 						"source-highlighter": "pygments",

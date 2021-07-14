@@ -479,192 +479,196 @@ var _ = Describe("tag ranges", func() {
 
 })
 
-var _ = Describe("element id resolution", func() {
+var _ = Describe("section id resolution", func() {
 
-	Context("sections", func() {
+	Context("default it", func() {
 
-		Context("default it", func() {
-
-			It("simple title", func() {
-				// given
-				section := types.Section{
-					Level:      0,
-					Attributes: types.Attributes{},
-					Title: []interface{}{
-						&types.StringElement{
-							Content: "foo",
-						},
+		It("simple title", func() {
+			// given
+			section := types.Section{
+				Level:      0,
+				Attributes: types.Attributes{},
+				Title: []interface{}{
+					&types.StringElement{
+						Content: "foo",
 					},
-					Elements: []interface{}{},
-				}
-				// when
-				section, err := section.ResolveID(types.AttributesWithOverrides{
-					Content:   map[string]interface{}{},
-					Overrides: map[string]string{},
-				})
-				// then
-				Expect(err).NotTo(HaveOccurred())
-				Expect(section.Attributes[types.AttrID]).To(Equal("_foo"))
-			})
+				},
+			}
+			// when
+			err := section.ResolveID(types.Attributes{}, types.ElementReferences{})
+			// then
+			Expect(err).NotTo(HaveOccurred())
+			Expect(section.Attributes[types.AttrID]).To(Equal("_foo"))
+		})
 
-			It("title with link", func() {
-				// given
-				section := types.Section{
-					Level:      0,
-					Attributes: types.Attributes{},
-					Title: []interface{}{
-						&types.StringElement{
-							Content: "a link to ",
-						},
-						&types.InlineLink{
-							Location: &types.Location{
-								Scheme: "https://",
-								Path: []interface{}{
-									&types.StringElement{
-										Content: "foo.com",
-									},
+		It("title with link", func() {
+			// given
+			section := types.Section{
+				Level:      0,
+				Attributes: types.Attributes{},
+				Title: []interface{}{
+					&types.StringElement{
+						Content: "a link to ",
+					},
+					&types.InlineLink{
+						Location: &types.Location{
+							Scheme: "https://",
+							Path: []interface{}{
+								&types.StringElement{
+									Content: "foo.com",
 								},
 							},
 						},
 					},
-					Elements: []interface{}{},
-				}
-				// when
-				section, err := section.ResolveID(types.AttributesWithOverrides{
-					Content:   map[string]interface{}{},
-					Overrides: map[string]string{},
-				})
-				// then
-				Expect(err).NotTo(HaveOccurred())
-				Expect(section.Attributes[types.AttrID]).To(Equal("_a_link_to_httpsfoo_com")) // TODO: should be `httpsfoo`
-			})
+				},
+			}
+			// when
+			err := section.ResolveID(types.Attributes{}, types.ElementReferences{})
+			// then
+			Expect(err).NotTo(HaveOccurred())
+			Expect(section.Attributes[types.AttrID]).To(Equal("_a_link_to_httpsfoo_com")) // TODO: should be `httpsfoo`
 		})
 
-		Context("custom id prefix", func() {
-
-			It("simple title", func() {
-				// given
-				section := types.Section{
-					Level:      0,
-					Attributes: types.Attributes{},
-					Title: []interface{}{
-						&types.StringElement{
-							Content: "foo",
-						},
+		It("avoid duplicate id", func() {
+			// given
+			section := types.Section{
+				Level:      0,
+				Attributes: types.Attributes{},
+				Title: []interface{}{
+					&types.StringElement{
+						Content: "foo",
 					},
-					Elements: []interface{}{},
-				}
-				// when
-				section, err := section.ResolveID(types.AttributesWithOverrides{
-					Content: map[string]interface{}{
-						types.AttrIDPrefix: "custom_",
-					},
-					Overrides: map[string]string{},
-				})
-				// then
-				Expect(err).NotTo(HaveOccurred())
-				Expect(section.Attributes[types.AttrID]).To(Equal("custom_foo"))
-			})
+				},
+			}
+			// when
+			err := section.ResolveID(types.Attributes{}, types.ElementReferences{})
+			// then
+			Expect(err).NotTo(HaveOccurred())
+			Expect(section.Attributes[types.AttrID]).To(Equal("_foo"))
+		})
+	})
 
-			It("title with link", func() {
-				// given
-				section := types.Section{
-					Level:      0,
-					Attributes: types.Attributes{},
-					Title: []interface{}{
-						&types.StringElement{
-							Content: "a link to ",
-						},
-						&types.InlineLink{
-							Location: &types.Location{
-								Scheme: "https://",
-								Path: []interface{}{
-									&types.StringElement{
-										Content: "foo.com",
-									},
+	Context("custom id prefix", func() {
+
+		It("simple title", func() {
+			// given
+			section := types.Section{
+				Level:      0,
+				Attributes: types.Attributes{},
+				Title: []interface{}{
+					&types.StringElement{
+						Content: "foo",
+					},
+				},
+			}
+			// when
+			err := section.ResolveID(
+				types.Attributes{
+					types.AttrIDPrefix: "custom_",
+				},
+				types.ElementReferences{},
+			)
+			// then
+			Expect(err).NotTo(HaveOccurred())
+			Expect(section.Attributes[types.AttrID]).To(Equal("custom_foo"))
+		})
+
+		It("title with link", func() {
+			// given
+			section := types.Section{
+				Level:      0,
+				Attributes: types.Attributes{},
+				Title: []interface{}{
+					&types.StringElement{
+						Content: "a link to ",
+					},
+					&types.InlineLink{
+						Location: &types.Location{
+							Scheme: "https://",
+							Path: []interface{}{
+								&types.StringElement{
+									Content: "foo.com",
 								},
 							},
 						},
 					},
-					Elements: []interface{}{},
-				}
-				// when
-				section, err := section.ResolveID(types.AttributesWithOverrides{
-					Content: map[string]interface{}{
-						types.AttrIDPrefix: "custom_",
+				},
+			}
+			// when
+			err := section.ResolveID(
+				types.Attributes{
+					types.AttrIDPrefix: "custom_",
+				},
+				types.ElementReferences{},
+			)
+			// then
+			Expect(err).NotTo(HaveOccurred())
+			Expect(section.Attributes[types.AttrID]).To(Equal("custom_a_link_to_httpsfoo_com")) // TODO: should be `httpsfoo`
+		})
+	})
+
+	Context("custom id", func() {
+
+		It("simple title", func() {
+			// given
+			section := types.Section{
+				Level: 0,
+				Attributes: types.Attributes{
+					types.AttrID: "bar",
+				},
+				Title: []interface{}{
+					&types.StringElement{
+						Content: "foo",
 					},
-					Overrides: map[string]string{},
-				})
-				// then
-				Expect(err).NotTo(HaveOccurred())
-				Expect(section.Attributes[types.AttrID]).To(Equal("custom_a_link_to_httpsfoo_com")) // TODO: should be `httpsfoo`
-			})
+				},
+			}
+			// when
+			err := section.ResolveID(
+				types.Attributes{
+					types.AttrIDPrefix: "custom_",
+				},
+				types.ElementReferences{},
+			)
+			// then
+			Expect(err).NotTo(HaveOccurred())
+			Expect(section.Attributes[types.AttrID]).To(Equal("bar"))
 		})
 
-		Context("custom id", func() {
-
-			It("simple title", func() {
-				// given
-				section := types.Section{
-					Level: 0,
-					Attributes: types.Attributes{
-						types.AttrID: "bar",
+		It("title with link", func() {
+			// given
+			section := types.Section{
+				Level: 0,
+				Attributes: types.Attributes{
+					types.AttrID: "bar",
+				},
+				Title: []interface{}{
+					&types.StringElement{
+						Content: "a link to ",
 					},
-					Title: []interface{}{
-						&types.StringElement{
-							Content: "foo",
-						},
-					},
-					Elements: []interface{}{},
-				}
-				// when
-				section, err := section.ResolveID(types.AttributesWithOverrides{
-					Content: map[string]interface{}{
-						types.AttrIDPrefix: "custom_",
-					},
-					Overrides: map[string]string{},
-				})
-				// then
-				Expect(err).NotTo(HaveOccurred())
-				Expect(section.Attributes[types.AttrID]).To(Equal("bar"))
-			})
-
-			It("title with link", func() {
-				// given
-				section := types.Section{
-					Level: 0,
-					Attributes: types.Attributes{
-						types.AttrID: "bar",
-					},
-					Title: []interface{}{
-						&types.StringElement{
-							Content: "a link to ",
-						},
-						&types.InlineLink{
-							Location: &types.Location{
-								Scheme: "https://",
-								Path: []interface{}{
-									&types.StringElement{
-										Content: "foo.com",
-									},
+					&types.InlineLink{
+						Location: &types.Location{
+							Scheme: "https://",
+							Path: []interface{}{
+								&types.StringElement{
+									Content: "foo.com",
 								},
 							},
 						},
 					},
-					Elements: []interface{}{},
-				}
-				// when
-				section, err := section.ResolveID(types.AttributesWithOverrides{
-					Content: map[string]interface{}{
-						types.AttrIDPrefix: "custom_",
-					},
-					Overrides: map[string]string{},
-				})
-				// then
-				Expect(err).NotTo(HaveOccurred())
-				Expect(section.Attributes[types.AttrID]).To(Equal("bar"))
-			})
+				},
+			}
+			// when
+			err := section.ResolveID(
+				types.Attributes{
+					types.AttrIDPrefix: "custom_",
+				},
+				types.ElementReferences{},
+			)
+			// then
+			Expect(err).NotTo(HaveOccurred())
+			Expect(section.Attributes[types.AttrID]).To(Equal("bar"))
 		})
+
 	})
 })
 
@@ -689,7 +693,6 @@ var _ = Describe("footnote replacements", func() {
 						},
 					},
 				},
-				Elements: []interface{}{},
 			}
 			footnotes := types.NewFootnotes()
 			// when
@@ -706,7 +709,6 @@ var _ = Describe("footnote replacements", func() {
 						ID: 1,
 					},
 				},
-				Elements: []interface{}{},
 			}))
 			Expect(footnotes.Notes()).To(Equal([]types.Footnote{
 				{
@@ -738,7 +740,6 @@ var _ = Describe("footnote replacements", func() {
 						},
 					},
 				},
-				Elements: []interface{}{},
 			}
 			footnotes := types.NewFootnotes()
 			// when
@@ -756,7 +757,6 @@ var _ = Describe("footnote replacements", func() {
 						Ref: "disclaimer",
 					},
 				},
-				Elements: []interface{}{},
 			}))
 			Expect(footnotes.Notes()).To(Equal([]types.Footnote{
 				{

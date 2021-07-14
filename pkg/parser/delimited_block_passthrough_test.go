@@ -215,7 +215,7 @@ _foo_
 
 *bar*
 ++++`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.PassthroughBlock{
 							Attributes: types.Attributes{
@@ -251,7 +251,7 @@ _foo_
 *bar*
 
 another paragraph`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.PassthroughBlock{
 							Attributes: types.Attributes{

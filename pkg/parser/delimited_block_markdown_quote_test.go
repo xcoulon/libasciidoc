@@ -16,7 +16,7 @@ var _ = Describe("markdown-style quote blocks", func() {
 			source := `> some text
 on *multiple lines*`
 
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.MarkdownQuoteBlock{
 						Lines: [][]interface{}{
@@ -48,7 +48,7 @@ on *multiple lines*`
 		It("with marker on each line without author", func() {
 			source := `> some text
 > on *multiple lines*`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.MarkdownQuoteBlock{
 						Lines: [][]interface{}{
@@ -81,7 +81,7 @@ on *multiple lines*`
 			source := `> some text
 > on *multiple lines*
 > -- John Doe`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.MarkdownQuoteBlock{
 						Attributes: types.Attributes{
@@ -118,7 +118,7 @@ on *multiple lines*`
 > some text
 > on *multiple lines*
 > -- John Doe`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.MarkdownQuoteBlock{
 						Attributes: types.Attributes{
@@ -153,7 +153,7 @@ on *multiple lines*`
 
 		It("with with author only", func() {
 			source := `> -- John Doe`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.MarkdownQuoteBlock{
 						Attributes: types.Attributes{

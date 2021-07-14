@@ -9,7 +9,7 @@ import (
 )
 
 // TableOfContents returns the Table of Contents for the given document
-func TableOfContents(doc types.Document) (types.TableOfContents, error) {
+func TableOfContents(doc *types.Document) (types.TableOfContents, error) {
 	ctx := renderer.NewContext(doc, configuration.NewConfiguration())
 	if _, err := html5.Render(ctx, doc, ioutil.Discard); err != nil {
 		return ctx.TableOfContents, err

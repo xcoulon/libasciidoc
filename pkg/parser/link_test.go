@@ -16,7 +16,7 @@ var _ = Describe("links", func() {
 
 			It("without text", func() {
 				source := "a link to https://example.com"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -40,7 +40,7 @@ var _ = Describe("links", func() {
 
 			It("with empty text", func() {
 				source := "a link to https://example.com[]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -64,7 +64,7 @@ var _ = Describe("links", func() {
 
 			It("with text only", func() {
 				source := "a link to mailto:foo@bar[the foo@bar email]."
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -94,7 +94,7 @@ var _ = Describe("links", func() {
 
 			It("with text and extra attributes", func() {
 				source := "a link to mailto:foo@bar[the foo@bar email, foo=bar]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -125,7 +125,7 @@ var _ = Describe("links", func() {
 and more text on the
 next lines`
 
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -157,7 +157,7 @@ next lines`
 and more text on the
 next lines`
 
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -186,7 +186,7 @@ next lines`
 
 			It("with more text afterwards", func() {
 				source := `a link to https://example.com and more text`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -213,7 +213,7 @@ next lines`
 
 				It("only with text having comma", func() {
 					source := `a link to http://website.com[A, B, and C]`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							&types.Paragraph{
 								Elements: []interface{}{
@@ -242,7 +242,7 @@ next lines`
 
 				It("only with doublequoted text having comma", func() {
 					source := `a link to http://website.com["A, B, and C"]`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							&types.Paragraph{
 								Elements: []interface{}{
@@ -269,7 +269,7 @@ next lines`
 
 				It("with doublequoted text having comma and other attrs", func() {
 					source := `a link to http://website.com["A, B, and C", role=foo]`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							&types.Paragraph{
 								Elements: []interface{}{
@@ -297,7 +297,7 @@ next lines`
 
 				It("with text having comma and other attributes", func() {
 					source := `a link to http://website.com[A, B, and C, role=foo]`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							&types.Paragraph{
 								Elements: []interface{}{
@@ -328,7 +328,7 @@ next lines`
 
 			It("with special characters", func() {
 				source := "a link to https://foo*_.com"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -352,7 +352,7 @@ next lines`
 
 			It("with quoted text without attributes", func() {
 				source := "a link to https://example.com[_a_ *b* `c`]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -412,7 +412,7 @@ next lines`
 
 			It("with quoted text with attributes", func() {
 				source := "a link to https://example.com[[.myrole1]_a_]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -451,7 +451,7 @@ next lines`
 
 			It("with quoted texts with attributes", func() {
 				source := "a link to https://example.com[[.myrole1]_a_ [.myrole2]*b* [.myrole3]`c`]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -519,7 +519,7 @@ next lines`
 			It("in bold text", func() {
 				source := `a link to *https://example.com[]*`
 
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -548,7 +548,7 @@ next lines`
 
 			It("with special characters", func() {
 				source := "a link to https://foo*_.com"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -573,7 +573,7 @@ next lines`
 			It("in bold text", func() {
 				source := `a link to *https://example.com[]*`
 
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -603,7 +603,7 @@ next lines`
 			It("in italic text", func() {
 				source := `a link to _https://example.com[]_`
 
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -638,7 +638,7 @@ next lines`
 	
 a link to {url}`
 
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"url": "https://foo2.bar", // overridden by second declaration
 						},
@@ -680,7 +680,7 @@ a link to {url}`
 	
 a link to {scheme}://{path} and https://foo.com`
 
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"scheme": "https",
 							"path":   "example.com",
@@ -732,7 +732,7 @@ a link to {scheme}://{path} and https://foo.com`
 	
 a link to *{scheme}://{path}[] and https://foo.com[]*`
 
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"scheme": "https",
 							"path":   "example.com",
@@ -795,7 +795,7 @@ a link to *{scheme}://{path}[] and https://foo.com[]*`
 	
 a link to {scheme}://{path} and https://foo.com`
 
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"scheme": "https",
 							// "path":   "example.com", // TODO: should it be removed?
@@ -874,7 +874,7 @@ a link to {scheme}://{path} and https://foo.com`
 							},
 						},
 					}
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"scheme": "https",
 							"path":   "example.com",
@@ -928,7 +928,7 @@ a link to {scheme}://{path} and https://foo.com`
 							},
 						},
 					}
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"scheme": "https",
 							"path":   "example.com",
@@ -965,7 +965,7 @@ a link to {scheme}://{path} and https://foo.com`
 
 			It("relative link to doc without text", func() {
 				source := "a link to link:foo.adoc[]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -989,7 +989,7 @@ a link to {scheme}://{path} and https://foo.com`
 
 			It("relative link to doc with text", func() {
 				source := "a link to link:foo.adoc[foo doc]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -1016,7 +1016,7 @@ a link to {scheme}://{path} and https://foo.com`
 
 			It("relative link to external URL with text only", func() {
 				source := "a link to link:https://example.com[foo doc]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -1043,7 +1043,7 @@ a link to {scheme}://{path} and https://foo.com`
 
 			It("relative link to external URL with text and extra attributes", func() {
 				source := "a link to link:https://example.com[foo doc, foo=bar]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -1071,7 +1071,7 @@ a link to {scheme}://{path} and https://foo.com`
 
 			It("relative link to external URL with extra attributes only", func() {
 				source := "a link to link:https://example.com[foo=bar]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -1098,7 +1098,7 @@ a link to {scheme}://{path} and https://foo.com`
 
 			It("invalid relative link to doc", func() {
 				source := "a link to link:foo.adoc"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -1114,7 +1114,7 @@ a link to {scheme}://{path} and https://foo.com`
 
 			It("with quoted text attribute", func() {
 				source := "link:/[a _a_ b *b* c `c`]"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -1174,7 +1174,7 @@ a link to {scheme}://{path} and https://foo.com`
 
 			It("with all valid characters", func() {
 				source := `a link to link:ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~:/?#@!$&;=()*+,-_.%[as expected]`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -1208,7 +1208,7 @@ a link to {scheme}://{path} and https://foo.com`
 			It("with encoded space", func() {
 				source := `Test 1: link:/test/a b[with space]
 Test 2: link:/test/a%20b[with encoded space]`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -1244,7 +1244,7 @@ Test 2: link:/test/a%20b[with encoded space]`
 
 a link to {scheme}:{path}[] and https://foo.com`
 
-				expected := types.Document{
+				expected := &types.Document{
 					Attributes: types.Attributes{
 						"scheme": "link",
 						// "path":   "example.com", // should it be removed from the Document attributes?
@@ -1297,7 +1297,7 @@ a link to {scheme}:{path}[] and https://foo.com`
 
 			It("relative link within quoted text", func() {
 				source := "*link:foo[]*"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -1326,7 +1326,7 @@ a link to {scheme}:{path}[] and https://foo.com`
 
 				It("relative link only with text having comma", func() {
 					source := `a link to link:https://example.com[A, B, and C]`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							&types.Paragraph{
 								Elements: []interface{}{
@@ -1355,7 +1355,7 @@ a link to {scheme}:{path}[] and https://foo.com`
 
 				It("relative link only with doublequoted text having comma", func() {
 					source := `a link to link:https://example.com["A, B, and C"]`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							&types.Paragraph{
 								Elements: []interface{}{
@@ -1382,7 +1382,7 @@ a link to {scheme}:{path}[] and https://foo.com`
 
 				It("with doublequoted text having comma and other attrs", func() {
 					source := `a link to link:https://example.com["A, B, and C", role=foo]`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							&types.Paragraph{
 								Elements: []interface{}{
@@ -1410,7 +1410,7 @@ a link to {scheme}:{path}[] and https://foo.com`
 
 				It("with text having comma and other attributes", func() {
 					source := `a link to link:https://example.com[A, B, and C, role=foo]`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							&types.Paragraph{
 								Elements: []interface{}{

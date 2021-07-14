@@ -14,7 +14,8 @@ import (
 )
 
 // TODO: convert `ctx *processContext` as a local variable instead of a func param
-func ApplySubstitutions(ctx *processContext, done <-chan interface{}, fragmentStream <-chan types.DocumentFragment) chan types.DocumentFragment {
+func ApplySubstitutions(done <-chan interface{}, fragmentStream <-chan types.DocumentFragment) chan types.DocumentFragment {
+	ctx := newProcessContext()
 	processedFragmentStream := make(chan types.DocumentFragment)
 	go func() {
 		defer close(processedFragmentStream)
@@ -134,10 +135,10 @@ func processBlockWithElements(ctx *processContext, block types.WithElements) err
 	if err := block.SetElements(elements); err != nil {
 		return err
 	}
-	// also, process terms of labeled list elements
-	if l, ok := block.(*types.LabeledListElement); ok {
-		var err error
-		if l.Term, err = subs.processElements(ctx, l.Term); err != nil {
+	switch b := block.(type) {
+	case *types.LabeledListElement:
+		// also, process term of labeled list elements
+		if b.Term, err = subs.processElements(ctx, b.Term); err != nil {
 			return err
 		}
 	}
@@ -373,6 +374,9 @@ func newSubstitution(kind string) (*substitution, error) {
 				InlinePassthroughs: true,
 				SpecialCharacters:  true,
 				Attributes:         true,
+				Quotes:             true,
+				Macros:             true,
+				Replacements:       true,
 			},
 		}, nil
 	case "macros":
@@ -473,7 +477,9 @@ func (s *substitution) hasEnablements() bool {
 // }
 
 func (s *substitution) processElements(ctx *processContext, elements []interface{}) ([]interface{}, error) {
-	// log.Debugf("applying step '%s'", step.group)
+	if log.IsLevelEnabled(log.DebugLevel) {
+		log.Debugf("applying substitution '%s' on %s", s.rule, spew.Sdump(elements))
+	}
 	elements, err := parseElements(ctx, elements, s.rule, GlobalStore(substitutionsKey, s))
 	if err != nil {
 		return nil, err
@@ -546,8 +552,10 @@ func (c *current) isSubstitutionEnabled(k substitutionKind) (bool, error) {
 	}
 	enabled, found := s.enablements[k]
 	if !found {
+		log.Infof("substitution '%s' not configured in '%s'", k, s.rule)
 		return false, nil
 	}
+	// log.Debugf("substitution '%s' enabled: %t", k, enabled)
 	return enabled, nil
 }
 

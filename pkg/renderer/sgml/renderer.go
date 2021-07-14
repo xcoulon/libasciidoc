@@ -18,7 +18,7 @@ import (
 type Renderer interface {
 
 	// Render renders a document to the given output stream.
-	Render(ctx *renderer.Context, doc types.Document, output io.Writer) (types.Metadata, error)
+	Render(ctx *renderer.Context, doc *types.Document, output io.Writer) (types.Metadata, error)
 
 	// SetFunction sets the named function.
 	SetFunction(name string, fn interface{})
@@ -43,7 +43,6 @@ func NewRenderer(t Templates) Renderer {
 		"specialCharacter":    specialCharacter,
 		"predefinedAttribute": predefinedAttribute,
 	}
-
 	return r
 }
 
@@ -135,7 +134,7 @@ func (r *sgmlRenderer) newTemplate(name string, tmpl string, err error) (*textTe
 }
 
 // Render renders the given document in HTML and writes the result in the given `writer`
-func (r *sgmlRenderer) Render(ctx *renderer.Context, doc types.Document, output io.Writer) (types.Metadata, error) {
+func (r *sgmlRenderer) Render(ctx *renderer.Context, doc *types.Document, output io.Writer) (types.Metadata, error) {
 
 	// metadata to be returned to the caller
 	var metadata types.Metadata
@@ -217,7 +216,7 @@ func (r *sgmlRenderer) Render(ctx *renderer.Context, doc types.Document, output 
 // splitAndRender the document with the header elements on one side
 // and all other elements (table of contents, with preamble, content) on the other side,
 // then renders the header and other elements
-func (r *sgmlRenderer) splitAndRender(ctx *renderer.Context, doc types.Document) (string, string, error) {
+func (r *sgmlRenderer) splitAndRender(ctx *renderer.Context, doc *types.Document) (string, string, error) {
 	switch doc.Attributes.GetAsStringWithDefault(types.AttrDocType, "article") {
 	case "manpage":
 		return r.splitAndRenderForManpage(ctx, doc)
@@ -228,7 +227,7 @@ func (r *sgmlRenderer) splitAndRender(ctx *renderer.Context, doc types.Document)
 
 // splits the document with the title of the section 0 (if available) on one side
 // and all other elements (table of contents, with preamble, content) on the other side
-func (r *sgmlRenderer) splitAndRenderForArticle(ctx *renderer.Context, doc types.Document) (string, string, error) {
+func (r *sgmlRenderer) splitAndRenderForArticle(ctx *renderer.Context, doc *types.Document) (string, string, error) {
 	if ctx.Config.WrapInHTMLBodyElement {
 		if header, found := doc.Header(); found {
 			renderedHeader, err := r.renderArticleHeader(ctx, header)
@@ -251,7 +250,7 @@ func (r *sgmlRenderer) splitAndRenderForArticle(ctx *renderer.Context, doc types
 
 // splits the document with the header elements on one side
 // and the other elements (table of contents, with preamble, content) on the other side
-func (r *sgmlRenderer) splitAndRenderForManpage(ctx *renderer.Context, doc types.Document) (string, string, error) {
+func (r *sgmlRenderer) splitAndRenderForManpage(ctx *renderer.Context, doc *types.Document) (string, string, error) {
 	header, _ := doc.Header()
 	nameSection := header.Elements[0].(types.Section)
 
@@ -267,7 +266,7 @@ func (r *sgmlRenderer) splitAndRenderForManpage(ctx *renderer.Context, doc types
 		return renderedHeader, renderedContent, nil
 	}
 	// in that case, we still want to display the name section
-	renderedHeader, err := r.renderManpageHeader(ctx, types.Section{}, nameSection)
+	renderedHeader, err := r.renderManpageHeader(ctx, &types.Section{}, nameSection)
 	if err != nil {
 		return "", "", err
 	}
@@ -281,14 +280,14 @@ func (r *sgmlRenderer) splitAndRenderForManpage(ctx *renderer.Context, doc types
 	return "", result.String(), nil
 }
 
-func (r *sgmlRenderer) renderDocumentRoles(ctx *Context, doc types.Document) (string, error) {
+func (r *sgmlRenderer) renderDocumentRoles(ctx *renderer.Context, doc *types.Document) (string, error) {
 	if header, found := doc.Header(); found {
 		return r.renderElementRoles(ctx, header.Attributes)
 	}
 	return "", nil
 }
 
-func (r *sgmlRenderer) renderDocumentID(doc types.Document) string {
+func (r *sgmlRenderer) renderDocumentID(doc *types.Document) string {
 	if header, found := doc.Header(); found {
 		if header.Attributes.Has(types.AttrCustomID) {
 			// We only want to emit a document body ID if one was explicitly set
@@ -298,7 +297,7 @@ func (r *sgmlRenderer) renderDocumentID(doc types.Document) string {
 	return ""
 }
 
-func (r *sgmlRenderer) renderAuthors(doc types.Document) string {
+func (r *sgmlRenderer) renderAuthors(doc *types.Document) string {
 	authors, found := doc.Authors()
 	if !found {
 		return ""
@@ -313,7 +312,7 @@ func (r *sgmlRenderer) renderAuthors(doc types.Document) string {
 // DefaultTitle the default title to render when the document has none
 const DefaultTitle = "Untitled"
 
-func (r *sgmlRenderer) renderDocumentTitle(ctx *renderer.Context, doc types.Document) (string, bool, error) {
+func (r *sgmlRenderer) renderDocumentTitle(ctx *renderer.Context, doc *types.Document) (string, bool, error) {
 	if header, found := doc.Header(); found {
 		// TODO: This feels wrong.  The title should not need markup.
 		title, err := r.renderPlainText(ctx, header.Title)
@@ -325,7 +324,7 @@ func (r *sgmlRenderer) renderDocumentTitle(ctx *renderer.Context, doc types.Docu
 	return "", false, nil
 }
 
-func (r *sgmlRenderer) renderArticleHeader(ctx *renderer.Context, header types.Section) (string, error) {
+func (r *sgmlRenderer) renderArticleHeader(ctx *renderer.Context, header *types.Section) (string, error) {
 	renderedHeader, err := r.renderInlineElements(ctx, header.Title)
 	if err != nil {
 		return "", err
@@ -349,7 +348,7 @@ func (r *sgmlRenderer) renderArticleHeader(ctx *renderer.Context, header types.S
 	return output.String(), nil
 }
 
-func (r *sgmlRenderer) renderManpageHeader(ctx *renderer.Context, header types.Section, nameSection types.Section) (string, error) {
+func (r *sgmlRenderer) renderManpageHeader(ctx *renderer.Context, header *types.Section, nameSection types.Section) (string, error) {
 	renderedHeader, err := r.renderInlineElements(ctx, header.Title)
 	if err != nil {
 		return "", err

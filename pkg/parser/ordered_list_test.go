@@ -27,7 +27,7 @@ var _ = Describe("ordered lists", func() {
 
 			It("with implicit numbering style on a single line", func() {
 				source := `. element on a single line`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -57,7 +57,7 @@ on
 multiple 
 lines
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -83,7 +83,7 @@ lines
 
 			It("with implicit numbering style", func() {
 				source := `. element`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -101,7 +101,7 @@ lines
 
 			It("with unnecessary level and numbering style adjustments", func() {
 				source := `.. element`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -119,7 +119,7 @@ lines
 
 			It("with arabic numbering style", func() {
 				source := `1. element`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -137,7 +137,7 @@ lines
 
 			It("with lower alpha numbering style", func() {
 				source := `b. element`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -155,7 +155,7 @@ lines
 
 			It("with upper alpha numbering style", func() {
 				source := `B. element`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -173,7 +173,7 @@ lines
 
 			It("with lower roman numbering style", func() {
 				source := `i) element`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -191,7 +191,7 @@ lines
 
 			It("with upper roman numbering style", func() {
 				source := `I) element`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -209,7 +209,7 @@ lines
 
 			It("with predefined attribute", func() {
 				source := `. {amp}`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -234,7 +234,7 @@ lines
 			It("with explicit start only", func() {
 				source := `[start=5]
 . element`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -256,7 +256,7 @@ lines
 			It("with explicit quoted numbering and start", func() {
 				source := `["lowerroman", start="5"]
 . element`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -284,7 +284,7 @@ lines
 				source := `. a
 . b`
 
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -320,7 +320,7 @@ lines
 				source := `[lowerroman]
 . element
 . element`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -347,7 +347,7 @@ lines
 				source := `. element 1
 . element 2`
 
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -390,7 +390,7 @@ lines
 			. element 2
 			.. element 2.1`
 
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -505,7 +505,7 @@ lines
 
 
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -594,7 +594,7 @@ lines
 .... level 4
 ..... level 5.
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -682,7 +682,7 @@ lines
 			It("ordered list with simple numbered elements", func() {
 				source := `1. a
 2. b`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -722,7 +722,7 @@ lines
 .... level 4
 ..... level 5
 . level 1`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -834,7 +834,7 @@ lines
 a. element 1.a
 2. element 2
 b. element 2.a`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -911,7 +911,7 @@ another delimited block
 ----
 . bar
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,
@@ -972,7 +972,7 @@ print("one")
 ----
 print("two")
 ----`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.GenericList{
 							Kind: types.OrderedListKind,

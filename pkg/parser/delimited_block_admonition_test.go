@@ -89,7 +89,7 @@ paragraphs
 ====
 foo
 ====`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.ExampleBlock{
 							Attributes: types.Attributes{
@@ -121,7 +121,7 @@ multiple
 paragraphs
 ====
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.ExampleBlock{
 							Attributes: types.Attributes{

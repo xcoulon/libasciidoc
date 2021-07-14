@@ -78,7 +78,7 @@ sed diam voluptua.
 At vero eos et accusam et justo duo dolores et ea rebum. 
 Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit *amet*.`
 
-	expected := types.Document{
+	expected := &types.Document{
 		Elements: []interface{}{
 			&types.Section{
 				Level: 1,

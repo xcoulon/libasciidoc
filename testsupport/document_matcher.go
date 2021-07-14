@@ -15,21 +15,21 @@ import (
 
 // MatchDocument a custom matcher to verify that a document matches the given expectation
 // Similar to the standard `Equal` matcher, but display a diff when the values don't match
-func MatchDocument(expected types.Document) gomegatypes.GomegaMatcher {
+func MatchDocument(expected *types.Document) gomegatypes.GomegaMatcher {
 	return &documentMatcher{
 		expected: expected,
 	}
 }
 
 type documentMatcher struct {
-	expected types.Document
+	expected *types.Document
 	diffs    string
 }
 
 var opts = []cmp.Option{cmpopts.IgnoreUnexported(types.GenericList{}, types.DelimitedBlock{})}
 
 func (m *documentMatcher) Match(actual interface{}) (success bool, err error) {
-	if _, ok := actual.(types.Document); !ok {
+	if _, ok := actual.(*types.Document); !ok {
 		return false, errors.Errorf("MatchDocument matcher expects a Document (actual: %T)", actual)
 	}
 	if diff := cmp.Diff(m.expected, actual, opts...); diff != "" {

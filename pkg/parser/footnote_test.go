@@ -17,7 +17,7 @@ var _ = Describe("footnotes - document", func() {
 		It("footnote with single-line content", func() {
 			footnoteContent := "some content"
 			source := fmt.Sprintf(`foo footnote:[%s]`, footnoteContent)
-			expected := types.Document{
+			expected := &types.Document{
 				Footnotes: []types.Footnote{
 					{
 						ID: 1,
@@ -79,7 +79,7 @@ var _ = Describe("footnotes - document", func() {
 					},
 				},
 			}
-			expected := types.Document{
+			expected := &types.Document{
 				Footnotes: []types.Footnote{
 					{
 						ID:       1,
@@ -106,7 +106,7 @@ var _ = Describe("footnotes - document", func() {
 
 		It("footnote in a paragraph", func() {
 			source := `This is another paragraph.footnote:[I am footnote text and will be displayed at the bottom of the article.]`
-			expected := types.Document{
+			expected := &types.Document{
 				Footnotes: []types.Footnote{
 					{
 						ID: 1,
@@ -141,7 +141,7 @@ A bold statement!footnote:disclaimer[Opinions are my own.]
 
 Another outrageous statement.footnote:disclaimer[]`
 
-			expected := types.Document{
+			expected := &types.Document{
 				Footnotes: []types.Footnote{
 					{
 						ID: 1,
@@ -226,7 +226,7 @@ a paragraph with another footnote.footnote:[baz]`
 					ID: 2,
 				},
 			}
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					"idprefix": "id_",
 				},
@@ -268,7 +268,7 @@ a paragraph with another footnote.footnote:[baz]`
 							types.AttrID: "id_title",
 						},
 						Elements: []interface{}{
-							types.Preamble{ // preamble is inserted
+							&types.Preamble{ // preamble is inserted
 								Elements: []interface{}{
 									types.Paragraph{
 										Lines: [][]interface{}{

@@ -17,7 +17,7 @@ What is libasciidoc?::
 	An implementation of the AsciiDoc processor in Golang.
 What is the answer to the Ultimate Question?:: 42`
 
-		expected := types.Document{
+		expected := &types.Document{
 			Elements: []interface{}{
 				&types.GenericList{
 					Kind: types.LabeledListKind,
@@ -78,7 +78,7 @@ What is libasciidoc?::
 	An implementation of the AsciiDoc processor in Golang.
 What is the answer to the Ultimate Question?:: 42`
 
-		expected := types.Document{
+		expected := &types.Document{
 			Elements: []interface{}{
 				&types.GenericList{
 					Kind: types.LabeledListKind,

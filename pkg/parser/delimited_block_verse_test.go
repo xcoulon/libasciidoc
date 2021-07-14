@@ -1251,7 +1251,7 @@ ____
 ____
 some *verse* content
 ____`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.VerseBlock{
 							Attributes: types.Attributes{
@@ -1291,7 +1291,7 @@ ____
 - content 
 ____
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.VerseBlock{
 							Attributes: types.Attributes{
@@ -1327,7 +1327,7 @@ ____
 some verse content 
 ____
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.VerseBlock{
 							Attributes: types.Attributes{
@@ -1356,7 +1356,7 @@ ____
 ----
 * content
 ____`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.VerseBlock{
 							Attributes: types.Attributes{
@@ -1403,7 +1403,7 @@ ____
 
 	* bar
 ____`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.VerseBlock{
 							Attributes: types.Attributes{
@@ -1433,7 +1433,7 @@ ____`
 				source := `[verse]
 ____
 ____`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.VerseBlock{
 							Attributes: types.Attributes{
@@ -1453,7 +1453,7 @@ ____`
 ____
 foo
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.VerseBlock{
 							Attributes: types.Attributes{

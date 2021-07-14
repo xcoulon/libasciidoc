@@ -216,7 +216,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 chocolate
 
 pasta`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -246,7 +246,7 @@ pasta`
 				source := `[title=my title]
 cookie
 pasta`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -269,7 +269,7 @@ pasta`
 [title=my {title}]
 cookie
 pasta`
-				expected := types.Document{
+				expected := &types.Document{
 					Attributes: types.Attributes{
 						"title": "cookies",
 					},
@@ -298,7 +298,7 @@ pasta`
 [title='my {title}']
 cookie
 pasta`
-				expected := types.Document{
+				expected := &types.Document{
 					Attributes: types.Attributes{
 						"title": "cookies",
 					},
@@ -327,7 +327,7 @@ pasta`
 [title="my {title}"]
 cookie
 pasta`
-				expected := types.Document{
+				expected := &types.Document{
 					Attributes: types.Attributes{
 						"title": "cookies",
 					},
@@ -356,7 +356,7 @@ pasta`
 .my {title}
 cookie
 pasta`
-				expected := types.Document{
+				expected := &types.Document{
 					Attributes: types.Attributes{
 						"title": "cookies",
 					},
@@ -384,7 +384,7 @@ pasta`
 [#anchor]
 cookie
 pasta`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -409,7 +409,7 @@ pasta`
 
 cookie
 pasta`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.BlankLine{},
 						&types.BlankLine{},
@@ -432,7 +432,7 @@ pasta`
 				source := `[.role1%hardbreaks.role2]
 cookie
 pasta`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -453,7 +453,7 @@ pasta`
 [.role2]
 cookie
 pasta`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -474,7 +474,7 @@ pasta`
 			It("not treat plusplus as line break", func() {
 				source := `C++
 cookie`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -490,7 +490,7 @@ cookie`
 
 				It("default", func() {
 					source := `cookie{counter:cookie} chocolate{counter2:cookie} pasta{counter:cookie} bob{counter:bob}`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							&types.Paragraph{
 								Elements: []interface{}{
@@ -504,7 +504,7 @@ cookie`
 
 				It("with numeric start", func() {
 					source := `cookie{counter:cookie:2} chocolate{counter2:cookie} pasta{counter:cookie} bob{counter:bob:10}`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							&types.Paragraph{
 								Elements: []interface{}{
@@ -518,7 +518,7 @@ cookie`
 
 				It("with alphanumeric start", func() {
 					source := `cookie{counter:cookie:b} chocolate{counter2:cookie} pasta{counter:cookie} bob{counter:bob:z}`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							&types.Paragraph{
 								Elements: []interface{}{
@@ -536,7 +536,7 @@ cookie`
 			
 .a title
 a paragraph`
-				expected := types.Document{
+				expected := &types.Document{
 					Attributes: types.Attributes{
 						types.AttrIDPrefix: "bar_",
 					},
@@ -561,7 +561,7 @@ a paragraph`
 
 			It("empty paragraph", func() {
 				source := `{blank}`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -579,7 +579,7 @@ a paragraph`
 
 			It("paragraph with predefined attribute", func() {
 				source := "hello {plus} world"
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -607,7 +607,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 				It("should apply the 'default' substitution", func() {
 					// quoted text is parsed but inline link macro is not
 					s := strings.ReplaceAll(source, "[subs=\"$SUBS\"]\n", "")
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"github-url":   "https://github.com",
 							"github-title": "GitHub",
@@ -708,7 +708,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 				It("should apply the 'normal' substitution", func() {
 					// quoted text is parsed but inline link macro is not
 					s := strings.ReplaceAll(source, "$SUBS", "normal")
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"github-url":   "https://github.com",
 							"github-title": "GitHub",
@@ -811,7 +811,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 
 				It("should apply the 'none' substitution", func() {
 					s := strings.ReplaceAll(source, "$SUBS", "none")
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"github-url":   "https://github.com",
 							"github-title": "GitHub",
@@ -848,7 +848,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 				It("should apply the 'quotes' substitution", func() {
 					// quoted text is parsed but inline link macros are not
 					s := strings.ReplaceAll(source, "$SUBS", "quotes")
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"github-url":   "https://github.com",
 							"github-title": "GitHub",
@@ -906,7 +906,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 				It("should apply the 'macros' substitution", func() {
 					// quoted text is not parsed but inline link macro is
 					s := strings.ReplaceAll(source, "$SUBS", "macros")
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"github-url":   "https://github.com",
 							"github-title": "GitHub",
@@ -974,7 +974,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 				It("should apply the 'attributes' substitution", func() {
 					// quoted text is not parsed but inline link macro is
 					s := strings.ReplaceAll(source, "$SUBS", "attributes")
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"github-url":   "https://github.com",
 							"github-title": "GitHub",
@@ -1011,7 +1011,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 				It("should apply the 'specialchars' substitution", func() {
 					// quoted text is not parsed but inline link macro is
 					s := strings.ReplaceAll(source, "$SUBS", "specialchars")
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"github-url":   "https://github.com",
 							"github-title": "GitHub",
@@ -1060,7 +1060,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 				It("should apply the 'replacements' substitution", func() {
 					// quoted text is not parsed but inline link macro is
 					s := strings.ReplaceAll(source, "$SUBS", "replacements")
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"github-url":   "https://github.com",
 							"github-title": "GitHub",
@@ -1100,7 +1100,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 					// Note: Asciidoctor 2.0.12 does not parse the macros withing the quotes, so the
 					// 2nd link of the first line is not detected
 					s := strings.ReplaceAll(source, "$SUBS", "quotes,macros")
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"github-url":   "https://github.com",
 							"github-title": "GitHub",
@@ -1189,7 +1189,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 					// quoted text and inline link macro are both parsed
 					// (same as above, but with subs in reversed order)
 					s := strings.ReplaceAll(source, "$SUBS", "macros,quotes")
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"github-url":   "https://github.com",
 							"github-title": "GitHub",
@@ -1277,7 +1277,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 				It("should apply the 'attributes,macros' substitution", func() {
 					// inline links are fully parsed
 					s := strings.ReplaceAll(source, "$SUBS", "attributes,macros")
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"github-url":   "https://github.com",
 							"github-title": "GitHub",
@@ -1362,7 +1362,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 					// inline links with URL coming from attribute susbtitutions are left as-is
 					// however, inline link 'text' attribute coming from attribute susbtitutions are replaced
 					s := strings.ReplaceAll(source, "$SUBS", "macros,attributes")
-					expected := types.Document{
+					expected := &types.Document{
 						Attributes: types.Attributes{
 							"github-url":   "https://github.com",
 							"github-title": "GitHub",
@@ -1433,7 +1433,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 
 			It("note admonition paragraph", func() {
 				source := `NOTE: this is a note.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -1451,7 +1451,7 @@ and another one using attribute substitution: {github-url}[{github-title}]...
 			It("warning admonition paragraph", func() {
 				source := `WARNING: this is a multiline
 warning!`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -1470,7 +1470,7 @@ warning!`
 				source := `[[cookie]]
 .chocolate
 NOTE: this is a note.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -1490,7 +1490,7 @@ NOTE: this is a note.`
 			It("caution admonition paragraph with single line", func() {
 				source := `[CAUTION]
 this is a caution!`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -1511,7 +1511,7 @@ this is a caution!`
 .chocolate
 this is a 
 *caution*!`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -1545,7 +1545,7 @@ No space after the [NOTE]!
 
 [CAUTION]
 And no space after [CAUTION] either.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -1572,7 +1572,7 @@ And no space after [CAUTION] either.`
 			It("not an admonition paragraph", func() {
 				source := `cookie
 NOTE: a note`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -1592,7 +1592,7 @@ NOTE: a note`
 			It("inline image within a quote", func() {
 				source := `[quote, john doe, quote title]
 a cookie image:cookie.png[]`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -1626,7 +1626,7 @@ a cookie image:cookie.png[]`
 			It("with author and title", func() {
 				source := `[verse, john doe, verse title]
 I am a verse paragraph.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -1648,7 +1648,7 @@ I am a verse paragraph.`
 [verse, john doe, verse title]
 .universe
 I am a verse paragraph.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -1671,7 +1671,7 @@ I am a verse paragraph.`
 			It("with empty title", func() {
 				source := `[verse, john doe, ]
 I am a verse paragraph.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -1690,7 +1690,7 @@ I am a verse paragraph.`
 			It("without title", func() {
 				source := `[verse, john doe ]
 I am a verse paragraph.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -1709,7 +1709,7 @@ I am a verse paragraph.`
 			It("with empty author", func() {
 				source := `[verse,  ]
 I am a verse paragraph.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -1727,7 +1727,7 @@ I am a verse paragraph.`
 			It("without author", func() {
 				source := `[verse]
 I am a verse paragraph.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
@@ -1746,7 +1746,7 @@ I am a verse paragraph.`
 			// 				// assume that the author meant to use an image, so the `verse` attribute will be ignored during rendering
 			// 				source := `[verse, john doe, verse title]
 			// image::cookie.png[]`
-			// 				expected := types.Document{
+			// 				expected := &types.Document{
 			// 					Elements: []interface{}{
 			// 						&types.Paragraph{
 			// 							Attributes: types.Attributes{

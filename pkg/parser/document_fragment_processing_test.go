@@ -18,7 +18,7 @@ var _ = Describe("document processing", func() {
 ----
 foo
 ----`
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					types.AttrSyntaxHighlighter: "pygments",
 				},
@@ -78,7 +78,7 @@ Preamble comes here
 					Content: "Section C",
 				},
 			}
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					types.AttrTableOfContents: nil,
 				},
@@ -91,7 +91,7 @@ Preamble comes here
 						Title: headerTitle,
 						Elements: []interface{}{
 							types.TableOfContentsPlaceHolder{},
-							types.Preamble{
+							&types.Preamble{
 								Elements: []interface{}{
 									types.Paragraph{
 										Lines: [][]interface{}{
@@ -181,7 +181,7 @@ eve - analyzes an image to determine if it's a picture of a life form
 				},
 			}
 
-			expected := types.Document{
+			expected := &types.Document{
 				Attributes: types.Attributes{
 					types.AttrDocType: "manpage",
 					types.AttrAuthors: []types.DocumentAuthor{

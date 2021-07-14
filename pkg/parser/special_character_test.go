@@ -14,7 +14,7 @@ var _ = Describe("special characters", func() {
 
 		It("should parse in paragraph", func() {
 			source := "<b>*</b> &apos; &amp;"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Paragraph{
 						Lines: [][]interface{}{
@@ -67,7 +67,7 @@ var _ = Describe("special characters", func() {
 			source := "```" + "\n" +
 				"<b>*</b> &apos; &amp;" + "\n" +
 				"```"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.FencedBlock{
 						Lines: [][]interface{}{

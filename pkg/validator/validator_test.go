@@ -13,7 +13,7 @@ var _ = Describe("document validator", func() {
 
 		It("should not report problems", func() {
 			// given
-			doc := types.Document{
+			doc := &types.Document{
 				Attributes:        types.Attributes{},
 				ElementReferences: types.ElementReferences{},
 				Footnotes:         []types.Footnote{},
@@ -31,7 +31,7 @@ var _ = Describe("document validator", func() {
 			}
 
 			// when
-			problems, err := Validate(&doc)
+			problems, err := Validate(doc)
 
 			// then
 			Expect(err).NotTo(HaveOccurred())
@@ -43,7 +43,7 @@ var _ = Describe("document validator", func() {
 
 		It("should not report problems", func() {
 			// given
-			doc := types.Document{
+			doc := &types.Document{
 				Attributes: types.Attributes{
 					types.AttrDocType: "manpage",
 				},
@@ -96,7 +96,7 @@ var _ = Describe("document validator", func() {
 			}
 
 			// when
-			problems, err := Validate(&doc)
+			problems, err := Validate(doc)
 
 			// then
 			Expect(err).NotTo(HaveOccurred())
@@ -108,7 +108,7 @@ var _ = Describe("document validator", func() {
 
 			It("missing header - invalid level", func() {
 				// given
-				doc := types.Document{
+				doc := &types.Document{
 					Attributes: types.Attributes{
 						types.AttrDocType: "manpage",
 					},
@@ -161,7 +161,7 @@ var _ = Describe("document validator", func() {
 				}
 
 				// when
-				problems, err := Validate(&doc)
+				problems, err := Validate(doc)
 
 				// then
 				Expect(err).NotTo(HaveOccurred())
@@ -174,7 +174,7 @@ var _ = Describe("document validator", func() {
 
 			It("missing name section - invalid level", func() {
 				// given
-				doc := types.Document{
+				doc := &types.Document{
 					Attributes: types.Attributes{
 						types.AttrDocType: "manpage",
 					},
@@ -227,7 +227,7 @@ var _ = Describe("document validator", func() {
 				}
 
 				// when
-				problems, err := Validate(&doc)
+				problems, err := Validate(doc)
 
 				// then
 				Expect(err).NotTo(HaveOccurred())
@@ -240,7 +240,7 @@ var _ = Describe("document validator", func() {
 
 			It("missing name section - invalid title", func() {
 				// given
-				doc := types.Document{
+				doc := &types.Document{
 					Attributes: types.Attributes{
 						types.AttrDocType: "manpage",
 					},
@@ -293,7 +293,7 @@ var _ = Describe("document validator", func() {
 				}
 
 				// when
-				problems, err := Validate(&doc)
+				problems, err := Validate(doc)
 
 				// then
 				Expect(err).NotTo(HaveOccurred())
@@ -306,7 +306,7 @@ var _ = Describe("document validator", func() {
 
 			It("missing name section - invalid elements", func() {
 				// given
-				doc := types.Document{
+				doc := &types.Document{
 					Attributes: types.Attributes{
 						types.AttrDocType: "manpage",
 					},
@@ -348,7 +348,7 @@ var _ = Describe("document validator", func() {
 				}
 
 				// when
-				problems, err := Validate(&doc)
+				problems, err := Validate(doc)
 
 				// then
 				Expect(err).NotTo(HaveOccurred())
@@ -361,7 +361,7 @@ var _ = Describe("document validator", func() {
 
 			It("missing synopsis section - invalid level", func() {
 				// given
-				doc := types.Document{
+				doc := &types.Document{
 					Attributes: types.Attributes{
 						types.AttrDocType: "manpage",
 					},
@@ -414,7 +414,7 @@ var _ = Describe("document validator", func() {
 				}
 
 				// when
-				problems, err := Validate(&doc)
+				problems, err := Validate(doc)
 
 				// then
 				Expect(err).NotTo(HaveOccurred())
@@ -427,7 +427,7 @@ var _ = Describe("document validator", func() {
 
 			It("missing synopsis section - invalid title", func() {
 				// given
-				doc := types.Document{
+				doc := &types.Document{
 					Attributes: types.Attributes{
 						types.AttrDocType: "manpage",
 					},
@@ -480,7 +480,7 @@ var _ = Describe("document validator", func() {
 				}
 
 				// when
-				problems, err := Validate(&doc)
+				problems, err := Validate(doc)
 
 				// then
 				Expect(err).NotTo(HaveOccurred())

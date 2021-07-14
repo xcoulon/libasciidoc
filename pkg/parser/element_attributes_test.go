@@ -19,7 +19,7 @@ var _ = Describe("element attributes", func() {
 				It("element link alone", func() {
 					source := `[link=http://foo.bar]
 a paragraph`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
 								Attributes: types.Attributes{
@@ -40,7 +40,7 @@ a paragraph`
 				It("spaces in link", func() {
 					source := `[link= http://foo.bar  ]
 a paragraph`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
 								Attributes: types.Attributes{
@@ -65,7 +65,7 @@ a paragraph`
 				It("spaces before keyword", func() {
 					source := `[ link=http://foo.bar]
 a paragraph`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
 								Lines: [][]interface{}{
@@ -89,7 +89,7 @@ a paragraph`
 				It("unbalanced brackets", func() {
 					source := `[link=http://foo.bar
 a paragraph`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
 								Lines: [][]interface{}{
@@ -119,7 +119,7 @@ a paragraph`
 				It("normal syntax", func() {
 					source := `[[img-foobar]]
 a paragraph`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
 								Attributes: types.Attributes{
@@ -141,7 +141,7 @@ a paragraph`
 				It("short-hand syntax", func() {
 					source := `[#img-foobar]
 a paragraph`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
 								Attributes: types.Attributes{
@@ -166,7 +166,7 @@ a paragraph`
 				It("extra spaces", func() {
 					source := `[ #img-foobar ]
 a paragraph`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
 								Lines: [][]interface{}{
@@ -190,7 +190,7 @@ a paragraph`
 				It("unbalanced brackets", func() {
 					source := `[#img-foobar
 a paragraph`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
 								Lines: [][]interface{}{
@@ -220,7 +220,7 @@ a paragraph`
 				It("valid element title", func() {
 					source := `.a title
 a paragraph`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
 								Attributes: types.Attributes{
@@ -245,7 +245,7 @@ a paragraph`
 				It("extra space after dot", func() {
 					source := `. a title
 a list item!`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							types.OrderedList{
 								Items: []*types.OrderedListElement{
@@ -279,7 +279,7 @@ a list item!`
 					source := `!a title
 a paragraph`
 
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
 								Lines: [][]interface{}{
@@ -309,7 +309,7 @@ a paragraph`
 				It("shortcut role element", func() {
 					source := `[.a_role]
 a paragraph`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
 								Attributes: types.Attributes{
@@ -331,7 +331,7 @@ a paragraph`
 				It("full role syntax", func() {
 					source := `[role=a_role]
 a paragraph`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
 								Attributes: types.Attributes{
@@ -355,7 +355,7 @@ a paragraph`
 				source := `[.a_role]
 
 a paragraph`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						// attribute was attached to blankline, which was filtered out in the final doc
 						types.Paragraph{
@@ -378,7 +378,7 @@ a paragraph`
 
 
 a paragraph`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						// attributes were attached to blankline, which was filtered out in the final doc
 						types.Paragraph{
@@ -400,7 +400,7 @@ a paragraph`
 			It("single standalone attribute", func() {
 				source := `[.a_role]
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{},
 				}
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
@@ -410,7 +410,7 @@ a paragraph`
 				source := `[.a_role]
 [[ID]]
 .title`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{},
 				}
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
@@ -422,7 +422,7 @@ a paragraph`
 [.a_role]
 [[ID]]
 .title`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{

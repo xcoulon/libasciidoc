@@ -19,7 +19,7 @@ var _ = Describe("quote blocks", func() {
 ____
 some *quote* content
 ____`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Quote,
@@ -62,7 +62,7 @@ ____
 - content 
 ____
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Quote,
@@ -128,7 +128,7 @@ ____
 some quote content 
 ____
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Quote,
@@ -156,7 +156,7 @@ ____
 ____
 .foo
 ____`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Quote,
@@ -180,7 +180,7 @@ ____
 ----
 * content
 ____`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Quote,
@@ -250,7 +250,7 @@ ____
 
 * content
 ____`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Quote,
@@ -313,7 +313,7 @@ ____`
 				source := `[quote]
 ____
 ____`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Quote,
@@ -331,7 +331,7 @@ ____`
 ____
 foo
 `
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Quote,

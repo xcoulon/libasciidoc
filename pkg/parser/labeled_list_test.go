@@ -16,7 +16,7 @@ var _ = Describe("labeled lists", func() {
 			source := `Item1::
 Item 1 description
 on 2 lines`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -47,7 +47,7 @@ on 2 lines`
 
 		It("with a single term and no description", func() {
 			source := `Item1::`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -70,7 +70,7 @@ on 2 lines`
 		It("with a quoted text in term and in description", func() {
 			source := "`foo()`::\n" +
 				`This function is _untyped_.`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -117,7 +117,7 @@ on 2 lines`
 		It("with a index term", func() {
 			source := "((`foo`))::\n" +
 				`This function is _untyped_.`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -169,7 +169,7 @@ on 2 lines`
 		It("with a concealed index term in term", func() {
 			source := "(((foo,bar)))::\n" +
 				`This function is _untyped_.`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -213,7 +213,7 @@ on 2 lines`
 		It("with a horizontal layout attribute", func() {
 			source := `[horizontal]
 Item1:: foo`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -246,7 +246,7 @@ Item1:: foo`
 		It("with a single term and a blank line", func() {
 			source := `Item1::
 			`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -273,7 +273,7 @@ Item 2::
 Item 2 description
 Item 3:: 
 Item 3 description`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -337,7 +337,7 @@ Item 2:::
 Item 2 description
 Item 3::::
 Item 3 description`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -409,7 +409,7 @@ Item 3 description`
 * foo
 * bar
 Item with description:: something simple`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -479,7 +479,7 @@ foo
 bar
 
 a normal paragraph.`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -522,7 +522,7 @@ Item 2:: something simple
 ----
 another fenced block
 ----`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -587,7 +587,7 @@ Item 2:: something simple
 ----
 another fenced block
 ----`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -646,7 +646,7 @@ another fenced block
 		It("with nested unordered list - case 2", func() {
 			source := `Labeled item::
 - unordered item`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -688,7 +688,7 @@ another fenced block
 			source := `.Labeled, single-line
 first term:: definition of the first term
 second term:: definition of the second term`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -745,7 +745,7 @@ level 1:: description 1
 level 2::: description 2
 level 3:::: description 3
 level 1:: description 1`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -844,7 +844,7 @@ level 1:: description 1
 level 2::: description 2
 level 3:::: description 3
 level 2::: description 2`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -939,7 +939,7 @@ level 2::: description 2`
 
 		It("item with predefined attribute", func() {
 			source := `level 1:: {amp}`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -968,7 +968,7 @@ level 2::: description 2`
 
 		It("item with a colon the term", func() {
 			source := `what: ever:: text`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -1009,7 +1009,7 @@ addition
 IMPORTANT: important
 +
 TIP: tip`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,
@@ -1096,7 +1096,7 @@ This is the next continuation paragraph.
 +
 TIP: We can embed admonitions too!
 `
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.LabeledListKind,

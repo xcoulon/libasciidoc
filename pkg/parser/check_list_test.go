@@ -18,7 +18,7 @@ var _ = Describe("checked lists", func() {
 - [x] also checked
 - [ ] not checked
 -     normal list item`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.UnorderedListKind,
@@ -91,7 +91,7 @@ var _ = Describe("checked lists", func() {
 	* [x] also checked
 	* [ ] not checked
 	*     normal list item`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.UnorderedListKind,
@@ -167,7 +167,7 @@ var _ = Describe("checked lists", func() {
 ** [x] also checked
 ** [ ] not checked
 *     normal list item`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.UnorderedListKind,
@@ -258,7 +258,7 @@ var _ = Describe("checked lists", func() {
 ** a normal list item
 ** another normal list item
 *     normal list item`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.GenericList{
 						Kind: types.UnorderedListKind,

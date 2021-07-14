@@ -1527,7 +1527,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 
 		It("should include child and grandchild content with relative level offset", func() {
 			source := `include::../../test/includes/parent-include-relative-offset.adoc[leveloffset=+1]`
-			expected := types.Document{
+			expected := &types.Document{
 				ElementReferences: types.ElementReferences{
 					"_parent_title": []interface{}{
 						&types.StringElement{
@@ -1673,7 +1673,7 @@ include::../../test/includes/hello_world.go.txt[lines=1]
 
 		It("should include child and grandchild content with relative then absolute level offset", func() {
 			source := `include::../../test/includes/parent-include-absolute-offset.adoc[leveloffset=+1]`
-			expected := types.Document{
+			expected := &types.Document{
 				ElementReferences: types.ElementReferences{
 					"_parent_title": []interface{}{
 						&types.StringElement{

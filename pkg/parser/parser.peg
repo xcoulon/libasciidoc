@@ -1814,9 +1814,11 @@ HeaderGroup <- elements:(
     / InlinePassthrough
     / SpecialCharacter
     / Quote
+    / Link
     / AttributeSubstitution
     / ElementPlaceHolder // needed when parsing a second time, after first pass returned attribute substitutions
     / Replacement
+    / ShortHandAnchor
     / AnyChar)+ EOF { 
         return types.Merge(elements), nil
     }

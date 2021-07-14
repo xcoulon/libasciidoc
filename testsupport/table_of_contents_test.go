@@ -11,19 +11,19 @@ import (
 var _ = Describe("table of contents", func() {
 
 	expected := types.TableOfContents{
-		Sections: []types.ToCSection{
+		Sections: []*types.ToCSection{
 			{
 				ID:       "title",
 				Level:    1,
 				Title:    "Title",
-				Children: []types.ToCSection{},
+				Children: []*types.ToCSection{},
 			},
 		},
 	}
 
 	It("should match", func() {
 		// given
-		actual := types.Document{
+		actual := &types.Document{
 			ElementReferences: types.ElementReferences{},
 			Footnotes:         []types.Footnote{},
 			Elements: []interface{}{
@@ -50,7 +50,7 @@ var _ = Describe("table of contents", func() {
 
 	It("should not match", func() {
 		// given
-		actual := types.Document{
+		actual := &types.Document{
 			Elements: []interface{}{},
 		}
 		// when

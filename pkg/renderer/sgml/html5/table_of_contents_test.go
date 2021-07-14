@@ -197,7 +197,7 @@ var _ = Describe("table of contents initialization", func() {
 	Context("document without section", func() {
 
 		It("should return empty table of contents when doc has no section", func() {
-			actual := types.Document{
+			actual := &types.Document{
 				Attributes:        types.Attributes{},
 				ElementReferences: types.ElementReferences{},
 				Footnotes:         []types.Footnote{},
@@ -213,7 +213,7 @@ var _ = Describe("table of contents initialization", func() {
 				},
 			}
 			expected := types.TableOfContents{
-				Sections: []types.ToCSection{},
+				Sections: []*types.ToCSection{},
 			}
 			Expect(TableOfContents(actual)).To(Equal(expected))
 		})
@@ -250,7 +250,7 @@ var _ = Describe("table of contents initialization", func() {
 		sectionBTitle := []interface{}{
 			&types.StringElement{Content: "Section B"},
 		}
-		document := types.Document{
+		document := &types.Document{
 			Attributes: types.Attributes{},
 			ElementReferences: types.ElementReferences{
 				"_a_header":    doctitle,
@@ -346,18 +346,18 @@ var _ = Describe("table of contents initialization", func() {
 		It("should return table of contents with section level 1,2,3,2 with default level", func() {
 			delete(document.Attributes, types.AttrTableOfContentsLevels)
 			expected := types.TableOfContents{
-				Sections: []types.ToCSection{
+				Sections: []*types.ToCSection{
 					{
 						ID:    "_section_a",
 						Level: 1,
 						Title: "Section A with link to https://redhat.com",
-						Children: []types.ToCSection{
+						Children: []*types.ToCSection{
 							{
 
 								ID:       "_section_a_a",
 								Level:    2,
 								Title:    "Section A.a <sup class=\"footnote\">[1]</sup>",
-								Children: []types.ToCSection{},
+								Children: []*types.ToCSection{},
 							},
 						},
 					},
@@ -365,7 +365,7 @@ var _ = Describe("table of contents initialization", func() {
 						ID:       "_section_b",
 						Level:    1,
 						Title:    "Section B",
-						Children: []types.ToCSection{},
+						Children: []*types.ToCSection{},
 					},
 				},
 			}
@@ -375,24 +375,24 @@ var _ = Describe("table of contents initialization", func() {
 		It("should return table of contents with section level 1,2,3,2 with custom level", func() {
 			document.Attributes[types.AttrTableOfContentsLevels] = "4" // must be a string
 			expected := types.TableOfContents{
-				Sections: []types.ToCSection{
+				Sections: []*types.ToCSection{
 					{
 						ID:    "_section_a",
 						Level: 1,
 						Title: "Section A with link to https://redhat.com",
-						Children: []types.ToCSection{
+						Children: []*types.ToCSection{
 							{
 
 								ID:    "_section_a_a",
 								Level: 2,
 								Title: "Section A.a <sup class=\"footnote\">[1]</sup>",
-								Children: []types.ToCSection{
+								Children: []*types.ToCSection{
 									{
 
 										ID:       "_section_a_a_1",
 										Level:    3,
 										Title:    "Section A.a.1",
-										Children: []types.ToCSection{},
+										Children: []*types.ToCSection{},
 									},
 								},
 							},
@@ -402,7 +402,7 @@ var _ = Describe("table of contents initialization", func() {
 						ID:       "_section_b",
 						Level:    1,
 						Title:    "Section B",
-						Children: []types.ToCSection{},
+						Children: []*types.ToCSection{},
 					},
 				},
 			}

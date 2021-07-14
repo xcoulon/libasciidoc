@@ -39,7 +39,7 @@ var _ = Describe("include table of contents", func() {
 	tocPlaceHolder := types.TableOfContentsPlaceHolder{}
 
 	It("table of contents with default placement and no header with content", func() {
-		source := types.Document{
+		source := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTableOfContents: nil,
 			},
@@ -48,7 +48,7 @@ var _ = Describe("include table of contents", func() {
 				section,
 			},
 		}
-		expected := types.Document{
+		expected := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTableOfContents: nil,
 			},
@@ -62,7 +62,7 @@ var _ = Describe("include table of contents", func() {
 	})
 
 	It("table of contents with default placement and a header with content", func() {
-		source := types.Document{
+		source := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTableOfContents: nil,
 			},
@@ -81,7 +81,7 @@ var _ = Describe("include table of contents", func() {
 				},
 			},
 		}
-		expected := types.Document{
+		expected := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTableOfContents: nil,
 			},
@@ -105,7 +105,7 @@ var _ = Describe("include table of contents", func() {
 	})
 
 	It("table of contents with default placement and a header without content", func() {
-		source := types.Document{
+		source := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTableOfContents: nil,
 			},
@@ -123,7 +123,7 @@ var _ = Describe("include table of contents", func() {
 				},
 			},
 		}
-		expected := types.Document{
+		expected := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTableOfContents: nil,
 			},
@@ -146,7 +146,7 @@ var _ = Describe("include table of contents", func() {
 	})
 
 	It("table of contents with preamble placement and no header with content", func() {
-		source := types.Document{
+		source := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTableOfContents: "preamble",
 			},
@@ -155,7 +155,7 @@ var _ = Describe("include table of contents", func() {
 				section,
 			},
 		}
-		expected := types.Document{
+		expected := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTableOfContents: "preamble",
 			},
@@ -169,7 +169,7 @@ var _ = Describe("include table of contents", func() {
 	})
 
 	It("table of contents with preamble placement and header with content", func() {
-		source := types.Document{
+		source := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTableOfContents: "preamble",
 			},
@@ -187,7 +187,7 @@ var _ = Describe("include table of contents", func() {
 				},
 			},
 		}
-		expected := types.Document{
+		expected := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTableOfContents: "preamble",
 			},
@@ -210,7 +210,7 @@ var _ = Describe("include table of contents", func() {
 	})
 
 	It("table of contents with preamble placement and header without content", func() {
-		source := types.Document{
+		source := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTableOfContents: "preamble",
 			},
@@ -227,7 +227,7 @@ var _ = Describe("include table of contents", func() {
 				},
 			},
 		}
-		expected := types.Document{
+		expected := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTableOfContents: "preamble",
 			},

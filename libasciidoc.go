@@ -52,7 +52,7 @@ func ConvertFile(output io.Writer, config configuration.Configuration) (types.Me
 // Returns an error if a problem occurred. The default will be HTML5, but depends on the config.BackEnd value.
 func Convert(r io.Reader, output io.Writer, config configuration.Configuration) (types.Metadata, error) {
 
-	var render func(*renderer.Context, types.Document, io.Writer) (types.Metadata, error)
+	var render func(*renderer.Context, *types.Document, io.Writer) (types.Metadata, error)
 	switch config.BackEnd {
 	case "html", "html5", "":
 		render = html5.Render
@@ -73,7 +73,7 @@ func Convert(r io.Reader, output io.Writer, config configuration.Configuration) 
 		return types.Metadata{}, err
 	}
 	// validate the document
-	problems, err := validator.Validate(&doc)
+	problems, err := validator.Validate(doc)
 	if err != nil {
 		return types.Metadata{}, err
 	}

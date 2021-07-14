@@ -17,7 +17,7 @@ var _ = Describe("tables", func() {
 | *foo* foo  | _bar_  
 |===
 `
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Table{
 						Columns: []types.TableColumn{
@@ -66,7 +66,7 @@ var _ = Describe("tables", func() {
 			source := `|===
 | *foo* foo  | _bar_  | baz
 |===`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Table{
 						Columns: []types.TableColumn{
@@ -128,7 +128,7 @@ var _ = Describe("tables", func() {
 |row 2, column 1
 |row 2, column 2
 |===`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Table{
 						Attributes: types.Attributes{
@@ -202,7 +202,7 @@ var _ = Describe("tables", func() {
 |row 2, column 1
 |row 2, column 2
 |===`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Table{
 						Attributes: types.Attributes{
@@ -269,7 +269,7 @@ var _ = Describe("tables", func() {
 		It("empty table ", func() {
 			source := `|===
 |===`
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Table{
 						Columns: []types.TableColumn{},
@@ -282,7 +282,7 @@ var _ = Describe("tables", func() {
 
 		It("empty table with cols attr", func() {
 			source := "[cols=\"3,2,5\"]\n|===\n|==="
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Table{
 						Attributes: types.Attributes{
@@ -302,7 +302,7 @@ var _ = Describe("tables", func() {
 
 		It("autowidth overrides column widths", func() {
 			source := "[%autowidth,cols=\"3,2,5\"]\n|===\n|==="
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Table{
 						Attributes: types.Attributes{
@@ -323,7 +323,7 @@ var _ = Describe("tables", func() {
 
 		It("column autowidth", func() {
 			source := "[cols=\"30,~,~\"]\n|===\n|==="
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Table{
 						Attributes: types.Attributes{
@@ -343,7 +343,7 @@ var _ = Describe("tables", func() {
 
 		It("columns with repeat", func() {
 			source := "[cols=\"3*10,2*~\"]\n|===\n|==="
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Table{
 						Attributes: types.Attributes{
@@ -364,7 +364,7 @@ var _ = Describe("tables", func() {
 		})
 		It("columns with alignment changes", func() {
 			source := "[cols=\"2*^.^,<,.>\"]\n|===\n|==="
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Table{
 						Attributes: types.Attributes{
@@ -386,7 +386,7 @@ var _ = Describe("tables", func() {
 		// TODO: This checks that we parse the styles -- we don't actually do anything with them further yet.
 		It("columns with alignment changes and styles", func() {
 			source := "[cols=\"2*^.^d,<e,.>s\"]\n|===\n|==="
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					types.Table{
 						Attributes: types.Attributes{

@@ -18,7 +18,8 @@ var _ = Describe("preambles", func() {
 	}
 
 	It("doc without sections", func() {
-		source := types.Document{
+		// given
+		doc := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTitle: "foo",
 			},
@@ -44,7 +45,7 @@ var _ = Describe("preambles", func() {
 				},
 			},
 		}
-		expected := types.Document{
+		expected := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTitle: "foo",
 			},
@@ -70,11 +71,15 @@ var _ = Describe("preambles", func() {
 				},
 			},
 		}
-		Expect(includePreamble(source)).To(Equal(expected))
+		// when
+		doc.InsertPreamble()
+		// then
+		Expect(doc).To(Equal(expected))
 	})
 
 	It("doc with 1-paragraph preamble", func() {
-		source := types.Document{
+		// given
+		doc := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTitle: "foo",
 			},
@@ -110,7 +115,7 @@ var _ = Describe("preambles", func() {
 				},
 			},
 		}
-		expected := types.Document{
+		expected := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTitle: "foo",
 			},
@@ -119,7 +124,7 @@ var _ = Describe("preambles", func() {
 				"_section_b": sectionBTitle,
 			},
 			Elements: []interface{}{
-				types.Preamble{
+				&types.Preamble{
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
@@ -148,11 +153,15 @@ var _ = Describe("preambles", func() {
 				},
 			},
 		}
-		Expect(includePreamble(source)).To(Equal(expected))
+		// when
+		doc.InsertPreamble()
+		// then
+		Expect(doc).To(Equal(expected))
 	})
 
 	It("doc with 2-paragraph preamble", func() {
-		source := types.Document{
+		// given
+		doc := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTitle: "foo",
 			},
@@ -196,7 +205,7 @@ var _ = Describe("preambles", func() {
 				},
 			},
 		}
-		expected := types.Document{
+		expected := &types.Document{
 			Attributes: types.Attributes{
 				types.AttrTitle: "foo",
 			},
@@ -205,7 +214,7 @@ var _ = Describe("preambles", func() {
 				"_section_b": sectionBTitle,
 			},
 			Elements: []interface{}{
-				types.Preamble{
+				&types.Preamble{
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
@@ -240,7 +249,10 @@ var _ = Describe("preambles", func() {
 				},
 			},
 		}
-		Expect(includePreamble(source)).To(Equal(expected))
+		// when
+		doc.InsertPreamble()
+		// then
+		Expect(doc).To(Equal(expected))
 	})
 
 })

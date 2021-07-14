@@ -29,7 +29,7 @@ func (r *sgmlRenderer) renderTableOfContents(ctx *renderer.Context, toc types.Ta
 	return result.String(), nil
 }
 
-func (r *sgmlRenderer) renderTableOfContentsSections(ctx *renderer.Context, sections []types.ToCSection) (string, error) {
+func (r *sgmlRenderer) renderTableOfContentsSections(ctx *renderer.Context, sections []*types.ToCSection) (string, error) {
 	if len(sections) == 0 {
 		return "", nil
 	}
@@ -47,7 +47,7 @@ func (r *sgmlRenderer) renderTableOfContentsSections(ctx *renderer.Context, sect
 		Context  *renderer.Context
 		Level    int
 		Content  string
-		Sections []types.ToCSection
+		Sections []*types.ToCSection
 	}{
 		Context:  ctx,
 		Level:    sections[0].Level,
@@ -61,7 +61,7 @@ func (r *sgmlRenderer) renderTableOfContentsSections(ctx *renderer.Context, sect
 	return resultBuf.String(), nil //nolint: gosec
 }
 
-func (r *sgmlRenderer) renderTableOfContentsEntry(ctx *renderer.Context, entry types.ToCSection) (string, error) {
+func (r *sgmlRenderer) renderTableOfContentsEntry(ctx *renderer.Context, entry *types.ToCSection) (string, error) {
 	resultBuf := &strings.Builder{}
 
 	content, err := r.renderTableOfContentsSections(ctx, entry.Children)
@@ -75,7 +75,7 @@ func (r *sgmlRenderer) renderTableOfContentsEntry(ctx *renderer.Context, entry t
 		ID       string
 		Title    string
 		Content  string
-		Children []types.ToCSection
+		Children []*types.ToCSection
 	}{
 		Context:  ctx,
 		Level:    entry.Level,
@@ -92,8 +92,8 @@ func (r *sgmlRenderer) renderTableOfContentsEntry(ctx *renderer.Context, entry t
 
 // newTableOfContents initializes a TableOfContents from the sections
 // of the given document
-func (r *sgmlRenderer) newTableOfContents(ctx *renderer.Context, doc types.Document) (types.TableOfContents, error) {
-	sections := make([]types.ToCSection, 0, len(doc.Elements))
+func (r *sgmlRenderer) newTableOfContents(ctx *renderer.Context, doc *types.Document) (types.TableOfContents, error) {
+	sections := make([]*types.ToCSection, 0, len(doc.Elements))
 	for _, e := range doc.Elements {
 		if s, ok := e.(types.Section); ok {
 			tocs, err := r.visitSection(ctx, s, 1)
@@ -108,19 +108,19 @@ func (r *sgmlRenderer) newTableOfContents(ctx *renderer.Context, doc types.Docum
 	}, nil
 }
 
-func (r *sgmlRenderer) visitSection(ctx *renderer.Context, section types.Section, currentLevel int) ([]types.ToCSection, error) {
+func (r *sgmlRenderer) visitSection(ctx *renderer.Context, section types.Section, currentLevel int) ([]*types.ToCSection, error) {
 	tocLevels, err := getTableOfContentsLevels(ctx)
 	if err != nil {
-		return []types.ToCSection{}, err
+		return []*types.ToCSection{}, err
 	}
-	children := make([]types.ToCSection, 0, len(section.Elements))
+	children := make([]*types.ToCSection, 0, len(section.Elements))
 	// log.Debugf("visiting children section: %t (%d < %d)", currentLevel < tocLevels, currentLevel, tocLevels)
 	if currentLevel <= tocLevels {
 		for _, e := range section.Elements {
 			if s, ok := e.(types.Section); ok {
 				tocs, err := r.visitSection(ctx, s, currentLevel+1)
 				if err != nil {
-					return []types.ToCSection{}, err
+					return []*types.ToCSection{}, err
 				}
 				children = append(children, tocs...)
 			}
@@ -132,10 +132,10 @@ func (r *sgmlRenderer) visitSection(ctx *renderer.Context, section types.Section
 
 	renderedTitle, err := r.renderPlainText(ctx, section.Title)
 	if err != nil {
-		return []types.ToCSection{}, err
+		return []*types.ToCSection{}, err
 	}
 
-	return []types.ToCSection{
+	return []*types.ToCSection{
 		{
 			ID:       section.Attributes.GetAsStringWithDefault(types.AttrID, ""),
 			Level:    section.Level,

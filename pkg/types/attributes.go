@@ -165,11 +165,11 @@ func NewAttributes(attributes ...interface{}) (Attributes, error) {
 	positionalIndex := 0
 	for _, attr := range attributes {
 		switch attr := attr.(type) {
-		case PositionalAttribute:
+		case *PositionalAttribute:
 			positionalIndex++
 			attr.Index = positionalIndex
 			result.Set(attr.Key(), attr.Value)
-		case Attribute:
+		case *Attribute:
 			result.Set(attr.Key, attr.Value)
 		case Attributes: // when an there were multiple attributes, eg: `[quote,author,title]`
 			result.SetAll(attr)
@@ -313,7 +313,7 @@ func toAttributesWithMapping(attrs interface{}, mapping map[string]string) Attri
 // HasAttributeWithValue checks that there is an entry for the given key/value pair
 func HasAttributeWithValue(attributes interface{}, key string, value interface{}) bool {
 	switch a := attributes.(type) {
-	case Attribute:
+	case *Attribute:
 		if a.Key == key && a.Value == value {
 			return true
 		}
@@ -336,7 +336,7 @@ func HasAttributeWithValue(attributes interface{}, key string, value interface{}
 // HasNotAttribute checks that there is no entry for the given key
 func HasNotAttribute(attributes interface{}, key string) bool {
 	switch a := attributes.(type) {
-	case Attribute:
+	case *Attribute:
 		if a.Key == key {
 			return false
 		}
@@ -361,33 +361,28 @@ type PositionalAttribute struct {
 	Value interface{}
 }
 
+// NewPositionalAttribute returns a new attribute who key is the position in the group
+func NewPositionalAttribute(value interface{}) (*PositionalAttribute, error) {
+	return &PositionalAttribute{
+		Value: value,
+	}, nil
+}
+
 // Key returns the "temporary" key, based on the attribute index.
-func (a PositionalAttribute) Key() string {
+func (a *PositionalAttribute) Key() string {
 	return AttrPositionalIndex + strconv.Itoa(a.Index)
 }
 
-// NewPositionalAttribute returns a new attribute who key is the position in the group
-func NewPositionalAttribute(value interface{}) (PositionalAttribute, error) {
-	result := PositionalAttribute{
-		Value: value,
-	}
-	// if log.IsLevelEnabled(log.DebugLevel) {
-	// 	log.Debug("new positional attribute:")
-	// 	spew.Fdump(log.StandardLogger().Out, result)
-	// }
-	return result, nil
-}
-
 // NewOptionAttribute sets a boolean option.
-func NewOptionAttribute(options interface{}) (Attribute, error) {
-	return Attribute{
+func NewOptionAttribute(options interface{}) (*Attribute, error) {
+	return &Attribute{
 		Key:   AttrOption,
 		Value: Reduce(options),
 	}, nil
 }
 
 // NewNamedAttribute a named (or positional) element
-func NewNamedAttribute(key string, value interface{}) (Attribute, error) {
+func NewNamedAttribute(key string, value interface{}) (*Attribute, error) {
 	value = Reduce(value)
 	if key == AttrOpts { // Handle the alias
 		key = AttrOptions
@@ -396,44 +391,44 @@ func NewNamedAttribute(key string, value interface{}) (Attribute, error) {
 	// 	// log.Debugf("new named attribute '%s':", key)
 	// 	spew.Fdump(log.StandardLogger().Out, value)
 	// }
-	return Attribute{
+	return &Attribute{
 		Key:   key,
 		Value: value,
 	}, nil
 }
 
 // NewInlineIDAttribute initializes a new attribute map with a single entry for the ID using the given value
-func NewInlineIDAttribute(id string) (Attribute, error) {
+func NewInlineIDAttribute(id string) (*Attribute, error) {
 	// log.Debugf("initializing a new inline ElementID with ID=%s", id)
-	return Attribute{
+	return &Attribute{
 		Key:   AttrID,
 		Value: id,
 	}, nil
 }
 
 // NewTitleAttribute initializes a new attribute map with a single entry for the title using the given value
-func NewTitleAttribute(title interface{}) (Attribute, error) {
+func NewTitleAttribute(title interface{}) (*Attribute, error) {
 	// log.Debugf("initializing a new Title attribute with content=%v", title)
-	return Attribute{
+	return &Attribute{
 		Key:   AttrTitle,
 		Value: title,
 	}, nil
 }
 
 // NewRoleAttribute initializes a new attribute map with a single entry for the title using the given value
-func NewRoleAttribute(role interface{}) (Attribute, error) {
+func NewRoleAttribute(role interface{}) (*Attribute, error) {
 	role = Reduce(role)
 	// log.Debugf("new role attribute: '%v'", spew.Sdump(role))
-	return Attribute{
+	return &Attribute{
 		Key:   AttrRole,
 		Value: role,
 	}, nil
 }
 
 // NewIDAttribute initializes a new attribute map with a single entry for the ID using the given value
-func NewIDAttribute(id interface{}) (Attribute, error) {
+func NewIDAttribute(id interface{}) (*Attribute, error) {
 	// log.Debugf("initializing a new ID attribute with ID='%v'", id)
-	return Attribute{
+	return &Attribute{
 		Key:   AttrID,
 		Value: id,
 	}, nil
@@ -485,7 +480,7 @@ func (a Attributes) Set(key string, value interface{}) Attributes {
 // SetAll adds the given attributes to the current ones
 func (a Attributes) SetAll(attr interface{}) Attributes {
 	switch attr := attr.(type) {
-	case Attribute:
+	case *Attribute:
 		if a == nil {
 			a = Attributes{}
 		}

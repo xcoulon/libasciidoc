@@ -228,7 +228,7 @@ some *example* content`
 				source := `====
 some *example* content
 ====`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Example,
@@ -262,7 +262,7 @@ some *example* content
 				source := `====
 .foo
 ====`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Example,
@@ -280,7 +280,7 @@ with *bold content*
 
 * and a list item
 ====`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Example,
@@ -332,7 +332,7 @@ with *bold content*
 			It("with unclosed delimiter", func() {
 				source := `====
 End of file here`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Example,
@@ -356,7 +356,7 @@ End of file here`
 ====
 foo
 ====`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Example,
@@ -380,7 +380,7 @@ foo
 
 			It("example block starting delimiter only", func() {
 				source := `====`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Example,
@@ -396,7 +396,7 @@ foo
 			It("with single rich line", func() {
 				source := `[example]
 some *example* content`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{

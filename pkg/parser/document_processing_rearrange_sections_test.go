@@ -89,7 +89,7 @@ var _ = Describe("rearrange sections", func() {
 				},
 			},
 		}
-		expected := types.Document{
+		expected := &types.Document{
 			ElementReferences: types.ElementReferences{
 				"_a_header":    doctitle,
 				"_section_a":   sectionATitle,
@@ -240,7 +240,7 @@ var _ = Describe("rearrange sections", func() {
 				},
 			},
 		}
-		expected := types.Document{
+		expected := &types.Document{
 			ElementReferences: types.ElementReferences{
 				"_a_header":    doctitle,
 				"_section_a":   sectionATitle,
@@ -391,7 +391,7 @@ var _ = Describe("rearrange sections", func() {
 				},
 			},
 		}
-		expected := types.Document{
+		expected := &types.Document{
 			ElementReferences: types.ElementReferences{
 				"_a_header":    doctitle,
 				"_section_a":   sectionATitle,

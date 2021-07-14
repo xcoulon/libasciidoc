@@ -269,7 +269,7 @@ a second paragraph`
 
 			It("single line comment alone", func() {
 				source := `// A single-line comment.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{},
 				}
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
@@ -277,7 +277,7 @@ a second paragraph`
 
 			It("single line comment with prefixing spaces alone", func() {
 				source := `  // A single-line comment.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.LiteralBlock{
 							Attributes: types.Attributes{
@@ -299,7 +299,7 @@ a second paragraph`
 
 			It("single line comment with prefixing tabs alone", func() {
 				source := "\t\t// A single-line comment."
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.LiteralBlock{
 							Attributes: types.Attributes{
@@ -321,7 +321,7 @@ a second paragraph`
 
 			It("single line comment at end of line", func() {
 				source := `foo // A single-line comment.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
@@ -339,7 +339,7 @@ a second paragraph`
 				source := `a first line
 // A single-line comment.
 another line`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
@@ -362,7 +362,7 @@ another line`
 					source := `a first line
 	// A single-line comment.
 another line`
-					expected := types.Document{
+					expected := &types.Document{
 						Elements: []interface{}{
 							types.Paragraph{
 								Lines: [][]interface{}{
@@ -391,7 +391,7 @@ another line`
 a *comment* block
 with multiple lines
 ////`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{},
 				}
 				Expect(ParseDocument(source)).To(MatchDocument(expected))
@@ -405,7 +405,7 @@ a *comment* block
 with multiple lines
 ////
 a second paragraph`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						types.Paragraph{
 							Lines: [][]interface{}{
@@ -442,7 +442,7 @@ a second paragraph`
 					Content: "section 1",
 				},
 			}
-			expected := types.Document{
+			expected := &types.Document{
 				ElementReferences: types.ElementReferences{
 					"_section_1": section1Title,
 				},
@@ -498,7 +498,7 @@ a second paragraph`
 					Content: "section 1",
 				},
 			}
-			expected := types.Document{
+			expected := &types.Document{
 				ElementReferences: types.ElementReferences{
 					"_section_0": section0Title,
 					"_section_1": section1Title,

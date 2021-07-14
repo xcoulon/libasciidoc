@@ -15,7 +15,7 @@ var _ = Describe("fenced blocks", func() {
 		It("with single line", func() {
 			content := "some fenced code"
 			source := "```\n" + content + "\n" + "```"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.DelimitedBlock{
 						Kind: types.Fenced,
@@ -32,7 +32,7 @@ var _ = Describe("fenced blocks", func() {
 
 		It("with no line", func() {
 			source := "```\n```"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.DelimitedBlock{
 						Kind: types.Fenced,
@@ -44,7 +44,7 @@ var _ = Describe("fenced blocks", func() {
 
 		It("with multiple lines alone", func() {
 			source := "```\nsome fenced code\nwith an empty line\n\nin the middle\n```"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.DelimitedBlock{
 						Kind: types.Fenced,
@@ -61,7 +61,7 @@ var _ = Describe("fenced blocks", func() {
 
 		It("with multiple lines then a paragraph", func() {
 			source := "```\nsome fenced code\nwith an empty line\n\nin the middle\n```\nthen a normal paragraph."
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.DelimitedBlock{
 						Kind: types.Fenced,
@@ -85,7 +85,7 @@ var _ = Describe("fenced blocks", func() {
 		It("after a paragraph", func() {
 			content := "some fenced code"
 			source := "a paragraph.\n\n```\n" + content + "\n" + "```\n"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.Paragraph{
 						Elements: []interface{}{
@@ -110,7 +110,7 @@ var _ = Describe("fenced blocks", func() {
 
 		It("with unclosed delimiter", func() {
 			source := "```\nEnd of file here"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.DelimitedBlock{
 						Kind: types.Fenced,
@@ -131,7 +131,7 @@ var _ = Describe("fenced blocks", func() {
 				"and more text on the\n" +
 				"next lines\n" +
 				"```"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.DelimitedBlock{
 						Kind: types.Fenced,
@@ -152,7 +152,7 @@ var _ = Describe("fenced blocks", func() {
 				"and more text on the" + "\n" +
 				"next lines" + "\n" +
 				"```"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.DelimitedBlock{
 						Kind: types.Fenced,
@@ -172,7 +172,7 @@ var _ = Describe("fenced blocks", func() {
 				"* some \n" +
 				"* listing \n" +
 				"* content \n```"
-			expected := types.Document{
+			expected := &types.Document{
 				Elements: []interface{}{
 					&types.DelimitedBlock{
 						Kind: types.Fenced,

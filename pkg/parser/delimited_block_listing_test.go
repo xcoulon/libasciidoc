@@ -18,7 +18,7 @@ var _ = Describe("listing blocks", func() {
 				source := `----
 some *listing* code
 ----`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Listing,
@@ -36,7 +36,7 @@ some *listing* code
 			It("with no line", func() {
 				source := `----
 ----`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind:     types.Listing,
@@ -54,7 +54,7 @@ with an empty line
 
 in the middle
 ----`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Listing,
@@ -75,7 +75,7 @@ in the middle
 * listing 
 * content
 ----`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Listing,
@@ -98,7 +98,7 @@ with an empty line
 in the middle
 ----
 then a normal paragraph.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Listing,
@@ -125,7 +125,7 @@ then a normal paragraph.`
 ----
 some listing code
 ----`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Elements: []interface{}{
@@ -151,7 +151,7 @@ some listing code
 			It("with unclosed delimiter", func() {
 				source := `----
 End of file here.`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Listing,
@@ -171,7 +171,7 @@ End of file here.`
 import <1>
 ----
 <1> an import`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Listing,
@@ -214,7 +214,7 @@ func foo() {} <2>
 ----
 <1> an import
 <2> a func`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Listing,
@@ -277,7 +277,7 @@ func foo() {} <4>
 <2> a single import
 <3> a single basic import
 <4> a func`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Listing,
@@ -365,7 +365,7 @@ func foo() {} <4>
 import <a>
 ----
 <a> an import`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.DelimitedBlock{
 							Kind: types.Listing,
@@ -411,7 +411,7 @@ import <a>
 			It("with single rich line", func() {
 				source := `[listing]
 some *listing* content`
-				expected := types.Document{
+				expected := &types.Document{
 					Elements: []interface{}{
 						&types.Paragraph{
 							Attributes: types.Attributes{
